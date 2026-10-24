@@ -1,0 +1,13 @@
+{
+  "name": "justquizme-unified",
+  "version": "2.5.0",
+  "description": "JustQuizMe Unified Master Platform - Modular Architecture for CS, Maths & Physics",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

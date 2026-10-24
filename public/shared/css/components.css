@@ -1,0 +1,257 @@
+/* JustQuizMe Shared Components: Buttons, Cards, Modals & Shell */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+
+.brand-sub {
+  font-size: 11.5px;
+  color: var(--ink-secondary);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.theme-btn {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.theme-btn:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-tint);
+}
+
+/* Base Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.btn:hover {
+  background: var(--surface-subtle);
+  border-color: var(--border-strong);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #FFFFFF !important;
+  border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--ink-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.btn-ghost:hover {
+  color: var(--ink);
+  background: var(--surface-subtle);
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+/* Segmented Buttons */
+.segmented {
+  display: inline-flex;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 2px;
+}
+
+.segmented button {
+  background: transparent;
+  border: none;
+  color: var(--ink-secondary);
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.segmented button.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Modals */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 580px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+
+.modal-card.wide {
+  max-width: 780px;
+}
+
+.modal-subtopics-scroll {
+  overflow-y: auto;
+  margin: 16px 0;
+  max-height: 48vh;
+  padding-right: 6px;
+}
+
+/* Sliders */
+.slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface-subtle);
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.slider-wrap input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  color: var(--ink-secondary);
+}
+
+.status-badge.online {
+  color: var(--green);
+  border-color: rgba(29, 107, 79, 0.3);
+  background: var(--green-soft);
+}
+
+/* Stat Rows */
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+}
+
+.stat-track {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-subtle);
+  border-radius: 3px;
+  margin: 0 16px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 3px;
+}

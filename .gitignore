@@ -1,0 +1,28 @@
+# ==============================================================================
+# JustQuizMe Unified Platform - .gitignore
+# ==============================================================================
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+**/csharp/
+
+# User session state & score history
+data/*/*.json
+!data/**/.gitkeep
+
+# Exam Board Past Paper Exclusions
+**/questions/past-paper/**
+**/questions/past-papers/**
+**/images/past-paper/**
+**/images/past-papers/**
+**/past-paper/**
+**/past_paper/**
+**/past-papers/**

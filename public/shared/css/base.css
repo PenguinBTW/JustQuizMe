@@ -1,0 +1,84 @@
+/* JustQuizMe Shared Base Styles: Theme Tokens, Typography & Resets */
+
+:root, [data-theme="light"] {
+  --bg: #FBF9F5;
+  --surface: #FFFFFF;
+  --surface-subtle: #F3EFE8;
+  --surface-tint: #F7F4EE;
+  --ink: #161514;
+  --ink-secondary: #5A564F;
+  --ink-muted: #8C867C;
+  --border: #E6E1D7;
+  --border-strong: #CEC7B9;
+  --shadow: 0 2px 18px rgba(22, 21, 20, 0.035);
+  
+  --green: #1D6B4F;
+  --green-soft: rgba(29, 107, 79, 0.09);
+  --blue: #156DFF;
+  --blue-soft: rgba(21, 109, 255, 0.08);
+  --amber: #A86410;
+  --amber-soft: rgba(168, 100, 16, 0.12);
+  --red: #B8332A;
+  --red-soft: rgba(184, 51, 42, 0.09);
+
+  /* Default brand accent (overridden per subject) */
+  --accent: #156DFF;
+  --accent-hover: #0D5AE5;
+  --accent-soft: rgba(21, 109, 255, 0.08);
+}
+
+[data-theme="dark"] {
+  --bg: #111110;
+  --surface: #181816;
+  --surface-subtle: #201F1D;
+  --surface-tint: #1C1B19;
+  --ink: #F2EFE9;
+  --ink-secondary: #A6A198;
+  --ink-muted: #6E6A63;
+  --border: #272624;
+  --border-strong: #3A3834;
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+
+  --green: #42B883;
+  --green-soft: rgba(66, 184, 131, 0.13);
+  --blue: #6BA3D6;
+  --blue-soft: rgba(107, 163, 214, 0.13);
+  --amber: #E8A538;
+  --amber-soft: rgba(232, 165, 56, 0.15);
+  --red: #E55A4F;
+  --red-soft: rgba(229, 90, 79, 0.13);
+
+  /* Default brand accent (overridden per subject) */
+  --accent: #3B82F6;
+  --accent-hover: #60A5FA;
+  --accent-soft: rgba(59, 130, 246, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.serif {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

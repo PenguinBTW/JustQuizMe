@@ -1,0 +1,45 @@
+// Computer Science API Service & Data Loaders
+import { S } from './state.js';
+import { $, num } from './utils.js';
+import { ensurePastFull, buildCaches, topicData } from './taxonomy.js';
+import { renderRoom } from './navigation.js';
+
+export async function api(path, opt) {
+  const p = path.startsWith('/api') ? '/cs' + path : path;
+  const res = await fetch(p, opt);
+  if (!res.ok) throw new Error(res.status);
+  return res.json();
+}
+
+export async function loadHome() {
+  $('#stage').innerHTML = '<div class="card"><p class="mono" style="color:var(--ink-muted);">Loading question banks…</p></div>';
+  const [quizzes, scores, save] = await Promise.all([
+    api('/api/quizzes'),
+    api('/api/scores'),
+    api('/api/save').catch(() => null)
+  ]);
+  S.quizzes = quizzes || { normal: [], 'past-paper': [] };
+  S.scores = Array.isArray(scores) ? scores : [];
+  S.save = save;
+
+  await ensurePastFull();
+  buildCaches();
+
+  if (!S.mixed._init) {
+    S.mixed._init = true;
+    const data = topicData();
+    data.forEach(t => { if (t.qcount > 0) S.mixed.topics.add(t.topic); });
+    data.forEach(t => t.subs.forEach((g, gi) => { if (S.mixed.topics.has(t.topic)) S.mixed.subs.add(`${t.topic}|${gi}`); }));
+    const allMarks = data.reduce((s, t) => s + t.mmarks, 0);
+    S.mixed.m = Math.min(30, Math.max(5, allMarks));
+    const first = data.find(t => t.qcount > 0);
+    if (first) S.openTopics.add(first.topic);
+  }
+
+  const allQs = S.quizzes['past-paper'] || [];
+  const pt = allQs.reduce((s, m) => s + m.totalMarks, 0);
+  const pn = allQs.reduce((s, m) => s + m.questionCount, 0);
+  $('#bankStats').innerHTML = `<span style="color:var(--accent); font-weight:600;">${num(pn)}</span> Qs · <span style="color:var(--accent); font-weight:600;">${num(pt)}</span> Marks`;
+
+  renderRoom();
+}
