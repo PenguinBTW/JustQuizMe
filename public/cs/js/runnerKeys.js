@@ -16,6 +16,8 @@ export const BINDINGS = [
 //   modKey:         Ctrl / Meta / Alt held
 //   modalOpen:      a modal backdrop is open
 //   popoverOpen:    the keys hint popover is showing
+//   buttonFocused:  focus is on a button (an answer option, save, nav…) — its
+//                   own Enter activation must win over runner nav
 //   canPrev:        a previous question exists
 //   canNext:        a next question exists (false on the last question)
 //   optionCount:    visible MCQ option buttons
@@ -31,7 +33,7 @@ export function decide(key, ctx = {}) {
   if (key === '?') return { action: 'hint' };
   if (key === 'ArrowLeft' || key === 'k') return ctx.canPrev ? { action: 'prev' } : none;
   if (key === 'ArrowRight' || key === 'j') return ctx.canNext ? { action: 'next' } : none;
-  if (key === 'Enter') return { action: 'primary' };
+  if (key === 'Enter') return ctx.buttonFocused ? none : { action: 'primary' };
   if (/^[1-9]$/.test(key) && ctx.optionsEnabled) {
     const i = +key - 1;
     if (i < (ctx.optionCount || 0)) return { action: 'select', index: i };
