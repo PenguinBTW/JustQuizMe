@@ -1,5 +1,4 @@
-// Topic-mastery heatmap — mounts a "Topic mastery" grid into the Stats view.
-// Self-contained: watches #stage and appends after the stats cards.
 import { mountMastery } from '../../shared/js/mountMastery.js';
+import { AQA_TOPICS } from './state.js';
 
-mountMastery('physics');
+mountMastery('physics', { order: AQA_TOPICS });

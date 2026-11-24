@@ -45,7 +45,7 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-function renderCard(subject, quizzes, scores) {
+function renderCard(subject, quizzes, scores, order) {
   const uuidIndex = {};
   for (const cat of ['normal', 'past-paper']) {
     for (const q of quizzes?.[cat] || []) {
@@ -53,7 +53,7 @@ function renderCard(subject, quizzes, scores) {
     }
   }
   const acc = topicAccuracy(scores, uuidIndex);
-  const cells = gridModel(taxonomyOrder(quizzes), acc);
+  const cells = gridModel(order?.length ? order : taxonomyOrder(quizzes), acc);
   const card = document.createElement('div');
   card.className = `card ${CARD_CLASS}`;
   card.innerHTML = `
@@ -78,12 +78,25 @@ function statsViewActive(stage) {
 
 export function mountMastery(subject, opts = {}) {
   const stageSel = opts.stageSelector || '#stage';
-  let data = null;
-  const tryMount = () => {
+  const order = opts.order || null;
+  let quizzes = null;
+  let fetching = false;
+  // Lazy: no requests until the Stats view actually appears; scores are
+  // re-fetched on every mount so a just-finished quiz lights up immediately.
+  const tryMount = async () => {
     const stage = document.querySelector(stageSel);
-    if (!statsViewActive(stage) || !data) return;
-    if (stage.querySelector(`.${CARD_CLASS}`)) return;
-    stage.appendChild(renderCard(subject, data.quizzes, data.scores));
+    if (!statsViewActive(stage) || fetching || stage.querySelector(`.${CARD_CLASS}`)) return;
+    fetching = true;
+    try {
+      if (!quizzes) {
+        quizzes = await fetch(`/${subject}/api/quizzes`).then(r => (r.ok ? r.json() : null)).catch(() => null);
+      }
+      const scores = await fetch(`/${subject}/api/scores`).then(r => (r.ok ? r.json() : [])).catch(() => []);
+      if (!statsViewActive(stage) || stage.querySelector(`.${CARD_CLASS}`)) return;
+      stage.appendChild(renderCard(subject, quizzes, Array.isArray(scores) ? scores : [], order));
+    } finally {
+      fetching = false;
+    }
   };
   const start = () => {
     injectStyle();
@@ -92,12 +105,6 @@ export function mountMastery(subject, opts = {}) {
     new MutationObserver(tryMount).observe(stage, { childList: true, subtree: true });
     tryMount();
   };
-  Promise.all([
-    fetch(`/${subject}/api/quizzes`).then(r => (r.ok ? r.json() : null)).catch(() => null),
-    fetch(`/${subject}/api/scores`).then(r => (r.ok ? r.json() : null)).catch(() => null),
-  ]).then(([quizzes, scores]) => {
-    data = { quizzes, scores: Array.isArray(scores) ? scores : [] };
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
-    else start();
-  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
 }
