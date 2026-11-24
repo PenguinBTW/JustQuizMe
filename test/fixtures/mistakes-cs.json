@@ -1,0 +1,37 @@
+{
+  "uuid": "sample-mistakes-cs",
+  "version": 1,
+  "title": "Mistakes-annotation sample",
+  "subject": "cs",
+  "topics": [
+    "Demonstration"
+  ],
+  "questions": [
+    {
+      "type": "multiple-choice",
+      "marks": 1,
+      "prompt": "Which feature defines Von Neumann architecture?",
+      "options": [
+        "Separate instruction and data buses",
+        "Shared memory for instructions and data",
+        "No stored program concept",
+        "Harvard cache hierarchy"
+      ],
+      "correctIndex": 1,
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Confuses Von Neumann with Harvard architecture \u2014 separate buses is the Harvard design.",
+          "correction": "Von Neumann uses one shared memory and a single bus for both instructions and data."
+        },
+        {
+          "optionIndex": 3,
+          "misconception": "Attributes Harvard cache organisation to Von Neumann.",
+          "correction": "Cache hierarchy is orthogonal to the basic stored-program model; Von Neumann says nothing about caches."
+        }
+      ],
+      "id": "sample-q1",
+      "topic": "Demonstration"
+    }
+  ]
+}

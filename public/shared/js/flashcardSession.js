@@ -14,8 +14,10 @@ export function buildSmartDeck(S, questions) {
   const resolveFn = s => resolveScoreTopics(s, uuidIndex);
   const rows = computeMastery(scores, resolveFn);
   const cards = deckFromQuestions(questions);
-  // mastery bands first, per-card due state breaks toward what needs reps now
-  return orderCardsByDue(orderDeckByMastery(cards, rows));
+  // mastery bands first (weak > unpractised > strong); per-card due state
+  // reorders only within a band — due/overdue first, then unseen, then future.
+  const ordered = orderDeckByMastery(cards, rows);
+  return orderCardsByDue(ordered);
 }
 
 // Mounts a flashcard session into `stage`. Returns nothing; cleanup via onExit.

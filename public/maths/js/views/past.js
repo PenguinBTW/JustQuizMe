@@ -7,6 +7,7 @@ import { openExploreList } from './explore.js';
 import { startSubQuiz, beginFileQuiz } from '../runner/starters.js';
 import { exploreFullFile } from './practice.js';
 import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
+import { dueReview } from '../../../shared/js/dueReview.js';
 import { masteryBadge, resolveScoreTopics, buildUuidIndex } from '../../../shared/js/masteryUi.js';
 import { mountFlashcards, buildSmartDeck } from '../../../shared/js/flashcardSession.js';
 import { deckFromQuestions } from '../../../shared/js/flashcards.js';

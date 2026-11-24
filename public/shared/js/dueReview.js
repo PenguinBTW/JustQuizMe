@@ -27,14 +27,20 @@ export function dueReview(rows, { dueWithinDays = 7 } = {}) {
   const out = [];
   for (const r of rows || []) {
     if (r.mastery == null || !(r.mastery > 0)) continue;
-    const days = daysUntilDue(r.mastery);
+    // retention NOW = measured mastery decayed by time since last practice —
+    // mastery itself is a static measurement, memory is what fades.
+    const age = typeof r.daysSince === 'number' && r.daysSince > 0 ? r.daysSince : 0;
+    const retention = r.mastery * Math.pow(0.5, age / HALF_LIFE_DAYS);
+    if (!(retention > 0)) continue;
+    const days = daysUntilDue(retention);
     if (days == null) continue;
     const overdue = days <= 0;
     const dueSoon = !overdue && days <= dueWithinDays;
     if (!overdue && !dueSoon) continue;
     out.push({
       topic: r.topic,
-      mastery: r.mastery,
+      mastery: retention,
+      measuredMastery: r.mastery,
       daysDue: days,
       overdue,
       label: overdue

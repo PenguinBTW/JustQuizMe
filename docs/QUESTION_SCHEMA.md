@@ -257,3 +257,30 @@ Used for programming problems in C# and OCR Pseudocode.
   ]
 }
 ```
+
+---
+
+## 4. Examiner Feedback Annotations (`mistakes[]`, schema v1, optional)
+
+Any question may carry a `mistakes` array describing common wrong answers and the misconception behind them. Banks without `mistakes` render exactly as before — the field is purely additive.
+
+```json
+{
+  "mistakes": [
+    {
+      "optionIndex": 0,
+      "misconception": "Confuses Von Neumann with Harvard architecture — separate buses is the Harvard design.",
+      "correction": "Von Neumann stores instructions and data in one shared memory with a single bus."
+    },
+    {
+      "pattern": "line by line",
+      "misconception": "Attributes the interpreter's behaviour to compilers.",
+      "correction": "Compilers translate the whole program before execution; line-by-line translation describes interpreters."
+    }
+  ]
+}
+```
+
+- **MCQ**: `optionIndex` (integer) matches the selected distractor.
+- **written / calculation / extended-response / self-marked**: `pattern` is matched case-insensitively as a substring of the student's answer text.
+- `misconception` (required): what the student is probably thinking. `correction` (optional): the examiner-style fix.

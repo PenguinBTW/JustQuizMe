@@ -1,0 +1,26 @@
+{
+  "uuid": "sample-mistakes-physics",
+  "version": 1,
+  "title": "Mistakes-annotation sample",
+  "subject": "physics",
+  "topics": [
+    "Demonstration"
+  ],
+  "questions": [
+    {
+      "type": "calculation",
+      "marks": 2,
+      "prompt": "Calculate the acceleration of a 2 kg mass under a 10 N resultant force.",
+      "answer": 5,
+      "mistakes": [
+        {
+          "pattern": "20",
+          "misconception": "Multiplied instead of dividing \u2014 F=ma rearranged wrongly.",
+          "correction": "a = F/m = 10/2 = 5 m/s\u00b2. Multiply only when solving for F."
+        }
+      ],
+      "id": "sample-q1",
+      "topic": "Demonstration"
+    }
+  ]
+}

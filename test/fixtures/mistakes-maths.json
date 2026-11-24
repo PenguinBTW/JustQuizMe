@@ -1,0 +1,31 @@
+{
+  "uuid": "sample-mistakes-maths",
+  "version": 1,
+  "title": "Mistakes-annotation sample",
+  "subject": "maths",
+  "topics": [
+    "Demonstration"
+  ],
+  "questions": [
+    {
+      "type": "written",
+      "marks": 3,
+      "prompt": "Explain why the discriminant determines the number of real roots of a quadratic.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Discriminant appears under the square root in the quadratic formula."
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "because",
+          "misconception": "Asserts rather than explains \u2014 'because' without the mechanism earns no marks.",
+          "correction": "State that b\u00b2\u22124ac sits under the root sign: negative means no real solution, zero means a repeated root."
+        }
+      ],
+      "id": "sample-q1",
+      "topic": "Demonstration"
+    }
+  ]
+}

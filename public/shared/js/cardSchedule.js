@@ -2,6 +2,12 @@
 // Honest minimal model: correct recall doubles the interval (capped at 60d),
 // a lapse resets to 1 day. No ease factors, no fake precision.
 const STORE_KEY = 'jqm-card-schedule-v1';
+// Card keys are only unique within a portal (filename+question id) — namespace
+// by subject so two subjects sharing ids don't share schedules.
+function ns() {
+  try { const m = location.pathname.match(/\/(cs|maths|physics)\//); return m ? m[1] + ':' : ''; }
+  catch { return ''; }
+}
 
 function load() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch { return {}; }
@@ -12,6 +18,7 @@ function saveAll(m) {
 
 // recordGrade(cardKey, got) → updated state {interval, due, reps}
 export function recordGrade(cardKey, got, now = Date.now()) {
+  cardKey = ns() + cardKey;
   const all = load();
   const prev = all[cardKey] || { interval: 1, reps: 0 };
   const interval = got ? Math.min(60, prev.interval * 2) : 1;
@@ -24,8 +31,9 @@ export function recordGrade(cardKey, got, now = Date.now()) {
 // dueCardKeys(keys, now) → the subset due now or overdue
 export function dueCardKeys(keys, now = Date.now()) {
   const all = load();
+  const p = ns();
   return (keys || []).filter(k => {
-    const st = all[k];
+    const st = all[p + k];
     if (!st) return true; // never seen — due by definition
     return (st.due || 0) <= now;
   });
@@ -34,9 +42,10 @@ export function dueCardKeys(keys, now = Date.now()) {
 // orderCardsByDue(cards, now) → due first (overdue-most first), then new, then not-yet-due
 export function orderCardsByDue(cards, now = Date.now()) {
   const all = load();
+  const p = ns();
   const rank = c => {
-    const st = all[c.key || c.id || c.front];
-    if (!st) return { band: 1, due: 0 };
+    const st = all[p + (c.key || c.id || c.front)];
+    if (!st) return { band: 0, due: 0 };
     return (st.due || 0) <= now ? { band: 0, due: st.due } : { band: 2, due: st.due };
   };
   return [...(cards || [])]
