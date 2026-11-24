@@ -195,11 +195,19 @@ function initQuickKeys() {
     if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
     const k = e.key.toLowerCase();
     if (k === 'escape') { disarm(); return; }
-    if (k === 'enter' && armedLink) { armedLink.click(); return; }
+    if (k === 'enter' && armedLink) {
+      e.preventDefault(); // also blocks Enter's default activation of any focused control
+      armedLink.click();
+      return;
+    }
     if (k === 's') {
       disarm();
-      document.getElementById('synthesizer')?.scrollIntoView({ behavior: 'smooth' });
-      document.getElementById('marksSlider')?.focus({ preventScroll: true });
+      const slider = document.getElementById('marksSlider');
+      if (slider) {
+        slider.focus(); // lets the browser scroll the control into view itself
+      } else {
+        document.getElementById('synthesizer')?.scrollIntoView({ behavior: 'smooth' });
+      }
       return;
     }
     const cardClass = QUICK_KEYS[k];
