@@ -45,11 +45,13 @@ export function streakModel(entries, now = new Date()) {
 
   let best = 0, run = 0, prev = null;
   for (const k of sorted) {
-    const [y, m, dd] = k.split('-').map(Number);
-    const d = new Date(y, m - 1, dd);
-    run = prev && (d - prev) === 86400000 ? run + 1 : 1;
+    // calendar-day step, not a 24h diff — a DST shift makes a real day 23/25h
+    const next = prev ? new Date(prev) : null;
+    next?.setDate(next.getDate() + 1);
+    run = next && dayKey(next) === k ? run + 1 : 1;
     if (run > best) best = run;
-    prev = d;
+    const [y, m, dd] = k.split('-').map(Number);
+    prev = new Date(y, m - 1, dd);
   }
 
   return { current, best, lastDay: sorted[sorted.length - 1] };

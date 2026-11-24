@@ -8,7 +8,7 @@ function chipHtml(model) {
   const { current, best, lastDay } = model;
   if (!current) return '';
   const title = `best: ${best} day${best === 1 ? '' : 's'}${lastDay ? ` · last studied ${lastDay}` : ''}`;
-  return `<span id="${CHIP_ID}" class="streak-chip" title="${title}"
+  return `<span id="${CHIP_ID}" class="streak-chip" data-sig="${current}|${best}|${lastDay ?? ''}" title="${title}"
     style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
     border-radius:999px;font-size:12px;font-family:ui-monospace,monospace;
     color:var(--accent,#e07b39);background:color-mix(in srgb,var(--accent,#e07b39) 12%,transparent);
@@ -26,7 +26,13 @@ export function mountStreakChip({ getModel, stageSel = '#stage' } = {}) {
     try { model = getModel() || { current: 0, best: 0 }; } catch { model = { current: 0, best: 0 }; }
     const html = chipHtml(model);
     if (!html) { old?.remove(); return; }
-    if (old) { old.outerHTML = html; return; }
+    // Each chip edit refires the stage observer — skip no-op rewrites so
+    // inject() settles instead of looping on its own mutations.
+    const sig = `${model.current}|${model.best}|${model.lastDay ?? ''}`;
+    if (old) {
+      if (old.dataset.sig !== sig) old.outerHTML = html;
+      return;
+    }
     nav.insertAdjacentHTML('beforeend', html);
   };
   const stage = document.querySelector(stageSel);

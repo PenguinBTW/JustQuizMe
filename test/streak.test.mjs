@@ -45,6 +45,15 @@ test('object entries with date fields are read', () => {
   assert.equal(m.current, 2);
 });
 
+test('consecutive calendar days across a DST shift stay consecutive', () => {
+  // US spring-forward 2026-03-08: local midnights are 23h apart.
+  // Run with TZ=America/New_York to exercise the 23-hour day.
+  const days = [D(2026, 3, 6), D(2026, 3, 7), D(2026, 3, 8), D(2026, 3, 9), D(2026, 3, 10)];
+  const m = streakModel(days, new Date(2026, 2, 10, 15, 0));
+  assert.equal(m.best, 5);
+  assert.equal(m.current, 5);
+});
+
 test('toStreakText renders copy only when alive', () => {
   assert.equal(toStreakText({ current: 3 }), '3-day streak');
   assert.equal(toStreakText({ current: 1 }), '1-day streak');
