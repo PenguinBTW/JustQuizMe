@@ -85,7 +85,17 @@ function cardHtml(sum) {
     <svg class="ww-spark" viewBox="0 0 132 30" preserveAspectRatio="none" aria-label="runs per day, last 7 days">
       <polyline points="${sum.spark}" fill="none" stroke="var(--ink-muted, #8b95a5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
     </svg>
-    <div class="ww-rows">${rows || '<p class="ww-empty">No runs yet this week — pick a portal and start.</p>'}</div>`;
+    ${sum.runs === 0 ? '<p class="ww-empty">No runs yet this week — pick a portal and start.</p>' : ''}
+    <div class="ww-rows">${rows}</div>`;
+}
+
+async function refreshCard(card) {
+  try {
+    const portals = await fetchScores();
+    card.innerHTML = cardHtml(weeklySummary(portals));
+  } catch {
+    card.innerHTML = '<p class="ww-empty">Weekly stats unavailable.</p>';
+  }
 }
 
 async function mount() {
@@ -100,13 +110,8 @@ async function mount() {
   card.setAttribute('aria-label', 'Your week across all portals');
   card.innerHTML = '<p class="ww-empty">Loading your week…</p>';
   anchor.parentNode.insertBefore(card, anchor);
-  try {
-    const portals = await fetchScores();
-    if (!document.getElementById(CARD_ID)) return; // page navigated away
-    card.innerHTML = cardHtml(weeklySummary(portals));
-  } catch {
-    card.innerHTML = '<p class="ww-empty">Weekly stats unavailable.</p>';
-  }
+  if (!document.getElementById(CARD_ID)) return; // raced with a re-render
+  await refreshCard(card);
 }
 
 export function initWeeklyWidget() {
@@ -117,4 +122,12 @@ export function initWeeklyWidget() {
     if (!document.getElementById(CARD_ID)) mount();
   });
   mo.observe(document.documentElement, { childList: true, subtree: true });
+  // bfcache restores the launchpad with a stale card after a quiz — re-pull
+  // scores on a persisted pageshow instead of waiting for a full reload.
+  window.addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    const card = document.getElementById(CARD_ID);
+    if (card) refreshCard(card);
+    else mount();
+  });
 }
