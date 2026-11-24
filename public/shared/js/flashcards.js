@@ -9,6 +9,9 @@ export function cardFromQuestion(q) {
   if (!q || typeof q !== 'object') return null;
   const front = (q.prompt || '').trim();
   if (!front) return null;
+  // cards are self-contained recall — questions whose meaning lives in a
+  // diagram, image or data table can't be answered from the stem alone
+  if (q.image || q.images || q.table || q.tableData || q.answerImage) return null;
   if (q.type === 'multiple-choice') {
     const correct = Array.isArray(q.options) ? q.options[q.correctIndex] : null;
     const text = correct && (typeof correct === 'object' ? correct.text : correct);
@@ -29,7 +32,13 @@ export function cardFromQuestion(q) {
 }
 
 export function deckFromQuestions(questions) {
-  return (questions || []).map(cardFromQuestion).filter(Boolean);
+  const seen = new Set();
+  return (questions || []).map(cardFromQuestion).filter(Boolean).filter(c => {
+    const key = c.id || c.front;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 // Mastery-weighted ordering: cards whose topic is weak come first, then

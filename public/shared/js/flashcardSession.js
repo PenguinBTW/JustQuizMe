@@ -24,7 +24,10 @@ export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
   const grades = []; // {card, got}
   let keyHandler = null;
 
+  let finished = false;
   const finish = async () => {
+    if (finished) return;
+    finished = true;
     if (keyHandler) document.removeEventListener('keydown', keyHandler);
     const total = cards.reduce((s, c) => s + (c.marks || 1), 0);
     const got = grades.reduce((s, g) => s + (g.got ? (g.card.marks || 1) : 0), 0);
@@ -86,6 +89,8 @@ export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
         </div>` : ''}
       </div>`;
     stage.querySelector('#fcExit').addEventListener('click', () => { idx = cards.length; render(); });
+    const cardEl = stage.querySelector('.fc-card');
+    if (cardEl && !flipped) cardEl.addEventListener('click', () => { flipped = true; render(); });
     if (flipped) {
       stage.querySelector('#fcNo').addEventListener('click', () => grade(false));
       stage.querySelector('#fcYes').addEventListener('click', () => grade(true));
@@ -99,6 +104,12 @@ export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
   };
 
   keyHandler = e => {
+    // self-cleanup: navigating away mid-session must not leave live shortcuts
+    if (!document.contains(stage) || !stage.querySelector('.fc-session')) {
+      document.removeEventListener('keydown', keyHandler);
+      return;
+    }
+    if (e.repeat) return;
     if (e.key === 'Escape') { idx = cards.length; render(); return; }
     if (idx >= cards.length) return;
     if (!flipped && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); flipped = true; render(); return; }
