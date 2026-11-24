@@ -92,3 +92,64 @@ test('weakestTopics with no history returns unpracticed catalogue topics, not ze
   assert.equal(picks.length, 2);
   assert.ok(picks.every(p => p.unpracticed && p.mastery === null));
 });
+
+// --- per-question data path ---
+
+test('per-question outcomes attribute marks to their own topics, not the whole paper', () => {
+  // a mixed paper: 8/8 on Logic, 0/2 on Algorithms — aggregate would smear 80% over both
+  const rows = computeMastery([{
+    date: iso(0), score: 8, total: 10, topics: ['Logic', 'Algorithms'],
+    perQuestion: [
+      { id: 'q1', topic: 'Logic', score: 8, marks: 8, attempted: true },
+      { id: 'q2', topic: 'Algorithms', score: 0, marks: 2, attempted: false }
+    ]
+  }], resolve, NOW);
+  const logic = rows.find(r => r.topic === 'Logic');
+  const algo = rows.find(r => r.topic === 'Algorithms');
+  assert.ok(Math.abs(logic.mastery - 1) < 1e-9, `logic ${logic.mastery}`);
+  assert.equal(algo.mastery, 0);
+  assert.equal(algo.weak, true);
+});
+
+test('marks-weighting: heavy questions shape mastery more than light ones', () => {
+  const rows = computeMastery([{
+    date: iso(0), score: 1, total: 11, topics: ['Logic'],
+    perQuestion: [
+      { id: 'q1', topic: 'Logic', score: 1, marks: 1, attempted: true },   // tiny MCQ correct
+      { id: 'q2', topic: 'Logic', score: 0, marks: 10, attempted: true }   // big question failed
+    ]
+  }], resolve, NOW);
+  assert.ok(Math.abs(rows[0].mastery - 1 / 11) < 1e-9);
+});
+
+test('legacy entries without perQuestion still use aggregate attribution (backward compat)', () => {
+  const rows = computeMastery([
+    { date: iso(0), score: 4, total: 10, topics: ['Logic', 'Data'] }  // no perQuestion
+  ], resolve, NOW);
+  assert.equal(rows.length, 2);
+  assert.ok(rows.every(r => Math.abs(r.mastery - 0.4) < 1e-9));
+});
+
+test('mixed legacy + per-question history combines without throwing', () => {
+  const rows = computeMastery([
+    { date: iso(1), score: 10, total: 10, topics: ['Logic'] },  // legacy: 100%
+    { date: iso(0), score: 0, total: 10, topics: ['Logic'],     // per-question: 0%
+      perQuestion: [{ id: 'q', topic: 'Logic', score: 0, marks: 10, attempted: true }] }
+  ], resolve, NOW);
+  assert.equal(rows.length, 1);
+  assert.ok(rows[0].mastery > 0 && rows[0].mastery < 0.5, `mastery ${rows[0].mastery}`);
+  assert.equal(rows[0].runs, 2);
+});
+
+test('per-question entries with missing/zero marks are skipped safely', () => {
+  const rows = computeMastery([{
+    date: iso(0), score: 5, total: 5, topics: ['Logic'],
+    perQuestion: [
+      { id: 'q1', topic: 'Logic', score: 5, marks: 0, attempted: true },   // zero marks
+      { id: 'q2', topic: null, score: 3, marks: 3, attempted: true },      // no topic
+      { topic: 'Logic', score: 5, marks: 5, attempted: true }
+    ]
+  }], resolve, NOW);
+  assert.equal(rows.length, 1);
+  assert.ok(Math.abs(rows[0].mastery - 1) < 1e-9);
+});

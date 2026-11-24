@@ -36,30 +36,71 @@ function runDate(s) {
 // this module stays free of the quizTitle/uuidIndex resolution rules.
 export function computeMastery(scores, resolveTopics, now = new Date()) {
   const topics = new Map();
+  const entry = (name) => {
+    const e = topics.get(name) || { topic: name, wsum: 0, wpct: 0, wgot: 0, wavail: 0, perQ: false, runs: 0, last: null };
+    if (!topics.has(name)) topics.set(name, e);
+    return e;
+  };
   for (const s of scores || []) {
     const pct = runPct(s);
     const date = runDate(s);
     if (pct == null || !date) continue;
+    const w = Math.pow(0.5, daysBetween(date, now) / HALF_LIFE_DAYS);
+    // Per-question path: each question contributes weight × marks to its own
+    // topic's weighted accuracy (wgot/wavail). Marks-weighting means a 12-mark
+    // question shapes mastery more than a 1-mark MCQ — honest signal.
+    const pq = Array.isArray(s?.perQuestion) ? s.perQuestion.filter(q => q && typeof q.topic === 'string' && q.topic) : [];
+    if (pq.length) {
+      for (const q of pq) {
+        const qm = Number(q.marks) || 0;
+        if (!qm) continue;
+        const got = Math.min(qm, Math.max(0, Number(q.score) || 0));
+        const e = entry(q.topic);
+        e.perQ = true;
+        e.wgot += w * got;
+        e.wavail += w * qm;
+        if (!e.last || date > e.last) e.last = date;
+      }
+      // count the run once per topic it touched
+      const seen = new Set(pq.map(q => q.topic));
+      for (const name of seen) entry(name).runs += 1;
+      continue;
+    }
+    // Legacy aggregate path: the run's whole-paper percentage is attributed to
+    // every topic it covered (documented approximation for pre-perQuestion data).
     let names = [];
     try { names = resolveTopics(s) || []; } catch { continue; }
-    const w = Math.pow(0.5, daysBetween(date, now) / HALF_LIFE_DAYS);
     for (const name of names) {
       if (typeof name !== 'string' || !name) continue;
-      const e = topics.get(name) || { topic: name, wsum: 0, wpct: 0, runs: 0, last: null };
+      const e = entry(name);
       e.wsum += w;
       e.wpct += w * pct;
       e.runs += 1;
       if (!e.last || date > e.last) e.last = date;
-      topics.set(name, e);
     }
   }
-  const out = [...topics.values()].map(e => ({
-    topic: e.topic,
-    mastery: e.wsum ? e.wpct / e.wsum : 0,
-    runs: e.runs,
-    daysSince: e.last ? Math.round(daysBetween(e.last, now)) : null,
-    weak: e.wsum ? (e.wpct / e.wsum) < WEAK_THRESHOLD : false
-  }));
+  const out = [...topics.values()].map(e => {
+    // a topic can mix per-question and legacy entries: combine both signals
+    // weighted as recorded (each entry contributes with its own decay weight).
+    const masteryPQ = e.wavail ? e.wgot / e.wavail : null;
+    const masteryLegacy = e.wsum ? e.wpct / e.wsum : null;
+    let mastery;
+    if (masteryPQ != null && masteryLegacy != null) {
+      // weight the two signals by their evidence mass: per-question marks vs legacy runs
+      const pqMass = e.wavail;
+      const legacyMass = e.wsum;
+      mastery = (masteryPQ * pqMass + masteryLegacy * legacyMass) / (pqMass + legacyMass);
+    } else {
+      mastery = masteryPQ != null ? masteryPQ : (masteryLegacy != null ? masteryLegacy : 0);
+    }
+    return {
+      topic: e.topic,
+      mastery,
+      runs: e.runs,
+      daysSince: e.last ? Math.round(daysBetween(e.last, now)) : null,
+      weak: mastery < WEAK_THRESHOLD
+    };
+  });
   // weakest first; ties broken by least-recently-practiced, then name
   out.sort((a, b) => a.mastery - b.mastery
     || (b.daysSince ?? 1e9) - (a.daysSince ?? 1e9)

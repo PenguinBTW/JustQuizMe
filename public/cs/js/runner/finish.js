@@ -126,6 +126,28 @@ export async function renderSummaryReport() {
 
   const pct = Math.round((earned / (total || 1)) * 100);
 
+  // Per-question outcomes — the data-integrity layer mastery is built on.
+  // attempted: the student engaged the question at all (typed text, picked an
+  // option, self-marked, ran code). Unattempted questions still record 0 score
+  // against full marks — skipping a topic in an exam is honest signal.
+  const perQuestion = (S.quiz.questions || []).map(q => {
+    const ans = S.answers[ak(q)] || {};
+    const qm = +q.marks || 0;
+    const score = Math.min(qm, Math.max(0, ans.score || 0));
+    const attempted = !!(ans.selected != null || (ans.text && ans.text.trim())
+      || ans.revealed || ans.tickedCount != null || (ans.ticked && ans.ticked.length)
+      || ans.score != null);
+    return {
+      id: q.id || null,
+      topic: q.topic || q._topic || null,
+      subtopic: q.subtopic || null,
+      type: q.type,
+      score,
+      marks: qm,
+      attempted
+    };
+  });
+
   // Save to scores.json
   const scoreEntry = {
     quizUuid: S.quiz.uuid || MIXED_UUID,
@@ -138,7 +160,8 @@ export async function renderSummaryReport() {
     seconds: S.elapsed,
     exam: S.runMode === 'exam',
     topics: [...new Set((S.quiz.questions || []).map(q => q.topic || q._topic).filter(Boolean))],
-    breakdown
+    breakdown,
+    perQuestion
   };
   try {
     await api('/api/scores', {
