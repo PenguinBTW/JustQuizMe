@@ -109,7 +109,8 @@ export function resumeVirtual(sv) {
     uuid: sv.quizUuid,
     version: sv.quizVersion ?? 1,
     title: sv.title || 'Saved quiz',
-    timeLimitMinutes: sv.timeLimitMinutes || null,
+    // Pre-update exam saves have no timeLimitMinutes; recompute like the starters.
+    timeLimitMinutes: sv.timeLimitMinutes || (sv.exam ? (sv.questions || []).reduce((s, q) => s + (+q.marks || 0), 0) * 1.5 : null) || null,
     exam: !!sv.exam,
     questions: sv.questions || []
   };

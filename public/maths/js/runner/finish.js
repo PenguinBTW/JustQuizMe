@@ -13,10 +13,14 @@ export async function finishQuiz(auto = false) {
     const k = ak(q);
     if (!S.answers[k]) {
       S.answers[k] = { locked: true, score: 0 };
-    } else if ((q.type === 'written' || q.type === 'self-marked') && S.answers[k].score == null) {
+    } else if (q.type === 'written' || q.type === 'self-marked') {
+      // Exam mode keeps ticks editable after locking, so rescore whenever
+      // ticks exist; otherwise a pre-edit score survives to the results page.
       const a = S.answers[k];
       a.locked = true;
-      a.score = Math.min(tickMarks(q, a.ticks), q.marks);
+      if (a.score == null || (a.ticks || []).some(Boolean)) {
+        a.score = Math.min(tickMarks(q, a.ticks), q.marks);
+      }
     }
   }
 

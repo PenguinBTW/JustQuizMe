@@ -86,6 +86,7 @@ export async function resumeSave(){
 }
 
 export function resumeVirtual(sv){
-  const quizLike = { uuid: sv.quizUuid, version: sv.quizVersion ?? 1, title: sv.title || 'Saved quiz', timeLimitMinutes: sv.timeLimitMinutes || null, exam: !!sv.exam, questions: sv.questions || [] };
+  // Pre-update exam saves have no timeLimitMinutes; recompute like the starters.
+  const quizLike = { uuid: sv.quizUuid, version: sv.quizVersion ?? 1, title: sv.title || 'Saved quiz', timeLimitMinutes: sv.timeLimitMinutes || (sv.exam ? (sv.questions || []).reduce((s, q) => s + (+q.marks || 0), 0) * 1.5 : null) || null, exam: !!sv.exam, questions: sv.questions || [] };
   beginRun({ mode: 'quiz', quizLike, meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true }, resume: sv, retrySpec: sv.spec || { kind: 'mixed' } });
 }
