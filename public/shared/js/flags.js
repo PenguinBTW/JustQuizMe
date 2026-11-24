@@ -115,6 +115,7 @@ export function openFlagDialog(ctx) {
     const prevFocus = document.activeElement;
     let reason = null;
     let pending = false;
+    let okTimer = null;
 
     REASONS.forEach((r) => {
       const b = document.createElement('button');
@@ -131,6 +132,7 @@ export function openFlagDialog(ctx) {
     });
 
     const close = (result) => {
+      if (okTimer) clearTimeout(okTimer); // a later dialog must not inherit this dialog's timer
       overlay.remove();
       document.removeEventListener('keydown', onKey);
       if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
@@ -161,12 +163,13 @@ export function openFlagDialog(ctx) {
         await postFlag({
           portal: ctx.portal,
           fileBase: ctx.fileBase || '',
+          category: ctx.category,
           questionId: ctx.questionId,
           reason,
           note: note.value,
         });
         ok.style.display = 'inline';
-        setTimeout(() => close(true), 700);
+        okTimer = setTimeout(() => close(true), 700);
       } catch (e) {
         pending = false;
         err.textContent = 'Flag failed: ' + e.message;

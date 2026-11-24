@@ -567,6 +567,7 @@ export function wireQuestionInteractions(q) {
   attachChromeFlagButton(() => ({
     portal: 'cs',
     fileBase: q._srcFile || S.quizMeta?.file || '',
+    category: S.quizMeta?.category,
     questionId: q.id || k,
     questionLabel: `Question ${S.idx + 1} of ${S.quiz.questions.length}`
   }));

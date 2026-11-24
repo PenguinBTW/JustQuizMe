@@ -21,7 +21,7 @@ function flagRow(f) {
         <span class="mono" style="font-size:11.5px; color:var(--ink-muted, #66707f);">${esc(when)}</span>
       </div>
       <div class="mono" style="font-size:12px; color:var(--ink-secondary, #8892a4); margin-top:6px;">
-        ${esc(f.fileBase || '(mixed)')} · Q: ${esc(f.questionId)}
+        ${esc(f.fileBase || '(mixed)')}${f.category ? ` · ${esc(f.category)}` : ''} · Q: ${esc(f.questionId)}
       </div>
       ${f.note ? `<p style="font-size:13.5px; margin:8px 0 0;">${esc(f.note)}</p>` : ''}
     </div>`;

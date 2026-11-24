@@ -33,10 +33,13 @@ function writeFlags(list) {
 
 function validateFlag(body) {
   if (!body || typeof body !== 'object') return 'payload must be an object';
-  const { portal, fileBase, questionId, reason, note } = body;
+  const { portal, fileBase, category, questionId, reason, note } = body;
   if (!PORTALS.has(portal)) return `portal must be one of ${[...PORTALS].join(', ')}`;
   if (typeof fileBase !== 'string' || fileBase.length > 200 || /[/\\]|\.\./.test(fileBase)) {
     return 'fileBase must be a plain filename string (<=200 chars, no path separators)';
+  }
+  if (category !== undefined && (typeof category !== 'string' || category.length > 80)) {
+    return 'category must be a string <=80 chars';
   }
   if (typeof questionId !== 'string' && typeof questionId !== 'number') return 'questionId must be a string or number';
   if (String(questionId).length > 120) return 'questionId too long';
@@ -66,6 +69,7 @@ function createFlagsRouter() {
     flags.push({
       portal: req.body.portal,
       fileBase: req.body.fileBase,
+      ...(typeof req.body.category === 'string' ? { category: req.body.category } : {}),
       questionId: req.body.questionId,
       reason: req.body.reason,
       note: req.body.note.trim(),

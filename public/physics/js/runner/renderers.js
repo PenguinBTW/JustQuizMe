@@ -144,6 +144,7 @@ export function wireQ(q){
   attachChromeFlagButton(() => ({
     portal: 'physics',
     fileBase: q._srcFile || S.quizMeta?.file || '',
+    category: S.quizMeta?.category,
     questionId: q.id || String(S.idx),
     questionLabel: `Q${S.idx + 1} of ${S.quiz.questions.length}`
   }));
