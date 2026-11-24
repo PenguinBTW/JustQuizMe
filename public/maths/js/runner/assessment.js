@@ -25,9 +25,22 @@ export function beginRun(o) {
   S.answers = o.resume?.answers ?? {};
   S.elapsed = o.resume?.elapsedSeconds ?? 0;
   S.startedAt = o.resume?.startedAt ?? new Date().toISOString();
-  S.qDwell = Object.fromEntries((o.resume?.questionTimes || []).map(t => [t.q, t.s || 0]));
+  const savedTimes = Array.isArray(o.resume?.questionTimes) ? o.resume.questionTimes : [];
+  S.qDwell = Object.fromEntries(
+    savedTimes.filter(t => t && typeof t.s === 'number').map(t => [t.q, t.s])
+  );
   S.qShownKey = null;
   S.qShownAt = 0;
+
+  // Dwell while the tab is hidden doesn't count as time on the question.
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      noteDwell(S.qDwell, S.qShownKey, S.qShownAt, Date.now());
+      S.qShownAt = 0;
+    } else if (S.room === 'runner' && S.qShownKey) {
+      S.qShownAt = Date.now();
+    }
+  });
 
   clearInterval(S.timerId);
   S.room = 'runner';
@@ -69,7 +82,9 @@ export async function saveProgress() {
     questionIndex: S.idx,
     answers: S.answers,
     elapsedSeconds: S.elapsed,
-    questionTimes: S.quiz.questions.map(q => ({ q: ak(q), s: Math.round(S.qDwell[ak(q)] || 0) })),
+    // Fractional seconds here so save→resume→finish doesn't drift through
+    // two rounds of rounding; only the final score entry rounds.
+    questionTimes: S.quiz.questions.map(q => ({ q: ak(q), s: S.qDwell[ak(q)] || 0 })),
     startedAt: S.startedAt,
     kind: S.quizMeta.virtual ? 'virtual' : 'file',
     title: S.quiz.title,

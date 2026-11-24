@@ -4,6 +4,7 @@
 // Credit the question that was on screen since `shownAt` with the elapsed
 // dwell, then return the fresh clock state for the newly shown question.
 export function noteDwell(dwell, shownKey, shownAt, now) {
+  // shownAt <= 0 means the clock is paused (tab hidden / nothing shown).
   if (shownKey && shownAt > 0) {
     const secs = Math.max(0, (now - shownAt) / 1000);
     dwell[shownKey] = (dwell[shownKey] || 0) + secs;
@@ -37,7 +38,9 @@ export function heatColor(seconds, med) {
 
 // questionTimes: [{ q: 'qid', s: seconds }] in quiz order → compact bar strip.
 export function timeStripHtml(questionTimes) {
-  const list = (questionTimes || []).filter(t => t && typeof t.s === 'number');
+  // Stored data comes back through the API — guard the shape before reading it.
+  const list = (Array.isArray(questionTimes) ? questionTimes : [])
+    .filter(t => t && typeof t.s === 'number' && t.s >= 0);
   if (!list.length) return '';
   const med = median(list.map(t => t.s));
   const max = Math.max(...list.map(t => t.s), 1);
@@ -47,5 +50,8 @@ export function timeStripHtml(questionTimes) {
     const secs = Math.round(t.s);
     return `<span class="time-tick" style="height:${h}px;background:${col};" title="Q${i + 1} · ${secs}s"></span>`;
   }).join('');
-  return `<div class="time-strip" title="Time per question — warm = slower than the session median">${ticks}</div>`;
+  // The exact values also live in one SR-readable label — hover tooltips on
+  // non-focusable ticks are unreachable by keyboard and touch users.
+  const label = 'Time per question: ' + list.map((t, i) => `Q${i + 1} ${Math.round(t.s)}s`).join(', ');
+  return `<div class="time-strip" role="img" aria-label="${label}" title="Time per question — warm = slower than the session median">${ticks}</div>`;
 }

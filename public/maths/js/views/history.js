@@ -34,7 +34,7 @@ export function historyEntryHtml(a, retryLabel) {
           <span class="pill ${a.exam ? 'accent' : ''}">${a.exam ? 'Exam Conditions' : 'Standard Quiz'}</span>
         </div>
         <div class="mono" style="font-size:12px; color:var(--ink-muted);">
-          ${fmtDate(a.date)} · ${fmtDur((a.minutes || 0) * 60 + (a.seconds || 0))} · ${a.score}/${a.total} marks (${p}%)
+          ${fmtDate(a.date)} · ${fmtDur(a.seconds ?? (a.minutes || 0) * 60)} · ${a.score}/${a.total} marks (${p}%)
         </div>
         ${timeStripHtml(a.questionTimes)}
       </div>
