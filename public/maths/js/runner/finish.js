@@ -33,9 +33,13 @@ export async function finishQuiz(auto = false) {
     quizTitle: S.quiz.title,
     score: totalScore,
     total: maxMarks,
-    // 'qs' retry runs are subsets — flagged so best-attempt rankings don't
-    // let a perfect subset overwrite a full set's personal best.
-    subset: S.retrySpec?.kind === 'qs' || undefined,
+    // 'qs' retries of a partial set are subsets — flagged so best-attempt
+    // rankings don't let a perfect subset overwrite a full set's personal
+    // best. A retry covering every question of the original set isn't a
+    // subset, so it still competes for the personal best. Specs without an
+    // `of` count (e.g. another portal's shape) stay conservative: subset.
+    subset: S.retrySpec?.kind === 'qs' &&
+      (S.retrySpec.ids?.length ?? 0) < (S.retrySpec.of ?? Infinity) || undefined,
     minutes,
     seconds,
     exam: !!S.quiz.exam,

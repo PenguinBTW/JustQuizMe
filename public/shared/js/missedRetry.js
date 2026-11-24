@@ -24,6 +24,7 @@ export function buildRetrySpec(questions, answers, keyOf, from) {
     kind: 'qs',
     ids,
     count: ids.length,
+    of: (questions || []).length,
     marks,
     title: `Retry missed · ${ids.length}Q · ${marks}m`,
   };

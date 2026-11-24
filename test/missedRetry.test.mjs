@@ -1,6 +1,14 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { missedQuestionIds, buildRetrySpec, resolveSpecQuestions } from '../public/shared/js/missedRetry.js';
+// shared/js/missedRetry.js is a .js ESM file: Node 18 (the documented minimum)
+// treats extensionless-type .js as CJS and chokes on its `export` syntax, so
+// load it via a data: URL instead of a path import.
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../public/shared/js/missedRetry.js'), 'utf8');
+const { missedQuestionIds, buildRetrySpec, resolveSpecQuestions } =
+  await import('data:text/javascript;charset=utf-8,' + encodeURIComponent(src));
 
 const ak = (q) => q.key ?? q.id;
 const q = (id, marks) => ({ id, key: id, marks });
