@@ -8,6 +8,7 @@ import {
   mechanicsHtml, graphFeaturesHtml, writtenHtml, selfMarkedHtml, calcHtml, wireQ
 } from './renderers.js';
 import { finishQuiz } from './finish.js';
+import { openPrintDialog } from '../../../shared/js/print.js';
 import { renderRoom } from '../navigation.js';
 
 export function beginRun(o) {
@@ -114,6 +115,7 @@ export function renderQ() {
       <div class="chrome-cluster">
         <button class="btn-ghost" id="backTop">← Previous question</button>
         ${inQuiz ? '<button class="btn-ghost mono" style="font-size:12px;" id="saveBtn" title="Save progress to resume later">Save</button>' : ''}
+        <button class="btn-ghost mono" style="font-size:12px;" id="printPaperBtn" title="Export as a printable exam paper">Print paper</button>
       </div>
       <span class="mono chrome-mid" id="chromeMid"></span>
       <span class="mono" id="chromeRight">${esc(q.section || 'Mathematics')}</span>
@@ -152,6 +154,11 @@ export function renderQ() {
     const sb = $('#saveBtn');
     if (sb) sb.onclick = saveProgress;
   }
+  const pp = $('#printPaperBtn');
+  if (pp) pp.onclick = () => openPrintDialog({
+    title: S.quiz.title, portal: 'OCR Maths H240', questions: S.quiz.questions,
+    imgRoot: '/maths/images/past-paper/', timeLimitMinutes: S.quiz.timeLimitMinutes,
+  });
 
   wireQ(q);
   wireKeypad();

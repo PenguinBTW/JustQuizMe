@@ -6,6 +6,7 @@ import { renderPromptHtml, evaluateTraceTable, evaluateTruthTable, evaluateCalcu
 import { saveCurrent, saveProgress, renderQ } from './assessment.js';
 import { finishQuiz } from './finish.js';
 import { renderRoom } from '../navigation.js';
+import { openPrintDialog } from '../../../shared/js/print.js';
 
 export function renderQuestionSpecifics(q) {
   const ans = S.answers[ak(q)] || {};
@@ -581,6 +582,11 @@ export function wireQuestionInteractions(q) {
     saveCurrent(q);
     saveProgress();
   });
+
+  $('#printPaperBtn')?.addEventListener('click', () => openPrintDialog({
+    title: S.quiz.title, portal: 'OCR Computer Science H446', questions: S.quiz.questions,
+    imgRoot: '/cs/images/past-paper/', timeLimitMinutes: S.quiz.timeLimitMinutes,
+  }));
 
   $('#finishQ')?.addEventListener('click', () => {
     saveCurrent(q);

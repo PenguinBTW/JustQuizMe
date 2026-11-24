@@ -6,6 +6,7 @@ import { getAllQuestionPool, resolveDeps, depHtml } from '../taxonomy.js';
 import { renderPromptHtml } from './evaluators.js';
 import { renderQuestionSpecifics, wireQuestionInteractions } from './renderers.js';
 import { finishQuiz } from './finish.js';
+import { openPrintDialog } from '../../../shared/js/print.js';
 
 export function beginRun(o) {
   S.quiz = { ...o.quizLike };
@@ -111,6 +112,7 @@ export function renderQ() {
         <span class="mono" id="qAnswered">${footerAnsweredText(q)}</span>
         <div style="display:flex; align-items:center; gap:10px;">
           <button class="btn-ghost" id="saveBtn">Save Progress</button>
+          <button class="btn-ghost" id="printPaperBtn" title="Export as a printable exam paper">Print paper</button>
           ${S.idx > 0 ? '<button class="btn" id="prevQ">← Back</button>' : ''}
           ${S.idx < qs.length - 1
             ? '<button class="btn btn-jade" id="nextQ">Continue →</button>'

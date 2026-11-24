@@ -4,6 +4,7 @@ import { $, esc, fmtClock, ak } from '../utils.js';
 import { api } from '../api.js';
 import { resolveDeps, depHtml, mcqHtml, writtenHtml, selfMarkedHtml, calcHtml, wireQ } from './renderers.js';
 import { finishQuiz } from './finish.js';
+import { openPrintDialog } from '../../../shared/js/print.js';
 import { goExploreBack } from '../views/explore.js';
 import { renderRoom } from '../navigation.js';
 
@@ -145,6 +146,7 @@ export function renderQ(){
     <div class="chrome-cluster">
       <button class="btn-ghost" id="backTop">← Previous question</button>
       ${inQuiz ? '<button class="btn-ghost mono" style="font-size:12px;" id="saveBtn" title="Save progress to resume later">Save</button>' : ''}
+      <button class="btn-ghost mono" style="font-size:12px;" id="printPaperBtn" title="Export as a printable exam paper">Print paper</button>
     </div>
     <span class="mono chrome-mid" id="chromeMid"></span>
     <span class="mono" id="chromeRight"></span>
@@ -169,6 +171,11 @@ export function renderQ(){
   $('#prevQ').onclick = navBack;
   const sv = $('#saveBtn');
   if (sv) sv.onclick = saveProgress;
+  const pp = $('#printPaperBtn');
+  if (pp) pp.onclick = () => openPrintDialog({
+    title: S.quiz.title, portal: 'AQA Physics 7408', questions: S.quiz.questions,
+    imgRoot: '/physics/images/past-paper/', timeLimitMinutes: S.quiz.timeLimitMinutes,
+  });
   if (window.renderMath) window.renderMath();
 }
 
