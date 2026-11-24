@@ -32,7 +32,10 @@ export function resumeTick({ portal, snapshot, isDone, store, mine }) {
     if (prev && prev.quizUuid === done) clearAnchor(portal, store);
   }
   const snap = snapshot && snapshot();
-  if (!snap) return;
+  // A run that just finished is never a save candidate — its grading writes
+  // can change the snapshot signature, which would otherwise count as
+  // "progress" and overwrite another tab's newer anchor before being cleared.
+  if (!snap || snap.quizUuid === done) return;
   const prev = loadAnchor(portal, store);
   const snapSig = `${snap.quizUuid}|${snap.qIndex}|${JSON.stringify(snap.answers)}`;
   // The first observation is a baseline, not progress — a fresh mount must not

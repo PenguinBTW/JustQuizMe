@@ -137,3 +137,15 @@ test('resumeTick: a different question set under the same uuid is a new quiz', a
   resumeTick({ portal: 'maths', snapshot: () => ({ ...base(), qIndex: 0, order: ['x', 'y'], answers: {}, elapsed: 2 }), isDone: () => null, store: s, mine: mineN });
   assert.equal(loadAnchor('maths', s).qIndex, 0, 'new generated quiz was blocked as a relaunch');
 });
+
+test('resumeTick: a finishing run cannot overwrite a foreign anchor', async () => {
+  const { resumeTick } = await import('../public/shared/js/mountResume.js');
+  const s = new MemStore();
+  // Another tab owns the anchor for quiz q-2.
+  const mineA = { savedAt: 0, sig: null };
+  resumeTick({ portal: 'maths', snapshot: () => ({ ...base(), quizUuid: 'q-2' }), isDone: () => null, store: s, mine: mineA });
+  // This tab's exam for q-9 finishes while grading mutates its snapshot.
+  const mineE = { savedAt: 0, sig: null };
+  resumeTick({ portal: 'maths', snapshot: () => ({ ...base(), quizUuid: 'q-9', answers: { a: { locked: true }, b: { locked: true } }, elapsed: 300 }), isDone: () => 'q-9', store: s, mine: mineE });
+  assert.equal(loadAnchor('maths', s)?.quizUuid, 'q-2', 'finishing exam clobbered a foreign save');
+});
