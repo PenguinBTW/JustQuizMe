@@ -15,7 +15,8 @@ function cleanTopics(list) {
 }
 
 // Which topics an attempt covered: entry.topics[] wins, then the uuidIndex
-// (uuid -> topics[] from the quiz list), then 'Mixed practice'.
+// (uuid -> topics[] from the quiz list), then the saved quizTitle — generated
+// topic quizzes are titled "<topic> · N-mark quiz" — then 'Mixed practice'.
 export function topicsFor(attempt, uuidIndex = {}) {
   if (Array.isArray(attempt?.topics) && attempt.topics.length) {
     const t = cleanTopics(attempt.topics);
@@ -26,6 +27,8 @@ export function topicsFor(attempt, uuidIndex = {}) {
     const t = cleanTopics(idx);
     if (t.length) return t;
   }
+  const titled = String(attempt?.quizTitle || '').split('·')[0].trim();
+  if (titled && !/^mixed/i.test(titled)) return [titled];
   return ['Mixed practice'];
 }
 

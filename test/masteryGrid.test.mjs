@@ -57,3 +57,9 @@ test('gridModel: taxonomy order first, attempted extras appended, zero-attempt t
   assert.equal(cells[0].total, 0);
   assert.equal(cells[2].pct, 50);
 });
+
+test('topicsFor recovers topic from generated-quiz titles, keeps true mixed runs apart', () => {
+  assert.deepEqual(topicsFor({ quizTitle: 'Trigonometry · 12-mark quiz' }), ['Trigonometry']);
+  assert.deepEqual(topicsFor({ quizTitle: 'Mixed Mathematics · 20m (8Q)' }), ['Mixed practice']);
+  assert.deepEqual(topicsFor({ quizTitle: '' }), ['Mixed practice']);
+});
