@@ -78,7 +78,7 @@ function openOverlay(title, questions) {
       card.appendChild(el('div', null, 'practice — not counted in stats'));
       const row = el('div', 'practice-row');
       const closeBtn = el('button', 'btn btn-primary', 'Close');
-      close.onclick = close;
+      closeBtn.onclick = close;
       row.appendChild(closeBtn);
       card.appendChild(row);
       return;
@@ -114,7 +114,7 @@ function openOverlay(title, questions) {
     card.appendChild(row);
     typeset(card);
     // keep focus inside after the re-render swapped buttons
-    const first = card.querySelector('button');
+    const first = card.querySelector('.practice-row button') || card.querySelector('button');
     first?.focus();
   };
   render(spec0);
