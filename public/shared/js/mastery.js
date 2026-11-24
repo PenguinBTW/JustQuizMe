@@ -28,8 +28,12 @@ function runPct(s) {
 }
 
 function runDate(s) {
-  const t = s?.date instanceof Date ? s.date : new Date(s?.date);
-  return Number.isNaN(+t) ? null : t;
+  // scores.json is user-writable via the API — a hostile date object with a
+  // throwing valueOf/toString must never crash the whole topic view.
+  try {
+    const t = s?.date instanceof Date ? s.date : new Date(s?.date);
+    return Number.isNaN(+t) ? null : t;
+  } catch { return null; }
 }
 
 // resolveTopics is injected by the caller (stats.js topicsFor in practice) so

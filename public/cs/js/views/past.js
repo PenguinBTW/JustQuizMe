@@ -6,6 +6,7 @@ import { openSynthModal, openTopicModal } from '../modals.js';
 import { openExploreList } from './explore.js';
 import { startSubQuiz } from '../runner/starters.js';
 import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
+import { topicsFor } from '../../../shared/js/stats.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -18,7 +19,10 @@ export function synthPoolQ() {
 // Minimal topic resolution: score entries carry topics[] written at finish time.
 // (shared/stats.js topicsFor adds quizTitle/uuid fallbacks — adopt it here when that lands.)
 function resolveScoreTopics(s) {
-  return Array.isArray(s?.topics) ? s.topics.filter(t => typeof t === 'string') : [];
+  const direct = Array.isArray(s?.topics) ? s.topics.filter(t => typeof t === 'string') : [];
+  if (direct.length) return direct;
+  // older entries predate topics[] — recover what topicsFor can (quizTitle prefix etc.)
+  try { return topicsFor(s); } catch { return []; }
 }
 
 function masteryBadge(row) {
