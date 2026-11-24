@@ -114,6 +114,7 @@ export function renderQ() {
       <div class="chrome-cluster">
         <button class="btn-ghost" id="backTop">← Previous question</button>
         ${inQuiz ? '<button class="btn-ghost mono" style="font-size:12px;" id="saveBtn" title="Save progress to resume later">Save</button>' : ''}
+        ${inQuiz && S.quiz.exam ? '<button class="btn-ghost mono" style="font-size:12px;" id="saveExitBtn" title="Save progress and leave the exam">Save &amp; exit</button>' : ''}
       </div>
       <span class="mono chrome-mid" id="chromeMid"></span>
       <span class="mono" id="chromeRight">${esc(q.section || 'Mathematics')}</span>
@@ -151,6 +152,17 @@ export function renderQ() {
   if (inQuiz) {
     const sb = $('#saveBtn');
     if (sb) sb.onclick = saveProgress;
+    const se = $('#saveExitBtn');
+    if (se) se.onclick = async () => {
+      se.disabled = true;
+      se.textContent = 'Saving…';
+      try {
+        await saveProgress();
+      } catch { /* leave anyway — progress flash already reports failure */ }
+      clearInterval(S.timerId);
+      S.room = S.returnRoom || 'past';
+      renderRoom();
+    };
   }
 
   wireQ(q);
