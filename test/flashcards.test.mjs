@@ -51,3 +51,37 @@ test('ordering with no mastery data preserves input order', () => {
   const cards = [{ front: 'a', topic: 'X' }, { front: 'b', topic: 'Y' }];
   assert.deepEqual(orderDeckByMastery(cards, []).map(c => c.front), ['a', 'b']);
 });
+
+test('buildSmartDeck: not-yet-due weak card outranks overdue strong card; most-overdue first within band', async () => {
+  // shim browser globals for cardSchedule's localStorage/location access
+  const store = {};
+  globalThis.localStorage = {
+    getItem: k => store[k] ?? null,
+    setItem: (k, v) => { store[k] = String(v); },
+    removeItem: k => { delete store[k]; },
+  };
+  globalThis.location = { pathname: '/cs/' };
+  const NOW = Date.now();
+  // strong-topic card overdue since yesterday; weak-topic card due tomorrow
+  store['jqm-card-schedule-v1'] = JSON.stringify({
+    'cs:strong-card': { interval: 2, due: NOW - 86400000, reps: 3 },
+    'cs:weak-card': { interval: 4, due: NOW + 86400000, reps: 2 },
+  });
+  const { buildSmartDeck } = await import('../public/shared/js/flashcardSession.js');
+  const questions = [
+    { id: 'weak-q', type: 'multiple-choice', topic: 'Weak', prompt: 'w', options: ['a', 'b'], correctIndex: 0, _key: 'weak-card', marks: 1 },
+    { id: 'strong-q', type: 'multiple-choice', topic: 'Strong', prompt: 's', options: ['a', 'b'], correctIndex: 0, _key: 'strong-card', marks: 1 },
+  ];
+  const S = {
+    scores: [
+      { date: new Date().toISOString(), score: 2, total: 10, topics: ['Weak'], quizUuid: 'u1' },
+      { date: new Date().toISOString(), score: 10, total: 10, topics: ['Strong'], quizUuid: 'u2' },
+    ],
+    quizzes: {},
+  };
+  const deck = buildSmartDeck(S, questions);
+  if (!deck.length) throw new Error('empty deck');
+  if (deck[0].key !== 'weak-card' && !(deck[0].front || '').includes('w')) {
+    throw new Error('weak card should lead despite strong card being overdue: ' + JSON.stringify(deck.map(c => c.key)));
+  }
+});

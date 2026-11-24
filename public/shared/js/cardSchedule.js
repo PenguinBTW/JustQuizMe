@@ -63,3 +63,11 @@ export function dueRank(c, now = Date.now()) {
   if (!st) return 1;
   return (st.due || 0) <= now ? 0 : 2;
 }
+
+// dueStamp(card) → the card's due timestamp; unseen cards count as due at time 0
+// (most overdue possible) since they've never been reviewed.
+export function dueStamp(c) {
+  const all = load();
+  const st = all[ns() + (c.key || c.id || c.front)];
+  return st ? (st.due || 0) : 0;
+}

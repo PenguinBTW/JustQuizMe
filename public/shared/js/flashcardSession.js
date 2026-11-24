@@ -3,7 +3,7 @@
 // across modes (per-question data present) while exam statistics can tell the
 // difference (flashcard: true — the explore-distinction pattern).
 import { deckFromQuestions, orderDeckByMastery } from './flashcards.js';
-import { recordGrade, dueRank } from './cardSchedule.js';
+import { recordGrade, dueRank, dueStamp } from './cardSchedule.js';
 import { computeMastery } from './mastery.js';
 import { buildUuidIndex, resolveScoreTopics } from './masteryUi.js';
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -21,8 +21,8 @@ export function buildSmartDeck(S, questions) {
   // due rank within the band (overdue > unseen > not-yet-due).
   const bandOf = new Map((rows || []).map(r => [r.topic, r.weak ? 0 : (r.mastery == null ? 1 : 2)]));
   return ordered
-    .map((c, i) => ({ c, i, r: dueRank(c), b: bandOf.get(c.topic) ?? 1 }))
-    .sort((a, b) => a.b - b.b || a.r - b.r || a.i - b.i)
+    .map((c, i) => ({ c, i, r: dueRank(c), d: dueStamp(c), b: bandOf.get(c.topic) ?? 1 }))
+    .sort((a, b) => a.b - b.b || a.r - b.r || a.d - b.d || a.i - b.i)
     .map(x => x.c);
 }
 
