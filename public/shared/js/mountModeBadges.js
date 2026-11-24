@@ -5,7 +5,10 @@ import { badgeModel, countsFromScores } from './modeBadges.js';
 
 const PORTAL = (location.pathname.match(/^\/(maths|physics|cs)\//) || [])[1];
 const CACHE_KEY = `jqm.modeBadges.${PORTAL}`;
+const STALE_MS = 30000;
 let model = null;
+let lastFetch = 0;
+let pending = null;
 
 const style = document.createElement('style');
 style.textContent = `
@@ -16,28 +19,45 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-async function load() {
-  if (model) return model;
-  let scores = [];
-  try { scores = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]'); } catch {}
-  try {
-    const r = await fetch(`/api/scores`);
-    if (r.ok) {
-      scores = await r.json();
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify(scores)); } catch {}
-    }
-  } catch {}
-  model = badgeModel(countsFromScores(scores));
-  return model;
+async function load(force = false) {
+  if (model && !force) return model;
+  if (pending) return pending;
+  pending = (async () => {
+    let scores = [];
+    try { scores = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]'); } catch {}
+    try {
+      // portal namespaced endpoint — /api/scores falls through to index.html
+      const r = await fetch(`/${PORTAL}/api/scores`);
+      if (r.ok && (r.headers.get('content-type') || '').includes('json')) {
+        scores = await r.json();
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(scores)); } catch {}
+      }
+    } catch {}
+    model = badgeModel(countsFromScores(scores));
+    lastFetch = Date.now();
+    pending = null;
+    return model;
+  })();
+  return pending;
 }
 
 function decorate(card, m) {
-  if (card.querySelector('.mode-badges')) return;
+  if (card.querySelector('.mode-badges')) {
+    // refresh counts on an already-decorated card after a new attempt
+    card.querySelectorAll('.mode-badge[data-kind]').forEach((chip, i) => {
+      const b = m.badges[i];
+      if (b) chip.textContent = b.kind === 'new' ? `${b.icon} new` : `${b.icon} ${b.kind} ×${b.count}`;
+    });
+    return;
+  }
+  // only set/picker cards (they carry an action button); info banners stay clean
+  if (card.classList.contains('card') && !card.querySelector('button')) return;
   const row = document.createElement('div');
   row.className = 'mode-badges';
   for (const b of m.badges) {
     const chip = document.createElement('span');
     chip.className = `mode-badge mode-${b.kind}`;
+    chip.dataset.kind = b.kind;
     chip.textContent = b.kind === 'new' ? `${b.icon} new` : `${b.icon} ${b.kind} ×${b.count}`;
     row.appendChild(chip);
   }
@@ -51,8 +71,10 @@ function decorate(card, m) {
 }
 
 function sweep() {
-  if (!model) return;
-  document.querySelectorAll('.subtopic-card').forEach((c) => decorate(c, model));
+  // scores may have changed since page load (a finished run refreshes them)
+  if (lastFetch && Date.now() - lastFetch > STALE_MS) model = null;
+  if (!model) { load().then(sweep); return; }
+  document.querySelectorAll('.subtopic-card, .card').forEach((c) => decorate(c, model));
 }
 
 load().then(sweep);
