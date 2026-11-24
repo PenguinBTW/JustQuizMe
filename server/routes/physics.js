@@ -50,42 +50,6 @@ function createPhysicsRouter(quizService, saveService) {
   });
 
   
-  // author studio: validated atomic bank writes
-  const { saveAuthoredBank, upsertQuestion, safeFileName } = require('../services/author-service');
-  router.post('/author/save', (req, res) => {
-    try {
-      const b = req.body || {};
-      const bank = b.bank;
-      if (!bank || typeof bank !== 'object') return res.status(400).json({ error: 'bank object required' });
-      let final = bank;
-      const fname = safeFileName(b.file || bank.title) + '.json';
-      const full = require('path').join(quizService.normalDir, fname);
-      const fs = require('fs');
-      if (fs.existsSync(full) && b.question) {
-        // edit-existing: merge the authored question into the existing bank
-        const existing = JSON.parse(fs.readFileSync(full, 'utf8'));
-        final = upsertQuestion(existing, b.question);
-      } else if (b.question) {
-        final = upsertQuestion(bank, b.question);
-      }
-      const out = saveAuthoredBank(quizService.normalDir, final, b.file || bank.title);
-      res.json({ ok: true, ...out });
-    } catch (e) {
-      if (e.errors) return res.status(422).json({ error: 'validation failed', details: e.errors });
-      res.status(500).json({ error: String(e.message || e) });
-    }
-  });
-
-  router.get('/author/bank', (req, res) => {
-    // edit-existing: load a bank for the author form
-    const fs = require('fs');
-    const path = require('path');
-    const fname = safeFileName(String(req.query.file || '').replace(/\.json$/i, '')) + '.json';
-    const full = path.join(quizService.normalDir, fname);
-    if (!fs.existsSync(full)) return res.status(404).json({ error: 'bank not found' });
-    try { res.json(JSON.parse(fs.readFileSync(full, 'utf8'))); }
-    catch (e) { res.status(500).json({ error: 'bank file unreadable' }); }
-  });
 
   return router;
 }
