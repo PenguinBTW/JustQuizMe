@@ -28,6 +28,7 @@ export async function listBookmarks(force = false) {
 
 export async function toggleBookmark(q) {
   const b = makeBookmark(q, { ...S.quizMeta, uuid: S.quiz?.uuid, title: S.quizMeta?.title || S.quiz?.title }, S.idx);
+  if (!b.file) return false;
   const r = await api('/api/bookmarks/toggle', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -48,8 +49,17 @@ export async function launchBookmarkedRun(b) {
   const stamped = stampFile(quiz);
   const like = scopedQuizLike(b, { ...quiz, questions: stamped });
   if (!like) return false;
+  // Explore mode: unscored self-marked practice — a bookmark run must not post
+  // a one-question score under the source quiz's id, delete an unrelated save,
+  // or offer Save (resume would expand back to the whole file).
+  S.exploreCtx = { title: like.title, sub: '1 bookmarked question', questions: like.questions, backRoom: 'practice' };
   S.returnRoom = 'practice';
-  beginRun({ mode: 'quiz', quizLike: like, meta: { category: b.category || 'normal', file: b.file }, retrySpec: null });
+  beginRun({
+    mode: 'explore',
+    quizLike: { ...like, uuid: null, version: null },
+    meta: { category: b.category || 'normal', file: b.file, virtual: true },
+    retrySpec: null
+  });
   return true;
 }
 
@@ -76,6 +86,10 @@ async function syncStarBtn(btn) {
 function injectStar() {
   const cluster = document.querySelector('.q-chrome .chrome-cluster');
   if (!cluster || document.getElementById('bmStarBtn')) return;
+  // No resolvable source file (e.g. full-set Explore, virtual mixed runs) —
+  // the bookmark couldn't be relaunched, so don't offer the star.
+  const key = currentBookmarkKey();
+  if (!key || key.split('|')[1] === '') return;
   const btn = document.createElement('button');
   btn.id = 'bmStarBtn';
   btn.className = 'btn-ghost mono';
