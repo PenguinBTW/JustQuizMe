@@ -6,6 +6,7 @@ import { openSynthModal, openTopicModal } from '../modals.js';
 import { openExploreList } from './explore.js';
 import { startSubQuiz, beginFileQuiz } from '../runner/starters.js';
 import { exploreFullFile } from './practice.js';
+import { parseTerms, matchQuiz, countLabel, emptyMessage } from '../../../shared/js/quizSearch.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -63,11 +64,15 @@ export function renderPast() {
       <h3 class="serif" style="font-size:24px;">Browse by Topic</h3>
       <span class="mono" style="font-size:12px; color:var(--ink-muted);">OCR A-Level Mathematics (H240)</span>
     </div>
-    <div class="accordion-list">
+    <div class="quiz-search">
+      <input id="quizSearchInput" class="quiz-search-input" type="search" placeholder="Search quizzes by title or topic..." aria-label="Search quizzes" autocomplete="off">
+      <span class="mono quiz-search-count" id="quizSearchCount"></span>
+    </div>
+    <div class="accordion-list" id="quizPickerList">
       ${data.map((t, ti) => {
         const compBadge = t.compName ? `<span class="pill" style="font-size:11px; padding:2px 8px; margin-left:10px; opacity:0.85;">${esc(t.compName)}</span>` : '';
         return `
-        <div class="accordion-item ${S.openTopics.has(t.topic) ? 'open' : ''}" data-acc="${ti}">
+        <div class="accordion-item ${S.openTopics.has(t.topic) ? 'open' : ''}" data-acc="${ti}" data-qs-topic="${esc(t.topic)}">
           <div class="accordion-header-row">
             <div class="acc-trigger-left" data-acc-toggle="${ti}">
               <span class="acc-num">${String(ti + 1).padStart(2, '0')}</span>
@@ -80,7 +85,7 @@ export function renderPast() {
           </div>
           <div class="accordion-body">
             ${t.subs.map((g, gi) => `
-              <div class="subtopic-row">
+              <div class="subtopic-row" data-qs="${esc(g.name)} ${esc(t.topic)}">
                 <span>${esc(g.name)} <span class="mono" style="font-size:11px; color:var(--ink-muted);">(${g.questions.length}Q · ${g.questions.reduce((a, q) => a + (+q.marks || 0), 0)}m)</span></span>
                 <div style="display:flex; align-items:center; gap:8px;">
                   <button class="btn-ghost mono" style="font-size:12px;" data-explore-sub="${esc(t.topic)}|${gi}">Explore</button>
@@ -106,8 +111,8 @@ export function renderPast() {
             return compName === comp.name;
           });
           if (!files.length) return '';
-          return `<div class="fp-year">${esc(comp.name)} <span class="mono" style="font-weight:normal; font-size:12px; color:var(--ink-muted);">· ${files.length} question banks · ${comp.spec}</span></div>` + files.map(m => `
-            <div class="subtopic-row">
+          return `<div class="fp-year" data-qs-year>${esc(comp.name)} <span class="mono" style="font-weight:normal; font-size:12px; color:var(--ink-muted);">· ${files.length} question banks · ${comp.spec}</span></div>` + files.map(m => `
+            <div class="subtopic-row" data-qs="${esc(m.title)} ${esc(comp.name)}">
               <span>${esc(m.title)} <span class="mono" style="font-size:11.5px; color:var(--ink-muted);">· ${m.questionCount}Q · ${m.totalMarks}m</span></span>
               <div style="display:flex; align-items:center; gap:8px;">
                 <button class="btn-ghost mono" style="font-size:12px;" data-explore-file="past-paper|${esc(m.file)}">Explore</button>
@@ -117,6 +122,7 @@ export function renderPast() {
         }).join('') || '<p class="mono" style="font-size:12px; color:var(--ink-muted);">No past papers yet.</p>'}
       </div>
     </details>
+    <p id="quizSearchEmpty" class="quiz-search-empty" hidden></p>
 
     <div style="margin-top: 36px; display:flex; align-items:center; justify-content:space-between; color:var(--ink-secondary); font-size:13px;">
       ${recentHtml}
@@ -162,6 +168,46 @@ export function renderPast() {
     const [cat, file] = b.dataset.quizFile.split('|');
     beginFileQuiz(cat, file, true);
   });
+
+  wireQuizSearch();
+}
+
+// Live-filter the picker's quiz rows; an active filter opens accordions
+// so matched sub rows stay visible, and clearing restores a full render.
+export function wireQuizSearch() {
+  const input = $('#quizSearchInput');
+  if (!input) return;
+  const apply = () => {
+    const terms = parseTerms(input.value);
+    if (!terms.length) { rerenderKeepScroll(); return; }
+    const rows = [...document.querySelectorAll('#quizPickerList [data-qs], .fullpapers [data-qs]')];
+    document.querySelectorAll('#quizPickerList .accordion-item').forEach(item => {
+      const topicHit = matchQuiz(item.dataset.qsTopic || '', terms);
+      let anySub = false;
+      item.querySelectorAll('[data-qs]').forEach(r => {
+        const hit = topicHit || matchQuiz(r.dataset.qs, terms);
+        r.hidden = !hit;
+        anySub = anySub || hit;
+      });
+      item.hidden = !topicHit && !anySub;
+      item.classList.add('open');
+    });
+    document.querySelectorAll('.fp-year').forEach(h => {
+      let el = h.nextElementSibling, show = false;
+      while (el && !el.classList.contains('fp-year')) {
+        if (el.dataset && el.dataset.qs !== undefined && !el.hidden) show = true;
+        el = el.nextElementSibling;
+      }
+      h.hidden = !show;
+    });
+    const shown = rows.filter(r => !r.hidden).length;
+    $('#quizSearchCount').textContent = countLabel(shown, rows.length);
+    const empty = $('#quizSearchEmpty');
+    empty.textContent = emptyMessage(terms);
+    empty.hidden = shown > 0;
+  };
+  input.oninput = apply;
+  input.onkeydown = e => { if (e.key === 'Escape') { input.value = ''; rerenderKeepScroll(); } };
 }
 
 export function toggleSynthTopic(ti) {
