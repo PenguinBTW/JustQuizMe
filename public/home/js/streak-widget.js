@@ -25,6 +25,14 @@ export async function initStreakWidget(rootId = 'streakWidget') {
   const dateLists = await Promise.all(PORTALS.map(fetchPortalDates));
   const dates = dateLists.flat();
   const s = computeStreak(dates);
+  // Scores are capped per portal; a best computed from data already saved
+  // must never shrink when old attempts roll out of the cap.
+  let best = s.best;
+  try {
+    const stored = Number(localStorage.getItem('jqm.streak.best') || 0);
+    best = Math.max(best, stored);
+    if (best > stored) localStorage.setItem('jqm.streak.best', String(best));
+  } catch { /* storage unavailable — just show the computed best */ }
   const now = new Date();
 
   const strip = s.last7
@@ -36,6 +44,15 @@ export async function initStreakWidget(rootId = 'streakWidget') {
     })
     .join('');
 
+  // Screen-reader mirror of the strip — the dots are decorative dots, so the
+  // daily breakdown also lives in visually-hidden text.
+  const stripText = s.last7
+    .map((n, i) => {
+      const d = new Date(now.getTime() - (6 - i) * 86400000);
+      return `${DAY_LABELS[d.getDay()]} ${d.getDate()}: ${n} attempt${n === 1 ? '' : 's'}`;
+    })
+    .join(', ');
+
   root.innerHTML = `
     <div class="streak-card" role="status" aria-label="Practice streak">
       <div class="streak-figures">
@@ -44,7 +61,7 @@ export async function initStreakWidget(rootId = 'streakWidget') {
           <span class="streak-label">day streak</span>
         </div>
         <div class="streak-figure">
-          <span class="streak-num">${s.best}</span>
+          <span class="streak-num">${best}</span>
           <span class="streak-label">best</span>
         </div>
         <div class="streak-figure">
@@ -53,6 +70,7 @@ export async function initStreakWidget(rootId = 'streakWidget') {
         </div>
       </div>
       <div class="streak-strip" aria-hidden="true">${strip}</div>
+      <span class="visually-hidden">Last 7 days — ${stripText}</span>
     </div>`;
 }
 

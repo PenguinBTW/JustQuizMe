@@ -49,8 +49,14 @@ test('same-day duplicate attempts count once for the streak, twice for the strip
 });
 
 test('attempts straddling midnight land on different days', () => {
-  // 23:59 yesterday + 00:01 today = 2-day streak, not 1.
-  const s = computeStreak([day(1, '23:59:00Z'), day(0, '00:01:00Z')], NOW);
+  // 23:59 local yesterday + 00:01 local today = 2-day streak, not 1.
+  // Built with setHours/setDate so the crossing holds in every time zone.
+  const late = new Date(NOW);
+  late.setDate(late.getDate() - 1);
+  late.setHours(23, 59, 0, 0);
+  const early = new Date(NOW);
+  early.setHours(0, 1, 0, 0);
+  const s = computeStreak([late.toISOString(), early.toISOString()], NOW);
   assert.equal(s.current, 2);
 });
 
