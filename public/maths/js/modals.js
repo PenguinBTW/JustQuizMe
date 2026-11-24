@@ -3,6 +3,7 @@ import { S, OCR_MATHS_TOPIC_SPECS } from './state.js';
 import { $, esc } from './utils.js';
 import { mixedPool, topicDraft, pickForMode } from './taxonomy.js';
 import { startMixedSel, startTopicQuiz } from './runner/starters.js';
+import { TIMER_PRESETS, examStartLabel } from './timerPresets.js';
 
 export function openSynthModal() {
   const data = (S._topicData || []).filter(t => S.mixed.topics.has(t.topic) && t.qcount > 0);
@@ -35,6 +36,15 @@ export function openSynthModal() {
   document.querySelectorAll('#synthModeSeg button').forEach(b => {
     b.classList.toggle('active', b.dataset.seg === S.mixed.mode);
   });
+
+  const presetSel = $('#synthTimerPreset');
+  if (!presetSel.options.length) {
+    presetSel.innerHTML = TIMER_PRESETS.map(p => `<option value="${p.key}">${esc(p.label)}</option>`).join('');
+  }
+  presetSel.value = S.mixed.timer || 'standard';
+  const customInput = $('#synthTimerCustom');
+  customInput.value = S.mixed.timerCustom;
+  customInput.style.display = presetSel.value === 'custom' ? '' : 'none';
 
   updateSynthModalMarks(S.mixed.m);
   syncPopupToggleAllButton();
@@ -72,7 +82,7 @@ export function updateSynthModalMarks(val) {
   const m = Number(val);
   S.mixed.m = m;
   $('#synthModalMarksLabel').textContent = `${m} marks`;
-  $('#synthStartExamBtn').textContent = `Start Exam · ${Math.round(m * 1.5)}m ⏱`;
+  $('#synthStartExamBtn').textContent = examStartLabel(S.mixed.timer, m, S.mixed.timerCustom);
 }
 
 export function toggleAllPopupSubtopics() {
@@ -96,6 +106,16 @@ export function wireModals() {
   });
   $('#synthToggleAllBtn').onclick = toggleAllPopupSubtopics;
   $('#synthModalSlider').oninput = e => updateSynthModalMarks(e.target.value);
+
+  $('#synthTimerPreset').onchange = e => {
+    S.mixed.timer = e.target.value;
+    $('#synthTimerCustom').style.display = S.mixed.timer === 'custom' ? '' : 'none';
+    updateSynthModalMarks(S.mixed.m);
+  };
+  $('#synthTimerCustom').oninput = e => {
+    S.mixed.timerCustom = Math.max(1, Math.min(600, Math.round(+e.target.value || 0)));
+    updateSynthModalMarks(S.mixed.m);
+  };
 
   document.querySelectorAll('#synthModeSeg button').forEach(b => {
     b.onclick = () => {

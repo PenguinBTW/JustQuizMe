@@ -69,9 +69,17 @@ window.renderMath = function () {
       <span class="mono" style="font-size:14px; font-weight:600; min-width:76px; text-align:right;" id="synthModalMarksLabel">45 marks</span>
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding-top:14px; border-top:1px solid var(--border);">
-      <div class="segmented" id="synthModeSeg">
-        <button data-seg="standard" class="active">Standard</button>
-        <button data-seg="random">Random</button>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div class="segmented" id="synthModeSeg">
+          <button data-seg="standard" class="active">Standard</button>
+          <button data-seg="random">Random</button>
+        </div>
+        <label style="display:flex; align-items:center; gap:7px; font-size:12px; color:var(--ink-secondary);">
+          Exam timer
+          <select id="synthTimerPreset" class="btn" style="padding:4px 8px; font-size:12px;"></select>
+          <input type="number" id="synthTimerCustom" min="1" max="600" value="45"
+                 style="width:60px; display:none;" aria-label="Custom exam time in minutes" />
+        </label>
       </div>
       <div style="display:flex; gap:10px;">
         <button class="btn" id="synthStartQuizBtn">Start Quiz ↑</button>

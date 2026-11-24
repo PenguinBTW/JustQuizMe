@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { ensurePastFull, buildCaches, topicData, topicDraft, topicAllQs, pickForMode, mixedPool } from '../taxonomy.js';
 import { renderRoom } from '../navigation.js';
 import { beginRun } from './assessment.js';
+import { presetMinutes } from '../timerPresets.js';
 
 export function startMixedSel(exam) {
   const pool = mixedPool();
@@ -19,7 +20,7 @@ export function startMixedSel(exam) {
       uuid: MIXED_UUID,
       version: 1,
       title: `Mixed Mathematics · ${tot}m (${set.length}Q)`,
-      timeLimitMinutes: exam ? tot * 1.5 : null,
+      timeLimitMinutes: exam ? presetMinutes(S.mixed.timer, tot, S.mixed.timerCustom) : null,
       exam: !!exam,
       questions: set
     },
@@ -30,6 +31,8 @@ export function startMixedSel(exam) {
       subs: [...S.mixed.subs],
       marks: S.mixed.m,
       mode: S.mixed.mode,
+      timer: S.mixed.timer,
+      timerCustom: S.mixed.timerCustom,
       exam: !!exam
     }
   });
@@ -165,6 +168,8 @@ export async function retryRun() {
     S.mixed.subs = new Set(r.subs || []);
     S.mixed.m = r.marks || 25;
     S.mixed.mode = r.mode || 'standard';
+    S.mixed.timer = r.timer || 'standard';
+    S.mixed.timerCustom = r.timerCustom || 45;
     S.mixed._init = true;
     const pool = mixedPool();
     if (!pool.length) {
@@ -179,7 +184,7 @@ export async function retryRun() {
         uuid: MIXED_UUID,
         version: 1,
         title: `Mixed Mathematics · ${tot}m (${set.length}Q)`,
-        timeLimitMinutes: r.exam ? tot * 1.5 : null,
+        timeLimitMinutes: r.exam ? presetMinutes(r.timer, tot, r.timerCustom) : null,
         exam: !!r.exam,
         questions: set
       },
