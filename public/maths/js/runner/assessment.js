@@ -67,6 +67,7 @@ export async function saveProgress() {
     kind: S.quizMeta.virtual ? 'virtual' : 'file',
     title: S.quiz.title,
     exam: !!S.quiz.exam,
+    timeLimitMinutes: S.quiz.timeLimitMinutes ?? null,
     order: S.quiz.questions.map(ak),
     questions: S.quizMeta.virtual ? S.quiz.questions : null,
     spec: S.retrySpec
@@ -76,6 +77,9 @@ export async function saveProgress() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
+  // Refresh the in-memory save so Resume reflects this write, not the
+  // snapshot loaded at page start.
+  S.save = { ...body, updatedAt: new Date().toISOString() };
   const b = $('#saveBtn');
   if (b) {
     b.classList.add('save-flash');
@@ -156,10 +160,18 @@ export function renderQ() {
     if (se) se.onclick = async () => {
       se.disabled = true;
       se.textContent = 'Saving…';
+      // Stop the countdown first: an auto-finish mid-save would DELETE the
+      // resume snapshot this button is writing.
+      clearInterval(S.timerId);
       try {
         await saveProgress();
-      } catch { /* leave anyway — progress flash already reports failure */ }
-      clearInterval(S.timerId);
+      } catch {
+        se.disabled = false;
+        se.textContent = 'Save failed ✗';
+        startTimer();
+        setTimeout(() => { se.textContent = 'Save & exit'; }, 1600);
+        return;
+      }
       S.room = S.returnRoom || 'past';
       renderRoom();
     };

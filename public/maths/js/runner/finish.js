@@ -123,6 +123,15 @@ export async function finishQuiz(auto = false) {
   if (rm) rm.onclick = () => {
     const target = firstReviewIndex(S.quiz.questions, S.answers, ak);
     if (target < 0) return;
+    S.quiz.exam = false; // review is practice: unlock answer checks
+    // 'Back to list' should show this run's missed questions, not whatever
+    // explore list was open before.
+    S.exploreCtx = {
+      title: `Missed questions — ${S.quiz.title}`,
+      sub: `${missed} question${missed === 1 ? '' : 's'} below full marks`,
+      questions: S.quiz.questions.filter((q) => (S.answers[ak(q)]?.score || 0) < q.marks),
+      backRoom: 'past'
+    };
     S.runMode = 'explore';
     S.idx = target;
     S.room = 'runner';
@@ -130,6 +139,13 @@ export async function finishQuiz(auto = false) {
   };
   $('#retryResBtn').onclick = () => retryRun();
   $('#exploreResBtn').onclick = () => {
+    S.quiz.exam = false;
+    S.exploreCtx = {
+      title: S.quiz.title,
+      sub: `${S.quiz.questions.length} questions from the finished run`,
+      questions: S.quiz.questions,
+      backRoom: 'past'
+    };
     S.runMode = 'explore';
     S.idx = 0;
     S.room = 'runner';
