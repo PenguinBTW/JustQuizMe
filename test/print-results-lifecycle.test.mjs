@@ -55,6 +55,11 @@ test('beforeprint populates the sheet and tags the body', () => {
 });
 
 test('afterprint clears the sheet and the print class', () => {
+  // Self-contained: populate first so there is state to clear, otherwise the
+  // assertions pass vacuously on an empty sheet.
+  els.set('finishPrintBtn', summaryMarker);
+  listeners.beforeprint();
+  assert.ok(host.innerHTML.includes('Lifecycle Quiz'));
   listeners.afterprint();
   assert.equal(host.innerHTML, '');
   assert.ok(!document.body.classList.contains('printing-sheet'));
