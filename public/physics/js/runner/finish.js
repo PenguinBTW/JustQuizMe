@@ -22,6 +22,7 @@ export function quizScore(){
 
 export async function finishQuiz(auto = false){
   clearInterval(S.timerId);
+  const finishedAt = new Date().toISOString();
   for (const q of S.quiz.questions){
     const k = ak(q), a = S.answers[k];
     if (q.type === 'written' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, score: Math.min(n, q.marks) }; }
@@ -30,7 +31,7 @@ export async function finishQuiz(auto = false){
     else if (q.type === 'calculation' && !(a?.locked)){ if (a?.helpedDone){ S.answers[k].score = 0; } else S.answers[k] = { ...(a || {}), locked: true, loggedWrong: (a?.attempts || 0) > 0, score: 0 }; }
   }
   const r = quizScore();
-  const entry = { quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, quizTitle: S.quiz.title, score: r.score, total: r.total, minutes: Math.round(S.elapsed / 60), seconds: S.elapsed, helped: r.helped, exam: !!S.quiz.exam, breakdown: { mcq: r.mcq, written: r.w, cSolo: r.c, self: r.s }, date: new Date().toISOString() };
+  const entry = { quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, quizTitle: S.quiz.title, score: r.score, total: r.total, minutes: Math.round(S.elapsed / 60), seconds: S.elapsed, helped: r.helped, exam: !!S.quiz.exam, breakdown: { mcq: r.mcq, written: r.w, cSolo: r.c, self: r.s }, date: finishedAt };
   let saved = null;
   try { await api('/api/scores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) }); saved = true; } catch { saved = false; }
   try { await api('/api/save', { method: 'DELETE' }); } catch {}
@@ -72,13 +73,14 @@ export async function finishQuiz(auto = false){
   $('#dlJsonBtn').onclick = () => {
     const { filename, json } = buildExport({
       portal: 'physics', quiz: S.quiz, quizMeta: S.quizMeta, answers: S.answers,
-      keyOf: ak, mode: S.runMode, startedAt: S.startedAt, finishedAt: new Date().toISOString(), elapsedSeconds: S.elapsed,
+      keyOf: ak, mode: S.runMode, startedAt: S.startedAt, finishedAt, elapsedSeconds: S.elapsed,
     });
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' }));
+    const url = URL.createObjectURL(new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' }));
+    a.href = url;
     a.download = filename;
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
   $('#retryBtn').onclick = () => retryRun();
   window.scrollTo(0, 0);

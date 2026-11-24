@@ -46,7 +46,7 @@ test('verdicts: correct / partial / incorrect / helped', () => {
   assert.equal(buildExport(mk(2)).json.attempt.questions[0].verdict, 'partial');
   assert.equal(buildExport(mk(0)).json.attempt.questions[0].verdict, 'incorrect');
   assert.equal(buildExport(mk(0, { helped: true })).json.attempt.questions[0].verdict, 'helped');
-  assert.equal(buildExport(mk(0, { helped: true })).json.attempt.questions[0].answer, 'helped (steps used)');
+  assert.equal(buildExport(mk(0, { helped: true, finalValue: '4.2' })).json.attempt.questions[0].answer, 'helped (steps used, last entry 4.2)');
 });
 
 test('filename is portal-slug-quiz-date.json and special chars are slugged', () => {

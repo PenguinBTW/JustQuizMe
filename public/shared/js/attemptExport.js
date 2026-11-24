@@ -32,7 +32,7 @@ function userAnswer(q, a) {
       return `${(a.ticks || []).filter(Boolean).length}/${q.marks} marks claimed`;
     case 'calculation': {
       const v = trim(a.finalValue);
-      if (a.helped) return 'helped (steps used)';
+      if (a.helped) return `helped (steps used${v ? `, last entry ${v}${q.unit ? ` ${q.unit}` : ''}` : ''})`;
       return v ? `${v}${q.unit ? ` ${q.unit}` : ''}` : `${a.attempts || 0} attempt(s)`;
     }
     default:
