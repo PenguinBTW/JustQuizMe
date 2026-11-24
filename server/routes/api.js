@@ -1,5 +1,6 @@
 const express = require('express');
 const { calculateAllMetrics } = require('../services/metrics-service');
+const { buildBankHealthReport } = require('../services/bank-health');
 
 function createApiRouter(services) {
   const router = express.Router();
@@ -19,6 +20,24 @@ function createApiRouter(services) {
       res.json(metrics);
     } catch (err) {
       res.status(500).json({ error: 'Failed to calculate metrics: ' + err.message });
+    }
+  });
+
+  // Read-only scan of each portal's question-bank manifests: quiz/question
+  // totals, missing required fields, marks distribution, duplicate ids.
+  router.get('/bank-health', (req, res) => {
+    try {
+      const subjects = {};
+      for (const [key, svc] of Object.entries(services)) {
+        subjects[key] = {
+          name: svc.quizService.config.name,
+          spec: svc.quizService.config.spec,
+          questionsDir: svc.quizService.questionsDir
+        };
+      }
+      res.json(buildBankHealthReport(subjects));
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to scan question banks: ' + err.message });
     }
   });
 
