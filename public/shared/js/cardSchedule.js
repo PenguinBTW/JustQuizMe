@@ -63,3 +63,22 @@ export function dueRank(c, now = Date.now()) {
   if (!st) return 1;
   return (st.due || 0) <= now ? 0 : 2;
 }
+
+// dueStamp(card) → the card's due timestamp; unseen cards count as due at time 0
+// (most overdue possible) since they've never been reviewed.
+export function dueStamp(c) {
+  const all = load();
+  const st = all[ns() + (c.key || c.id || c.front)];
+  return st ? (st.due || 0) : 0;
+}
+
+// scheduleSnapshot() → the raw schedule map (one parse) for batch ordering.
+export function scheduleSnapshot() {
+  return load();
+}
+// dueInfoWith(card, all, now) → { rank, stamp } using a pre-loaded map.
+export function dueInfoWith(c, all, now = Date.now()) {
+  const st = (all || {})[ns() + (c.key || c.id || c.front)];
+  if (!st) return { rank: 1, stamp: 0 };
+  return { rank: (st.due || 0) <= now ? 0 : 2, stamp: st.due || 0 };
+}
