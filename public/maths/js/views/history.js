@@ -6,12 +6,12 @@ import { beginFileQuiz } from '../runner/starters.js';
 
 export function pastEntries() {
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
-  return S.scores.filter(s => uuids.has(s.quizUuid)).slice().reverse();
+  return S.scores.filter(s => uuids.has(s.quizUuid) || uuids.has((s.quizUuid || '').split(':retry-missed')[0])).slice().reverse();
 }
 
 export function practiceEntries() {
   const uuids = new Set(S.quizzes.normal.map(m => m.uuid));
-  return S.scores.filter(s => uuids.has(s.quizUuid)).slice().reverse();
+  return S.scores.filter(s => uuids.has(s.quizUuid) || uuids.has((s.quizUuid || '').split(':retry-missed')[0])).slice().reverse();
 }
 
 export function pct(a) {

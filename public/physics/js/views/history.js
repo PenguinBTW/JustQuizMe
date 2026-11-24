@@ -4,14 +4,18 @@ import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
 
+// retry-missed runs are saved under '<sourceUuid>:retry-missed' — match on
+// the source uuid so retried attempts still show in history
+const srcUuid = (u) => (u || '').split(':retry-missed')[0];
+
 export function pastEntries(){
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
-  return S.scores.filter(s => uuids.has(s.quizUuid)).slice().reverse();
+  return S.scores.filter(s => uuids.has(s.quizUuid) || uuids.has(srcUuid(s.quizUuid))).slice().reverse();
 }
 
 export function practiceEntries(){
   const uuids = new Set(S.quizzes.normal.map(m => m.uuid));
-  return S.scores.filter(s => uuids.has(s.quizUuid)).slice().reverse();
+  return S.scores.filter(s => uuids.has(s.quizUuid) || uuids.has(srcUuid(s.quizUuid))).slice().reverse();
 }
 
 export function pct(a){ return a.total ? Math.round(a.score / a.total * 100) : 0; }

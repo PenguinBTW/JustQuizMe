@@ -40,6 +40,18 @@ export function registerRetryMissed({ S, beginRun, keyOf }) {
       const missed = collectMissed(S.quiz.questions, S.answers, keyOf);
       const questions = questionsFromRefs(S.quiz.questions, missed);
       if (!questions.length) return;
+      // keep linked-question context (physics resolveDeps): predecessors
+      // dropped from the missed subset must still resolve their dep stems,
+      // so seed them into the dep pool S._pastAll when it exists
+      if (S._pastAll) {
+        for (const q of questions) {
+          for (const d of q.dependsOn || []) {
+            if (!d?.id || S._pastAll[d.id]) continue;
+            const pred = S.quiz.questions.find(p => keyOf(p) === d.id || p.id === d.id);
+            if (pred) S._pastAll[d.id] = pred;
+          }
+        }
+      }
       const spec = buildRetrySpec(missed, S.quiz.title);
       beginRun({
         mode: 'quiz',
