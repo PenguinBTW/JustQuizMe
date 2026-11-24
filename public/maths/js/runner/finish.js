@@ -53,6 +53,7 @@ export async function finishQuiz(auto = false) {
       body: JSON.stringify(entry)
     });
     await api('/api/save', { method: 'DELETE' });
+    S.save = null;
     S.scores = await api('/api/scores').catch(() => []);
   } catch {}
 

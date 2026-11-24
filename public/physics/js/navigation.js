@@ -86,7 +86,10 @@ export async function resumeSave(){
 }
 
 export function resumeVirtual(sv){
-  // Pre-update exam saves have no timeLimitMinutes; recompute like the starters.
-  const quizLike = { uuid: sv.quizUuid, version: sv.quizVersion ?? 1, title: sv.title || 'Saved quiz', timeLimitMinutes: sv.timeLimitMinutes || (sv.exam ? (sv.questions || []).reduce((s, q) => s + (+q.marks || 0), 0) * 1.5 : null) || null, exam: !!sv.exam, questions: sv.questions || [] };
+  // Pre-update saves only carry exam on spec, and none carry timeLimitMinutes;
+  // fall back to spec.exam and recompute the limit like the starters do.
+  const isExam = !!(sv.exam || sv.spec?.exam);
+  const tot = (sv.questions || []).reduce((s, q) => s + (+q.marks || 0), 0);
+  const quizLike = { uuid: sv.quizUuid, version: sv.quizVersion ?? 1, title: sv.title || 'Saved quiz', timeLimitMinutes: sv.timeLimitMinutes || (isExam && tot ? tot * 1.5 : null), exam: isExam, questions: sv.questions || [] };
   beginRun({ mode: 'quiz', quizLike, meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true }, resume: sv, retrySpec: sv.spec || { kind: 'mixed' } });
 }

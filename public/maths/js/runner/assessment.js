@@ -77,7 +77,8 @@ export async function saveProgress() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
-  S.save = { ...body, updatedAt: new Date().toISOString() };
+  // Clone answers so post-save edits can't leak into the cached save.
+  S.save = { ...body, answers: structuredClone(S.answers), updatedAt: new Date().toISOString() };
   const b = $('#saveBtn');
   if (b) {
     b.classList.add('save-flash');

@@ -57,7 +57,8 @@ export async function saveProgress(){
   };
   try {
     await api('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    S.save = { ...body, updatedAt: new Date().toISOString() };
+    // Clone answers so post-save edits can't leak into the cached save.
+    S.save = { ...body, answers: structuredClone(S.answers), updatedAt: new Date().toISOString() };
   } catch {}
   const b = $('#saveBtn');
   if (b){ b.classList.add('save-flash'); const t = b.textContent; b.textContent = '✓ Saved'; setTimeout(() => { b.textContent = t; b.classList.remove('save-flash'); }, 1500); }
