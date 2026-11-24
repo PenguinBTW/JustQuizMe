@@ -69,7 +69,8 @@ export async function saveProgress() {
     exam: !!S.quiz.exam,
     order: S.quiz.questions.map(ak),
     questions: S.quizMeta.virtual ? S.quiz.questions : null,
-    spec: S.retrySpec
+    spec: S.retrySpec,
+    returnRoom: S.returnRoom ?? null
   };
   await api('/api/save', {
     method: 'POST',
