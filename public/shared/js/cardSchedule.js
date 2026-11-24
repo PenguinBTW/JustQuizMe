@@ -53,3 +53,13 @@ export function orderCardsByDue(cards, now = Date.now()) {
     .sort((a, b) => a.r.band - b.r.band || a.r.due - b.r.due || a.i - b.i)
     .map(x => x.c);
 }
+
+// dueRank(card) → 0 overdue, 1 unseen, 2 not-yet-due — compose with mastery
+// bands: sort by (masteryBand, dueRank) so weak-topic cards always precede
+// stronger-topic cards, and within a topic band reviews precede new cards.
+export function dueRank(c, now = Date.now()) {
+  const all = load();
+  const st = all[ns() + (c.key || c.id || c.front)];
+  if (!st) return 1;
+  return (st.due || 0) <= now ? 0 : 2;
+}

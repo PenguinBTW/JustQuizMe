@@ -41,3 +41,14 @@ test('labels are honest: overdue Nd / due today / due in Nd', () => {
   assert.match(out.find(o => o.topic === 'x').label, /^overdue \d+d$|^due today$/);
   assert.match(out.find(o => o.topic === 'y').label, /^due in \d+d$|^due today$/);
 });
+
+test('aging topics: retention projection uses daysSince — fresh strong topic not due, same mastery aged becomes due', async () => {
+  const { dueReview } = await import('../public/shared/js/dueReview.js');
+  const fresh = [{ topic: 'T', mastery: 0.9, daysSince: 0 }];
+  const aged = [{ topic: 'T', mastery: 0.9, daysSince: 42 }];
+  // fresh: 0.9 retention — weeks from weak; aged 42d: 0.9 * 2^-3 = 0.11 — overdue
+  const freshDue = dueReview(fresh, { dueWithinDays: 7 });
+  const agedDue = dueReview(aged, { dueWithinDays: 7 });
+  if (freshDue.length) throw new Error('fresh topic wrongly due: ' + JSON.stringify(freshDue));
+  if (!agedDue.length || !agedDue[0].overdue) throw new Error('aged topic should be overdue: ' + JSON.stringify(agedDue));
+});
