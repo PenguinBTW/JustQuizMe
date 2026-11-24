@@ -82,6 +82,8 @@ export function saveCurrent(q) {
 }
 
 export async function saveProgress() {
+  // snapshot must include what is mid-typing right now
+  try { saveCurrent(S.quiz.questions[S.idx]); } catch {}
   const body = {
     quizUuid: S.quiz.uuid,
     quizVersion: S.quiz.version,
