@@ -50,7 +50,10 @@ export function registerRetryMissed({ S, beginRun, keyOf }) {
           for (const d of q.dependsOn || []) {
             if (!d?.id) continue;
             const pred = S.quiz.questions.find(p => keyOf(p) === d.id || p.id === d.id);
-            if (pred) S._pastAll[d.id] = pred;
+            // resolveDeps takes the FIRST pool entry matching a dep id —
+            // a colliding id from another paper loaded earlier would win
+            // over this pred, so re-add the pool with the pred first
+            if (pred) S._pastAll = { [d.id]: pred, ...S._pastAll };
           }
         }
       }
