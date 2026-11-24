@@ -83,6 +83,7 @@ export function wireSymbolic(q) {
     inp.oninput = () => {
       const a = (S.answers[k] ||= {});
       a.text = inp.value;
+      a.checked = false; // an edited answer can't keep the old verdict
       if (S.quiz?.exam) {
         a.locked = true;
         a.correct = areMathEqual(inp.value, q.expected || q.answer);
@@ -96,7 +97,8 @@ export function wireSymbolic(q) {
       const val = $('#symInput').value;
       const expected = q.expected || q.answer;
       const correct = areMathEqual(val, expected);
-      S.answers[k] = { locked: true, text: val, correct, checked: true, score: correct ? q.marks : 0 };
+      // Explore/review checks mark the verdict without locking the field.
+      S.answers[k] = { locked: S.runMode !== 'explore', text: val, correct, checked: true, score: correct ? q.marks : 0 };
       renderQ();
     };
   }
@@ -167,6 +169,7 @@ export function wireMilestone(q) {
       a.milestones = a.milestones || {};
       a.milestones[mid] = a.milestones[mid] || {};
       a.milestones[mid][fkey] = inp.value;
+      a.checked = false;
       if (S.quiz?.exam) {
         a.locked = true;
         evaluateMilestone(q, a);
@@ -179,7 +182,7 @@ export function wireMilestone(q) {
     chk.onclick = () => {
       const a = (S.answers[k] ||= { milestones: {} });
       a.checked = true;
-      a.locked = true;
+      a.locked = S.runMode !== 'explore';
       evaluateMilestone(q, a);
       renderQ();
     };
@@ -649,7 +652,7 @@ export function wireCalc(q) {
     chk.onclick = () => {
       const val = $('#calcInput').value;
       const correct = areMathEqual(val, q.answer);
-      S.answers[k] = { locked: true, text: val, correct, checked: true, score: correct ? q.marks : 0 };
+      S.answers[k] = { locked: S.runMode !== 'explore', text: val, correct, checked: true, score: correct ? q.marks : 0 };
       renderQ();
     };
   }
