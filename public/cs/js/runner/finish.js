@@ -89,6 +89,8 @@ export async function renderSummaryReport() {
     discrete: { got: 0, total: 0 },
     coding: { got: 0, total: 0 }
   };
+  const weak = [];
+  const strong = [];
 
   S.quiz.questions.forEach(q => {
     const qm = +q.marks || 0;
@@ -96,6 +98,11 @@ export async function renderSummaryReport() {
     const ans = S.answers[ak(q)] || {};
     const score = Math.min(qm, Math.max(0, ans.score || 0));
     earned += score;
+
+    // Per-question outcome for the review queue: partial or zero credit
+    // re-queues the question, full marks clears it.
+    if (score >= qm) strong.push(ak(q));
+    else weak.push({ k: ak(q), got: score, marks: qm });
 
     if (q.type === 'multiple-choice') {
       breakdown.mcq.total += qm;
@@ -129,7 +136,9 @@ export async function renderSummaryReport() {
         minutes: Math.floor(S.elapsed / 60),
         seconds: S.elapsed,
         exam: S.runMode === 'exam',
-        breakdown
+        breakdown,
+        weak,
+        strong
       })
     });
   } catch {}

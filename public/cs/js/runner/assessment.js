@@ -24,6 +24,7 @@ export function beginRun(o) {
   S.answers = o.resume?.answers ?? {};
   S.elapsed = o.resume?.elapsedSeconds ?? 0;
   S.startedAt = o.resume?.startedAt ?? new Date().toISOString();
+  S.retrySpec = o.retrySpec ?? null;
   clearInterval(S.timerId);
   S.room = 'runner';
   renderQ();
@@ -165,6 +166,7 @@ export async function saveProgress() {
     startedAt: S.startedAt,
     title: S.quiz.title,
     exam: S.runMode === 'exam',
+    spec: S.retrySpec || null,
     questions: S.quiz.questions
   };
   try {

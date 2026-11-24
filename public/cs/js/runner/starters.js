@@ -1,8 +1,10 @@
 // Computer Science Quiz Run Starters
 import { S, MIXED_UUID } from '../state.js';
 import { orderTypeShuffled } from '../utils.js';
+import { api } from '../api.js';
 import { mixedPool, pickForMode } from '../taxonomy.js';
 import { beginRun } from './assessment.js';
+import { reviewQueue, planReviewRefs, resolveReviewDeck } from '../review.js';
 
 export function startMixedRun(exam) {
   const pool = mixedPool();
@@ -20,6 +22,37 @@ export function startMixedRun(exam) {
       questions: set
     },
     meta: { category: 'normal', file: 'synthesized', virtual: true }
+  });
+}
+
+async function fetchQuizForCategory(category, file) {
+  if (category === 'past-paper' && S.pastFull[file]) return S.pastFull[file];
+  const quiz = await api(`/api/quiz?category=${encodeURIComponent(category)}&file=${encodeURIComponent(file)}`);
+  if (category === 'past-paper') S.pastFull[file] = quiz;
+  return quiz;
+}
+
+// Review queue -> retry-spec deck of the questions the user still owes.
+export async function startReviewRun(exam) {
+  const refs = planReviewRefs(reviewQueue(), S.quizzes);
+  return runReviewSpec({ kind: 'review', items: refs, exam: !!exam });
+}
+
+async function runReviewSpec(spec) {
+  const { set, tot } = await resolveReviewDeck(spec.items, fetchQuizForCategory);
+  if (!set.length) return alert('No questions found in the review queue.');
+  S.returnRoom = 'history';
+  beginRun({
+    mode: spec.exam ? 'exam' : 'quiz',
+    quizLike: {
+      uuid: MIXED_UUID,
+      version: 1,
+      title: `Review Queue · ${tot}m (${set.length}Q)`,
+      exam: !!spec.exam,
+      questions: orderTypeShuffled(set)
+    },
+    meta: { category: 'normal', file: 'review', virtual: true },
+    retrySpec: spec
   });
 }
 
