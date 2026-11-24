@@ -11,7 +11,7 @@ export function modeOfScore(score) {
 }
 
 // Best attempt per scored mode for one quiz — best = highest score/total
-// fraction; ties keep the earliest attempt.
+// fraction; equal fractions prefer the larger denominator (more marks shown).
 export function bestPerMode(scores, quizUuid) {
   const out = {};
   for (const s of scores || []) {
@@ -19,7 +19,11 @@ export function bestPerMode(scores, quizUuid) {
     if (typeof s.score !== 'number' || typeof s.total !== 'number' || s.total <= 0) continue;
     const mode = modeOfScore(s);
     const cur = out[mode];
-    if (!cur || s.score / s.total > cur.score / cur.total) {
+    if (
+      !cur ||
+      s.score / s.total > cur.score / cur.total ||
+      (s.score / s.total === cur.score / cur.total && s.total > cur.total)
+    ) {
       out[mode] = { score: s.score, total: s.total };
     }
   }
