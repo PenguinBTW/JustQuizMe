@@ -109,7 +109,8 @@ export function resumeVirtual(sv) {
     uuid: sv.quizUuid,
     version: sv.quizVersion ?? 1,
     title: sv.title || 'Saved quiz',
-    timeLimitMinutes: null,
+    timeLimitMinutes: sv.timeLimitMinutes || null,
+    exam: !!sv.exam,
     questions: sv.questions || []
   };
   beginRun({

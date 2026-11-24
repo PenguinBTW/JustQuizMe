@@ -1,6 +1,6 @@
 // Physics Assessment Runner (Question Display, Nav, Progress, Timer, Save)
 import { S } from '../state.js';
-import { $, esc, fmtClock, ak } from '../utils.js';
+import { $, esc, fmtClock, ak, tickMarks } from '../utils.js';
 import { api } from '../api.js';
 import { resolveDeps, depHtml, mcqHtml, writtenHtml, selfMarkedHtml, calcHtml, wireQ } from './renderers.js';
 import { finishQuiz } from './finish.js';
@@ -35,12 +35,10 @@ export function startTimer(){
     const mid = $('#chromeMid');
     if (!mid || S.room !== 'runner') return;
     const lim = S.quiz.timeLimitMinutes;
-    if (S.quiz.exam && lim){
+    if (lim){
       const left = Math.max(0, Math.round(lim * 60 - S.elapsed));
       mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
-    }
-    if (S.quiz.timeLimitMinutes && S.elapsed >= S.quiz.timeLimitMinutes * 60){
-      finishQuiz(true);
+      if (left <= 0) finishQuiz(true);
     }
   };
   upd();
@@ -52,6 +50,7 @@ export async function saveProgress(){
     quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, category: S.quizMeta.category,
     questionIndex: S.idx, answers: S.answers, elapsedSeconds: S.elapsed, startedAt: S.startedAt,
     kind: S.quizMeta.virtual ? 'virtual' : 'file', title: S.quiz.title,
+    exam: !!S.quiz.exam, timeLimitMinutes: S.quiz.timeLimitMinutes || null,
     order: S.quiz.questions.map(ak),
     questions: S.quizMeta.virtual ? S.quiz.questions : null,
     spec: S.retrySpec,
@@ -74,7 +73,7 @@ export function progress(){
   const mid = $('#chromeMid');
   if (mid){
     mid.textContent = chromeCount();
-    if (S.runMode === 'quiz' && S.quiz.exam && S.quiz.timeLimitMinutes){
+    if (S.runMode === 'quiz' && S.quiz.timeLimitMinutes){
       const left = Math.max(0, Math.round(S.quiz.timeLimitMinutes * 60 - S.elapsed));
       mid.innerHTML = `${esc(chromeCount())} · <span class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
     }
@@ -114,7 +113,7 @@ export function rightLabel(q){
   if (q.type === 'written') return `${q.section} · self-checked`;
   if (q.type === 'self-marked'){
     if (a?.locked) return `${q.section} · self-marked ${a.score}/${q.marks}`;
-    const n = (a?.ticks || []).filter(Boolean).length;
+    const n = tickMarks(q, a?.ticks);
     return a?.revealed ? `${q.section} · ${n}/${q.marks} ticked` : `${q.section} · reveal the answer`;
   }
   if (a?.soloCorrect) return `Solo ✓ +${q.marks}`;

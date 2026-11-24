@@ -86,10 +86,11 @@ export async function resumeSave() {
     version: sv.quizVersion ?? 1,
     title: sv.title || 'Saved quiz',
     timeLimitMinutes: sv.timeLimitMinutes || null,
+    exam: !!sv.exam,
     questions: sv.questions || []
   };
   beginRun({
-    mode: 'quiz',
+    mode: sv.exam ? 'exam' : 'quiz',
     quizLike,
     meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true },
     resume: sv,

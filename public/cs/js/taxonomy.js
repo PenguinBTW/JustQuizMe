@@ -96,7 +96,10 @@ export function pickExact(pool, target) {
   for (let s = target; s >= 0; s--) {
     if (dp[s] && dp[s].length) return { set: dp[s], tot: s };
   }
-  return { set: pool.length ? [pool[0]] : [], tot: pool.length ? (+pool[0].marks || 0) : 0 };
+  // No subset sums to <= target: every question overshoots, so offer the
+  // smallest-marked one as the closest available fit.
+  const smallest = pool.filter(q => (+q.marks || 0) > 0).sort((a, b) => (+a.marks || 0) - (+b.marks || 0))[0];
+  return { set: smallest ? [smallest] : [], tot: smallest ? (+smallest.marks || 0) : 0 };
 }
 
 export function pickForMode(pool, mode, target) {

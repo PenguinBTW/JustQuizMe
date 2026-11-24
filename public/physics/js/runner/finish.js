@@ -1,6 +1,6 @@
 // Physics Quiz Results & Scoring Controller
 import { S } from '../state.js';
-import { $, esc, fmtDur, ak } from '../utils.js';
+import { $, esc, fmtDur, ak, tickMarks } from '../utils.js';
 import { api } from '../api.js';
 import { renderRoom } from '../navigation.js';
 import { retryRun } from './starters.js';
@@ -23,8 +23,8 @@ export async function finishQuiz(auto = false){
   clearInterval(S.timerId);
   for (const q of S.quiz.questions){
     const k = ak(q), a = S.answers[k];
-    if (q.type === 'written' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, score: Math.min(n, q.marks) }; }
-    else if (q.type === 'self-marked' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, revealed: true, score: Math.min(n, q.marks) }; }
+    if (q.type === 'written' && !(a?.locked)){ S.answers[k] = { ...(a || {}), locked: true, score: Math.min(tickMarks(q, a?.ticks), q.marks) }; }
+    else if (q.type === 'self-marked' && !(a?.locked)){ S.answers[k] = { ...(a || {}), locked: true, revealed: true, score: Math.min(tickMarks(q, a?.ticks), q.marks) }; }
     else if (q.type === 'multiple-choice' && !(a?.locked)){ S.answers[k] = { locked: true, picked: null, correct: false, score: 0 }; }
     else if (q.type === 'calculation' && !(a?.locked)){ if (a?.helpedDone){ S.answers[k].score = 0; } else S.answers[k] = { ...(a || {}), locked: true, loggedWrong: (a?.attempts || 0) > 0, score: 0 }; }
   }

@@ -37,7 +37,7 @@ export function startTimer() {
     const mid = $('#chromeMid');
     if (!mid || S.room !== 'runner') return;
     const lim = S.quiz.timeLimitMinutes;
-    if (S.quiz.exam && lim) {
+    if (lim) {
       const left = Math.max(0, Math.round(lim * 60 - S.elapsed));
       mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
       if (left <= 0) finishQuiz(true);
@@ -67,6 +67,7 @@ export async function saveProgress() {
     kind: S.quizMeta.virtual ? 'virtual' : 'file',
     title: S.quiz.title,
     exam: !!S.quiz.exam,
+    timeLimitMinutes: S.quiz.timeLimitMinutes || null,
     order: S.quiz.questions.map(ak),
     questions: S.quizMeta.virtual ? S.quiz.questions : null,
     spec: S.retrySpec

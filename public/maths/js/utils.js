@@ -4,6 +4,11 @@ export const $ = (s) => document.querySelector(s);
 export const fmtClock = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 export const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 export const ak = (q) => q._key || q.id;
+
+// Marks earned from mark-scheme ticks: scheme points can be worth >1 mark,
+// so sum their `marks` weights rather than counting checked boxes.
+export const tickMarks = (q, ticks) =>
+  (q.markScheme || []).reduce((s, m, i) => s + (ticks && ticks[i] ? (+m.marks || 1) : 0), 0);
 export const normT = (s) => String(s || '').trim().toLowerCase();
 export const num = (n) => Number(n || 0).toLocaleString('en-GB');
 

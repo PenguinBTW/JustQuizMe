@@ -1,6 +1,6 @@
 // Maths Quiz Results & Examiner Script Audit Controller
 import { S } from '../state.js';
-import { $, esc, fmtDur, ak, chipify } from '../utils.js';
+import { $, esc, fmtDur, ak, chipify, tickMarks } from '../utils.js';
 import { api } from '../api.js';
 import { renderRoom } from '../navigation.js';
 import { renderQ } from './assessment.js';
@@ -13,6 +13,10 @@ export async function finishQuiz(auto = false) {
     const k = ak(q);
     if (!S.answers[k]) {
       S.answers[k] = { locked: true, score: 0 };
+    } else if ((q.type === 'written' || q.type === 'self-marked') && S.answers[k].score == null) {
+      const a = S.answers[k];
+      a.locked = true;
+      a.score = Math.min(tickMarks(q, a.ticks), q.marks);
     }
   }
 

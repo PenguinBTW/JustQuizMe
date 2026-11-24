@@ -1,6 +1,6 @@
 // Maths Question Renderers (Symbolic CAS, Milestone, Proof, Hypothesis, Mechanics, Graph, Written, Calc)
 import { S } from '../state.js';
-import { $, esc, ak, chipify } from '../utils.js';
+import { $, esc, ak, chipify, tickMarks } from '../utils.js';
 import { areMathEqual, cleanMathStr } from '../cas.js';
 import { mathKeypadHtml } from './keypad.js';
 import { renderQ } from './assessment.js';
@@ -549,8 +549,7 @@ export function wireWritten(q) {
     lockBtn.onclick = () => {
       const a = (S.answers[k] ||= { ticks: [] });
       a.locked = true;
-      const ticked = (a.ticks || []).filter(Boolean).length;
-      a.score = Math.min(ticked, q.marks);
+      a.score = Math.min(tickMarks(q, a.ticks), q.marks);
       renderQ();
     };
   }
@@ -603,8 +602,7 @@ export function wireSelfMarked(q) {
     lockBtn.onclick = () => {
       const a = (S.answers[k] ||= { ticks: [] });
       a.locked = true;
-      const ticked = (a.ticks || []).filter(Boolean).length;
-      a.score = Math.min(ticked, q.marks);
+      a.score = Math.min(tickMarks(q, a.ticks), q.marks);
       renderQ();
     };
   }

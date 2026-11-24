@@ -1,6 +1,6 @@
 // Physics Question Renderers (MCQ, Written, Self-Marked, Multi-Step Calculation)
 import { S } from '../state.js';
-import { $, esc, ak, chipify, tableHtml, imgSrc, qImages, imgHtml } from '../utils.js';
+import { $, esc, ak, chipify, tableHtml, imgSrc, qImages, imgHtml, tickMarks } from '../utils.js';
 import { renderQ, navNext, progress } from './assessment.js';
 import { finishQuiz } from './finish.js';
 import { goExploreBack } from '../views/explore.js';
@@ -92,7 +92,7 @@ export function msPanel(q, a, disabled){
       <div><strong>[${m.marks ?? 1}]</strong> ${t}</div>
     </div>`;
   }).join('');
-  const ticked = (a.ticks || []).filter(Boolean).length;
+  const ticked = tickMarks(q, a.ticks);
   return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
       <span class="mono" style="font-size:12px; font-weight:600;">COMPARE WITH OFFICIAL MARK SCHEME</span>
       <span class="pill green">${Math.min(ticked, q.marks)} / ${q.marks} marks</span>
@@ -194,7 +194,7 @@ export function wireWritten(q){
   if (explore){ wireNav(); return; } // free navigation, never locks
   const lock = () => {
     const a = S.answers[k] ||= { ticks: [] };
-    if (!a.locked){ const n = (a.ticks || []).filter(Boolean).length; a.locked = true; a.score = Math.min(n, q.marks); }
+    if (!a.locked){ a.locked = true; a.score = Math.min(tickMarks(q, a.ticks), q.marks); }
   };
   wireNav(lock);
 }
@@ -246,7 +246,7 @@ export function wireSelfMarked(q){
   if (explore){ wireNav(); return; } // free navigation, never locks
   const lock = () => {
     const a = S.answers[k] ||= { ticks: [] };
-    if (!a.locked){ const n = (a.ticks || []).filter(Boolean).length; a.locked = true; a.score = Math.min(n, q.marks); }
+    if (!a.locked){ a.locked = true; a.score = Math.min(tickMarks(q, a.ticks), q.marks); }
   };
   wireNav(lock);
 }
