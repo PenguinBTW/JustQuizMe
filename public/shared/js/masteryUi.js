@@ -1,9 +1,14 @@
 // Shared mastery UI helpers — HTML-string builders, no DOM dependency.
 // Used by all three portals' topic-list views (cs/maths/physics).
 
-// Minimal topic resolution: score entries carry topics[] written at finish time.
+import { topicsFor } from './stats.js';
+
+// Topic resolution: entries written at finish time carry topics[]; older or
+// ordinary-file entries fall back to topicsFor's chain (quizTitle prefix etc.).
 export function resolveScoreTopics(s) {
-  return Array.isArray(s?.topics) ? s.topics.filter(t => typeof t === 'string') : [];
+  const direct = Array.isArray(s?.topics) ? s.topics.filter(t => typeof t === 'string') : [];
+  if (direct.length) return direct;
+  try { return topicsFor(s); } catch { return []; }
 }
 
 // Small pill: red pct⚠ when weak, green pct% when fine, grey 'new' when unpracticed.

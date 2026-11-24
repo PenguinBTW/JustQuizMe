@@ -28,8 +28,12 @@ function runPct(s) {
 }
 
 function runDate(s) {
-  const t = s?.date instanceof Date ? s.date : new Date(s?.date);
-  return Number.isNaN(+t) ? null : t;
+  // scores.json is user-writable via the API — a hostile date object with a
+  // throwing valueOf/toString must never crash the whole topic view.
+  try {
+    const t = s?.date instanceof Date ? s.date : new Date(s?.date);
+    return Number.isNaN(+t) ? null : t;
+  } catch { return null; }
 }
 
 // resolveTopics is injected by the caller (stats.js topicsFor in practice) so
@@ -52,9 +56,12 @@ export function computeMastery(scores, resolveTopics, now = new Date()) {
     const pq = Array.isArray(s?.perQuestion) ? s.perQuestion.filter(q => q && typeof q.topic === 'string' && q.topic) : [];
     if (pq.length) {
       for (const q of pq) {
-        const qm = Number(q.marks) || 0;
+        // scores.json is user-writable — a hostile marks/score object with a
+        // throwing valueOf must not take down the whole topic view.
+        let qm = 0, gotRaw = 0;
+        try { qm = Number(q.marks) || 0; gotRaw = Number(q.score) || 0; } catch { continue; }
         if (!qm) continue;
-        const got = Math.min(qm, Math.max(0, Number(q.score) || 0));
+        const got = Math.min(qm, Math.max(0, gotRaw));
         const e = entry(q.topic);
         e.perQ = true;
         e.wgot += w * got;
@@ -113,10 +120,14 @@ export function computeMastery(scores, resolveTopics, now = new Date()) {
 // has NEVER practiced rank just below weak ones (they're unknowns, not zeros).
 export function weakestTopics(masteryRows, knownTopics, count = 3) {
   const rows = masteryRows || [];
-  const weak = rows.filter(r => r.weak);
+  const catalogue = new Set(knownTopics || []);
+  // only catalogue topics can actually be quizzed — a weak topic with no
+  // synthesizer questions must not consume a review slot.
+  const available = rows.filter(r => catalogue.has(r.topic));
+  const weak = available.filter(r => r.weak);
   const practiced = new Set(rows.map(r => r.topic));
   const unpracticed = (knownTopics || []).filter(t => !practiced.has(t));
-  const strong = rows.filter(r => !r.weak);
+  const strong = available.filter(r => !r.weak);
   return [...weak, ...unpracticed.map(t => ({ topic: t, mastery: null, runs: 0, daysSince: null, weak: false, unpracticed: true })), ...strong]
     .slice(0, count);
 }
