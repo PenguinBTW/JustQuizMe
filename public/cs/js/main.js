@@ -5,6 +5,7 @@ import { loadHome } from './api.js';
 import { renderRoom } from './navigation.js';
 import './stats.js';
 import './exportCsv.js';
+import './streak.js';
 import { startMixedRun } from './runner/starters.js';
 
 export function initTheme() {

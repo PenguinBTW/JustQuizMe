@@ -7,6 +7,7 @@ import { wireModals, closeSynthModal, closeTopicModal } from './modals.js';
 import { startMixedSel } from './runner/starters.js';
 import { initStatsTab } from './stats.js';
 import './exportCsv.js';
+import './streak.js';
 
 export function initTheme() {
   const t = localStorage.getItem('mjq-theme') || 'dark';

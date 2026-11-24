@@ -7,6 +7,7 @@ import { wireModals, closeSynthModal, closeTopicModal } from './modals.js';
 import { startMixedSel } from './runner/starters.js';
 import './stats.js';
 import './exportCsv.js';
+import './streak.js';
 
 // ---------- theme (dark default) ----------
 export function initTheme(){
