@@ -5,6 +5,7 @@ import { initHeroWave } from './demos/wave-canvas.js';
 import { initAsciiEngine } from './demos/ascii-engine.js';
 import { initMathCanvas } from './demos/math-canvas.js';
 import { initPhysicsChamber } from './demos/physics-chamber.js';
+import { initWeeklyWidget } from './weekly-widget.js';
 
 const SUBJECT_CONFIG = {
   maths: {
@@ -200,6 +201,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initAsciiEngine();
   initMathCanvas();
   initPhysicsChamber();
+  initWeeklyWidget();
 
   loadLiveMetrics();
   switchSubject('maths');
