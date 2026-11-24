@@ -184,7 +184,7 @@ export async function retryRun() {
         uuid: MIXED_UUID,
         version: 1,
         title: `Mixed Mathematics · ${tot}m (${set.length}Q)`,
-        timeLimitMinutes: r.exam ? presetMinutes(r.timer, tot, r.timerCustom) : null,
+        timeLimitMinutes: r.exam ? presetMinutes(r.timer || 'standard', tot, r.timerCustom) : null,
         exam: !!r.exam,
         questions: set
       },
