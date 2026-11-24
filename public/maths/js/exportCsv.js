@@ -1,6 +1,7 @@
 // Maths portal Export CSV mount — injects the button into the Stats view.
 // Self-initializing on import; downloads data/scores.json as an RFC-4180 CSV.
 import { S } from './state.js';
+import { api } from './api.js';
 import { $ } from './utils.js';
 import { mountCsvExport } from '../../shared/js/exportCsv.js';
 
@@ -17,6 +18,6 @@ function uuidIndex() {
 mountCsvExport({
   portal: 'maths',
   stage: $('#stage'),
-  getScores: () => S.scores || [],
+  getScores: () => api('/api/scores').catch(() => S.scores || []),
   uuidIndex
 });

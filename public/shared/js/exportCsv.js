@@ -22,8 +22,9 @@ function downloadCsv(csv, portal) {
 }
 
 // mountCsvExport({ portal, stage, getScores, uuidIndex })
-// stage: the portal's #stage element; getScores() → runs array; uuidIndex() →
-// uuid → topics[] map (same shape each portal's stats.js builds).
+// stage: the portal's #stage element; getScores() → runs array or a promise of
+// one (a fresh fetch beats a stale snapshot — another tab may have saved runs);
+// uuidIndex() → uuid → topics[] map (same shape each portal's stats.js builds).
 export function mountCsvExport({ portal, stage, getScores, uuidIndex }) {
   if (!stage) return;
 
@@ -39,11 +40,17 @@ export function mountCsvExport({ portal, stage, getScores, uuidIndex }) {
     btn.title = 'Download all recorded runs as CSV';
     btn.style.cursor = 'pointer';
     btn.style.marginLeft = '12px';
-    btn.onclick = () => {
-      let idx = {};
-      try { idx = uuidIndex() || {}; } catch { idx = {}; }
-      const csv = buildScoresCsv(getScores() || [], { portal, uuidIndex: idx });
-      downloadCsv(csv, portal);
+    btn.onclick = async () => {
+      btn.disabled = true;
+      try {
+        let idx = {};
+        try { idx = uuidIndex() || {}; } catch { idx = {}; }
+        const runs = (await getScores()) || [];
+        const csv = buildScoresCsv(runs, { portal, uuidIndex: idx });
+        downloadCsv(csv, portal);
+      } finally {
+        btn.disabled = false;
+      }
     };
     nav.appendChild(btn);
   };
