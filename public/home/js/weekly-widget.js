@@ -53,9 +53,9 @@ async function fetchScores() {
   const out = await Promise.all(PORTALS.map(async p => {
     try {
       const res = await fetch(`/api/${p.id}/scores`);
-      return { ...p, scores: res.ok ? await res.json() : [] };
+      return { ...p, scores: res.ok ? await res.json() : [], ok: res.ok };
     } catch {
-      return { ...p, scores: [] };
+      return { ...p, scores: [], ok: false };
     }
   }));
   return out;
@@ -92,6 +92,13 @@ function cardHtml(sum) {
 async function refreshCard(card) {
   try {
     const portals = await fetchScores();
+    // A portal that failed to respond returns scores:[] with ok:false — if
+    // every portal failed the empty totals would masquerade as an empty
+    // week, so surface the unavailable state instead.
+    if (portals.every(p => p.ok === false)) {
+      card.innerHTML = '<p class="ww-empty">Weekly stats unavailable.</p>';
+      return;
+    }
     card.innerHTML = cardHtml(weeklySummary(portals));
   } catch {
     card.innerHTML = '<p class="ww-empty">Weekly stats unavailable.</p>';
