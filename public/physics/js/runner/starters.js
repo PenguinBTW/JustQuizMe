@@ -21,7 +21,7 @@ export function startMixedSel(exam){
   S.returnRoom = 'past';
   beginRun({
     mode: 'quiz',
-    quizLike: { uuid: MIXED_UUID, version: 1, title: `Mixed · ${tot}m (${set.length}Q)`, timeLimitMinutes: exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace))) : null, exam: !!exam, questions: set },
+    quizLike: { uuid: MIXED_UUID, version: 1, title: `Mixed · ${tot}m (${set.length}Q)`, timeLimitMinutes: exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(use.tot * paceMinutesPerMark(S.mixed.pace))) : null, exam: !!exam, questions: set },
     meta: { category: 'past-paper', file: 'mixed', virtual: true },
     retrySpec: { kind: 'mixedsel', topics: [...S.mixed.topics], subs: [...S.mixed.subs], marks: S.mixed.m, mode: S.mixed.mode, exam: !!exam },
   });
@@ -38,7 +38,7 @@ export function startTopicQuiz(ti, exam){
   S.returnRoom = 'past';
   beginRun({
     mode: 'quiz',
-    quizLike: { uuid: MIXED_UUID, version: 1, title: `${c.t.topic} · ${use.tot}-mark quiz`, timeLimitMinutes: exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace))) : null, exam: !!exam, questions: use.set },
+    quizLike: { uuid: MIXED_UUID, version: 1, title: `${c.t.topic} · ${use.tot}-mark quiz`, timeLimitMinutes: exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(use.tot * paceMinutesPerMark(S.mixed.pace))) : null, exam: !!exam, questions: use.set },
     meta: { category: 'past-paper', file: 'mixed', virtual: true },
     retrySpec: { kind: 'topic', topic: c.t.topic, marks, mode, exam: !!exam },
   });
@@ -115,7 +115,7 @@ export async function retryRun(){
     S.returnRoom = 'past';
     beginRun({
       mode: 'quiz',
-      quizLike: { uuid: MIXED_UUID, version: 1, title: `${r.topic} · ${tot}-mark quiz`, timeLimitMinutes: r.exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace))) : null, exam: !!r.exam, questions: set },
+      quizLike: { uuid: MIXED_UUID, version: 1, title: `${r.topic} · ${tot}-mark quiz`, timeLimitMinutes: r.exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(use.tot * paceMinutesPerMark(S.mixed.pace))) : null, exam: !!r.exam, questions: set },
       meta: { category: 'past-paper', file: 'mixed', virtual: true },
       retrySpec: r,
     });
@@ -132,7 +132,7 @@ export async function retryRun(){
     S.returnRoom = 'past';
     beginRun({
       mode: 'quiz',
-      quizLike: { uuid: MIXED_UUID, version: 1, title: `Mixed · ${tot}m (${set.length}Q)`, timeLimitMinutes: r.exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace))) : null, exam: !!r.exam, questions: set },
+      quizLike: { uuid: MIXED_UUID, version: 1, title: `Mixed · ${tot}m (${set.length}Q)`, timeLimitMinutes: r.exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(use.tot * paceMinutesPerMark(S.mixed.pace))) : null, exam: !!r.exam, questions: set },
       meta: { category: 'past-paper', file: 'mixed', virtual: true },
       retrySpec: r,
     });
