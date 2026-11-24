@@ -5,6 +5,7 @@ import { initHeroWave } from './demos/wave-canvas.js';
 import { initAsciiEngine } from './demos/ascii-engine.js';
 import { initMathCanvas } from './demos/math-canvas.js';
 import { initPhysicsChamber } from './demos/physics-chamber.js';
+import { renderOverview } from './overview.js';
 
 const SUBJECT_CONFIG = {
   maths: {
@@ -202,6 +203,8 @@ window.addEventListener('DOMContentLoaded', () => {
   initPhysicsChamber();
 
   loadLiveMetrics();
+  const ovRoot = document.getElementById('overviewRoot');
+  if (ovRoot) renderOverview(ovRoot);
   switchSubject('maths');
 
   const slider = document.getElementById('marksSlider');
