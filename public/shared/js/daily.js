@@ -73,10 +73,14 @@ function prevDay(dateStr) {
   return `${dt.getUTCFullYear()}-${p(dt.getUTCMonth() + 1)}-${p(dt.getUTCDate())}`;
 }
 
-// Consecutive days answered ending today (or yesterday if today is still open)
-export function dailyStreak(rec, dateStr = todayStr()) {
+// Consecutive days answered ending today (or yesterday if today is still
+// open). `pickId` — today's deterministic pick — guards against a same-day
+// bank swap: a record written for a different question doesn't count.
+export function dailyStreak(rec, dateStr = todayStr(), pickId) {
   const days = rec?.days || {};
-  let cur = days[dateStr] ? dateStr : prevDay(dateStr);
+  const today = days[dateStr];
+  const todayDone = !!today && (pickId === undefined || today.questionId === pickId);
+  let cur = todayDone ? dateStr : prevDay(dateStr);
   let n = 0;
   while (days[cur]) { n++; cur = prevDay(cur); }
   return n;

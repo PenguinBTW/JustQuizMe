@@ -68,3 +68,17 @@ test('streak counts consecutive answered days, tolerating an open today', () => 
 test('todayStr formats local date', () => {
   assert.equal(todayStr(new Date(2026, 10, 24, 9, 30)), '2026-11-24');
 });
+
+test('dailyStreak: same-day bank swap does not count today', () => {
+  const store = memStore();
+  recordDay(store, 'cs', '2026-11-22', 'p1.q1', true);
+  recordDay(store, 'cs', '2026-11-23', 'p1.q2', true);
+  recordDay(store, 'cs', '2026-11-24', 'p1.q3', true); // recorded for the OLD pick
+  const rec = loadDaily(store, 'cs');
+  // new pick for today differs → streak counts through yesterday only
+  assert.equal(dailyStreak(rec, '2026-11-24', 'p1.q9'), 2);
+  // matching pick still counts today
+  assert.equal(dailyStreak(rec, '2026-11-24', 'p1.q3'), 3);
+  // no pickId → legacy behaviour counts today
+  assert.equal(dailyStreak(rec, '2026-11-24'), 3);
+});

@@ -66,10 +66,10 @@ export function registerDaily({ portal, S, store = globalThis.localStorage }) {
 
   const chipLabel = () => {
     const rec = loadDaily(store, portal);
-    const streak = dailyStreak(rec);
     // a same-day bank change that swaps the pick shouldn't keep the old check
     const { ids } = allQuestions();
     const pick = pickDailyId(ids, todayStr());
+    const streak = dailyStreak(rec, todayStr(), pick);
     const dayRec = recordFor(rec, todayStr());
     const done = !!(dayRec && dayRec.questionId === pick);
     const sTxt = streak > 0 ? ` <span class="daily-streak">· ${streak}d</span>` : '';
@@ -108,10 +108,16 @@ export function registerDaily({ portal, S, store = globalThis.localStorage }) {
     const ctx = [];
     for (const d of q.dependsOn || q.deps || []) {
       const did = d?.id ?? d;
-      const src = byId.get(did) || [...byId.values()].find(q2 => {
-        const qid = q2.id ?? q2._key ?? '';
-        return qid === did || qid.endsWith('/' + did) || qid.endsWith('#' + did) || qid.endsWith(':' + did);
-      });
+      // deps are sibling ids within the same paper — prefer same-file matches
+      // so a reused id in another paper can't leak the wrong context in
+      const sameFile = q._srcFile ? [...byId.values()].filter(x => x._srcFile === q._srcFile) : [];
+      const src = sameFile.find(x => x.id === did || x._key === did)
+        || byId.get(did)
+        || sameFile.find(x => (x._key ?? '').endsWith(':' + did))
+        || [...byId.values()].find(q2 => {
+          const qid = q2.id ?? q2._key ?? '';
+          return qid === did || qid.endsWith('/' + did) || qid.endsWith('#' + did) || qid.endsWith(':' + did);
+        });
       const t = src ? promptText(src) : (d?.prompt ?? '');
       if (t) ctx.push(`(${esc(did)}: ${esc(t)})`);
     }
