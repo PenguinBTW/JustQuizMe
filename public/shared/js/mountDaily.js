@@ -5,7 +5,7 @@
 
 import { esc } from './utils.js';
 import {
-  pickDailyId, loadDaily, recordDay, recordFor, isTodayDone, dailyStreak, todayStr
+  pickDailyId, loadDaily, recordDay, recordFor, dailyStreak, todayStr
 } from './daily.js';
 
 const CHIP_ID = 'dailyQuizChip';
@@ -67,7 +67,11 @@ export function registerDaily({ portal, S, store = globalThis.localStorage }) {
   const chipLabel = () => {
     const rec = loadDaily(store, portal);
     const streak = dailyStreak(rec);
-    const done = isTodayDone(rec, todayStr());
+    // a same-day bank change that swaps the pick shouldn't keep the old check
+    const { ids } = allQuestions();
+    const pick = pickDailyId(ids, todayStr());
+    const dayRec = recordFor(rec, todayStr());
+    const done = !!(dayRec && dayRec.questionId === pick);
     const sTxt = streak > 0 ? ` <span class="daily-streak">· ${streak}d</span>` : '';
     return done ? `Daily ✓${sTxt}` : `Daily question${sTxt}`;
   };
@@ -104,7 +108,10 @@ export function registerDaily({ portal, S, store = globalThis.localStorage }) {
     const ctx = [];
     for (const d of q.dependsOn || q.deps || []) {
       const did = d?.id ?? d;
-      const src = byId.get(did);
+      const src = byId.get(did) || [...byId.values()].find(q2 => {
+        const qid = q2.id ?? q2._key ?? '';
+        return qid === did || qid.endsWith('/' + did) || qid.endsWith('#' + did) || qid.endsWith(':' + did);
+      });
       const t = src ? promptText(src) : (d?.prompt ?? '');
       if (t) ctx.push(`(${esc(did)}: ${esc(t)})`);
     }
@@ -167,7 +174,7 @@ export function registerDaily({ portal, S, store = globalThis.localStorage }) {
       ov.querySelector('#dailyMs').hidden = false;
       const got = ov.querySelector('#dailyGotBtn');
       const missed = ov.querySelector('#dailyMissedBtn');
-      if (got) { got.hidden = false; missed.hidden = false; ov.querySelector('#dailyRevealBtn').hidden = true; }
+      if (got) { got.hidden = false; missed.hidden = false; ov.querySelector('#dailyRevealBtn').hidden = true; card.focus(); }
     };
     const settle = (got) => {
       recordDay(store, portal, date, id, got);
