@@ -108,7 +108,7 @@ export async function renderSummaryReport() {
     // unresolvable keys.
     if (S.runMode !== 'explore') {
       if (score >= qm) strong.push(ak(q));
-      else weak.push({ k: ak(q), got: score, marks: qm });
+      else weak.push({ k: ak(q), got: score, marks: qm, cat: q._srcCat || S.quizMeta?.category || 'normal' });
     }
 
     if (q.type === 'multiple-choice') {

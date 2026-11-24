@@ -34,7 +34,7 @@ export function reviewQueue(scores = S.scores) {
           lost: w?.marks != null ? w.marks - (w.got ?? 0) : null,
           quizTitle: e?.quizTitle || '',
           quizFile: e?.quizFile || '',
-          cat: e?.category || null,
+          cat: w?.cat || e?.category || null,
           date: e?.date || ''
         });
         order.push(key);
@@ -91,7 +91,12 @@ export function planReviewRefs(items, quizzes) {
 // slots over easier ones in other files.
 export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) {
   const found = [];
+  const worstKeptRank = () => (found.length < cap ? Infinity : found.map((x) => x.r).sort((a, b) => a - b)[cap - 1]);
   for (const ref of refs || []) {
+    // Refs come out of planReviewRefs ordered by their best-ranked key, so
+    // once the deck is full and every remaining key ranks worse, no later
+    // fetch can change the outcome.
+    if ((ref.keys || []).every((k) => k.r > worstKeptRank())) break;
     const wanted = new Map((ref.keys || []).map((k) => [String(k.id).toLowerCase(), k.r]));
     for (const bank of [ref, ref.alt].filter(Boolean)) {
       if (!wanted.size) break;
@@ -102,7 +107,7 @@ export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) 
         continue;
       }
       if (!quiz) continue;
-      for (const q of stampPool(quiz, ref.file)) {
+      for (const q of stampPool(quiz, ref.file, bank.category)) {
         const r = wanted.get(String(q.id).toLowerCase());
         if (r !== undefined) {
           wanted.delete(String(q.id).toLowerCase());

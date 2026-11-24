@@ -19,7 +19,7 @@ export async function ensurePastFull() {
     for (const m of (S.quizzes[cat] || [])) {
       const quiz = S.pastFull[m.file];
       if (!quiz) continue;
-      for (const q of stampPool(quiz, m.file)) all[q._key] = q;
+      for (const q of stampPool(quiz, m.file, cat)) all[q._key] = q;
     }
   }
   S._pastAll = all;

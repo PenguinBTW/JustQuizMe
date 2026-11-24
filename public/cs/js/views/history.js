@@ -1,7 +1,7 @@
 // Computer Science Attempt History View
 import { S } from '../state.js';
 import { $, esc, fmtDate } from '../utils.js';
-import { roomNav, wireRoomNav } from '../navigation.js';
+import { roomNav, wireRoomNav, resumeBannerHtml, wireResumeBanner } from '../navigation.js';
 import { startReviewRun } from '../runner/starters.js';
 import { reviewQueue, REVIEW_DECK_CAP } from '../review.js';
 
@@ -36,6 +36,7 @@ export function renderHistory() {
 
   $('#stage').innerHTML = `
     ${roomNav('history')}
+    ${resumeBannerHtml()}
     <div class="history-stats-grid">
       <div class="history-stat-card">
         <div class="mono" style="font-size:12px; color:var(--ink-muted);">TOTAL ATTEMPTS</div>
@@ -87,6 +88,7 @@ export function renderHistory() {
   `;
 
   wireRoomNav();
+  wireResumeBanner();
   const rsBtn = $('#reviewStartBtn');
   if (rsBtn) rsBtn.onclick = () => startReviewRun(false);
   const reBtn = $('#reviewExamBtn');

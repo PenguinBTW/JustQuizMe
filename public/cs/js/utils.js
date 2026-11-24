@@ -80,9 +80,9 @@ export function stampFile(quiz) {
   return (quiz.questions || []).map(q => ({ ...q, _key: q.id, _imgBase: quiz.imageFolder || '', _src: '' }));
 }
 
-export function stampPool(quiz, file) {
+export function stampPool(quiz, file, cat) {
   const base = file.replace(/\.json$/i, '');
-  return (quiz.questions || []).map(q => ({ ...q, _key: `${base}:${q.id}`, _imgBase: quiz.imageFolder || '', _src: quiz.title, _srcFile: file }));
+  return (quiz.questions || []).map(q => ({ ...q, _key: `${base}:${q.id}`, _imgBase: quiz.imageFolder || '', _src: quiz.title, _srcFile: file, _srcCat: cat || '' }));
 }
 
 // Question images
