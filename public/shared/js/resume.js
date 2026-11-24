@@ -34,6 +34,8 @@ export function validAnchor(a, portal, now = Date.now()) {
 }
 
 export function saveAnchor(anchor, store = globalThis.localStorage) {
+  // Explore runs are never a "last unfinished run" worth resuming.
+  if (anchor && anchor.mode === 'explore') return null;
   const a = { v: RESUME_VERSION, ...anchor, savedAt: Date.now() };
   if (!validAnchor({ ...a, savedAt: a.savedAt }, a.portal)) return null;
   try {

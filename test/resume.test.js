@@ -85,6 +85,7 @@ test('stale anchor (>7d) is treated as expired', () => {
 
 test('explore-mode runs are never offered for resume', () => {
   const s = new MemStore();
+  assert.equal(saveAnchor({ ...base(), mode: 'explore' }, s), null);
   assert.equal(loadAnchor('maths', s), null);
   assert.equal(resumeHref(base()), null); // no deep-link routing today
 });

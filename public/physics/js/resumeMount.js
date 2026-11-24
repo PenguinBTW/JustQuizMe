@@ -32,7 +32,7 @@ mountResume({
           exam: !!S.quiz.exam
         }
       : null,
-  isDone: () => S.room === 'results',
+  isDone: () => (S.room === 'results' ? S.quiz?.uuid ?? 'done' : null),
   resume: (a) => {
     const quizLike = {
       uuid: a.quizUuid,
@@ -46,7 +46,12 @@ mountResume({
       mode: a.mode === 'explore' ? 'explore' : 'quiz',
       quizLike,
       meta: { category: a.category, file: a.quizFile, virtual: a.kind === 'virtual' },
-      resume: a,
+      resume: {
+        ...a,
+        questionIndex: a.qIndex,
+        elapsedSeconds: a.elapsed,
+        questions: a.questions
+      },
       retrySpec: a.spec || { kind: 'mixed' }
     });
   }

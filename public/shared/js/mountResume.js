@@ -6,6 +6,8 @@ import { saveAnchor, loadAnchor, clearAnchor } from './resume.js';
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+const answeredCount = (a) => Object.keys(a?.answers || {}).filter((k) => a.answers[k]?.locked).length;
+
 export function mountResume({ portal, isHome, host, snapshot, isDone, resume, doc = document, store = globalThis.localStorage }) {
   const chipSel = '.jqm-resume-chip';
   if (!doc.getElementById('jqm-resume-css')) {
@@ -56,13 +58,31 @@ export function mountResume({ portal, isHome, host, snapshot, isDone, resume, do
   }
 
   function tick() {
-    if (isDone && isDone()) clearAnchor(portal, store);
+    // isDone() returns the finished run's quizUuid, or null when not done —
+    // completion clears only that attempt's anchor, never another tab's newer save.
+    const done = isDone && isDone();
+    if (done) {
+      const prev = loadAnchor(portal, store);
+      if (prev && prev.quizUuid === done) clearAnchor(portal, store);
+    }
     const snap = snapshot && snapshot();
-    if (snap) saveAnchor(snap, store);
+    if (snap) {
+      // Don't let a regressed same-quiz run (e.g. a URL-param relaunch after
+      // reload, or a stale tab) clobber a further-along autosave: same quiz
+      // must reach at least the stored position or have answered more.
+      const prev = loadAnchor(portal, store);
+      const regressed =
+        prev && prev.quizUuid === snap.quizUuid &&
+        snap.qIndex < prev.qIndex &&
+        answeredCount(snap) <= answeredCount(prev);
+      if (!regressed) saveAnchor(snap, store);
+    }
     render();
   }
 
   const mo = new MutationObserver(tick);
   mo.observe(doc.body, { childList: true, subtree: true });
+  // Answer editors can update state without DOM mutations — poll to catch them.
+  if (typeof window !== 'undefined') setInterval(tick, 3000);
   tick();
 }
