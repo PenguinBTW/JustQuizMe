@@ -80,7 +80,7 @@ export async function finishQuiz(auto) {
   (S.quiz?.questions || []).forEach(q => {
     if (q.type !== 'multiple-choice') return;
     const ans = S.answers[ak(q)] || {};
-    if (ans.score == null && ans.selected != null) {
+    if (ans.score == null && ans.selected != null || ans.picked != null) {
       ans.score = ans.selected === q.correctIndex ? (+q.marks || 0) : 0;
     }
     if (ans.selected != null) ans.locked = true;
@@ -138,9 +138,12 @@ export async function renderSummaryReport() {
     const hasTableInput = (Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim())))
       || (ans.outputs && typeof ans.outputs === 'object' && Object.values(ans.outputs).some(v => String(v ?? '').trim()));
     const attempted = !!(ans.selected != null || (ans.text && ans.text.trim())
-      || (ans.code && ans.code.trim())
-      || hasTableInput
-      || ans.revealed || ans.tickedCount != null || (ans.ticked && ans.ticked.length));
+      || (ans.code && ans.code.trim() && (() => {
+        const sc = q.starterCode;
+        const starters = typeof sc === 'string' ? [sc] : (sc && typeof sc === 'object' ? Object.values(sc) : []);
+        return !starters.some(st => typeof st === 'string' && st.trim() === String(ans.code).trim());
+      })())
+      || hasTableInput || ans.tickedCount != null || (ans.ticked && ans.ticked.length));
     return {
       id: q.id || null,
       topic: q.topic || q._topic || null,
