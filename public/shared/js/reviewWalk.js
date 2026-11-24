@@ -21,6 +21,14 @@ function answerText(q, ans) {
     if (picked == null) return '';
     return `${'ABCDEF'[picked] || picked + 1}. ${optText(q.options?.[picked])}`;
   }
+  if (ans.code && typeof ans.code === 'string' && ans.code.trim()) return ans.code;
+  // table-type answers (trace-table, truth-table): rows/outputs snapshots
+  if (Array.isArray(ans.rows) && ans.rows.length) {
+    try { return ans.rows.map(r => Array.isArray(r) ? r.join(' | ') : String(r)).join('\n'); } catch {}
+  }
+  if (ans.outputs && typeof ans.outputs === 'object') {
+    try { return Object.entries(ans.outputs).map(([k, v]) => `${k}: ${v}`).join('\n'); } catch {}
+  }
   return ans.text || ans.proofText || ans.targetVal || ans.expected
     || (ans.finalValue != null ? String(ans.finalValue) : '') || '';
 }
