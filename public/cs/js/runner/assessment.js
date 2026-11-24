@@ -38,10 +38,10 @@ export function startTimer() {
     const lim = S.quiz.timeLimitMinutes;
     if (S.quiz.exam && lim) {
       const left = Math.max(0, Math.round(lim * 60 - S.elapsed));
-      mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
+      mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" role="timer" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
       if (left <= 0) finishQuiz(true);
     } else {
-      mid.innerHTML = `${esc(chromeCount())} · <span>⏱ ${fmtClock(S.elapsed)}</span>`;
+      mid.innerHTML = `${esc(chromeCount())} · <span role="timer">⏱ ${fmtClock(S.elapsed)}</span>`;
     }
   };
   upd();
@@ -108,7 +108,7 @@ export function renderQ() {
       ${renderQuestionSpecifics(q)}
 
       <div class="sheet-footer">
-        <span class="mono" id="qAnswered">${footerAnsweredText(q)}</span>
+        <span class="mono" id="qAnswered" aria-live="polite">${footerAnsweredText(q)}</span>
         <div style="display:flex; align-items:center; gap:10px;">
           <button class="btn-ghost" id="saveBtn">Save Progress</button>
           ${S.idx > 0 ? '<button class="btn" id="prevQ">← Back</button>' : ''}
@@ -120,6 +120,9 @@ export function renderQ() {
       </div>
     </div>
   `;
+
+  const a11y = $('#a11yStatus');
+  if (a11y) a11y.textContent = `Question ${S.idx + 1} of ${qs.length}`;
 
   wireQuestionInteractions(q);
   if (window.renderMath) window.renderMath();

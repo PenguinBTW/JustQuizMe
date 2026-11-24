@@ -23,13 +23,21 @@ export function initTheme() {
 
 // Global Keybindings
 document.addEventListener('keydown', e => {
-  const tag = document.activeElement?.tagName;
-  if (['INPUT', 'TEXTAREA'].includes(tag)) return;
+  const ae = document.activeElement;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(ae?.tagName) || ae?.isContentEditable) return;
   if (e.key === 'Escape') {
     closeSynthModal();
     closeTopicModal();
   }
   if (e.key.toLowerCase() === 't') $('#themeBtn')?.click();
+  if (S.quiz && !document.querySelector('.modal-backdrop.open')) {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); ($('#prevQ') || $('#backTop'))?.click(); }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const fin = $('#finishQ');
+      (fin && !fin.hidden ? fin : $('#nextQ'))?.click();
+    }
+  }
 });
 
 initTheme();
@@ -39,6 +47,9 @@ if (brand) {
   brand.onclick = () => {
     S.room = 'past';
     renderRoom();
+  };
+  brand.onkeydown = e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); brand.click(); }
   };
 }
 

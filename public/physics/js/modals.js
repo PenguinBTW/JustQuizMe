@@ -4,6 +4,18 @@ import { $, esc } from './utils.js';
 import { mixedPool, topicDraft, pickForMode } from './taxonomy.js';
 import { startMixedSel, startTopicQuiz } from './runner/starters.js';
 
+let modalFocusBack = null;
+
+function focusInto(id, closeId){
+  modalFocusBack = document.activeElement;
+  $(closeId)?.focus();
+}
+
+function restoreModalFocus(){
+  modalFocusBack?.focus?.();
+  modalFocusBack = null;
+}
+
 export function openSynthModal(){
   const data = (S._topicData || []).filter(t => S.mixed.topics.has(t.topic) && t.qcount > 0);
   if (!data.length) return;
@@ -15,7 +27,7 @@ export function openSynthModal(){
       <div class="modal-topic-group-title"><span>${String(AQA_TOPICS.indexOf(t.topic) + 1).padStart(2, '0')} ${esc(t.topic)}</span><span class="mono" style="font-size:11.5px; color:var(--ink-muted);">(${t.qcount} Qs)</span></div>
       <div class="subtopic-pills-wrap">
         ${t.subs.map((g, gi) => `
-        <span class="subtopic-chip checked" data-synth-sub="${esc(t.topic)}|${gi}"><span class="custom-check">✓</span> ${esc(g.name)} <span class="mono" style="font-size:11px; color:var(--ink-muted);">(${g.questions.length})</span></span>`).join('')}
+        <span class="subtopic-chip checked" data-synth-sub="${esc(t.topic)}|${gi}" role="checkbox" aria-checked="true" tabindex="0"><span class="custom-check" aria-hidden="true">✓</span> ${esc(g.name)} <span class="mono" style="font-size:11px; color:var(--ink-muted);">(${g.questions.length})</span></span>`).join('')}
       </div>
     </div>`).join('');
   const poolMarks = mixedPool().reduce((s, q) => s + (+q.marks || 0), 0);
@@ -26,15 +38,20 @@ export function openSynthModal(){
   document.querySelectorAll('#synthModeSeg button').forEach(b => b.classList.toggle('active', b.dataset.seg === S.mixed.mode));
   updateSynthModalMarks(S.mixed.m);
   syncPopupToggleAllButton();
-  box.querySelectorAll('[data-synth-sub]').forEach(ch => ch.onclick = () => {
-    ch.classList.toggle('checked');
-    ch.classList.contains('checked') ? S.mixed.subs.add(ch.dataset.synthSub) : S.mixed.subs.delete(ch.dataset.synthSub);
-    syncPopupToggleAllButton();
+  box.querySelectorAll('[data-synth-sub]').forEach(ch => {
+    ch.onkeydown = (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); ch.click(); } };
+    ch.onclick = () => {
+      ch.classList.toggle('checked');
+      ch.setAttribute('aria-checked', ch.classList.contains('checked'));
+      ch.classList.contains('checked') ? S.mixed.subs.add(ch.dataset.synthSub) : S.mixed.subs.delete(ch.dataset.synthSub);
+      syncPopupToggleAllButton();
+    };
   });
   $('#synthModal').classList.add('open');
+  focusInto('#synthModal', '#synthClose');
 }
 
-export function closeSynthModal(){ $('#synthModal').classList.remove('open'); }
+export function closeSynthModal(){ $('#synthModal').classList.remove('open'); restoreModalFocus(); }
 
 export function syncPopupToggleAllButton(){
   const chips = [...document.querySelectorAll('#synthModalSubtopicGroups .subtopic-chip')];
@@ -76,9 +93,10 @@ export function openTopicModal(ti){
   document.querySelectorAll('#topicModeSeg button').forEach(b => b.classList.toggle('active', b.dataset.seg === S.topicModal.mode));
   regenTopicModal();
   $('#topicModal').classList.add('open');
+  focusInto('#topicModal', '#topicClose');
 }
 
-export function closeTopicModal(){ $('#topicModal').classList.remove('open'); }
+export function closeTopicModal(){ $('#topicModal').classList.remove('open'); restoreModalFocus(); }
 
 export function regenTopicModal(){
   const m = S.topicModal;

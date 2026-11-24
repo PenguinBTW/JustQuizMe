@@ -39,7 +39,7 @@ export function startTimer() {
     const lim = S.quiz.timeLimitMinutes;
     if (S.quiz.exam && lim) {
       const left = Math.max(0, Math.round(lim * 60 - S.elapsed));
-      mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
+      mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" role="timer" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
       if (left <= 0) finishQuiz(true);
     } else {
       mid.textContent = `${chromeCount()} · ⏱ ${fmtClock(S.elapsed)}`;
@@ -126,7 +126,7 @@ export function renderQ() {
       </div>
       ${body}
       <div class="sheet-footer">
-        <span id="qAnswered" class="mono">Answered ${Object.keys(S.answers).filter(k => S.answers[k]?.locked).length} of ${qs.length}</span>
+        <span id="qAnswered" class="mono" aria-live="polite">Answered ${Object.keys(S.answers).filter(k => S.answers[k]?.locked).length} of ${qs.length}</span>
         <div style="display:flex; gap:8px;">
           <button class="btn" id="prevQ">← Back</button>
           <button class="btn btn-primary" id="nextQ" ${isLast ? 'hidden' : ''}>Continue →</button>
@@ -135,6 +135,9 @@ export function renderQ() {
       </div>
     </div>
   `;
+
+  const a11y = $('#a11yStatus');
+  if (a11y) a11y.textContent = `Question ${S.idx + 1} of ${qs.length}`;
 
   $('#backTop').onclick = () => {
     if (S.idx > 0) { S.idx--; renderQ(); }

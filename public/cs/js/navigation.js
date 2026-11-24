@@ -61,7 +61,7 @@ export function resumeBannerHtml() {
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
         <button class="btn btn-jade" style="padding:6px 14px; font-size:12.5px;" id="resumeBtn">Resume</button>
-        <button class="btn-ghost" id="discardSave" title="Discard saved assessment">✕</button>
+        <button class="btn-ghost" id="discardSave" title="Discard saved assessment" aria-label="Discard saved assessment">✕</button>
       </div>
     </div>
   `;

@@ -5,6 +5,21 @@ import { mixedPool, pickForMode } from './taxonomy.js';
 import { startMixedRun } from './runner/starters.js';
 import { beginRun } from './runner/assessment.js';
 
+let modalFocusBack = null;
+
+function focusInto(closeId) {
+  // Re-render calls (chip toggles) re-enter openSynthModal while focus is
+  // already inside the dialog — don't steal it back to the close button.
+  if (document.activeElement?.closest?.('.modal-backdrop')) return;
+  modalFocusBack = document.activeElement;
+  $(closeId)?.focus();
+}
+
+export function restoreModalFocus() {
+  modalFocusBack?.focus?.();
+  modalFocusBack = null;
+}
+
 export function openSynthModal() {
   const data = (S._topicData || []).filter(t => S.mixed.topics.has(t.topic));
   let subHtml = '';
@@ -21,8 +36,8 @@ export function openSynthModal() {
             const key = `${t.topic}|${gi}`;
             const checked = S.mixed.subs.has(key);
             return `
-              <div class="subtopic-chip ${checked ? 'checked' : ''}" data-synth-sub="${esc(key)}">
-                <span class="custom-check">✓</span>
+              <div class="subtopic-chip ${checked ? 'checked' : ''}" data-synth-sub="${esc(key)}" role="checkbox" aria-checked="${checked}" tabindex="0">
+                <span class="custom-check" aria-hidden="true">✓</span>
                 <span>${esc(g.name)}</span>
                 <span class="mono" style="font-size:11px; opacity:0.7;">(${g.questions.length})</span>
               </div>
@@ -42,8 +57,9 @@ export function openSynthModal() {
   $('#synthStartExamBtn').textContent = `Start Exam · ${mins}m ⏱`;
 
   $('#synthModal').classList.add('open');
+  focusInto('#synthClose');
 
-  $('#synthClose').onclick = () => $('#synthModal').classList.remove('open');
+  $('#synthClose').onclick = () => { $('#synthModal').classList.remove('open'); restoreModalFocus(); };
   $('#synthToggleAllBtn').onclick = () => {
     const allChecked = data.every(t => t.subs.every((g, gi) => S.mixed.subs.has(`${t.topic}|${gi}`)));
     if (allChecked) {
@@ -62,11 +78,14 @@ export function openSynthModal() {
   };
 
   document.querySelectorAll('[data-synth-sub]').forEach(el => {
+    el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
     el.onclick = () => {
       const k = el.dataset.synthSub;
       if (S.mixed.subs.has(k)) S.mixed.subs.delete(k);
       else S.mixed.subs.add(k);
       openSynthModal();
+      // The re-render replaced this chip; put focus back on its successor.
+      document.querySelector(`[data-synth-sub="${CSS.escape(k)}"]`)?.focus();
     };
   });
 
@@ -91,7 +110,8 @@ export function openTopicModal(ti) {
   $('#modalExamBtn').textContent = `Start Exam · ${Math.round($('#modalSlider').value * 1.07)}m ⏱`;
 
   $('#topicModal').classList.add('open');
-  $('#topicClose').onclick = () => $('#topicModal').classList.remove('open');
+  focusInto('#topicClose');
+  $('#topicClose').onclick = () => { $('#topicModal').classList.remove('open'); restoreModalFocus(); };
 
   $('#modalSlider').oninput = (e) => {
     $('#modalMarksLabel').textContent = `${e.target.value} marks`;

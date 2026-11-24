@@ -1,0 +1,53 @@
+/* =========================================================================
+   Shared accessibility rules — linked by every portal index.html
+   ========================================================================= */
+
+/* Visually hidden but reachable by screen readers (live regions, hints). */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Keyboard focus indicator. !important so base rules like
+   `input { outline: none }` can't hide it for keyboard users. */
+:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.btn:focus-visible,
+.btn-ghost:focus-visible,
+.opt-card:focus-visible,
+.segmented button:focus-visible,
+.subtopic-chip:focus-visible,
+.acc-trigger-left:focus-visible,
+.level-card:focus-visible,
+.ms-item:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+/* Text inputs that suppress outline need it back on keyboard focus. */
+.written-textarea:focus-visible,
+.essay-pad:focus-visible,
+.step-input-row input:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

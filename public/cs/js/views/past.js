@@ -113,7 +113,7 @@ export function renderPast() {
       ${data.map((t, ti) => `
         <div class="accordion-item ${S.openTopics.has(t.topic) ? 'open' : ''}" data-acc="${ti}">
           <div class="accordion-header-row">
-            <div class="acc-trigger-left" data-acc-toggle="${ti}">
+            <div class="acc-trigger-left" data-acc-toggle="${ti}" role="button" aria-expanded="${S.openTopics.has(t.topic)}" tabindex="0">
               <span class="acc-num">${t.unit || String(ti + 1).padStart(2, '0')}</span>
               <span class="acc-title">${esc(t.topic)}</span>
             </div>
@@ -201,6 +201,7 @@ export function wirePastEvents() {
   $('#synthContinueBtn')?.addEventListener('click', () => openSynthModal());
 
   document.querySelectorAll('[data-acc-toggle]').forEach(el => {
+    el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
     el.onclick = () => {
       const ti = +el.dataset.accToggle;
       const t = S._topicData[ti];

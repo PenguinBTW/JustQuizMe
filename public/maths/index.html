@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/shared/css/a11y.css" />
 <script>
 window.renderMath = function () {
   try {
@@ -33,7 +34,7 @@ window.renderMath = function () {
 </head>
 <body>
 <header class="topbar">
-  <div class="brand" id="brandHome" title="Back to Past Papers">
+  <div class="brand" id="brandHome" title="Back to Past Papers" role="link" tabindex="0" aria-label="Back to Past Papers">
     <img src="favicon.png" alt="JustQuizMe Logo" class="brand-logo" />
     <div class="brand-text">
       <span class="brand-title">Maths JustQuizMe</span>
@@ -42,18 +43,19 @@ window.renderMath = function () {
   </div>
   <div class="topbar-right">
     <span class="mono" style="font-size:12px; color:var(--ink-muted);" id="bankStats">…</span>
-    <button class="theme-btn" id="themeBtn">Paper</button>
+    <button class="theme-btn" id="themeBtn" aria-label="Toggle dark or paper theme">Paper</button>
   </div>
 </header>
 
 <main class="stage" id="stage"></main>
+<div class="sr-only" aria-live="polite" id="a11yStatus"></div>
 
 <!-- Step 2: synthesizer subtopics + marks + quiz/exam -->
-<div class="modal-backdrop" id="synthModal">
+<div class="modal-backdrop" id="synthModal" role="dialog" aria-modal="true" aria-label="Custom paper synthesizer">
   <div class="modal-card wide">
     <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
       <span class="mono" style="font-size:11px; color:var(--accent); text-transform:uppercase;">Custom Paper Synthesizer · Step 2 of 2</span>
-      <button class="btn-ghost" id="synthClose">✕</button>
+      <button class="btn-ghost" id="synthClose" aria-label="Close synthesizer">✕</button>
     </div>
     <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:12px;">
       <div>
@@ -65,7 +67,7 @@ window.renderMath = function () {
     <div class="modal-subtopics-scroll" id="synthModalSubtopicGroups"></div>
     <div class="slider-wrap" style="margin-bottom:14px;">
       <span class="mono" style="font-size:12px; color:var(--ink-secondary);">Marks</span>
-      <input type="range" min="5" max="60" value="45" id="synthModalSlider" />
+      <input type="range" min="5" max="60" value="45" id="synthModalSlider" aria-label="Target marks" />
       <span class="mono" style="font-size:14px; font-weight:600; min-width:76px; text-align:right;" id="synthModalMarksLabel">45 marks</span>
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding-top:14px; border-top:1px solid var(--border);">
@@ -82,16 +84,16 @@ window.renderMath = function () {
 </div>
 
 <!-- Topic quiz builder -->
-<div class="modal-backdrop" id="topicModal">
+<div class="modal-backdrop" id="topicModal" role="dialog" aria-modal="true" aria-label="Topic quiz builder">
   <div class="modal-card">
     <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
       <span class="mono" style="font-size:11px; color:var(--accent); text-transform:uppercase;">Topic Quiz Builder</span>
-      <button class="btn-ghost" id="topicClose">✕</button>
+      <button class="btn-ghost" id="topicClose" aria-label="Close">✕</button>
     </div>
     <h3 class="serif" style="font-size:28px; margin-bottom:16px;" id="modalTopicTitle"></h3>
     <div class="slider-wrap" style="margin-bottom:16px;">
       <span class="mono" style="font-size:12px; color:var(--ink-secondary);">Marks</span>
-      <input type="range" min="5" max="50" value="20" id="modalSlider" />
+      <input type="range" min="5" max="50" value="20" id="modalSlider" aria-label="Marks" />
       <span class="mono" style="font-size:14px; font-weight:600; min-width:74px; text-align:right;" id="modalMarksLabel">20 marks</span>
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">

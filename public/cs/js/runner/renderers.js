@@ -71,8 +71,8 @@ export function renderQuestionSpecifics(q) {
               rendered = rendered.split(esc(hl)).join(`<span class="key-phrase">${esc(hl)}</span>`);
             });
             return `
-              <div class="ms-item ${isTicked ? 'checked' : ''}" data-midx="${mIdx}">
-                <span class="mono" style="color:var(--accent); font-weight:700;">${isTicked ? '☑' : '☐'}</span>
+              <div class="ms-item ${isTicked ? 'checked' : ''}" data-midx="${mIdx}" role="checkbox" aria-checked="${isTicked}" tabindex="0" aria-label="Mark scheme point ${mIdx + 1}">
+                <span class="mono" style="color:var(--accent); font-weight:700;" aria-hidden="true">${isTicked ? '☑' : '☐'}</span>
                 <div>[${item.marks}m] ${rendered}</div>
               </div>
             `;
@@ -110,14 +110,14 @@ export function renderQuestionSpecifics(q) {
         <div style="margin-top:28px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
             <span class="mono" style="font-size:11.5px; color:var(--ink-muted); text-transform:uppercase;">OFFICIAL OCR LEVEL DESCRIPTORS &amp; ASSESSMENT OBJECTIVES</span>
-            <span class="pill green" id="levelAwardedPill">${Math.min(+q.marks || 0, ans.score != null ? ans.score : 0)} / ${q.marks} marks</span>
+            <span class="pill green" id="levelAwardedPill" aria-live="polite">${Math.min(+q.marks || 0, ans.score != null ? ans.score : 0)} / ${q.marks} marks</span>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">
             ${levels.map((lvl) => {
               const isSelected = ans.selectedLevel === lvl.level;
               return `
-                <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}">
+                <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}" role="radio" aria-checked="${isSelected}" tabindex="0" aria-label="Level ${lvl.level}: ${esc(lvl.title)}">
                   <div class="level-card-top">
                     <strong style="font-size:15px;">${esc(lvl.title)}</strong>
                     <span class="format-badge">${lvl.range[0]}-${lvl.range[1]} Marks</span>
@@ -145,8 +145,8 @@ export function renderQuestionSpecifics(q) {
               ${q.indicativeContent.map((point, pIdx) => {
                 const isTicked = (ans.tickedIndicative || []).includes(pIdx);
                 return `
-                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}">
-                    <span class="mono" style="color:var(--accent); font-weight:700;">${isTicked ? '☑' : '☐'}</span>
+                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}" role="checkbox" aria-checked="${isTicked}" tabindex="0" aria-label="Indicative content point ${pIdx + 1}">
+                    <span class="mono" style="color:var(--accent); font-weight:700;" aria-hidden="true">${isTicked ? '☑' : '☐'}</span>
                     <div style="font-size:13.5px;">${formatPrompt(point)}</div>
                   </div>
                 `;
@@ -525,8 +525,8 @@ export function renderQuestionSpecifics(q) {
                   rendered = rendered.split(esc(hl)).join(`<span class="key-phrase">${esc(hl)}</span>`);
                 });
                 return `
-                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-midx="${mIdx}">
-                    <span class="mono" style="color:var(--accent); font-weight:700;">${isTicked ? '☑' : '☐'}</span>
+                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-midx="${mIdx}" role="checkbox" aria-checked="${isTicked}" tabindex="0" aria-label="Mark scheme point ${mIdx + 1}">
+                    <span class="mono" style="color:var(--accent); font-weight:700;" aria-hidden="true">${isTicked ? '☑' : '☐'}</span>
                     <div>[${item.marks}m] ${rendered}</div>
                   </div>
                 `;
@@ -633,6 +633,7 @@ export function wireQuestionInteractions(q) {
       renderQ();
     });
     document.querySelectorAll('[data-midx]').forEach(el => {
+      el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
       el.onclick = () => {
         const mIdx = +el.dataset.midx;
         ans.ticked ||= [];
@@ -667,6 +668,7 @@ export function wireQuestionInteractions(q) {
       renderQ();
     });
     document.querySelectorAll('[data-level-idx]').forEach(el => {
+      el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
       el.onclick = (e) => {
         if (e.target.tagName === 'INPUT') return;
         const lvlNum = +el.dataset.levelIdx;
@@ -687,6 +689,7 @@ export function wireQuestionInteractions(q) {
       };
     }
     document.querySelectorAll('[data-indicative-idx]').forEach(el => {
+      el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
       el.onclick = () => {
         const pIdx = +el.dataset.indicativeIdx;
         ans.tickedIndicative ||= [];
@@ -925,6 +928,7 @@ export function wireQuestionInteractions(q) {
     });
 
     document.querySelectorAll('.ms-item[data-midx]').forEach(el => {
+      el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
       el.onclick = () => {
         const mIdx = +el.dataset.midx;
         ans.ticked ||= [];

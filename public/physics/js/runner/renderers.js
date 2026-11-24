@@ -88,14 +88,14 @@ export function msPanel(q, a, disabled){
     for (const h of hl){ t = t.replace(esc(h), `<span class="key-phrase">${esc(h)}</span>`); }
     const on = !!a.ticks?.[i];
     return `<div class="ms-item ${on ? 'checked' : ''}" data-ms-item="${i}">
-      <input type="checkbox" data-tick="${i}" ${on ? 'checked' : ''} ${disabled ? 'disabled' : ''} style="margin-top:4px; accent-color:var(--green);" />
+      <input type="checkbox" data-tick="${i}" ${on ? 'checked' : ''} ${disabled ? 'disabled' : ''} style="margin-top:4px; accent-color:var(--green);" aria-label="Mark scheme point ${i + 1}: ${esc(m.text)}" />
       <div><strong>[${m.marks ?? 1}]</strong> ${t}</div>
     </div>`;
   }).join('');
   const ticked = (a.ticks || []).filter(Boolean).length;
   return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
       <span class="mono" style="font-size:12px; font-weight:600;">COMPARE WITH OFFICIAL MARK SCHEME</span>
-      <span class="pill green">${Math.min(ticked, q.marks)} / ${q.marks} marks</span>
+      <span class="pill green" aria-live="polite">${Math.min(ticked, q.marks)} / ${q.marks} marks</span>
     </div>${items}`;
 }
 

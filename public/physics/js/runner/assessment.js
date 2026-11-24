@@ -37,7 +37,7 @@ export function startTimer(){
     const lim = S.quiz.timeLimitMinutes;
     if (S.quiz.exam && lim){
       const left = Math.max(0, Math.round(lim * 60 - S.elapsed));
-      mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
+      mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" role="timer" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
     }
     if (S.quiz.timeLimitMinutes && S.elapsed >= S.quiz.timeLimitMinutes * 60){
       finishQuiz(true);
@@ -76,7 +76,7 @@ export function progress(){
     mid.textContent = chromeCount();
     if (S.runMode === 'quiz' && S.quiz.exam && S.quiz.timeLimitMinutes){
       const left = Math.max(0, Math.round(S.quiz.timeLimitMinutes * 60 - S.elapsed));
-      mid.innerHTML = `${esc(chromeCount())} · <span class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
+      mid.innerHTML = `${esc(chromeCount())} · <span role="timer" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
     }
   }
   const bar = $('#qBar');
@@ -95,6 +95,8 @@ export function progress(){
       foot.textContent = `Answered ${n} of ${qs.length} so far${extra}`;
     }
   }
+  const a11y = $('#a11yStatus');
+  if (a11y) a11y.textContent = `Question ${S.idx + 1} of ${qs.length}`;
   const next = $('#nextQ'), fin = $('#finishQ');
   if (next && fin){
     if (S.runMode === 'explore'){
@@ -155,7 +157,7 @@ export function renderQ(){
     ${depHtml(q)}
     ${body}
     <div class="sheet-footer">
-      <span id="qAnswered"></span>
+      <span id="qAnswered" aria-live="polite"></span>
       <div style="display:flex; gap:8px;">
         <button class="btn" id="prevQ">← Back</button>
         <button class="btn btn-primary" id="nextQ">Continue →</button>
