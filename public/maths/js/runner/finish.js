@@ -107,7 +107,7 @@ export async function finishQuiz(auto = false) {
     renderQ();
   };
   $('#backResBtn').onclick = () => {
-    S.room = 'past';
+    S.room = S.returnRoom || 'past';
     renderRoom();
   };
 }

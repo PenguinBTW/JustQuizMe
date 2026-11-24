@@ -2,7 +2,7 @@
 import { S } from './state.js';
 import { esc, normT } from './utils.js';
 import { topicAccuracy, pickWeakest } from '../../shared/js/weakestTopics.js';
-import { OCR_MATHS_TOPIC_SPECS } from './state.js';
+import { OCR_MATHS_TOPIC_SPECS, MIXED_UUID } from './state.js';
 import { startTopicQuiz } from './runner/starters.js';
 
 function quizTopicMap() {
@@ -19,7 +19,10 @@ function quizTopicMap() {
 // lookup misses them; their title is "<topic> · N-mark quiz", so recover the
 // topic from the leading segment when it names a known topic.
 function titleTopicHint(entry) {
-  const head = String(entry && entry.quizTitle || '').split(' · ')[0].trim();
+  // Only generated runs share MIXED_UUID — a file quiz has its own uuid, and
+  // guessing a topic from its title would misattribute whole-file scores.
+  if (!entry || entry.quizUuid !== MIXED_UUID) return null;
+  const head = String(entry.quizTitle || '').split(' · ')[0].trim();
   return head && OCR_MATHS_TOPIC_SPECS.some(s => normT(s.topic) === normT(head)) ? [head] : null;
 }
 
