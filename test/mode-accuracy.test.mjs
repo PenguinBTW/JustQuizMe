@@ -30,9 +30,9 @@ test('bestPerMode keeps the best fraction per mode', () => {
 });
 
 test('bestPerMode prefers the larger denominator on equal fractions', () => {
-  // scores.json is newest-first (addScore unshifts); a newer 4/8 ties an
-  // older 3/6 — the 8-mark attempt is the better display.
-  const scores = [s('q', 4, 8), s('q', 3, 6)];
+  // scores.json is newest-first (addScore unshifts); a newer 3/6 ties an
+  // older 4/8 — the 8-mark attempt is the better display and must replace it.
+  const scores = [s('q', 3, 6), s('q', 4, 8)];
   assert.deepEqual(bestPerMode(scores, 'q'), { quiz: { score: 4, total: 8 } });
 });
 
