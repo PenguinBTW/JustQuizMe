@@ -49,10 +49,13 @@ test('trimText strips html/latex/code and truncates', () => {
   assert.equal(trimText('Compute $x^2$ now'), 'Compute (math) now');
   assert.equal(trimText('Show that \\(x^2 > 0\\) holds'), 'Show that (math) holds');
   assert.equal(trimText('a < b and c > d'), 'a < b and c > d');
-  // `\(` inside a code span is not a math delimiter — without code-first
-  // stripping the math regex would eat the prose between the two spans
+  // `\(` inside a code span is not a math delimiter — a math-first match
+  // would eat the prose between the two spans
   assert.equal(trimText('See `f\\(a` and `g\\)b` now'), 'See (code) and (code) now');
   assert.equal(trimText('Run `echo hi` then \\(x^2\\) end'), 'Run (code) then (math) end');
+  // and the mirror image: a backtick inside LaTeX must not pair with a later
+  // code fence and eat the prose between them
+  assert.equal(trimText('Note \\(a`b\\) then `code` end'), 'Note (math) then (code) end');
   const long = 'x'.repeat(200);
   assert.equal(trimText(long).length, 140);
   assert.ok(trimText(long).endsWith('…'));

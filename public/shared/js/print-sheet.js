@@ -8,10 +8,11 @@ const MAX_TEXT = 140;
  * noise, collapse whitespace, cap at MAX_TEXT with an ellipsis. */
 export function trimText(s, max = MAX_TEXT) {
   const flat = String(s ?? '')
-    // code spans first: a `\(` inside one is code, not a math delimiter —
-    // matching math first would eat the prose between two code spans
-    .replace(/`{1,3}[^`]*`{1,3}/g, '(code)')
-    .replace(/\$\$?[^$]*\$\$?|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g, '(math)')
+    // One left-to-right pass over code spans and math delimiters: whichever
+    // starts first wins, so a `\(` inside code or a backtick inside LaTeX
+    // can't pair across the boundary and eat the prose between them
+    .replace(/`{1,3}[^`]*`{1,3}|\$\$?[^$]*\$\$?|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g,
+      (m) => (m.startsWith('`') ? '(code)' : '(math)'))
     // only strip things that look like real tags — `a < b and c > d` is text
     .replace(/<\/?[a-zA-Z][^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
