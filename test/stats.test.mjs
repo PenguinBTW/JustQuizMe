@@ -106,3 +106,20 @@ describe('sparklinePoints + recentPcts', () => {
     assert.deepEqual(recentPcts(runs, 2), [80, 60]);
   });
 });
+
+test('groupByTopic per-question attribution: marks split across topics, run counted once per topic', async () => {
+  const { groupByTopic } = await import('../public/shared/js/stats.js');
+  const entries = [{
+    quizUuid: 'q1', score: 8, total: 10,
+    perQuestion: [
+      { topic: 'A', score: 4, marks: 5 },
+      { topic: 'B', score: 4, marks: 5 },
+    ],
+  }];
+  const g = groupByTopic(entries, () => null);
+  const a = g.find(x => x.topic === 'A');
+  const b = g.find(x => x.topic === 'B');
+  if (!a || !b) throw new Error('topics missing');
+  if (a.correct !== 4 || a.attempted !== 5) throw new Error('per-question marks not used: ' + JSON.stringify(a));
+  if (a.runs !== 1 || b.runs !== 1) throw new Error('run should count once per topic');
+});
