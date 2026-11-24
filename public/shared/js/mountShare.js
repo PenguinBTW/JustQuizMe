@@ -5,7 +5,7 @@
 // whatever home screen the portal boots (it is swapped back in on every
 // re-render while the hash stays live).
 
-import { SHARE_HASH, parseResult, shareLink, resultCardHtml, encodeResult } from './shareResult.js';
+import { SHARE_HASH, parseResult, shareLink, resultCardHtml } from './shareResult.js';
 
 // Results-screen action buttons per portal (same anchors as retry-missed).
 const ANCHOR_SELECTOR = '#retryResBtn, #retryBtn, #finishReturnBtn';
@@ -55,28 +55,24 @@ export function registerShareResult({ S, portal, keyOf }) {
   const stage = document.getElementById('stage') || document.body;
 
   // --- receiving side: share hash → read-only card over everything ---
-  // The pre-share stage content is stashed and restored when the hash
-  // leaves the payload (Back / in-page hash nav); a new payload repaints
-  // the card so a second shared link never shows the first result.
-  let savedHtml = null;
+  // Leaving the payload (Back / in-page hash nav) reloads the page:
+  // markup we could restore would have none of the portal's handlers.
+  // A new payload repaints the card so a second shared link never shows
+  // the first result; the repaint key is the raw payload, not the
+  // re-encoded model (a valid foreign payload may carry precision
+  // encodeResult would round away).
   const paintCard = () => {
     const model = parseResult(location.hash, portal);
     const holder = document.getElementById(CARD_ID);
     if (!model) {
-      if (holder) {
-        if (savedHtml !== null) { stage.innerHTML = savedHtml; savedHtml = null; }
-        else holder.remove();
-      }
+      if (holder) location.reload();
       return false;
     }
-    const canonical = encodeResult(model);
-    if (!holder) {
-      if (savedHtml === null) savedHtml = stage.innerHTML;
+    const i = location.hash.indexOf(SHARE_HASH);
+    const raw = i < 0 ? '' : location.hash.slice(i + SHARE_HASH.length).split('&')[0].split('#')[0];
+    if (!holder || holder.dataset.shareP !== raw) {
       stage.innerHTML = resultCardHtml(model);
-      document.getElementById(CARD_ID).dataset.shareP = canonical;
-    } else if (holder.dataset.shareP !== canonical) {
-      stage.innerHTML = resultCardHtml(model);
-      document.getElementById(CARD_ID).dataset.shareP = canonical;
+      document.getElementById(CARD_ID).dataset.shareP = raw;
     }
     return true;
   };
@@ -102,12 +98,16 @@ export function registerShareResult({ S, portal, keyOf }) {
       (retryBtn || anchor).insertAdjacentElement('afterend', btn);
       btn.addEventListener('click', () => {
         const { score: s, marks: m } = totalsForRun(S, keyOf);
-        // the card's "Completed" date is the run's recorded finish, not the
-        // moment the link is copied (a share can happen days later)
+        // the card's "Completed" date is this run's finish — startedAt +
+        // elapsed — not the moment the link is copied. The scores list is
+        // only a fallback (cs never refreshes it after finish).
+        const started = S.startedAt ? Date.parse(S.startedAt) : NaN;
         const rawUuid = String(S.quiz?.uuid || '').replace(/:retry-missed$/, '');
-        const rec = [...(S.scores || [])].reverse().find((e) =>
+        const rec = (S.scores || []).find((e) =>
           e?.quizUuid === S.quiz?.uuid || e?.quizUuid === rawUuid);
-        const finished = rec?.date ? Date.parse(rec.date) : Date.now();
+        const finished = Number.isFinite(started)
+          ? started + (S.elapsed || 0) * 1000
+          : (rec?.date ? Date.parse(rec.date) : Date.now());
         const link = shareLink({
           portal,
           title: S.quiz?.title || 'Assessment',
