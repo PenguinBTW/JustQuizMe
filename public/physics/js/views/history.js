@@ -3,6 +3,7 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
+import { attemptsForQuiz, sparklineSvg } from '../../../../shared/js/sparkline.js';
 
 export function pastEntries(){
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -47,6 +48,7 @@ export function historyEntryHtml(a, retryLabel){
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
+      ${sparklineSvg(attemptsForQuiz(S.scores, a.quizFile))}
       <span class="pill ${pillFor(p)}">${p}% · ${a.score}/${a.total}</span>
       ${canRetry ? `<button class="btn" style="padding:5px 13px; font-size:12px;" data-retry-entry="${esc(a.quizUuid)}|${esc(a.quizFile)}">${esc(retryLabel)}</button>` : ''}
     </div>
