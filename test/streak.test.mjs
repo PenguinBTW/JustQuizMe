@@ -1,3 +1,7 @@
+// Pin a DST-observing zone so the spring-forward case exercises a real
+// 23-hour local day on every machine (Linux honors runtime TZ changes).
+process.env.TZ = 'America/New_York';
+
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { streakModel, toStreakText } from '../public/shared/js/streak.js';
@@ -46,8 +50,7 @@ test('object entries with date fields are read', () => {
 });
 
 test('consecutive calendar days across a DST shift stay consecutive', () => {
-  // US spring-forward 2026-03-08: local midnights are 23h apart.
-  // Run with TZ=America/New_York to exercise the 23-hour day.
+  // US spring-forward 2026-03-08: local midnights are 23h apart in New_York.
   const days = [D(2026, 3, 6), D(2026, 3, 7), D(2026, 3, 8), D(2026, 3, 9), D(2026, 3, 10)];
   const m = streakModel(days, new Date(2026, 2, 10, 15, 0));
   assert.equal(m.best, 5);
