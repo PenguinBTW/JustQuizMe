@@ -23,7 +23,11 @@ export function topicsFor(score, uuidIndex = {}) {
     const t = cleanTopics(score.topics);
     if (t.length) return t;
   }
-  const idx = score ? uuidIndex[score.quizUuid] : undefined;
+  // quizUuid comes from user-writable scores.json — an object key lookup on a
+  // non-primitive can throw (hostile toString), killing the whole Stats view.
+  const uuid = score && (typeof score.quizUuid === 'string' || typeof score.quizUuid === 'number')
+    ? score.quizUuid : undefined;
+  const idx = uuid !== undefined ? uuidIndex[uuid] : undefined;
   if (Array.isArray(idx) && idx.length) {
     const t = cleanTopics(idx);
     if (t.length) return t;

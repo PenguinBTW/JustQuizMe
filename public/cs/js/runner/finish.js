@@ -43,10 +43,6 @@ export async function finishQuiz(auto) {
         evaluateTruthTable(q, ans);
       } else if (q.type === 'calculation') {
         evaluateCalculation(q, ans);
-      } else if (q.type === 'multiple-choice') {
-        // exam MCQs stay unlocked and unscored during the paper — mark them now
-        ans.score = ans.selected != null && ans.selected === q.correctIndex ? (+q.marks || 0) : 0;
-        ans.locked = true;
       }
     });
 
@@ -76,6 +72,18 @@ export async function finishQuiz(auto) {
       }
     }
   }
+
+  // Score any MCQ selection that has no recorded score yet — exam papers score here by
+  // design, and resumed exams re-enter in quiz mode so their selections must not be lost.
+  // Already-scored answers (quiz mode locks+scores at click time) are untouched.
+  (S.quiz?.questions || []).forEach(q => {
+    if (q.type !== 'multiple-choice') return;
+    const ans = S.answers[ak(q)] || {};
+    if (ans.score == null && ans.selected != null) {
+      ans.score = ans.selected === q.correctIndex ? (+q.marks || 0) : 0;
+    }
+    if (ans.selected != null) ans.locked = true;
+  });
 
   // Clear save file
   try { await api('/api/save', { method: 'DELETE' }); } catch {}
@@ -129,7 +137,7 @@ export async function renderSummaryReport() {
     minutes: Math.floor(S.elapsed / 60),
     seconds: S.elapsed,
     exam: S.runMode === 'exam',
-    topics: [...new Set((S.quiz.questions || []).map(q => q._topic).filter(Boolean))],
+    topics: [...new Set((S.quiz.questions || []).map(q => q.topic || q._topic).filter(Boolean))],
     breakdown
   };
   try {
