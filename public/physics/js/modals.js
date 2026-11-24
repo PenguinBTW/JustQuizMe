@@ -8,8 +8,8 @@ let modalFocusBack = null;
 
 function focusInto(id, closeId){
   const ae = document.activeElement;
-  if (ae?.closest?.('.modal-backdrop')) return;
-  if (ae && ae !== document.body) modalFocusBack = ae;
+  if (ae?.closest?.('.modal-backdrop.open')) return;
+  if (ae && ae !== document.body && !ae.closest?.('.modal-backdrop')) modalFocusBack = ae;
   $(closeId)?.focus();
 }
 
@@ -41,7 +41,7 @@ export function openSynthModal(){
   updateSynthModalMarks(S.mixed.m);
   syncPopupToggleAllButton();
   box.querySelectorAll('[data-synth-sub]').forEach(ch => {
-    ch.onkeydown = (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); ch.click(); } };
+    ch.onkeydown = (e) => { if (!e.repeat && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); ch.click(); } };
     ch.onclick = () => {
       ch.classList.toggle('checked');
       ch.setAttribute('aria-checked', ch.classList.contains('checked'));

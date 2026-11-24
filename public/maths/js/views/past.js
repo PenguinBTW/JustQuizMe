@@ -132,7 +132,7 @@ export function renderPast() {
   $('#synthContinueBtn').onclick = () => { if (S.mixed.topics.size) openSynthModal(); };
 
   document.querySelectorAll('[data-acc-toggle]').forEach(el => {
-    el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
+    el.onkeydown = (ev) => { if (!ev.repeat && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); el.click(); } };
     el.onclick = () => {
       const t = (S._topicData || [])[+el.dataset.accToggle];
       if (!t) return;

@@ -24,7 +24,9 @@ export function initTheme() {
 // Global Keybindings
 document.addEventListener('keydown', e => {
   const ae = document.activeElement;
-  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(ae?.tagName) || ae?.isContentEditable) return;
+  // Skip while typing — but let arrows still navigate when a mark-scheme
+  // checkbox or radio is focused (they don't consume arrow keys).
+  if (ae?.isContentEditable || ae?.matches?.('textarea, select, input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="hidden"])')) return;
   if (e.key === 'Escape') {
     closeSynthModal();
     closeTopicModal();

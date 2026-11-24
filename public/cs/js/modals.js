@@ -8,13 +8,14 @@ import { beginRun } from './runner/assessment.js';
 let modalFocusBack = null;
 
 function focusInto(closeId) {
-  // Re-render calls (chip toggles) re-enter openSynthModal while focus is
-  // already inside the dialog — don't steal it back to the close button.
   const ae = document.activeElement;
-  if (ae?.closest?.('.modal-backdrop')) return;
-  // After a chip re-render the focused element was removed and activeElement
-  // fell back to <body> — keep the original trigger as the return target.
-  if (ae && ae !== document.body) modalFocusBack = ae;
+  // Re-render calls (chip toggles) re-enter while focus is inside the OPEN
+  // dialog — don't steal it back to the close button.
+  if (ae?.closest?.('.modal-backdrop.open')) return;
+  // Record the outside trigger as the return target. Never record <body>
+  // (a removed chip falls back to it) or a control inside a closed dialog
+  // (e.g. after Start Quiz hides the modal without moving focus).
+  if (ae && ae !== document.body && !ae.closest?.('.modal-backdrop')) modalFocusBack = ae;
   $(closeId)?.focus();
 }
 
@@ -81,7 +82,7 @@ export function openSynthModal() {
   };
 
   document.querySelectorAll('[data-synth-sub]').forEach(el => {
-    el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
+    el.onkeydown = (ev) => { if (!ev.repeat && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); el.click(); } };
     el.onclick = () => {
       const k = el.dataset.synthSub;
       if (S.mixed.subs.has(k)) S.mixed.subs.delete(k);

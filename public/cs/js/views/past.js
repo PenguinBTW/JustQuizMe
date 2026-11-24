@@ -201,7 +201,7 @@ export function wirePastEvents() {
   $('#synthContinueBtn')?.addEventListener('click', () => openSynthModal());
 
   document.querySelectorAll('[data-acc-toggle]').forEach(el => {
-    el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
+    el.onkeydown = (ev) => { if (!ev.repeat && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); el.click(); } };
     el.onclick = () => {
       const ti = +el.dataset.accToggle;
       const t = S._topicData[ti];

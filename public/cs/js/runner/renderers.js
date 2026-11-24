@@ -633,7 +633,7 @@ export function wireQuestionInteractions(q) {
       renderQ();
     });
     document.querySelectorAll('[data-midx]').forEach(el => {
-      el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
+      el.onkeydown = (ev) => { if (!ev.repeat && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); el.click(); } };
       el.onclick = () => {
         const mIdx = +el.dataset.midx;
         ans.ticked ||= [];
@@ -669,7 +669,7 @@ export function wireQuestionInteractions(q) {
       renderQ();
     });
     document.querySelectorAll('[data-level-idx]').forEach(el => {
-      el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
+      el.onkeydown = (ev) => { if (!ev.repeat && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); el.click(); } };
       el.onclick = (e) => {
         if (e.target.tagName === 'INPUT') return;
         const lvlNum = +el.dataset.levelIdx;
@@ -691,7 +691,7 @@ export function wireQuestionInteractions(q) {
       };
     }
     document.querySelectorAll('[data-indicative-idx]').forEach(el => {
-      el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
+      el.onkeydown = (ev) => { if (!ev.repeat && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); el.click(); } };
       el.onclick = () => {
         const pIdx = +el.dataset.indicativeIdx;
         ans.tickedIndicative ||= [];
@@ -931,7 +931,7 @@ export function wireQuestionInteractions(q) {
     });
 
     document.querySelectorAll('.ms-item[data-midx]').forEach(el => {
-      el.onkeydown = (ev) => { if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); el.click(); } };
+      el.onkeydown = (ev) => { if (!ev.repeat && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); el.click(); } };
       el.onclick = () => {
         const mIdx = +el.dataset.midx;
         ans.ticked ||= [];

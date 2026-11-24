@@ -4,6 +4,7 @@ import { $ } from './utils.js';
 import { loadHome } from './api.js';
 import { renderRoom } from './navigation.js';
 import { startMixedRun } from './runner/starters.js';
+import { restoreModalFocus } from './modals.js';
 
 export function initTheme() {
   const t = localStorage.getItem('cs-quizme-theme') || 'dark';
@@ -21,10 +22,15 @@ export function initTheme() {
 // Global hotkeys
 document.addEventListener('keydown', (e) => {
   const ae = document.activeElement;
-  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(ae?.tagName) || ae?.isContentEditable) return;
+  // Skip while typing — but let arrows still navigate when a mark-scheme
+  // checkbox or radio is focused (they don't consume arrow keys).
+  if (ae?.isContentEditable || ae?.matches?.('textarea, select, input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="hidden"])')) return;
   if (e.key === 'Escape') {
-    $('#synthModal')?.classList.remove('open');
-    $('#topicModal')?.classList.remove('open');
+    if (document.querySelector('.modal-backdrop.open')) {
+      $('#synthModal')?.classList.remove('open');
+      $('#topicModal')?.classList.remove('open');
+      restoreModalFocus();
+    }
   }
   if (e.key.toLowerCase() === 't') $('#themeBtn')?.click();
   if (S.quiz && !document.querySelector('.modal-backdrop.open')) {
