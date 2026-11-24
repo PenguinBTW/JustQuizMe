@@ -5,6 +5,7 @@ import { loadHome } from './api.js';
 import { renderRoom } from './navigation.js';
 import { wireModals, closeSynthModal, closeTopicModal } from './modals.js';
 import { startMixedSel } from './runner/starters.js';
+import { initStatsTab } from './stats.js';
 
 export function initTheme() {
   const t = localStorage.getItem('mjq-theme') || 'dark';
@@ -34,6 +35,7 @@ document.addEventListener('keydown', e => {
 
 initTheme();
 wireModals();
+initStatsTab();
 const brand = $('#brandHome');
 if (brand) {
   brand.onclick = () => {
