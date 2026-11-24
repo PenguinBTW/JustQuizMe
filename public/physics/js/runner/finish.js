@@ -23,6 +23,18 @@ export function quizScore(){
 export async function finishQuiz(auto = false){
   if (auto === true) S.timeExpired = true;
   clearInterval(S.timerId);
+  // capture whatever is mid-typing in the visible calculation input — a manual
+  // finish must grade the same answer expiry would have
+  try {
+    const cur = (S.quiz.questions || [])[S.idx];
+    const inp = $('#calcInput');
+    if (cur && cur.type === 'calculation' && inp) {
+      const k = ak(cur);
+      S.answers[k] = { ...(S.answers[k] || {}), finalValue: inp.value };
+    }
+  } catch { /* capture best-effort */ }
+  // a suspended-then-woken tab must not record time past the deadline
+  if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   for (const q of S.quiz.questions){
     const k = ak(q), a = S.answers[k];
     if (q.type === 'written' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, score: Math.min(n, q.marks) }; }
