@@ -23,7 +23,7 @@ export function openSynthModal(){
       <div class="modal-topic-group-title"><span>${String(AQA_TOPICS.indexOf(t.topic) + 1).padStart(2, '0')} ${esc(t.topic)}</span><span class="mono" style="font-size:11.5px; color:var(--ink-muted);">(${t.qcount} Qs)</span></div>
       <div class="subtopic-pills-wrap">
         ${t.subs.map((g, gi) => `
-        <span class="subtopic-chip checked" data-synth-sub="${esc(t.topic)}|${gi}"><span class="custom-check">✓</span> ${esc(g.name)} <span class="mono" style="font-size:11px; color:var(--ink-muted);">(${g.questions.length})</span></span>`).join('')}
+        <span class="subtopic-chip ${S.mixed.subs.has(`${t.topic}|${gi}`) ? 'checked' : ''}" data-synth-sub="${esc(t.topic)}|${gi}"><span class="custom-check">✓</span> ${esc(g.name)} <span class="mono" style="font-size:11px; color:var(--ink-muted);">(${g.questions.length})</span></span>`).join('')}
       </div>
     </div>`).join('');
   const poolMarks = mixedPool().reduce((s, q) => s + (+q.marks || 0), 0);

@@ -24,6 +24,7 @@ export function startMixedRun(exam) {
       timeLimitMinutes: exam && paceMinutesPerMark(S.mixed.pace) != null
         ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace)))
         : null,
+      untimed: paceMinutesPerMark(S.mixed.pace) == null,
       exam: !!exam,
       questions: set
     },
