@@ -52,6 +52,7 @@ export async function saveProgress(){
   const body = {
     quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, category: S.quizMeta.category,
     questionIndex: S.idx, answers: S.answers, elapsedSeconds: S.elapsed, startedAt: S.startedAt,
+    timeLimitMinutes: S.quiz.timeLimitMinutes || null,
     kind: S.quizMeta.virtual ? 'virtual' : 'file', title: S.quiz.title,
     order: S.quiz.questions.map(ak),
     questions: S.quizMeta.virtual ? S.quiz.questions : null,

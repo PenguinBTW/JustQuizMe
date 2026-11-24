@@ -5,10 +5,22 @@ import { topicsFor } from './stats.js';
 
 // Topic resolution: entries written at finish time carry topics[]; older or
 // ordinary-file entries fall back to topicsFor's chain (quizTitle prefix etc.).
-export function resolveScoreTopics(s) {
+export function resolveScoreTopics(s, uuidIndex = {}) {
   const direct = Array.isArray(s?.topics) ? s.topics.filter(t => typeof t === 'string') : [];
   if (direct.length) return direct;
-  try { return topicsFor(s); } catch { return []; }
+  try { return topicsFor(s, uuidIndex); } catch { return []; }
+}
+
+// Build the uuid→topics lookup from the portal's quiz metadata so topicsFor
+// can recover canonical topics for older file-backed entries.
+export function buildUuidIndex(quizzes) {
+  const idx = {};
+  for (const cat of Object.values(quizzes || {})) {
+    for (const q of cat || []) {
+      if (q?.uuid && Array.isArray(q.topics) && q.topics.length) idx[q.uuid] = q.topics;
+    }
+  }
+  return idx;
 }
 
 // Small pill: red pct⚠ when weak, green pct% when fine, grey 'new' when unpracticed.

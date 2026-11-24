@@ -7,7 +7,7 @@ import { openExploreList } from './explore.js';
 import { startSubQuiz, beginFileQuiz } from '../runner/starters.js';
 import { exploreFullFile } from './practice.js';
 import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
-import { masteryBadge, resolveScoreTopics } from '../../../shared/js/masteryUi.js';
+import { masteryBadge, resolveScoreTopics, buildUuidIndex } from '../../../shared/js/masteryUi.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -19,7 +19,7 @@ export function synthPoolQ() {
 
 export function renderPast() {
   const data = S._topicData || [];
-  const masteryRows = computeMastery(S.scores, resolveScoreTopics);
+  const masteryRows = computeMastery(S.scores, (s) => resolveScoreTopics(s, buildUuidIndex(S.quizzes)));
   const masteryByTopic = new Map(masteryRows.map(r => [r.topic, r]));
   const cells = data.map((t, ti) => {
     const sel = S.mixed.topics.has(t.topic);
@@ -137,7 +137,7 @@ export function renderPast() {
   $('#synthContinueBtn').onclick = () => { if (S.mixed.topics.size) openSynthModal(); };
 
   $('#reviewWeakestBtn').onclick = () => {
-    const rows = computeMastery(S.scores, resolveScoreTopics);
+    const rows = computeMastery(S.scores, (s) => resolveScoreTopics(s, buildUuidIndex(S.quizzes)));
     const picks = weakestTopics(rows, (S._topicData || []).filter(t => t.qcount > 0).map(t => t.topic), 3);
     S.mixed.topics.clear();
     S.mixed.subs.clear();

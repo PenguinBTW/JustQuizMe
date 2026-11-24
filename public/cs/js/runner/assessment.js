@@ -167,6 +167,7 @@ export async function saveProgress() {
     answers: S.answers,
     elapsedSeconds: S.elapsed,
     startedAt: S.startedAt,
+    timeLimitMinutes: S.quiz.timeLimitMinutes || null,
     title: S.quiz.title,
     exam: S.runMode === 'exam',
     questions: S.quiz.questions
