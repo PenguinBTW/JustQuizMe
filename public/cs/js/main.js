@@ -4,6 +4,7 @@ import { $ } from './utils.js';
 import { loadHome } from './api.js';
 import { renderRoom } from './navigation.js';
 import { startMixedRun } from './runner/starters.js';
+import './practiceMount.js';
 
 export function initTheme() {
   const t = localStorage.getItem('cs-quizme-theme') || 'dark';

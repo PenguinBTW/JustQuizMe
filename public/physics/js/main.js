@@ -5,6 +5,7 @@ import { loadHome } from './api.js';
 import { renderRoom } from './navigation.js';
 import { wireModals, closeSynthModal, closeTopicModal } from './modals.js';
 import { startMixedSel } from './runner/starters.js';
+import './practiceMount.js';
 
 // ---------- theme (dark default) ----------
 export function initTheme(){
