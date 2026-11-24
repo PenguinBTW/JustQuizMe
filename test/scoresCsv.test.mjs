@@ -79,6 +79,19 @@ test('uuidIndex topics fill the topic cell when entry has none', () => {
   assert.equal(csv.trim().split('\r\n')[1].split(',')[3], 'Graphs');
 });
 
+test('formula-like strings are neutralized for spreadsheet apps', () => {
+  const csv = buildScoresCsv(
+    [{ date: '2026-01-01T00:00:00.000Z', quizTitle: '=cmd|"/c calc"!A0', topics: ['-2+3'], score: 1, total: 2 }],
+    { portal: 'cs' }
+  );
+  const row = csv.trim().split('\r\n')[1];
+  assert.ok(row.includes(`"'=cmd|""/c calc""!A0"`));
+  assert.ok(row.includes("'-2+3"));
+  // numeric negatives are not mangled
+  const neg = buildScoresCsv([{ quizTitle: 'x', score: -1, total: 4 }], { portal: 'cs' });
+  assert.equal(neg.trim().split('\r\n')[1].split(',')[4], '-1');
+});
+
 test('malformed rows are skipped, not fatal', () => {
   const csv = buildScoresCsv([null, 'junk', { score: 5, total: 5, quizTitle: 'ok' }], { portal: 'cs' });
   const rows = csv.trim().split('\r\n');

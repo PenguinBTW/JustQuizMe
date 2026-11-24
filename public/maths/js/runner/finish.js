@@ -35,6 +35,7 @@ export async function finishQuiz(auto = false) {
     minutes,
     seconds,
     exam: !!S.quiz.exam,
+    topics: [...new Set((S.quiz.questions || []).map(q => q._topic).filter(Boolean))],
     date: new Date().toISOString()
   };
 

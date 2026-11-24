@@ -17,9 +17,12 @@ export const CSV_HEADERS = [
 ];
 
 // One field: quote only when the value can break the row layout.
+// Strings starting with =, +, - or @ (after whitespace) get a leading apostrophe
+// so spreadsheet apps can't evaluate attacker-stored titles as formulas.
 export function csvField(value) {
   const s = value === null || value === undefined ? '' : String(value);
-  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  const safe = typeof value === 'string' && /^\s*[=+\-@]/.test(value) ? `'${s}` : s;
+  return /[",\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 }
 
 // ISO-normalize a stored date; scores.json is user-writable via the API, so

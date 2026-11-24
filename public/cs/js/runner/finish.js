@@ -129,9 +129,12 @@ export async function renderSummaryReport() {
         minutes: Math.floor(S.elapsed / 60),
         seconds: S.elapsed,
         exam: S.runMode === 'exam',
+        topics: [...new Set((S.quiz.questions || []).map(q => q._topic).filter(Boolean))],
         breakdown
       })
     });
+    // keep the in-memory list in sync so Stats/CSV see the run that just saved
+    S.scores = await api('/api/scores').catch(() => S.scores);
   } catch {}
 
   $('#stage').innerHTML = `
