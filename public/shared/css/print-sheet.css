@@ -1,0 +1,21 @@
+/* Print-friendly results sheet: everything except #printSheet is hidden on
+   paper; the sheet itself is monochrome-safe with A4-friendly margins. */
+
+#printSheet { display: none; }
+
+@media print {
+  @page { margin: 14mm 12mm; }
+  body > *:not(#printSheet) { display: none !important; }
+  #printSheet { display: block; color: #000; background: #fff; }
+  .print-sheet h1 { font-size: 20px; margin: 0 0 2mm; }
+  .print-sheet .pr-sub { color: #333; font-size: 11px; margin: 0 0 4mm; }
+  .print-sheet .pr-summary { font-size: 13px; margin: 0 0 5mm; }
+  .pr-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .pr-table th, .pr-table td { border: 1px solid #444; padding: 1.6mm 2.2mm; text-align: left; vertical-align: top; }
+  .pr-table th { background: #eee; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pr-table .pr-ref { white-space: nowrap; width: 8%; }
+  .pr-table .pr-marks { white-space: nowrap; width: 10%; text-align: right; }
+  .pr-table .pr-v { white-space: nowrap; width: 12%; }
+  .pr-v-partial { color: #333; }
+  .pr-foot { margin-top: 5mm; font-size: 10px; color: #333; border-top: 1px solid #444; padding-top: 2mm; }
+}

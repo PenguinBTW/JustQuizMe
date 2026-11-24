@@ -3,6 +3,7 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, fmtDur, ak } from '../utils.js';
 import { api, loadHome } from '../api.js';
 import { evaluateTraceTable, evaluateTruthTable, evaluateCalculation } from './evaluators.js';
+import { printResults } from '../print-results.js';
 
 export async function finishQuiz(auto) {
   clearInterval(S.timerId);
@@ -164,9 +165,13 @@ export async function renderSummaryReport() {
         </div>
       </div>
 
-      <button class="btn btn-jade" id="finishReturnBtn" style="padding:10px 28px; font-size:14px;">Return to Question Banks</button>
+      <div style="display:flex; gap:12px; justify-content:center;">
+        <button class="btn" id="finishPrintBtn" style="padding:10px 28px; font-size:14px;">Print results</button>
+        <button class="btn btn-jade" id="finishReturnBtn" style="padding:10px 28px; font-size:14px;">Return to Question Banks</button>
+      </div>
     </div>
   `;
 
+  $('#finishPrintBtn')?.addEventListener('click', () => printResults());
   $('#finishReturnBtn')?.addEventListener('click', () => loadHome());
 }
