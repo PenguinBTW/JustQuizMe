@@ -79,7 +79,7 @@ function statsHtml() {
         <div class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Streak</div>
         <div class="serif" style="font-size:34px;">${streak}d</div>
       </div>
-      ${weak ? `<div style="margin-left:auto;min-width:0;"><span class="pill accent stat-weak" title="Revise: ${esc(weak.topic)} — ${weak.pct}%">Revise: ${esc(weak.topic)} — ${weak.pct}%</span></div>` : ''}
+      ${weak ? `<div class="pill accent" style="margin-left:auto;min-width:0;" title="Revise: ${esc(weak.topic)} — ${weak.pct}%"><span class="stat-weak">Revise: ${esc(weak.topic)}</span> — ${weak.pct}%</div>` : ''}
     </div>
     ${
       pts
