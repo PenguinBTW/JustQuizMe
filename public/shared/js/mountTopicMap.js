@@ -5,7 +5,6 @@ import { topicMapModel } from './topicMap.js';
 
 const PORTAL = (location.pathname.match(/^\/(maths|physics|cs)\//) || [])[1];
 const STALE_MS = 30000;
-const MAX_ROWS = 6;
 let model = null;
 let lastFetch = 0;
 let pending = null;
@@ -21,9 +20,9 @@ style.textContent = `
     font:500 12px/1.4 inherit; color:var(--ink-secondary,#ccd); }
   .topic-map .tm-name { flex:0 0 42%; overflow:hidden; text-overflow:ellipsis;
     white-space:nowrap; }
-  .topic-map .tm-bar { flex:1; height:5px; border-radius:3px;
+  .topic-map .tm-bar { display:block; flex:1; height:5px; border-radius:3px;
     background:rgba(255,255,255,0.08); overflow:hidden; }
-  .topic-map .tm-fill { height:100%; border-radius:3px; }
+  .topic-map .tm-fill { display:block; height:100%; border-radius:3px; }
   .topic-map .tm-n { flex:0 0 auto; font:600 10px/1 ui-monospace,monospace;
     color:var(--ink-muted,#9aa); }
 `;
@@ -44,8 +43,11 @@ async function load() {
         quizzes = await q.json();
       }
     } catch {}
+    // listQuizzes returns {category: [quizzes]} — flatten, but tolerate a bare
+    // array too so a shape change can't wedge the (cached) load promise
+    const all = Array.isArray(quizzes) ? quizzes : Object.values(quizzes || {}).flat();
     const uuidIndex = {};
-    for (const qz of quizzes || []) {
+    for (const qz of all) {
       if (qz && qz.uuid && Array.isArray(qz.topics)) uuidIndex[qz.uuid] = qz.topics;
     }
     model = topicMapModel(scores, uuidIndex);
@@ -66,7 +68,7 @@ function render(block, rows) {
   title.className = 'tm-title';
   title.textContent = 'Weakest topics';
   block.appendChild(title);
-  for (const r of rows.slice(0, MAX_ROWS)) {
+  for (const r of rows) {
     const row = document.createElement('div');
     row.className = 'tm-row';
     const name = document.createElement('span');
@@ -95,7 +97,7 @@ function sweep() {
   if (!stage) return;
   // only on the home/picker view — when run-start cards are on stage
   const onHome = stage.querySelector(
-    '[data-practice-start], [data-quiz-file], [data-exam-file], [data-practice-explore], .btn-practice-start, [data-idx], .subtopic-card'
+    '[data-practice-start], [data-quiz-file], [data-exam-file], [data-practice-explore], .btn-practice-start, [data-idx], .subtopic-card, [data-synth-topic], .synthesizer-sheet'
   );
   let block = stage.querySelector('.topic-map');
   if (!onHome || !model.length) {
@@ -112,3 +114,9 @@ function sweep() {
 
 load().then(sweep);
 new MutationObserver(sweep).observe(document.body, { childList: true, subtree: true });
+// scores written by a just-finished run should reach the block even when no
+// DOM change follows — sweep is cheap, so poll on the staleness interval
+setInterval(() => {
+  if (model && Date.now() - lastFetch > STALE_MS) { model = null; }
+  sweep();
+}, STALE_MS);
