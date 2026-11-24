@@ -16,8 +16,9 @@ function cleanTopics(list) {
 
 // Which topics an attempt covered: entry.topics[] wins, then the uuidIndex
 // (uuid -> topics[] from the quiz list), then the saved quizTitle — generated
-// topic quizzes are titled "<topic> · N-mark quiz" — then 'Mixed practice'.
-export function topicsFor(attempt, uuidIndex = {}) {
+// topic quizzes are titled "<topic> · N-mark quiz" and the title is trusted
+// only when `known` confirms it is a real topic — then 'Mixed practice'.
+export function topicsFor(attempt, uuidIndex = {}, known = null) {
   if (Array.isArray(attempt?.topics) && attempt.topics.length) {
     const t = cleanTopics(attempt.topics);
     if (t.length) return t;
@@ -28,18 +29,20 @@ export function topicsFor(attempt, uuidIndex = {}) {
     if (t.length) return t;
   }
   const titled = String(attempt?.quizTitle || '').split('·')[0].trim();
-  if (titled && !/^mixed/i.test(titled)) return [titled];
+  if (titled && !/^mixed/i.test(titled)) {
+    if (!known || known.has(titled)) return [titled];
+  }
   return ['Mixed practice'];
 }
 
 // Per-topic { correct, total, pct } buckets. A run covering several topics is
 // attributed fully to each one (marks were spread across them).
-export function topicAccuracy(attempts, uuidIndex = {}) {
+export function topicAccuracy(attempts, uuidIndex = {}, known = null) {
   const groups = new Map();
   for (const a of attempts || []) {
     const score = Number(a?.score) || 0;
     const total = Number(a?.total) || 0;
-    for (const topic of topicsFor(a, uuidIndex)) {
+    for (const topic of topicsFor(a, uuidIndex, known)) {
       const g = groups.get(topic) || { topic, correct: 0, total: 0, runs: 0 };
       g.correct += score;
       g.total += total;

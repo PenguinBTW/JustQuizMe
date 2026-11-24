@@ -52,8 +52,13 @@ function renderCard(subject, quizzes, scores, order) {
       if (q?.uuid && Array.isArray(q.topics)) uuidIndex[q.uuid] = q.topics;
     }
   }
-  const acc = topicAccuracy(scores, uuidIndex);
-  const cells = gridModel(order?.length ? order : taxonomyOrder(quizzes), acc);
+  const known = new Set([...(order || []), ...Object.values(uuidIndex).flat()]);
+  const acc = topicAccuracy(scores, uuidIndex, known);
+  // Portal taxonomy order first; bank topics outside it stay visible (grey)
+  const topics = order?.length
+    ? [...order, ...taxonomyOrder(quizzes).filter(t => !order.includes(t))]
+    : taxonomyOrder(quizzes);
+  const cells = gridModel(topics, acc);
   const card = document.createElement('div');
   card.className = `card ${CARD_CLASS}`;
   card.innerHTML = `

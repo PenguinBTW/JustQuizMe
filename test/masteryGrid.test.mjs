@@ -63,3 +63,9 @@ test('topicsFor recovers topic from generated-quiz titles, keeps true mixed runs
   assert.deepEqual(topicsFor({ quizTitle: 'Mixed Mathematics · 20m (8Q)' }), ['Mixed practice']);
   assert.deepEqual(topicsFor({ quizTitle: '' }), ['Mixed practice']);
 });
+
+test('topicsFor trusts titles only when known; synthesized papers stay mixed', () => {
+  const known = new Set(['Trigonometry', 'Data Structures']);
+  assert.deepEqual(topicsFor({ quizTitle: 'Trigonometry · 12-mark quiz' }, {}, known), ['Trigonometry']);
+  assert.deepEqual(topicsFor({ quizTitle: 'Synthesized Paper' }, {}, known), ['Mixed practice']);
+});
