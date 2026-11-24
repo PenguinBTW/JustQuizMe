@@ -6,6 +6,7 @@ import { openSynthModal, openTopicModal } from '../modals.js';
 import { openExploreList } from './explore.js';
 import { startSubQuiz } from '../runner/starters.js';
 import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
+import { masteryBadge, resolveScoreTopics } from '../../../shared/js/masteryUi.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -13,20 +14,6 @@ export function synthPoolQ() {
     if (S.mixed.topics.has(t.topic)) q += t.qcount;
   }
   return q;
-}
-
-// Minimal topic resolution: score entries carry topics[] written at finish time.
-// (shared/stats.js topicsFor adds quizTitle/uuid fallbacks — adopt it here when that lands.)
-function resolveScoreTopics(s) {
-  return Array.isArray(s?.topics) ? s.topics.filter(t => typeof t === 'string') : [];
-}
-
-function masteryBadge(row) {
-  if (!row) return '<span class="mastery-badge mastery-new" title="No practice history yet">new</span>';
-  const pct = Math.round(row.mastery * 100);
-  const cls = row.weak ? 'mastery-weak' : 'mastery-ok';
-  const label = row.weak ? 'needs review' : 'mastery';
-  return `<span class="mastery-badge ${cls}" title="${label} — ${pct}% over ${row.runs} run${row.runs === 1 ? '' : 's'}${row.daysSince != null ? `, last practiced ${row.daysSince}d ago` : ''}">${pct}%${row.weak ? ' ⚠' : ''}</span>`;
 }
 
 export function renderPast() {

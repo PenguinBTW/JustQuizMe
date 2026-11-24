@@ -6,6 +6,8 @@ import { openSynthModal, openTopicModal } from '../modals.js';
 import { openExploreList } from './explore.js';
 import { startSubQuiz, beginFileQuiz } from '../runner/starters.js';
 import { exploreFullFile } from './practice.js';
+import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
+import { masteryBadge, resolveScoreTopics } from '../../../shared/js/masteryUi.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -17,6 +19,8 @@ export function synthPoolQ() {
 
 export function renderPast() {
   const data = S._topicData || [];
+  const masteryRows = computeMastery(S.scores, resolveScoreTopics);
+  const masteryByTopic = new Map(masteryRows.map(r => [r.topic, r]));
   const cells = data.map((t, ti) => {
     const sel = S.mixed.topics.has(t.topic);
     const subTotal = t.subs.length;
@@ -26,7 +30,7 @@ export function renderPast() {
       <div class="topic-cell ${sel ? 'selected' : ''}" data-synth-topic="${ti}">
         <div class="topic-cell-left">
           <span class="topic-check">✓</span>
-          <span class="topic-cell-title">${String(ti + 1).padStart(2, '0')} ${esc(t.topic)} ${compBadge}</span>
+          <span class="topic-cell-title">${String(ti + 1).padStart(2, '0')} ${esc(t.topic)} ${masteryBadge(masteryByTopic.get(t.topic))} ${compBadge}</span>
         </div>
         <div class="topic-cell-meta">${subSel}/${subTotal} · ${t.qcount}Q</div>
       </div>
@@ -55,6 +59,7 @@ export function renderPast() {
       <div class="topic-grid" id="synthGrid">${cells}</div>
       <div class="synthesizer-footer">
         <button class="btn-ghost mono" style="font-size:12px;" id="toggleMajorBtn">${allSel ? 'Deselect all topics' : 'Select all topics'}</button>
+        <button class="btn-ghost mono" style="font-size:12px;" id="reviewWeakestBtn" title="Select your weakest topics and open the synthesizer">⚡ Review weakest</button>
         <button class="btn btn-primary" id="synthContinueBtn" ${S.mixed.topics.size ? '' : 'disabled'}>Continue →</button>
       </div>
     </div>
@@ -71,7 +76,7 @@ export function renderPast() {
           <div class="accordion-header-row">
             <div class="acc-trigger-left" data-acc-toggle="${ti}">
               <span class="acc-num">${String(ti + 1).padStart(2, '0')}</span>
-              <span class="acc-title">${esc(t.topic)} ${compBadge}</span>
+              <span class="acc-title">${esc(t.topic)} ${masteryBadge(masteryByTopic.get(t.topic))} ${compBadge}</span>
             </div>
             <div class="acc-right">
               <span class="mono" style="font-size:12px; color:var(--ink-muted);">${t.qcount} Qs · ${num(t.mmarks)} marks</span>
@@ -130,6 +135,21 @@ export function renderPast() {
   document.querySelectorAll('[data-synth-topic]').forEach(c => c.onclick = () => toggleSynthTopic(+c.dataset.synthTopic));
   $('#toggleMajorBtn').onclick = toggleAllMajorTopics;
   $('#synthContinueBtn').onclick = () => { if (S.mixed.topics.size) openSynthModal(); };
+
+  $('#reviewWeakestBtn').onclick = () => {
+    const rows = computeMastery(S.scores, resolveScoreTopics);
+    const picks = weakestTopics(rows, (S._topicData || []).filter(t => t.qcount > 0).map(t => t.topic), 3);
+    S.mixed.topics.clear();
+    S.mixed.subs.clear();
+    for (const pick of picks) {
+      const t = (S._topicData || []).find(x => x.topic === pick.topic);
+      if (!t) continue;
+      S.mixed.topics.add(t.topic);
+      t.subs.forEach((g, gi) => S.mixed.subs.add(`${t.topic}|${gi}`));
+    }
+    rerenderKeepScroll();
+    if (S.mixed.topics.size) openSynthModal();
+  };
 
   document.querySelectorAll('[data-acc-toggle]').forEach(el => el.onclick = () => {
     const t = (S._topicData || [])[+el.dataset.accToggle];
