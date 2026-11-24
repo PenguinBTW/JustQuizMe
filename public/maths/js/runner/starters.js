@@ -68,7 +68,7 @@ export function startTopicQuiz(ti, exam) {
       questions: use.set
     },
     meta: { category: 'past-paper', file: 'mixed', virtual: true },
-    retrySpec: { kind: 'topic', topic: c.t.topic, marks, mode, exam: !!exam }
+    retrySpec: { kind: 'topic', topic: c.t.topic, marks, mode, exam: !!exam, pace: S.mixed.pace }
   });
 }
 

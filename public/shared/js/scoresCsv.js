@@ -63,12 +63,12 @@ export function buildScoresCsv(runs, { portal = '', uuidIndex = {} } = {}) {
     const row = [
       csvDate(s.date),
       portal,
-      typeof s.quizTitle === 'string' ? s.quizTitle : '',
+      typeof s.quizTitle === 'string' ? s.quizTitle : (typeof s.title === 'string' ? s.title : ''),
       topicsCell(s, uuidIndex),
       score,
       total,
       pctOf(score, total),
-      s.exam ? 'exam' : 'quiz',
+      s.flashcard ? 'flashcards' : s.exam ? 'exam' : 'quiz',
       num(s.seconds)
     ];
     lines.push(row.map(csvField).join(','));
