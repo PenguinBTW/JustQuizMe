@@ -16,7 +16,8 @@ function readFlags() {
   try {
     const raw = fs.readFileSync(FLAGS_FILE, 'utf8');
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    // valid JSON that isn't a flags array is still corrupt — never clobber it
+    return Array.isArray(parsed) ? parsed : null;
   } catch (err) {
     if (err.code === 'ENOENT') return [];
     return null; // corrupt file — caller decides (500), never silently clobber
