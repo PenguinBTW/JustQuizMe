@@ -138,7 +138,7 @@ export function renderQ() {
       </div>
       ${body}
       <div class="sheet-footer">
-        <span id="qAnswered" class="mono">Answered ${Object.keys(S.answers).filter(k => S.answers[k]?.locked || S.answers[k]?.checked).length} of ${qs.length}</span>
+        <span id="qAnswered" class="mono">Answered ${qs.filter(q => S.answers[ak(q)]?.locked || S.answers[ak(q)]?.checked).length} of ${qs.length}</span>
         <div style="display:flex; gap:8px;">
           <button class="btn" id="prevQ">← Back</button>
           <button class="btn btn-primary" id="nextQ" ${isLast ? 'hidden' : ''}>Continue →</button>
