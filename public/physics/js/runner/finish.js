@@ -4,6 +4,7 @@ import { $, esc, fmtDur, ak } from '../utils.js';
 import { api } from '../api.js';
 import { renderRoom } from '../navigation.js';
 import { retryRun } from './starters.js';
+import { buildExport } from '../../../shared/js/attemptExport.js';
 
 export function quizScore(){
   let score = 0, total = 0, mcq = { got: 0, total: 0 }, w = { got: 0, total: 0 }, c = { got: 0, total: 0 }, s = { got: 0, total: 0 };
@@ -63,10 +64,22 @@ export async function finishQuiz(auto = false){
     </div>
     <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
       <button class="btn" id="backHomeBtn">Back to Library</button>
+      <button class="btn" id="dlJsonBtn">Download JSON</button>
       <button class="btn btn-primary" id="retryBtn">Try Again (Fresh Shuffle)</button>
     </div>
   </div>`;
   $('#backHomeBtn').onclick = () => { S.room = S.returnRoom || 'past'; renderRoom(); };
+  $('#dlJsonBtn').onclick = () => {
+    const { filename, json } = buildExport({
+      portal: 'physics', quiz: S.quiz, quizMeta: S.quizMeta, answers: S.answers,
+      keyOf: ak, mode: S.runMode, startedAt: S.startedAt, finishedAt: new Date().toISOString(), elapsedSeconds: S.elapsed,
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' }));
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
   $('#retryBtn').onclick = () => retryRun();
   window.scrollTo(0, 0);
   if (window.renderMath) window.renderMath();
