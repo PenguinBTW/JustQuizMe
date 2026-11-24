@@ -53,6 +53,14 @@ describe('topicCoverage', () => {
     assert.equal(rows.reduce((s, r) => s + r.attempted, 0), 2);
   });
 
+  it('non-string titles are skipped without throwing', () => {
+    const rows = topicCoverage([
+      { quizUuid: 'virt', quizTitle: { bad: true }, score: 5, total: 10 },
+      { quizUuid: 'virt', quizTitle: 'Waves · 18m (4Q)', score: 7, total: 10 },
+    ], QUIZZES, TOPICS);
+    assert.equal(rows.reduce((s, r) => s + r.attempted, 0), 1);
+  });
+
   it('scores with zero total count as incorrect (pct 0)', () => {
     const rows = topicCoverage([S('q1', 0, 0)], QUIZZES, TOPICS);
     assert.equal(rows.find(r => r.topic === 'Waves').incorrect, 1);

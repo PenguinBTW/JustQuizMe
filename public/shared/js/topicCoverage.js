@@ -37,7 +37,8 @@ export function topicCoverage(scores, quizzes, topics) {
     const m = metaByUuid.get(s.quizUuid);
     // Virtual quizzes (topic/sub/mixed) share one UUID with no catalog entry;
     // their titles start with the topic name ("Waves · 20-mark quiz").
-    const rows = m ? topicOf(m.topics) : topicOf([String(s.quizTitle || '').split('·')[0]]);
+    const title = typeof s.quizTitle === 'string' ? s.quizTitle : '';
+    const rows = m ? topicOf(m.topics) : topicOf([title.split('·')[0]]);
     if (!rows.length) continue;
     const got = Number(s.score) || 0;
     const total = Number(s.total) || 0;
