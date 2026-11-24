@@ -8,6 +8,49 @@ const esc = (s) =>
 
 const answeredCount = (a) => Object.keys(a?.answers || {}).filter((k) => a.answers[k]?.locked).length;
 
+const sameSet = (a, b) => JSON.stringify(a.order) === JSON.stringify(b.order);
+
+// Autosave ownership policy, shared by every mount — exported so tests can
+// drive the guard directly. `mine` carries this tab's last accepted save:
+// {savedAt, sig}, starting {savedAt: 0, sig: null}.
+//
+// Two hazards, two checks:
+// - relaunched: a fresh copy of the SAME question set (URL-param relaunch,
+//   deliberate Practice restart, stale tab) starts over with less elapsed and
+//   no more locked answers — it may not overwrite the further-along save.
+// - foreign: an anchor for a DIFFERENT quiz written after our last accepted
+//   save belongs to another tab — an idle tab can't clobber it.
+// Either check yields to genuine new progress in this tab: a change in the
+// snapshot signature (position or answer content — answers are compared by
+// value, since an unlocked retyped draft changes nothing countable).
+export function resumeTick({ portal, snapshot, isDone, store, mine }) {
+  // isDone() returns the finished run's quizUuid, or null when not done —
+  // completion clears only that attempt's anchor, never another tab's newer save.
+  const done = isDone && isDone();
+  if (done) {
+    const prev = loadAnchor(portal, store);
+    if (prev && prev.quizUuid === done) clearAnchor(portal, store);
+  }
+  const snap = snapshot && snapshot();
+  if (!snap) return;
+  const prev = loadAnchor(portal, store);
+  const snapSig = `${snap.quizUuid}|${snap.qIndex}|${JSON.stringify(snap.answers)}`;
+  // The first observation is a baseline, not progress — a fresh mount must not
+  // claim a signature change it didn't cause.
+  const myProgress = mine.sig !== null && snapSig !== mine.sig;
+  if (snapSig !== mine.sig) mine.sig = snapSig;
+  const relaunched =
+    prev && prev.quizUuid === snap.quizUuid && sameSet(prev, snap) &&
+    snap.elapsed < prev.elapsed - 5 &&
+    answeredCount(snap) <= answeredCount(prev);
+  const foreign =
+    prev && prev.quizUuid !== snap.quizUuid && prev.savedAt > mine.savedAt;
+  if ((!relaunched && !foreign) || myProgress) {
+    const a = saveAnchor(snap, store);
+    if (a) mine.savedAt = a.savedAt;
+  }
+}
+
 export function mountResume({ portal, isHome, host, snapshot, isDone, resume, doc = document, store = globalThis.localStorage }) {
   const chipSel = '.jqm-resume-chip';
   if (!doc.getElementById('jqm-resume-css')) {
@@ -60,40 +103,9 @@ export function mountResume({ portal, isHome, host, snapshot, isDone, resume, do
   // This tab's last accepted save — used to tell our own writes from another
   // tab's, and to detect genuine new progress in this tab.
   const mine = { savedAt: 0, sig: null };
-  const sameSet = (a, b) => JSON.stringify(a.order) === JSON.stringify(b.order);
 
   function tick() {
-    // isDone() returns the finished run's quizUuid, or null when not done —
-    // completion clears only that attempt's anchor, never another tab's newer save.
-    const done = isDone && isDone();
-    if (done) {
-      const prev = loadAnchor(portal, store);
-      if (prev && prev.quizUuid === done) clearAnchor(portal, store);
-    }
-    const snap = snapshot && snapshot();
-    if (snap) {
-      const prev = loadAnchor(portal, store);
-      const snapSig = `${snap.quizUuid}|${snap.qIndex}|${answeredCount(snap)}`;
-      // A relaunched copy of the same question set (URL-param relaunch, stale
-      // tab) starts over with less elapsed time and no more locked answers —
-      // don't let it overwrite the further-along save. Backtracking inside a
-      // live run keeps growing elapsed, so it still saves.
-      const relaunched =
-        prev && prev.quizUuid === snap.quizUuid && sameSet(prev, snap) &&
-        snap.elapsed < prev.elapsed - 5 &&
-        answeredCount(snap) <= answeredCount(prev);
-      // An anchor from another tab for a *different* quiz is newer work —
-      // an idle tab can't clobber it, but genuine new progress here can.
-      const foreign = prev && prev.quizUuid !== snap.quizUuid && prev.savedAt > mine.savedAt;
-      const myProgress = snapSig !== mine.sig;
-      if (!relaunched && (!foreign || myProgress)) {
-        const a = saveAnchor(snap, store);
-        if (a) {
-          mine.savedAt = a.savedAt;
-          mine.sig = snapSig;
-        }
-      }
-    }
+    resumeTick({ portal, snapshot, isDone, store, mine });
     render();
   }
 

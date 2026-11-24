@@ -89,3 +89,51 @@ test('explore-mode runs are never offered for resume', () => {
   assert.equal(loadAnchor('maths', s), null);
   assert.equal(resumeHref(base()), null); // no deep-link routing today
 });
+
+// --- resumeTick: autosave ownership across tabs (mount-level guard) ----------
+
+test('resumeTick: idle second tab cannot clobber a different quiz\'s anchor', async () => {
+  const { resumeTick } = await import('../public/shared/js/mountResume.js');
+  const s = new MemStore();
+  // Tab A is working quiz q-1.
+  const mineA = { savedAt: 0, sig: null };
+  const snapA = () => base();
+  resumeTick({ portal: 'maths', snapshot: snapA, isDone: () => null, store: s, mine: mineA });
+  assert.equal(loadAnchor('maths', s).quizUuid, 'q-1');
+  // Tab B idles on an older different quiz — foreign save must stand.
+  const mineB = { savedAt: 0, sig: null };
+  const snapB = () => ({ ...base(), quizUuid: 'q-0', elapsed: 20 });
+  resumeTick({ portal: 'maths', snapshot: snapB, isDone: () => null, store: s, mine: mineB });
+  resumeTick({ portal: 'maths', snapshot: snapB, isDone: () => null, store: s, mine: mineB });
+  assert.equal(loadAnchor('maths', s).quizUuid, 'q-1', 'idle tab overwrote a newer anchor');
+  // ...but real new progress in tab B does take over.
+  resumeTick({ portal: 'maths', snapshot: () => ({ ...snapB(), qIndex: 2 }), isDone: () => null, store: s, mine: mineB });
+  assert.equal(loadAnchor('maths', s).quizUuid, 'q-0');
+});
+
+test('resumeTick: a stale relaunch of the same set cannot erase progress', async () => {
+  const { resumeTick } = await import('../public/shared/js/mountResume.js');
+  const s = new MemStore();
+  const mineA = { savedAt: 0, sig: null };
+  resumeTick({ portal: 'maths', snapshot: () => base(), isDone: () => null, store: s, mine: mineA });
+  // A relaunched copy of the same question set restarts at low elapsed.
+  const mineR = { savedAt: 0, sig: null };
+  const fresh = () => ({ ...base(), qIndex: 0, answers: {}, elapsed: 3 });
+  resumeTick({ portal: 'maths', snapshot: fresh, isDone: () => null, store: s, mine: mineR });
+  assert.equal(loadAnchor('maths', s).qIndex, 4, 'relaunch erased the further-along save');
+  // A deliberate restart doing real work (typing a draft) does save.
+  resumeTick({ portal: 'maths', snapshot: () => ({ ...fresh(), answers: { a: { locked: false, value: 'x' } }, elapsed: 12 }), isDone: () => null, store: s, mine: mineR });
+  assert.equal(loadAnchor('maths', s).qIndex, 0, 'deliberate restart could not save its own work');
+  assert.deepEqual(loadAnchor('maths', s).answers, { a: { locked: false, value: 'x' } });
+});
+
+test('resumeTick: a different question set under the same uuid is a new quiz', async () => {
+  const { resumeTick } = await import('../public/shared/js/mountResume.js');
+  const s = new MemStore();
+  const mineA = { savedAt: 0, sig: null };
+  resumeTick({ portal: 'maths', snapshot: () => base(), isDone: () => null, store: s, mine: mineA });
+  // Same uuid, different order → a re-generated quiz, not a relaunch.
+  const mineN = { savedAt: 0, sig: null };
+  resumeTick({ portal: 'maths', snapshot: () => ({ ...base(), qIndex: 0, order: ['x', 'y'], answers: {}, elapsed: 2 }), isDone: () => null, store: s, mine: mineN });
+  assert.equal(loadAnchor('maths', s).qIndex, 0, 'new generated quiz was blocked as a relaunch');
+});
