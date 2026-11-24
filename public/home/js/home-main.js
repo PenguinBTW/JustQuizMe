@@ -5,6 +5,7 @@ import { initHeroWave } from './demos/wave-canvas.js';
 import { initAsciiEngine } from './demos/ascii-engine.js';
 import { initMathCanvas } from './demos/math-canvas.js';
 import { initPhysicsChamber } from './demos/physics-chamber.js';
+import { loadMastery } from './mastery.js';
 
 const SUBJECT_CONFIG = {
   maths: {
@@ -202,6 +203,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initPhysicsChamber();
 
   loadLiveMetrics();
+  loadMastery();
   switchSubject('maths');
 
   const slider = document.getElementById('marksSlider');
