@@ -29,7 +29,15 @@ function flagRow(f) {
 
 async function main() {
   const root = document.getElementById('flagsRoot');
-  const flags = await fetchFlags();
+  let flags;
+  try {
+    flags = await fetchFlags();
+  } catch (e) {
+    root.innerHTML = `<div class="card" style="padding:32px; text-align:center;">
+      <p style="color:var(--ink-secondary, #8892a4);">Couldn't load flagged reports (${esc(e.message)}). Try reloading.</p>
+    </div>`;
+    return;
+  }
 
   if (!flags.length) {
     root.innerHTML = `<div class="card" style="padding:32px; text-align:center;">
