@@ -54,6 +54,8 @@ export function normalizeStars(list) {
 export async function resolveStarred(stars, loadQuiz) {
   const cache = new Map();
   const out = [];
+  const emitted = new Set(); // runner answer state is keyed by question id:
+                           // the same file:qid in two banks would collide.
   for (const s of stars || []) {
     if (!s || !s.file || !s.qid) continue;
     const ck = `${s.category}|${s.file}`;
@@ -62,7 +64,10 @@ export async function resolveStarred(stars, loadQuiz) {
     if (!quiz) continue;
     const qs = quiz.questions || [];
     const q = qs[s.index] && qs[s.index].id === s.qid ? qs[s.index] : qs.find(x => x.id === s.qid);
-    if (q) out.push({ ...q, _srcFile: q._srcFile || s.file, _srcCat: q._srcCat || s.category });
+    if (q && !emitted.has(q.id)) {
+      emitted.add(q.id);
+      out.push({ ...q, _srcFile: q._srcFile || s.file, _srcCat: q._srcCat || s.category });
+    }
   }
   return out;
 }

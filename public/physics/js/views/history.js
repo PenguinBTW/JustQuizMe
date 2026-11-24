@@ -148,7 +148,8 @@ export function renderHistory(){
     const qs = await resolveStarred(stars, (category, file) =>
       api(`/api/quiz?category=${encodeURIComponent(category)}&file=${encodeURIComponent(file)}`));
     if (!qs.length) return;
-    openExploreList('★ Starred', `${qs.length} saved question${qs.length === 1 ? '' : 's'} across ${new Set(stars.map(s => s.file)).size} quiz${new Set(stars.map(s => s.file)).size === 1 ? '' : 'zes'}`, qs, 'history');
+    const quizCount = new Set(stars.map(s => `${s.category}|${s.file}`)).size;
+    openExploreList('★ Starred', `${qs.length} saved question${qs.length === 1 ? '' : 's'} across ${quizCount} quiz${quizCount === 1 ? '' : 'zes'}`, qs, 'history');
   };
   document.querySelectorAll('[data-retry-entry]').forEach(b => b.onclick = () => {
     const [uuid, file] = b.dataset.retryEntry.split('|');
