@@ -25,8 +25,9 @@ export function renderQuestionSpecifics(q) {
           } else if (S.runMode === 'exam' && ans.selected === i) {
             cls += ' is-selected';
           }
+          const ariaState = S.runMode === 'exam' && !ans.locked ? `aria-pressed="${ans.selected === i ? 'true' : 'false'}"` : '';
           return `
-            <button class="${cls}" data-opt-idx="${i}" ${ans.locked ? 'disabled' : ''}>
+            <button class="${cls}" data-opt-idx="${i}" ${ans.locked ? 'disabled' : ''} ${ariaState}>
               <div class="opt-top">
                 <span class="mono" style="font-weight:700;">${String.fromCharCode(65 + i)}</span>
                 <span style="font-size:15px; font-weight:600;">${formatPrompt(text)}</span>
