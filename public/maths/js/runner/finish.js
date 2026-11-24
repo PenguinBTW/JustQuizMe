@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { renderRoom } from '../navigation.js';
 import { renderQ } from './assessment.js';
 import { retryRun } from './starters.js';
+import { missedCount, retryMissed } from './missedRetry.js';
 
 export async function finishQuiz(auto = false) {
   clearInterval(S.timerId);
@@ -82,6 +83,7 @@ export async function finishQuiz(auto = false) {
       </p>
       <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
         <button class="btn" id="retryResBtn">Retry Assessment ⟳</button>
+        ${missedCount() ? `<button class="btn" id="missedResBtn">Retry the ${missedCount()} you missed ↺</button>` : ''}
         <button class="btn" id="exploreResBtn">Explore Questions ↗</button>
         <button class="btn btn-primary" id="backResBtn">Back to Past Papers</button>
       </div>
@@ -100,6 +102,8 @@ export async function finishQuiz(auto = false) {
   `;
 
   $('#retryResBtn').onclick = () => retryRun();
+  const missedBtn = $('#missedResBtn');
+  if (missedBtn) missedBtn.onclick = () => retryMissed();
   $('#exploreResBtn').onclick = () => {
     S.runMode = 'explore';
     S.idx = 0;
