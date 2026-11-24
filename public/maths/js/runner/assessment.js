@@ -32,16 +32,6 @@ export function beginRun(o) {
   S.qShownKey = null;
   S.qShownAt = 0;
 
-  // Dwell while the tab is hidden doesn't count as time on the question.
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      noteDwell(S.qDwell, S.qShownKey, S.qShownAt, Date.now());
-      S.qShownAt = 0;
-    } else if (S.room === 'runner' && S.qShownKey) {
-      S.qShownAt = Date.now();
-    }
-  });
-
   clearInterval(S.timerId);
   S.room = 'runner';
   renderQ();
@@ -73,7 +63,7 @@ export function chromeCount() {
 
 export async function saveProgress() {
   noteDwell(S.qDwell, S.qShownKey, S.qShownAt, Date.now());
-  S.qShownAt = Date.now();
+  S.qShownAt = document.hidden ? 0 : Date.now();
   const body = {
     quizUuid: S.quiz.uuid,
     quizVersion: S.quiz.version,
@@ -109,6 +99,17 @@ export async function saveProgress() {
   }
 }
 
+// Registered once — the handler reads S at event time, so it keeps working
+// across runs without accumulating listeners per beginRun.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    noteDwell(S.qDwell, S.qShownKey, S.qShownAt, Date.now());
+    S.qShownAt = 0;
+  } else if (S.room === 'runner' && S.qShownKey) {
+    S.qShownAt = Date.now();
+  }
+});
+
 export function eyebrowLeft(q) {
   return `${q.id} · ${q.marks} Mark${q.marks === 1 ? '' : 's'}`;
 }
@@ -122,7 +123,9 @@ export function renderQ() {
   // keep accumulating it.
   noteDwell(S.qDwell, S.qShownKey, S.qShownAt, Date.now());
   S.qShownKey = ak(q);
-  S.qShownAt = Date.now();
+  // Hidden tab (e.g. a run started backgrounded) holds the clock at 0 until
+  // the visibility listener resumes it on show.
+  S.qShownAt = document.hidden ? 0 : Date.now();
   const isLast = S.idx === qs.length - 1;
   const inQuiz = S.runMode === 'quiz';
 
