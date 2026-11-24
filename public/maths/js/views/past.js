@@ -179,18 +179,21 @@ export function wireQuizSearch() {
   if (!input) return;
   const apply = () => {
     const terms = parseTerms(input.value);
-    if (!terms.length) { rerenderKeepScroll(); return; }
     const rows = [...document.querySelectorAll('#quizPickerList [data-qs], .fullpapers [data-qs]')];
     document.querySelectorAll('#quizPickerList .accordion-item').forEach(item => {
-      const topicHit = matchQuiz(item.dataset.qsTopic || '', terms);
+      const topicHit = terms.length && matchQuiz(item.dataset.qsTopic || '', terms);
       let anySub = false;
       item.querySelectorAll('[data-qs]').forEach(r => {
-        const hit = topicHit || matchQuiz(r.dataset.qs, terms);
+        const hit = !terms.length || topicHit || matchQuiz(r.dataset.qs, terms);
         r.hidden = !hit;
         anySub = anySub || hit;
       });
-      item.hidden = !topicHit && !anySub;
-      item.classList.add('open');
+      item.hidden = terms.length && !topicHit && !anySub;
+      // qs-open (not 'open') marks expansion we added — a clear restores it
+      item.classList.toggle('qs-open', terms.length > 0 && !item.hidden);
+    });
+    document.querySelectorAll('.fullpapers [data-qs]').forEach(r => {
+      r.hidden = terms.length && !matchQuiz(r.dataset.qs, terms);
     });
     document.querySelectorAll('.fp-year').forEach(h => {
       let el = h.nextElementSibling, show = false;
@@ -198,16 +201,16 @@ export function wireQuizSearch() {
         if (el.dataset && el.dataset.qs !== undefined && !el.hidden) show = true;
         el = el.nextElementSibling;
       }
-      h.hidden = !show;
+      h.hidden = terms.length && !show;
     });
     const shown = rows.filter(r => !r.hidden).length;
-    $('#quizSearchCount').textContent = countLabel(shown, rows.length);
+    $('#quizSearchCount').textContent = terms.length ? countLabel(shown, rows.length) : '';
     const empty = $('#quizSearchEmpty');
     empty.textContent = emptyMessage(terms);
-    empty.hidden = shown > 0;
+    empty.hidden = !terms.length || shown > 0;
   };
   input.oninput = apply;
-  input.onkeydown = e => { if (e.key === 'Escape') { input.value = ''; rerenderKeepScroll(); } };
+  input.onkeydown = e => { if (e.key === 'Escape') { input.value = ''; apply(); } };
 }
 
 export function toggleSynthTopic(ti) {
