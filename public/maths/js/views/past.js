@@ -8,6 +8,8 @@ import { startSubQuiz, beginFileQuiz } from '../runner/starters.js';
 import { exploreFullFile } from './practice.js';
 import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
 import { masteryBadge, resolveScoreTopics, buildUuidIndex } from '../../../shared/js/masteryUi.js';
+import { mountFlashcards, buildSmartDeck } from '../../../shared/js/flashcardSession.js';
+import { deckFromQuestions } from '../../../shared/js/flashcards.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -60,6 +62,7 @@ export function renderPast() {
       <div class="synthesizer-footer">
         <button class="btn-ghost mono" style="font-size:12px;" id="toggleMajorBtn">${allSel ? 'Deselect all topics' : 'Select all topics'}</button>
         <button class="btn-ghost mono" style="font-size:12px;" id="reviewWeakestBtn" title="Select your weakest topics and open the synthesizer">⚡ Review weakest</button>
+            <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="smartCardsBtn" title="Flashcard session across all topics — weak-topic cards first">🂡 Smart cards</button>
         <button class="btn btn-primary" id="synthContinueBtn" ${S.mixed.topics.size ? '' : 'disabled'}>Continue →</button>
       </div>
     </div>
@@ -90,6 +93,7 @@ export function renderPast() {
                 <div style="display:flex; align-items:center; gap:8px;">
                   <button class="btn-ghost mono" style="font-size:12px;" data-explore-sub="${esc(t.topic)}|${gi}">Explore</button>
                   <button class="btn" style="padding:4px 13px; font-size:12px;" data-quiz-sub="${esc(t.topic)}|${gi}">Quiz</button>
+                  <button class="btn-ghost mono" style="font-size:12px;" data-cards-sub="${esc(t.topic)}|${gi}" title="Flashcard session for this subtopic">Cards</button>
                 </div>
               </div>`).join('') || '<p class="mono" style="font-size:12px; color:var(--ink-muted);">No questions tagged here yet.</p>'}
           </div>
@@ -171,6 +175,23 @@ export function renderPast() {
   document.querySelectorAll('[data-quiz-sub]').forEach(b => b.onclick = () => {
     const c = S._subCache.get(b.dataset.quizSub);
     if (c) startSubQuiz(c.topic, c.sub);
+  });
+
+  const startCards = (cards, title) => {
+    const stage = $('#stage');
+    if (!stage) return;
+    mountFlashcards({
+      S, stage, deck: cards, portal: location.pathname.split('/').filter(Boolean)[0] || 'maths', title,
+      onExit: () => renderPast(),
+    });
+  };
+  document.querySelectorAll('[data-cards-sub]').forEach(b => b.onclick = () => {
+    const c = S._subCache.get(b.dataset.cardsSub);
+    if (c) startCards(deckFromQuestions(c.sub.questions || []), `${c.topic} — ${c.sub.name}`);
+  });
+  $('#smartCardsBtn')?.addEventListener('click', () => {
+    const all = (S._topicData || []).flatMap(t => (t.subs || []).flatMap(g => g.questions || []));
+    startCards(buildSmartDeck(S, all).slice(0, 30), 'Smart cards');
   });
 
   document.querySelectorAll('[data-explore-file]').forEach(b => b.onclick = () => {

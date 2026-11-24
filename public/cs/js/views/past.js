@@ -7,6 +7,8 @@ import { openExploreList } from './explore.js';
 import { startSubQuiz } from '../runner/starters.js';
 import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
 import { masteryBadge, resolveScoreTopics, buildUuidIndex } from '../../../shared/js/masteryUi.js';
+import { mountFlashcards, buildSmartDeck } from '../../../shared/js/flashcardSession.js';
+import { deckFromQuestions } from '../../../shared/js/flashcards.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -77,6 +79,7 @@ export function renderPast() {
           <div class="comp-quick-selects">
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="toggleMajorBtn">${allSel ? 'Deselect all' : 'Select all'}</button>
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="reviewWeakestBtn" title="Select your weakest topics and open the synthesizer">⚡ Review weakest</button>
+            <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="smartCardsBtn" title="Flashcard session across all topics — weak-topic cards first">🂡 Smart cards</button>
           </div>
         </div>
       </div>
@@ -134,6 +137,7 @@ export function renderPast() {
                 <div style="display:flex; align-items:center; gap:8px;">
                   <button class="btn-ghost mono" style="font-size:12px;" data-explore-sub="${esc(t.topic)}|${gi}">Explore</button>
                   <button class="btn" style="padding:4px 13px; font-size:12px;" data-quiz-sub="${esc(t.topic)}|${gi}">Quiz</button>
+                  <button class="btn-ghost mono" style="font-size:12px;" data-cards-sub="${esc(t.topic)}|${gi}" title="Flashcard session for this subtopic">Cards</button>
                 </div>
               </div>
             `).join('') || '<p class="mono" style="font-size:12px; color:var(--ink-muted);">No questions tagged in this unit yet.</p>'}
@@ -154,6 +158,26 @@ export function renderPast() {
 }
 
 export function wirePastEvents() {
+  const startCards = (cards, title) => {
+    const stage = $('#stage');
+    if (!stage) return;
+    mountFlashcards({
+      S, stage, deck: cards, portal: location.pathname.split('/').filter(Boolean)[0] || 'cs', title,
+      onExit: () => renderPast(),
+    });
+  };
+  $$('[data-cards-sub]').forEach(btn => btn.addEventListener('click', () => {
+    const [topic, gi] = btn.dataset.cardsSub.split('|');
+    const t = (S._topicData || []).find(x => x.topic === topic);
+    const g = t && t.subs[+gi];
+    if (!g) return;
+    startCards(deckFromQuestions(g.questions || []), `${topic} — ${g.name}`);
+  }));
+  $('#smartCardsBtn')?.addEventListener('click', () => {
+    const all = (S._topicData || []).flatMap(t => (t.subs || []).flatMap(g => g.questions || []));
+    startCards(buildSmartDeck(S, all).slice(0, 30), 'Smart cards');
+  });
+
   $('#synthGrid')?.addEventListener('click', (e) => {
     const cell = e.target.closest('[data-synth-topic]');
     if (!cell) return;
