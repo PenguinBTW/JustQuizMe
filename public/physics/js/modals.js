@@ -9,7 +9,14 @@ export function openSynthModal(){
   const data = (S._topicData || []).filter(t => S.mixed.topics.has(t.topic) && t.qcount > 0);
   if (!data.length) return;
   // All subtopics selected by default when opening the modal.
-  data.forEach(t => t.subs.forEach((g, gi) => S.mixed.subs.add(`${t.topic}|${gi}`)));
+  // Seed subtopic selections only for topics never initialized — re-opening
+  // (e.g. after a pace change) must not undo deliberate exclusions.
+  S.mixed.seededTopics ||= new Set();
+  data.forEach(t => {
+    if (S.mixed.seededTopics.has(t.topic)) return;
+    S.mixed.seededTopics.add(t.topic);
+    t.subs.forEach((g, gi) => S.mixed.subs.add(`${t.topic}|${gi}`));
+  });
   const box = $('#synthModalSubtopicGroups');
   box.innerHTML = data.map(t => `
     <div>

@@ -9,7 +9,14 @@ export function openSynthModal() {
   const data = (S._topicData || []).filter(t => S.mixed.topics.has(t.topic) && t.qcount > 0);
   if (!data.length) return;
 
-  data.forEach(t => t.subs.forEach((g, gi) => S.mixed.subs.add(`${t.topic}|${gi}`)));
+  // Seed subtopic selections only for topics never initialized — re-opening
+  // (e.g. after a pace change) must not undo deliberate exclusions.
+  S.mixed.seededTopics ||= new Set();
+  data.forEach(t => {
+    if (S.mixed.seededTopics.has(t.topic)) return;
+    S.mixed.seededTopics.add(t.topic);
+    t.subs.forEach((g, gi) => S.mixed.subs.add(`${t.topic}|${gi}`));
+  });
   const box = $('#synthModalSubtopicGroups');
   box.innerHTML = data.map(t => `
     <div>
@@ -185,7 +192,10 @@ export function regenTopicModal() {
   m.tot = tot;
 
   $('#modalMarksLabel').textContent = `${m.marks} marks`;
-  $('#modalExamBtn').textContent = `Start Exam · ${Math.round(m.marks * 1.5)}m ⏱`;
+  const pacePerMark = paceMinutesPerMark(S.mixed.pace);
+  $('#modalExamBtn').textContent = pacePerMark == null
+    ? 'Start Exam · untimed'
+    : `Start Exam · ${Math.max(5, Math.round(m.marks * pacePerMark))}m ⏱`;
   $('#modalSummaryLine').textContent = `LIVE SUBTOPIC DISTRIBUTION · ${set.length} QUESTIONS (${tot} MARKS)`;
 
   const bySub = new Map();
