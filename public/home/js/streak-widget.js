@@ -28,11 +28,17 @@ export async function initStreakWidget(rootId = 'streakWidget') {
   // Scores are capped per portal; a best computed from data already saved
   // must never shrink when old attempts roll out of the cap.
   let best = s.best;
+  let total = s.total;
   try {
     const stored = Number(localStorage.getItem('jqm.streak.best') || 0);
     best = Math.max(best, stored);
     if (best > stored) localStorage.setItem('jqm.streak.best', String(best));
-  } catch { /* storage unavailable — just show the computed best */ }
+    // Same 500-entry cap: attempts evicted per subject would shrink the
+    // all-time total — persist the high-water mark so it can't go down.
+    const storedTotal = Number(localStorage.getItem('jqm.streak.total') || 0);
+    total = Math.max(total, storedTotal);
+    if (total > storedTotal) localStorage.setItem('jqm.streak.total', String(total));
+  } catch { /* storage unavailable — just show the computed values */ }
   const now = new Date();
 
   const strip = s.last7
@@ -69,7 +75,7 @@ export async function initStreakWidget(rootId = 'streakWidget') {
           <span class="streak-label">attempts / 7d</span>
         </div>
         <div class="streak-figure">
-          <span class="streak-num">${s.total}</span>
+          <span class="streak-num">${total}</span>
           <span class="streak-label">quizzes total</span>
         </div>
       </div>
