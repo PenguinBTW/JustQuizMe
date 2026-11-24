@@ -58,8 +58,11 @@ function subjectCard(subj, scores, manifests) {
   const quizIndex = indexQuizzes(manifests);
   const stats = aggregateMastery(scores, quizIndex).sort((a, b) => a.pct - b.pct);
   const attempts = (scores || []).length;
-  const earned = stats.reduce((s, t) => s + t.earned, 0);
-  const total = stats.reduce((s, t) => s + t.total, 0);
+  // Overall comes from the raw scores, not the per-topic stats: a paper
+  // covering two topics is credited to both, so summing stats would
+  // double-count it.
+  const earned = (scores || []).reduce((s, a) => s + (Number(a.score) || 0), 0);
+  const total = (scores || []).reduce((s, a) => s + (Number(a.total) || 0), 0);
   const overall = total > 0 ? Math.round((earned / total) * 100) : 0;
   const weakest = weakestTopics(stats, 3);
 

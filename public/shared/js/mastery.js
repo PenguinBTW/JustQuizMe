@@ -8,21 +8,31 @@
 
 export const MIXED_TOPIC = 'Mixed / Custom Papers';
 
-// file -> topics[] for every quiz the subject knows about.
+// uuid -> topics[] and file -> topics[] for every quiz the subject knows
+// about. Scores carry quizUuid, so match on it first: a filename can exist in
+// both the normal and past-paper categories, where file-only lookup would
+// silently credit the wrong quiz's topics.
 export function indexQuizzes(manifests) {
-  const map = new Map();
+  const byUuid = new Map();
+  const byFile = new Map();
   for (const cat of ['normal', 'past-paper']) {
     for (const m of manifests?.[cat] || []) {
-      if (m && m.file) map.set(m.file, Array.isArray(m.topics) ? m.topics : []);
+      if (!m) continue;
+      const topics = Array.isArray(m.topics) ? m.topics : [];
+      if (m.uuid) byUuid.set(m.uuid, topics);
+      if (m.file && !byFile.has(m.file)) byFile.set(m.file, topics);
     }
   }
-  return map;
+  return { byUuid, byFile };
 }
 
-// A score whose quizFile no manifest lists (synthesized papers, deleted files)
+// A score matching no manifest entry (synthesized papers, deleted files)
 // lands in a catch-all bucket rather than being dropped silently.
 export function topicsForScore(score, quizIndex) {
-  const topics = score && score.quizFile ? quizIndex.get(score.quizFile) : null;
+  if (!score) return [MIXED_TOPIC];
+  const topics =
+    (score.quizUuid && quizIndex.byUuid.get(score.quizUuid)) ||
+    (score.quizFile && quizIndex.byFile.get(score.quizFile));
   return topics && topics.length ? topics : [MIXED_TOPIC];
 }
 
