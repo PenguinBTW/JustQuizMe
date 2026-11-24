@@ -166,7 +166,7 @@ export function wirePastEvents() {
       onExit: () => renderPast(),
     });
   };
-  $$('[data-cards-sub]').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('[data-cards-sub]').forEach(btn => btn.addEventListener('click', () => {
     const [topic, gi] = btn.dataset.cardsSub.split('|');
     const t = (S._topicData || []).find(x => x.topic === topic);
     const g = t && t.subs[+gi];
