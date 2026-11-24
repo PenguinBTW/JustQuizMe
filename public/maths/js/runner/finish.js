@@ -31,9 +31,11 @@ export async function finishQuiz(auto = false) {
     const ans = S.answers[ak(q)] || {};
     const qm = +q.marks || 0;
     const score = Math.min(qm, Math.max(0, ans.score || 0));
+    const hasTableInput = Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim()));
     const attempted = !!(ans.selected != null || (ans.text && ans.text.trim())
-      || ans.revealed || ans.tickedCount != null || (ans.ticked && ans.ticked.length)
-      || ans.score != null);
+      || (ans.code && ans.code.trim())
+      || hasTableInput
+      || ans.revealed || ans.tickedCount != null || (ans.ticked && ans.ticked.length));
     return {
       id: q.id || null,
       topic: q.topic || q._topic || null,

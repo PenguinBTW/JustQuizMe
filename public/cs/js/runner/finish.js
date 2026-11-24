@@ -135,9 +135,11 @@ export async function renderSummaryReport() {
     const ans = S.answers[ak(q)] || {};
     const qm = +q.marks || 0;
     const score = Math.min(qm, Math.max(0, ans.score || 0));
+    const hasTableInput = Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim()));
     const attempted = !!(ans.selected != null || (ans.text && ans.text.trim())
-      || ans.revealed || ans.tickedCount != null || (ans.ticked && ans.ticked.length)
-      || ans.score != null);
+      || (ans.code && ans.code.trim())
+      || hasTableInput
+      || ans.revealed || ans.tickedCount != null || (ans.ticked && ans.ticked.length));
     return {
       id: q.id || null,
       topic: q.topic || q._topic || null,
@@ -165,15 +167,19 @@ export async function renderSummaryReport() {
     perQuestion
   };
   try {
-    await api('/api/scores', {
+    // explore mode is explicitly unscored ('Explore · No Score') — writing an entry
+    // would count unvisited questions as missed marks in mastery. Skip the write.
+    if (S.runMode !== 'explore') {
+      await api('/api/scores', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(scoreEntry)
-    });
-    // keep the in-memory list in sync so Stats/CSV see the run that just
-    // saved — mirrors the server's newest-first unshift + 500-entry cap
-    (S.scores = S.scores || []).unshift({ ...scoreEntry, date: new Date().toISOString() });
-    if (S.scores.length > 500) S.scores.length = 500;
+        body: JSON.stringify(scoreEntry)
+      });
+      // keep the in-memory list in sync so Stats/CSV see the run that just
+      // saved — mirrors the server's newest-first unshift + 500-entry cap
+      (S.scores = S.scores || []).unshift({ ...scoreEntry, date: new Date().toISOString() });
+      if (S.scores.length > 500) S.scores.length = 500;
+    }
   } catch {}
 
   $('#stage').innerHTML = `
