@@ -107,21 +107,23 @@ export function planReviewRefs(items, quizzes) {
 }
 
 // Resolves refs into pool-stamped questions via an injected fetcher so this
-// stays free of the api module. Refs are consumed in priority order and
-// resolution stops once `cap` questions are gathered, so missing files or
-// revised banks can't starve the deck. `pool` carries every fetched
-// question (past-paper stamps) for dependency lookups.
+// stays free of the api module. Only a candidate ranked inside the cap can
+// make the deck, so refs holding strictly lower ranks are fetched lazily —
+// and only if the top ranks resolve short (missing/revised banks).
+// `pool` carries every fetched question (past-paper stamps) for
+// dependency lookups.
 export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) {
   const candidates = [];
   const pool = [];
-  for (const ref of refs || []) {
+  const unfetched = [];
+  const collect = async (ref) => {
     let quiz;
     try {
       quiz = await fetchQuiz(ref.category, ref.file);
     } catch {
-      continue;
+      return;
     }
-    if (!quiz) continue;
+    if (!quiz) return;
     const wanted = new Map();
     (ref.keys || []).forEach((k, i) => wanted.set(String(k).toLowerCase(), ref.ranks?.[k] ?? i));
     for (const q of stampPool(quiz, ref.file)) {
@@ -133,10 +135,19 @@ export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) 
         candidates.push({ q: ref.category === 'normal' ? { ...q, _key: `n|${q._key.toLowerCase()}` } : q, rank });
       }
     }
+  };
+  for (const ref of refs || []) {
+    const minRank = Math.min(...(ref.keys || []).map((k, i) => ref.ranks?.[k] ?? i), Infinity);
+    if (minRank < cap) await collect(ref);
+    else unfetched.push(ref);
   }
   // Global priority order, not file order — a repeat miss in a later file
   // still outranks a one-off in an earlier one.
   candidates.sort((a, b) => a.rank - b.rank);
+  for (let i = 0; candidates.length < cap && i < unfetched.length; i++) {
+    await collect(unfetched[i]);
+    candidates.sort((a, b) => a.rank - b.rank);
+  }
   const set = candidates.slice(0, cap).map((c) => c.q);
   const tot = set.reduce((s, q) => s + (q.marks || 0), 0);
   return { set, tot, pool };

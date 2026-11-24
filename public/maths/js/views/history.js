@@ -144,11 +144,13 @@ export function renderHistory() {
     `;
   } else {
     const list = practiceEntries();
-    const runs = list.slice().reverse();
-    const best = list.length
-      ? list.reduce(
+    // Review-deck attempts list below but don't count as curated-set runs.
+    const curated = list.filter(a => a.quizUuid !== REVIEW_UUID);
+    const runs = curated.slice().reverse();
+    const best = curated.length
+      ? curated.reduce(
           (m, x) => (x.total && x.score / x.total > (m.total ? m.score / m.total : -1) ? x : m),
-          list[0]
+          curated[0]
         )
       : null;
     const bp = best ? pct(best) : 0;
@@ -161,12 +163,12 @@ export function renderHistory() {
         <div class="history-stats-grid">
           <div class="history-stat-card">
             <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Topic Set Best</span>
-            <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${list.length ? bp + '%' : '-'}</div>
+            <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${curated.length ? bp + '%' : '-'}</div>
             <span class="mono" style="font-size:12px; color:var(--green);">${best ? `${best.score} / ${best.total} marks` : 'no runs yet'}</span>
           </div>
           <div class="history-stat-card">
             <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Set Version</span>
-            <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${list.length ? 'v' + ver : '-'}</div>
+            <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${curated.length ? 'v' + ver : '-'}</div>
             <span class="mono" style="font-size:12px; color:var(--ink-secondary);">${best ? esc((best.quizFile || '').replace(/\.json$/i, '') + '.json') : ''}</span>
           </div>
           <div class="history-stat-card">
