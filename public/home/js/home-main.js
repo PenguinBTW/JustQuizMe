@@ -204,7 +204,8 @@ function initQuickKeys() {
       disarm();
       const slider = document.getElementById('marksSlider');
       if (slider) {
-        slider.focus(); // lets the browser scroll the control into view itself
+        slider.scrollIntoView({ block: 'center' }); // centred: slider visible + tabs above in view
+        slider.focus({ preventScroll: true });
       } else {
         document.getElementById('synthesizer')?.scrollIntoView({ behavior: 'smooth' });
       }
