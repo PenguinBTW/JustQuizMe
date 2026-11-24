@@ -21,6 +21,8 @@ export function quizScore(){
 }
 
 export async function finishQuiz(auto = false){
+  if (S._finishing) return;
+  S._finishing = true;
   if (auto === true) S.timeExpired = true;
   clearInterval(S.timerId);
   // capture whatever is mid-typing in the visible calculation input — a manual
@@ -47,7 +49,7 @@ export async function finishQuiz(auto = false){
         // typed answer must not earn zero for want of a click
         const v = parseFloat(a?.finalValue);
         const correct = a?.finalValue != null && numOk(v, q.answer, q.tolerancePercent ?? 2.5);
-        S.answers[k] = { ...(a || {}), locked: true, loggedWrong: !correct && (a?.attempts || 0) > 0, soloCorrect: correct || undefined, score: correct ? q.marks : 0 };
+        S.answers[k] = { ...(a || {}), locked: true, loggedWrong: !correct && (a?.attempts || 0) > 0, score: correct ? q.marks : 0 };
       }
     }
   }
