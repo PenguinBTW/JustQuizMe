@@ -26,7 +26,7 @@ function makeBank(t) {
       { id: "q2", type: "written", prompt: "Factor", marks: 2, markScheme: ["b"] }, // no options — valid written
       { id: "q3", type: "multiple-choice", marks: 4, options: ["x"], correctIndex: 0 }, // missing title/prompt
       { id: "q5", type: "multiple-choice", prompt: "Pick", marks: 1, correctIndex: 0 }, // missing options
-      { id: "q6", type: "trace-table", prompt: "Trace", mark: 5, expectedRows: [] }   // mark alias + expectedRows answer
+      { id: "q6", type: "trace-table", prompt: "Trace", marks: 5, expectedRows: [] } // expectedRows answer
     ]
   }));
   write("past-paper", "2024-p1.json", JSON.stringify({
@@ -95,6 +95,37 @@ test("written/trace-table questions need no options and report no absolute path"
   const report = scanQuestionsDir(makeBank(t));
   assert.equal(report.missingFields.answer, 0); // markScheme + expectedRows count as answers
   assert.equal(report.questionsDir, undefined); // server path stays out of the payload
+});
+
+test("malformed types fall back to generic checks without crashing", (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jqm-bank-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(dir, "normal"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "normal", "weird.json"), JSON.stringify({
+    uuid: "quiz-w",
+    questions: [
+      { id: "c1", type: "constructor", prompt: "Odd type", marks: 1 },
+      { id: "p1", type: "__proto__", prompt: "Proto type", marks: 1 }
+    ]
+  }));
+  const report = scanQuestionsDir(path.join(dir));
+  assert.equal(report.totalQuestions, 2);
+  // generic fallback: both lack options and any answer field
+  assert.equal(report.missingFields.options, 2);
+  assert.equal(report.missingFields.answer, 2);
+});
+
+test("a bare 'mark' field flags missing marks and adds 0, like the library", (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "jqm-bank-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(dir, "normal"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "normal", "legacy.json"), JSON.stringify({
+    uuid: "quiz-l",
+    questions: [{ id: "l1", type: "written", prompt: "Legacy", mark: 4, markScheme: ["x"] }]
+  }));
+  const report = scanQuestionsDir(path.join(dir));
+  assert.equal(report.missingFields.marks, 1);
+  assert.equal(report.totalMarks, 0);
 });
 
 test("buildBankHealthReport folds portals together", (t) => {

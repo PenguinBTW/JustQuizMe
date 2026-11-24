@@ -7,7 +7,7 @@ const path = require('path');
 
 const ID_KEYS = ['id', 'qid', 'questionId'];
 const TITLE_KEYS = ['title', 'prompt', 'text', 'question'];
-const MARKS_KEYS = ['marks', 'mark'];
+const MARKS_KEYS = ['marks'];
 
 // Canonical fields checked for every question.
 const QUESTION_FIELDS = [
@@ -101,7 +101,9 @@ function scanQuestionsDir(questionsDir) {
     const fileIds = new Map(); // id -> count within this one manifest
     for (const [index, question] of quiz.questions.entries()) {
       report.totalQuestions += 1;
-      const marks = Number(hasField(question, MARKS_KEYS) ? question.marks ?? question.mark : 0) || 0;
+      // Library parity: quiz-service totals read only `marks`; a bare `mark`
+      // field is flagged as missing and adds 0.
+      const marks = Number(question?.marks) || 0;
       report.totalMarks += marks;
       report.marksDistribution[marks] = (report.marksDistribution[marks] || 0) + 1;
 
@@ -110,7 +112,9 @@ function scanQuestionsDir(questionsDir) {
         if (!object || !hasField(question, field.keys)) miss(field.key, rel, index, question);
       }
       if (object) {
-        const typeFields = TYPE_FIELDS[question.type] ?? GENERIC_FIELDS;
+        // hasOwn guards prototype keys ('constructor', '__proto__', 'toString')
+        // against being read as type entries and crashing hasField below.
+        const typeFields = Object.hasOwn(TYPE_FIELDS, question.type) ? TYPE_FIELDS[question.type] : GENERIC_FIELDS;
         if (typeFields.options && !hasField(question, typeFields.options)) miss('options', rel, index, question);
         if (!hasField(question, typeFields.answer)) miss('answer', rel, index, question);
       } else {
