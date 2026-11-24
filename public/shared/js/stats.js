@@ -104,9 +104,15 @@ export function sparklinePoints(pcts, { w = 120, h = 28, pad = 2, n = 14 } = {})
 
 // Last-N per-run percentages, oldest → newest.
 export function recentPcts(scores, n = 14) {
+  const time = d => {
+    try {
+      const t = new Date(d).getTime();
+      return Number.isNaN(t) ? 0 : t;
+    } catch { return 0; }
+  };
   return (scores || [])
     .slice()
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .sort((a, b) => time(a?.date) - time(b?.date))
     .slice(-n)
     .map(s => (Number(s?.total) ? Math.round((Number(s.score) / Number(s.total)) * 1000) / 10 : 0));
 }
