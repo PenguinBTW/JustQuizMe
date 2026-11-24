@@ -67,6 +67,9 @@ export function renderExploreList() {
         mode: 'explore',
         quizLike: { uuid: null, version: null, title: ctx.title, timeLimitMinutes: null, questions: ctx.questions },
         meta: { category: 'past-paper', file: '', virtual: true },
+        // Results-review lists keep the finished run's working (unlocked);
+        // any other explore list starts clean.
+        resume: ctx.carryAnswers ? { answers: S.answers, elapsedSeconds: S.elapsed, startedAt: S.startedAt } : undefined,
         startIdx: +b.dataset.exploreQ
       });
     };

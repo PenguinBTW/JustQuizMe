@@ -131,7 +131,8 @@ export async function finishQuiz(auto = false) {
       title: `Missed questions — ${S.quiz.title}`,
       sub: `${missed} question${missed === 1 ? '' : 's'} below full marks`,
       questions: S.quiz.questions.filter((q) => (S.answers[ak(q)]?.score || 0) < q.marks),
-      backRoom: 'past'
+      backRoom: 'past',
+      carryAnswers: true
     };
     // Review keeps prior working visible but unlocked: locked answers would
     // keep inputs disabled, clearing them would discard the working.
@@ -148,7 +149,8 @@ export async function finishQuiz(auto = false) {
       title: S.quiz.title,
       sub: `${S.quiz.questions.length} questions from the finished run`,
       questions: S.quiz.questions,
-      backRoom: 'past'
+      backRoom: 'past',
+      carryAnswers: true
     };
     for (const a of Object.values(S.answers)) a.locked = false;
     S.runMode = 'explore';

@@ -635,6 +635,7 @@ export function wireCalc(q) {
     inp.oninput = () => {
       const a = (S.answers[k] ||= {});
       a.text = inp.value;
+      a.checked = false; // an edited answer can't keep the old verdict
       if (S.quiz?.exam) {
         a.locked = true;
         a.correct = areMathEqual(inp.value, q.answer);
