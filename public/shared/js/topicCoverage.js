@@ -12,13 +12,11 @@ const normTopic = (t) => String(t).trim().replace(/\s+/g, ' ').toLowerCase();
  * @param {Array} scores    /api/scores entries ({quizUuid, score, total})
  * @param {Array} quizzes   quiz meta entries ({uuid, topics, questionCount})
  * @param {string[]} topics topic names to report, in display order
- * @param {Object} [opts]   { mixedUuid, mixedTopics } — synthesized-quiz scores
- *   (uuid has no catalog entry) attribute to `mixedTopics` instead.
  * @returns {Array} rows: {topic, banked, attempted, correct, partial,
  *   incorrect, accuracy} — accuracy = total marks got / total marks, null when
  *   no attempts. Sorted weakest-first; never-attempted topics sort last.
  */
-export function topicCoverage(scores, quizzes, topics, opts = {}) {
+export function topicCoverage(scores, quizzes, topics) {
   const metaByUuid = new Map((quizzes || []).map((m) => [m.uuid, m]));
   const acc = new Map();
   for (const t of topics || []) {
@@ -35,10 +33,11 @@ export function topicCoverage(scores, quizzes, topics, opts = {}) {
   for (const m of quizzes || []) {
     for (const row of topicOf(m.topics)) row.banked += m.questionCount || 0;
   }
-  const mixedRows = topicOf(opts.mixedTopics);
   for (const s of scores || []) {
     const m = metaByUuid.get(s.quizUuid);
-    const rows = m ? topicOf(m.topics) : (s.quizUuid === opts.mixedUuid ? mixedRows : []);
+    // Virtual quizzes (topic/sub/mixed) share one UUID with no catalog entry;
+    // their titles start with the topic name ("Waves · 20-mark quiz").
+    const rows = m ? topicOf(m.topics) : topicOf([String(s.quizTitle || '').split('·')[0]]);
     if (!rows.length) continue;
     const got = Number(s.score) || 0;
     const total = Number(s.total) || 0;
@@ -67,11 +66,10 @@ export function shares(row) {
 export function rowHtml(row, esc) {
   const [c, p, i] = shares(row);
   const acc = row.accuracy == null ? '—' : `${Math.round(row.accuracy * 100)}%`;
-  const seg = (cls, pct, n, label) =>
-    `<i class="${cls}" style="width:${pct}%" role="img" aria-label="${n} ${label}"></i>`;
+  const seg = (cls, pct) => `<i class="${cls}" style="width:${pct}%"></i>`;
   return `<div class="coverage-row" title="${esc(row.topic)}: ${row.correct} correct, ${row.partial} partial, ${row.incorrect} incorrect of ${row.attempted} attempt(s)">
     <span class="coverage-name">${esc(row.topic)}</span>
-    <span class="coverage-bar" role="group" aria-label="${row.correct} correct, ${row.partial} partial, ${row.incorrect} incorrect">${seg('cov-c', c, row.correct, 'correct')}${seg('cov-p', p, row.partial, 'partial')}${seg('cov-i', i, row.incorrect, 'incorrect')}</span>
+    <span class="coverage-bar" role="group" aria-label="${row.correct} correct, ${row.partial} partial, ${row.incorrect} incorrect">${seg('cov-c', c)}${seg('cov-p', p)}${seg('cov-i', i)}</span>
     <span class="coverage-meta mono">${row.attempted} tries · ${row.banked}Q · ${acc}</span>
   </div>`;
 }

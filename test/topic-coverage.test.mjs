@@ -41,6 +41,18 @@ describe('topicCoverage', () => {
     assert.equal(rows[2].topic, 'Fields');      // never attempted
   });
 
+  it('virtual quizzes attribute by title prefix; unparseable titles skipped', () => {
+    const rows = topicCoverage([
+      { quizUuid: 'virt', quizTitle: 'Waves · 20-mark quiz', score: 9, total: 10 },
+      { quizUuid: 'virt', quizTitle: 'mechanics · Energy', score: 1, total: 10 },
+      { quizUuid: 'virt', quizTitle: 'Mixed · 20m (8Q)', score: 8, total: 10 },
+    ], QUIZZES, TOPICS);
+    assert.equal(rows.find(r => r.topic === 'Waves').correct, 1);
+    assert.equal(rows.find(r => r.topic === 'Mechanics').incorrect, 1);
+    // "Mixed ·" matches no topic — nothing misattributed
+    assert.equal(rows.reduce((s, r) => s + r.attempted, 0), 2);
+  });
+
   it('scores with zero total count as incorrect (pct 0)', () => {
     const rows = topicCoverage([S('q1', 0, 0)], QUIZZES, TOPICS);
     assert.equal(rows.find(r => r.topic === 'Waves').incorrect, 1);
