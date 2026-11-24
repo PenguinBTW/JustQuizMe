@@ -100,6 +100,7 @@ export async function resumeSave(){
 }
 
 export function resumeVirtual(sv){
-  const quizLike = { uuid: sv.quizUuid, version: sv.quizVersion ?? 1, title: sv.title || 'Saved quiz', timeLimitMinutes: sv.timeLimitMinutes || null, exam: !!sv.exam, questions: sv.questions || [] };
+  const quizLike = { uuid: sv.quizUuid, version: sv.quizVersion ?? 1, title: sv.title || 'Saved quiz', timeLimitMinutes: sv.timeLimitMinutes || null,
+    untimed: !!sv.untimed, exam: !!sv.exam, questions: sv.questions || [] };
   beginRun({ mode: 'quiz', quizLike, meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true }, resume: sv, retrySpec: sv.spec || { kind: 'mixed' } });
 }
