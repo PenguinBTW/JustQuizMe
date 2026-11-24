@@ -144,8 +144,12 @@ test('resumeTick: a finishing run cannot overwrite a foreign anchor', async () =
   // Another tab owns the anchor for quiz q-2.
   const mineA = { savedAt: 0, sig: null };
   resumeTick({ portal: 'maths', snapshot: () => ({ ...base(), quizUuid: 'q-2' }), isDone: () => null, store: s, mine: mineA });
-  // This tab's exam for q-9 finishes while grading mutates its snapshot.
+  // This tab's exam q-9 was mid-run (its own save was already accepted), then
+  // another tab wrote q-2 — grading mutating the exam's snapshot must not count
+  // as progress that overwrites the foreign anchor before the clear lands.
   const mineE = { savedAt: 0, sig: null };
+  resumeTick({ portal: 'maths', snapshot: () => ({ ...base(), quizUuid: 'q-9', elapsed: 200 }), isDone: () => null, store: s, mine: mineE });
+  resumeTick({ portal: 'maths', snapshot: () => ({ ...base(), quizUuid: 'q-2' }), isDone: () => null, store: s, mine: mineA });
   resumeTick({ portal: 'maths', snapshot: () => ({ ...base(), quizUuid: 'q-9', answers: { a: { locked: true }, b: { locked: true } }, elapsed: 300 }), isDone: () => 'q-9', store: s, mine: mineE });
   assert.equal(loadAnchor('maths', s)?.quizUuid, 'q-2', 'finishing exam clobbered a foreign save');
 });
