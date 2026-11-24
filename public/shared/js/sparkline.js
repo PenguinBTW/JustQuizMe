@@ -14,7 +14,7 @@ const DEFAULTS = { width: 72, height: 20, pad: 3, maxPoints: 10 };
 export function attemptKey(s) {
   const f = s?.quizFile;
   const u = s?.quizUuid;
-  if (typeof f !== 'string' || (typeof u !== 'string' && typeof u !== 'number')) return null;
+  if (typeof f !== 'string' || f === '' || (typeof u !== 'string' && typeof u !== 'number')) return null;
   return `${u}|${f}`;
 }
 
