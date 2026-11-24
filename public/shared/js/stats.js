@@ -30,7 +30,7 @@ export function topicsFor(score, uuidIndex = {}) {
   }
   const title = typeof score?.quizTitle === 'string' ? score.quizTitle : '';
   const head = title.split(' · ')[0].trim();
-  if (head && !/^(mixed|custom|past paper)/i.test(head)) return [head];
+  if (head && !/^(mixed|custom|synth|past paper)/i.test(head)) return [head];
   return ['Mixed practice'];
 }
 
@@ -68,8 +68,13 @@ export function weakestTopic(groups, minAttempts = 1) {
 export function streakDays(dates, now = new Date()) {
   const days = new Set();
   for (const d of dates || []) {
-    const t = d instanceof Date ? d : new Date(d);
-    if (Number.isNaN(t.getTime())) continue;
+    // scores.json is user-writable via the API — a malformed stored date must
+    // never throw, or the whole Stats view fails to open.
+    let t;
+    try {
+      t = d instanceof Date ? d : new Date(d);
+    } catch { continue; }
+    if (!(t instanceof Date) || Number.isNaN(t.getTime())) continue;
     days.add(
       `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`
     );
