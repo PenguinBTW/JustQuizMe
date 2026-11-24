@@ -69,3 +69,13 @@ test('topicsFor trusts titles only when known; synthesized papers stay mixed', (
   assert.deepEqual(topicsFor({ quizTitle: 'Trigonometry · 12-mark quiz' }, {}, known), ['Trigonometry']);
   assert.deepEqual(topicsFor({ quizTitle: 'Synthesized Paper' }, {}, known), ['Mixed practice']);
 });
+
+test('topicAccuracy folds case-variant labels into the canonical casing', () => {
+  const acc = topicAccuracy(
+    [{ topics: ['algebra'], score: 3, total: 6 }, { quizTitle: 'trigonometry · 8-mark quiz', score: 5, total: 8 }],
+    {},
+    new Set(['Algebra', 'Trigonometry'])
+  );
+  assert.deepEqual(Object.keys(acc).sort(), ['Algebra', 'Trigonometry']);
+  assert.equal(acc.Algebra.total, 6);
+});

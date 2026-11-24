@@ -54,9 +54,11 @@ function renderCard(subject, quizzes, scores, order) {
   }
   const known = new Set([...(order || []), ...Object.values(uuidIndex).flat()]);
   const acc = topicAccuracy(scores, uuidIndex, known);
-  // Portal taxonomy order first; bank topics outside it stay visible (grey)
+  // Portal taxonomy order first; bank topics outside it stay visible (grey).
+  // Case-insensitive dedupe: "algebra" bank labels fold into "Algebra".
+  const orderLower = new Set((order || []).map(t => String(t).toLowerCase()));
   const topics = order?.length
-    ? [...order, ...taxonomyOrder(quizzes).filter(t => !order.includes(t))]
+    ? [...order, ...taxonomyOrder(quizzes).filter(t => !orderLower.has(t.toLowerCase()))]
     : taxonomyOrder(quizzes);
   const cells = gridModel(topics, acc);
   const card = document.createElement('div');

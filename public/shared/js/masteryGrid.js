@@ -19,25 +19,29 @@ function cleanTopics(list) {
 // topic quizzes are titled "<topic> · N-mark quiz" and the title is trusted
 // only when `known` confirms it is a real topic — then 'Mixed practice'.
 export function topicsFor(attempt, uuidIndex = {}, known = null) {
+  // `known` may be a Set (exact lookup) or a Map (lowercase -> canonical casing)
+  const canon = t => (known instanceof Map ? known.get(t.toLowerCase()) : null) || t;
+  const has = t => !known || (known instanceof Map ? known.has(t.toLowerCase()) : known.has(t));
   if (Array.isArray(attempt?.topics) && attempt.topics.length) {
     const t = cleanTopics(attempt.topics);
-    if (t.length) return t;
+    if (t.length) return t.map(canon);
   }
   const idx = attempt ? uuidIndex[attempt.quizUuid] : undefined;
   if (Array.isArray(idx) && idx.length) {
     const t = cleanTopics(idx);
-    if (t.length) return t;
+    if (t.length) return t.map(canon);
   }
   const titled = String(attempt?.quizTitle || '').split('·')[0].trim();
-  if (titled && !/^mixed/i.test(titled)) {
-    if (!known || known.has(titled)) return [titled];
-  }
+  if (titled && !/^mixed/i.test(titled) && has(titled)) return [canon(titled)];
   return ['Mixed practice'];
 }
 
 // Per-topic { correct, total, pct } buckets. A run covering several topics is
 // attributed fully to each one (marks were spread across them).
 export function topicAccuracy(attempts, uuidIndex = {}, known = null) {
+  if (known instanceof Set) {
+    known = new Map([...known].map(k => [String(k).toLowerCase(), k]));
+  }
   const groups = new Map();
   for (const a of attempts || []) {
     const score = Number(a?.score) || 0;
