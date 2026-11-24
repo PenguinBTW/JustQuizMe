@@ -8,15 +8,19 @@
 /**
  * @param {Array<{quizUuid:string, score:number, total:number}>} scores
  * @param {Object<string, string[]>} quizTopics quizUuid -> topic names
+ * @param {(entry:object)=>string[]|null} [topicHint] fallback for generated
+ *   runs (mixed/topic synth quizzes share a virtual uuid, so the manifest
+ *   lookup misses them); parse the topic out of the entry instead
  * @returns {Array<{topic:string, scored:number, total:number, attempts:number, accuracy:number}>}
  *   sorted weakest-first (accuracy asc, then more evidence first, then name)
  */
-export function topicAccuracy(scores, quizTopics) {
+export function topicAccuracy(scores, quizTopics, topicHint) {
   const acc = new Map();
   for (const s of scores || []) {
     if (!s || typeof s.score !== 'number' || typeof s.total !== 'number') continue;
     if (!(s.total > 0) || s.score < 0) continue;
-    const topics = quizTopics ? quizTopics[s.quizUuid] : null;
+    let topics = quizTopics ? quizTopics[s.quizUuid] : null;
+    if (!Array.isArray(topics) && topicHint) topics = topicHint(s);
     if (!Array.isArray(topics)) continue;
     for (const t of topics) {
       const topic = String(t || '').trim();

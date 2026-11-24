@@ -74,3 +74,21 @@ test('pickWeakest respects n and minAttempts', () => {
   assert.deepEqual(pickWeakest(rows, 2).map(r => r.topic), ['a', 'b']);
   assert.deepEqual(pickWeakest(rows, 5, { minAttempts: 2 }).map(r => r.topic), ['b']);
 });
+
+test('topicHint recovers generated-run topics missed by the manifest map', () => {
+  const hint = e => {
+    const head = String(e.quizTitle || '').split(' · ')[0].trim();
+    return head === 'Trigonometry' ? [head] : null;
+  };
+  const rows = topicAccuracy(
+    [
+      { quizUuid: 'mixed', quizTitle: 'Trigonometry · 20-mark quiz', score: 4, total: 10 },
+      { quizUuid: 'mixed', quizTitle: 'Mixed Mathematics · 30m', score: 9, total: 10 }
+    ],
+    TOPICS,
+    hint
+  );
+  const trig = rows.find(r => r.topic === 'Trigonometry');
+  assert.equal(trig.attempts, 1); // topic quiz counted, mixed run ignored
+  assert.equal(trig.accuracy, 0.4);
+});
