@@ -14,13 +14,19 @@ export function sanitizeNote(note) {
   return note.trim().slice(0, 2000);
 }
 
-// Identity of a stored flag — the timestamp discriminates repeat flags of
-// the same question (POST intentionally doesn't dedupe).
+// Identity of a stored flag — `id` (assigned at POST) when present, else the
+// field tuple; `at` discriminates repeat flags of the same question
+// (POST intentionally doesn't dedupe).
 export function flagKey(f) {
-  return [f.portal, f.fileBase, f.questionId, f.at].map((v) => String(v ?? '')).join('');
+  return f.id
+    ? `id:${f.id}`
+    : [f.portal, f.fileBase, f.questionId, f.at]
+        .map((v) => String(v ?? ''))
+        .join('');
 }
 
 export function sameFlag(a, b) {
+  if (a.id && b.id) return a.id === b.id;
   return (
     a.portal === b.portal &&
     a.fileBase === b.fileBase &&
@@ -36,7 +42,7 @@ export function removeFlag(flags, sel) {
   return { flags: flags.slice(0, i).concat(flags.slice(i + 1)), removed: true };
 }
 
-// Newest-first list, grouped {portal: [...]}, preserving within-portal order.
+// Flags bucketed {portal: [...]}, preserving within-portal order.
 export function groupByPortal(flags) {
   const out = {};
   flags.forEach((f) => { (out[f.portal] ||= []).push(f); });

@@ -52,6 +52,9 @@ export async function deleteFlag(flag) {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      // id (assigned at POST) selects the exact row; the field identity is
+      // the fallback the server accepts for rows written before ids existed.
+      ...(typeof flag.id === 'string' ? { id: flag.id } : {}),
       portal: flag.portal,
       fileBase: flag.fileBase,
       questionId: flag.questionId,

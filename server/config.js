@@ -7,7 +7,7 @@ module.exports = {
   PORT: process.env.PORT || 3000,
   ROOT_DIR,
   PUBLIC_DIR: path.join(ROOT_DIR, 'public'),
-  DATA_DIR: path.join(ROOT_DIR, 'data'),
+  DATA_DIR: process.env.DATA_DIR || path.join(ROOT_DIR, 'data'),
 
   SUBJECTS: {
     cs: {

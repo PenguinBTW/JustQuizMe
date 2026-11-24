@@ -1,6 +1,7 @@
 // Question issue flags — shared across all portals.
 // POST /api/flags appends {portal, fileBase, questionId, reason, note, at}
 // to data/flags.json; GET /api/flags returns the stored list.
+const crypto = require('crypto');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -67,6 +68,7 @@ function createFlagsRouter() {
       return res.status(500).json({ error: 'flags store is corrupt and could not be read' });
     }
     flags.push({
+      id: crypto.randomUUID(),
       portal: req.body.portal,
       fileBase: req.body.fileBase,
       ...(typeof req.body.category === 'string' ? { category: req.body.category } : {}),
@@ -83,23 +85,29 @@ function createFlagsRouter() {
     res.json({ ok: true, count: flags.length });
   });
 
-  // Unflag: removes the first stored flag matching the identity fields
-  // (portal + fileBase + questionId + at — `at` discriminates repeat flags
-  // of the same question, since POST deliberately doesn't dedupe).
+  // Unflag: removes exactly the flagged report the client selected. `id` is
+  // the primary key (assigned at POST); callers holding a row written before
+  // ids existed may send {portal, fileBase, questionId, at} instead — the
+  // first row matching all of those fields is removed.
   router.delete('/flags', (req, res) => {
     const body = req.body;
-    if (!body || typeof body !== 'object' || typeof body.at !== 'string' || !body.at) {
-      return res.status(400).json({ error: 'expected {portal, fileBase, questionId, at}' });
+    const byId = body && typeof body.id === 'string' && body.id.length > 0;
+    const byFields =
+      body && typeof body === 'object' && typeof body.at === 'string' && body.at;
+    if (!body || typeof body !== 'object' || (!byId && !byFields)) {
+      return res.status(400).json({ error: 'expected {id} or {portal, fileBase, questionId, at}' });
     }
     const flags = readFlags();
     if (flags === null) {
       return res.status(500).json({ error: 'flags store is corrupt and could not be read' });
     }
     const i = flags.findIndex((f) =>
-      f.portal === body.portal &&
-      f.fileBase === body.fileBase &&
-      String(f.questionId) === String(body.questionId) &&
-      f.at === body.at
+      byId
+        ? f.id === body.id
+        : f.portal === body.portal &&
+          f.fileBase === body.fileBase &&
+          String(f.questionId) === String(body.questionId) &&
+          f.at === body.at
     );
     if (i < 0) return res.status(404).json({ error: 'no matching flag' });
     flags.splice(i, 1);
