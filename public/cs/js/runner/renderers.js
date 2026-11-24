@@ -22,10 +22,10 @@ export function renderQuestionSpecifics(q) {
             if (i === q.correctIndex) cls += ' is-correct';
             else if (ans.selected === i) cls += ' is-wrong';
             else cls += ' is-dim';
-          } else if (S.runMode === 'exam' && ans.selected === i) {
+          } else if (ans.selected === i) {
             cls += ' is-selected';
           }
-          const ariaState = S.runMode === 'exam' && !ans.locked ? `aria-pressed="${ans.selected === i ? 'true' : 'false'}"` : '';
+          const ariaState = !ans.locked ? `aria-pressed="${ans.selected === i ? 'true' : 'false'}"` : '';
           return `
             <button class="${cls}" data-opt-idx="${i}" ${ans.locked ? 'disabled' : ''} ${ariaState}>
               <div class="opt-top">
