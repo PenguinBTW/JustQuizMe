@@ -38,9 +38,14 @@
       </nav>
 
       <div class="masthead-actions">
+        <a href="/flags.html" id="flagsNavBadge" class="mast-link" title="Question issue reports" hidden style="display:none"></a>
         <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()">Paper Theme</button>
         <a href="#synthesizer" class="btn-synthesizer-jump">Synthesizer ↓</a>
       </div>
+      <script type="module">
+        import { mountFlagBadge } from '/shared/js/flags.js';
+        mountFlagBadge(document.getElementById('flagsNavBadge'));
+      </script>
     </header>
 
     <!-- MONUMENTAL HERO SECTION -->

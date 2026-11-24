@@ -6,6 +6,7 @@ const QuizService = require('./services/quiz-service');
 const SaveService = require('./services/save-service');
 
 const createApiRouter = require('./routes/api');
+const createFlagsRouter = require('./routes/flags');
 const createCsRouter = require('./routes/cs');
 const createMathsRouter = require('./routes/maths');
 const createPhysicsRouter = require('./routes/physics');
@@ -50,7 +51,9 @@ const csRouter = createCsRouter(services.cs.quizService, services.cs.saveService
 const mathsRouter = createMathsRouter(services.maths.quizService, services.maths.saveService);
 const physicsRouter = createPhysicsRouter(services.physics.quizService, services.physics.saveService);
 const apiRouter = createApiRouter(services);
+const flagsRouter = createFlagsRouter();
 
+app.use('/api', flagsRouter);
 app.use('/api', apiRouter);
 
 app.use('/api/cs', csRouter);
