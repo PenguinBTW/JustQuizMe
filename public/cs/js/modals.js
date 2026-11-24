@@ -10,8 +10,11 @@ let modalFocusBack = null;
 function focusInto(closeId) {
   // Re-render calls (chip toggles) re-enter openSynthModal while focus is
   // already inside the dialog — don't steal it back to the close button.
-  if (document.activeElement?.closest?.('.modal-backdrop')) return;
-  modalFocusBack = document.activeElement;
+  const ae = document.activeElement;
+  if (ae?.closest?.('.modal-backdrop')) return;
+  // After a chip re-render the focused element was removed and activeElement
+  // fell back to <body> — keep the original trigger as the return target.
+  if (ae && ae !== document.body) modalFocusBack = ae;
   $(closeId)?.focus();
 }
 

@@ -116,6 +116,7 @@ export function renderPast(){
       if (!t) return;
       S.openTopics.has(t.topic) ? S.openTopics.delete(t.topic) : S.openTopics.add(t.topic);
       rerenderKeepScroll();
+      document.querySelector(`[data-acc-toggle="${el.dataset.accToggle}"]`)?.focus();
     };
   });
   document.querySelectorAll('[data-topic-modal]').forEach(b => b.onclick = (e) => { e.stopPropagation(); openTopicModal(+b.dataset.topicModal); });

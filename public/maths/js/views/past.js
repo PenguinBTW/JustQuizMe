@@ -138,6 +138,7 @@ export function renderPast() {
       if (!t) return;
       S.openTopics.has(t.topic) ? S.openTopics.delete(t.topic) : S.openTopics.add(t.topic);
       rerenderKeepScroll();
+      document.querySelector(`[data-acc-toggle="${el.dataset.accToggle}"]`)?.focus();
     };
   });
 

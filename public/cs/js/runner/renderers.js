@@ -71,7 +71,7 @@ export function renderQuestionSpecifics(q) {
               rendered = rendered.split(esc(hl)).join(`<span class="key-phrase">${esc(hl)}</span>`);
             });
             return `
-              <div class="ms-item ${isTicked ? 'checked' : ''}" data-midx="${mIdx}" role="checkbox" aria-checked="${isTicked}" tabindex="0" aria-label="Mark scheme point ${mIdx + 1}">
+              <div class="ms-item ${isTicked ? 'checked' : ''}" data-midx="${mIdx}" role="checkbox" aria-checked="${isTicked}" tabindex="0" aria-label="Mark scheme point ${mIdx + 1}: ${esc(item.text)}">
                 <span class="mono" style="color:var(--accent); font-weight:700;" aria-hidden="true">${isTicked ? '☑' : '☐'}</span>
                 <div>[${item.marks}m] ${rendered}</div>
               </div>
@@ -145,7 +145,7 @@ export function renderQuestionSpecifics(q) {
               ${q.indicativeContent.map((point, pIdx) => {
                 const isTicked = (ans.tickedIndicative || []).includes(pIdx);
                 return `
-                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}" role="checkbox" aria-checked="${isTicked}" tabindex="0" aria-label="Indicative content point ${pIdx + 1}">
+                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}" role="checkbox" aria-checked="${isTicked}" tabindex="0" aria-label="Indicative content point ${pIdx + 1}: ${esc(point)}">
                     <span class="mono" style="color:var(--accent); font-weight:700;" aria-hidden="true">${isTicked ? '☑' : '☐'}</span>
                     <div style="font-size:13.5px;">${formatPrompt(point)}</div>
                   </div>
@@ -646,6 +646,7 @@ export function wireQuestionInteractions(q) {
         ans.score = Math.min(+q.marks || 0, earned);
         ans.tickedCount = ans.score;
         renderQ();
+        document.querySelector(`[data-midx="${mIdx}"]`)?.focus();
       };
     });
   }
@@ -676,6 +677,7 @@ export function wireQuestionInteractions(q) {
         const matchedLvl = (q.levels || []).find(l => l.level === lvlNum);
         if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[1]);
         renderQ();
+        document.querySelector(`[data-level-idx="${lvlNum}"]`)?.focus();
       };
     });
     const slider = $('#levelMarkSlider');
@@ -696,6 +698,7 @@ export function wireQuestionInteractions(q) {
         if (ans.tickedIndicative.includes(pIdx)) ans.tickedIndicative = ans.tickedIndicative.filter(i => i !== pIdx);
         else ans.tickedIndicative.push(pIdx);
         renderQ();
+        document.querySelector(`[data-indicative-idx="${pIdx}"]`)?.focus();
       };
     });
   }
@@ -940,6 +943,7 @@ export function wireQuestionInteractions(q) {
         }, 0);
         ans.score = Math.min(+q.marks || 0, earned);
         renderQ();
+        document.querySelector(`[data-midx="${mIdx}"]`)?.focus();
       };
     });
   }

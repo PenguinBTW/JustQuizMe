@@ -209,6 +209,7 @@ export function wirePastEvents() {
       if (S.openTopics.has(t.topic)) S.openTopics.delete(t.topic);
       else S.openTopics.add(t.topic);
       renderPast();
+      document.querySelector(`[data-acc-toggle="${ti}"]`)?.focus();
     };
   });
 

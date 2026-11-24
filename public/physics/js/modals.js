@@ -7,7 +7,9 @@ import { startMixedSel, startTopicQuiz } from './runner/starters.js';
 let modalFocusBack = null;
 
 function focusInto(id, closeId){
-  modalFocusBack = document.activeElement;
+  const ae = document.activeElement;
+  if (ae?.closest?.('.modal-backdrop')) return;
+  if (ae && ae !== document.body) modalFocusBack = ae;
   $(closeId)?.focus();
 }
 
@@ -75,6 +77,7 @@ export function toggleAllPopupSubtopics(){
   const all = chips.length > 0 && chips.every(c => c.classList.contains('checked'));
   chips.forEach(c => {
     c.classList.toggle('checked', !all);
+    c.setAttribute('aria-checked', String(!all));
     !all ? S.mixed.subs.add(c.dataset.synthSub) : S.mixed.subs.delete(c.dataset.synthSub);
   });
   syncPopupToggleAllButton();

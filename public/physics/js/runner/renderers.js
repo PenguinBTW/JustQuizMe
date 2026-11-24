@@ -203,6 +203,7 @@ export function wireTicks(k){
   document.querySelectorAll('[data-tick]').forEach(c => c.onchange = () => {
     const a = S.answers[k] ||= { ticks: [] }; a.ticks = a.ticks || [];
     a.ticks[+c.dataset.tick] = c.checked; renderQ();
+    document.querySelector(`[data-tick="${+c.dataset.tick}"]`)?.focus();
   });
   document.querySelectorAll('[data-ms-item]').forEach(item => item.onclick = (e) => {
     if (e.target.tagName === 'INPUT') return;

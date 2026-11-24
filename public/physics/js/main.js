@@ -27,6 +27,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape'){ closeSynthModal(); closeTopicModal(); }
   if (e.key.toLowerCase() === 't') $('#themeBtn')?.click();
   if (S.quiz && !document.querySelector('.modal-backdrop.open')){
+    if (e.repeat) return; // held key must not auto-advance / auto-submit
     if (e.key === 'ArrowLeft'){ e.preventDefault(); ($('#prevQ') || $('#backTop'))?.click(); }
     if (e.key === 'ArrowRight'){
       e.preventDefault();

@@ -541,6 +541,7 @@ export function wireWritten(q) {
       a.ticks = a.ticks || [];
       a.ticks[+c.dataset.wTick] = c.checked;
       renderQ();
+      document.querySelector(`[data-w-tick="${+c.dataset.wTick}"]`)?.focus();
     };
   });
 
@@ -595,6 +596,7 @@ export function wireSelfMarked(q) {
       a.ticks = a.ticks || [];
       a.ticks[+c.dataset.smTick] = c.checked;
       renderQ();
+      document.querySelector(`[data-sm-tick="${+c.dataset.smTick}"]`)?.focus();
     };
   });
 
