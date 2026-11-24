@@ -18,6 +18,14 @@ export const fmtDate = (iso) => {
     ' · ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 };
 
+/** Full timestamp for the detail line; stored entries may carry any junk
+ * the scores API accepted, so an unparseable date echoes back verbatim
+ * instead of throwing inside toISOString. */
+export const fmtFullDate = (iso) => {
+  const d = new Date(iso);
+  return isNaN(d) ? String(iso) : d.toISOString();
+};
+
 /** Raw score entry → normalized attempt row. Tolerant of missing fields. */
 export function normalizeEntry(e) {
   const score = +e.score || 0;
@@ -51,14 +59,14 @@ export function rowHtml(a) {
       <span class="ah-title">${esc(a.title)}</span>
       <span class="ah-meta mono">${a.mode}${a.version ? ` · v${esc(a.version)}` : ''}</span>
       <span class="ah-score mono">${a.score}/${a.total} <span class="ah-pct">${a.pct}%</span></span>
-      <span class="ah-date mono">${esc(fmtDate(a.date))}</span>
+      <span class="ah-date mono">${esc(fmtDate(a.date))}<span class="ah-chev">▾</span></span>
     </summary>
     <div class="ah-detail mono">
       <span>ref: ${esc(a.ref)}</span>
       ${a.uuid && a.uuid !== a.ref ? `<span>id: ${esc(a.uuid)}</span>` : ''}
       <span>duration: ${fmtDuration(a.seconds)}</span>
       <span>mode: ${a.mode === 'exam' ? 'exam conditions' : 'practice'}</span>
-      ${a.date ? `<span>finished: ${esc(new Date(a.date).toISOString())}</span>` : ''}
+      ${a.date ? `<span>finished: ${esc(fmtFullDate(a.date))}</span>` : ''}
     </div>
   </details>`;
 }

@@ -47,6 +47,12 @@ test('rows from multiple quizzes each render', () => {
   assert.match(html, /2 attempts/);
 });
 
+test('malformed stored timestamps do not throw', () => {
+  const html = rowHtml(normalizeEntry({ quizTitle: 'x', date: 'not-a-date' }));
+  assert.match(html, /finished: not-a-date/);
+  assert.match(html, /—/);
+});
+
 test('escapes HTML in titles and refs', () => {
   const html = rowHtml(normalizeEntry({ quizTitle: '<b>x</b>', quizFile: 'f<1>.json' }));
   assert.match(html, /&lt;b&gt;x&lt;\/b&gt;/);
