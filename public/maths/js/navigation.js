@@ -4,6 +4,7 @@ import { $, esc } from './utils.js';
 import { api, fmtSaved } from './api.js';
 import { renderPast } from './views/past.js';
 import { renderPractice } from './views/practice.js';
+import { renderProgress } from './views/progress.js';
 import { renderHistory } from './views/history.js';
 import { renderExploreList } from './views/explore.js';
 import { beginRun } from './runner/assessment.js';
@@ -47,6 +48,7 @@ export function renderRoom() {
   if (S.room === 'past') renderPast();
   else if (S.room === 'practice') renderPractice();
   else if (S.room === 'history') renderHistory();
+  else if (S.room === 'progress') renderProgress();
   else if (S.room === 'explore') renderExploreList();
   window.scrollTo(0, 0);
   if (window.renderMath) window.renderMath();
