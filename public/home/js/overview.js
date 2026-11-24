@@ -45,7 +45,7 @@ export async function renderOverview(container) {
     const series = accuracySeries(bySubject[key]);
     const roll = rollingAccuracy(series);
     const spark = roll.length >= 2
-      ? sparkline(roll.map((pct, i) => ({ pct, x: i })), { width: 180, height: 34, color: cfg.color })
+      ? sparkline(roll, { width: 180, height: 34, color: cfg.color })
       : '';
     const masteryPct = sum.meanMastery == null ? null : Math.round(sum.meanMastery * 100);
     return `
