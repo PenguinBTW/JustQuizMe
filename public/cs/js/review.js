@@ -92,10 +92,11 @@ export function planReviewRefs(items, quizzes) {
 export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) {
   const found = [];
   const worstKeptRank = () => (found.length < cap ? Infinity : found.map((x) => x.r).sort((a, b) => a - b)[cap - 1]);
-  for (const ref of refs || []) {
-    // Refs come out of planReviewRefs ordered by their best-ranked key, so
-    // once the deck is full and every remaining key ranks worse, no later
-    // fetch can change the outcome.
+  const bestRank = (ref) => (ref.keys || []).reduce((m, k) => Math.min(m, k.r), Infinity);
+  const sorted = [...(refs || [])].sort((a, b) => bestRank(a) - bestRank(b));
+  for (const ref of sorted) {
+    // Sorted by best-ranked key, so once the deck is full and every
+    // remaining key ranks worse, no later fetch can change the outcome.
     if ((ref.keys || []).every((k) => k.r > worstKeptRank())) break;
     const wanted = new Map((ref.keys || []).map((k) => [String(k.id).toLowerCase(), k.r]));
     for (const bank of [ref, ref.alt].filter(Boolean)) {
