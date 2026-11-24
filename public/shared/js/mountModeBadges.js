@@ -12,7 +12,7 @@ let pending = null;
 
 const style = document.createElement('style');
 style.textContent = `
-  .mode-badges { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .mode-badges { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; flex-basis:100%; }
   .mode-badge { font:600 10.5px/1.4 ui-monospace,monospace; padding:2px 8px;
     border-radius:10px; background:rgba(255,255,255,0.07); color:var(--ink-muted,#9aa); }
   .mode-badge b { color:var(--ink-secondary,#ccd); font-weight:700; }
@@ -68,6 +68,10 @@ function decorate(card, m) {
       !card.querySelector('[data-practice-start], [data-quiz-file], [data-exam-file], [data-practice-explore], .btn-practice-start, [data-idx]')) {
     return;
   }
+  // flex-row set cards (cs practice) would pin the badges beside the buttons —
+  // let the card wrap so the badge row lands in the footer
+  const cs = getComputedStyle(card);
+  if (cs.display === 'flex' && cs.flexWrap === 'nowrap') card.style.flexWrap = 'wrap';
   const row = document.createElement('div');
   row.className = 'mode-badges';
   for (const b of m.badges) {
