@@ -1778,3 +1778,9 @@ details.fullpapers summary:hover { color: var(--accent); }
 .qh-entry-date, .qh-entry-mode, .qh-entry-dur { color: var(--ink-muted); }
 .qh-entry-score { font-weight: 600; }
 .qh-pct { color: var(--accent); font-weight: 600; margin-left: 4px; }
+
+@media (max-width: 560px) {
+  .qh-entry { grid-template-columns: 1fr auto; }
+  .qh-entry-dur { display: none; }
+  .qh-entry-mode { display: none; }
+}

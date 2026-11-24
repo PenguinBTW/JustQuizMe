@@ -93,7 +93,7 @@ export function renderPast() {
       }).join('')}
     </div>
 
-    ${attemptHistoryHtml(S.scores)}
+    ${attemptHistoryHtml(S.scores.filter(s => S.quizzes['past-paper'].some(m => m.uuid === s.quizUuid)))}
 
     <details class="fullpapers">
       <summary><span>Full Sets · A-Z</span><span class="mono" style="font-size:12px; color:var(--ink-muted);">${S.quizzes['past-paper'].length} sets</span></summary>

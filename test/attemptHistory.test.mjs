@@ -111,3 +111,20 @@ test('quizHistoryHtml escapes injected content', () => {
   const html = quizHistoryHtml([mk({ date: '<script>' })], { file: 'pure_2023.json' });
   assert.equal(html.includes('<script>'), false);
 });
+
+test('quizAttempts filename fallback respects a replaced quiz', () => {
+  const feed = [
+    mk({ quizUuid: 'old-uuid', quizTitle: 'stale attempt' }),   // same file, old uuid
+    mk({ quizUuid: 'u2', quizFile: null, quizTitle: 'uuid-only' }),
+    mk({ quizUuid: null, quizTitle: 'legacy attempt' }),        // no uuid → file hit
+  ];
+  const rows = quizAttempts(feed, { file: 'pure_2023.json', uuid: 'u1' });
+  assert.deepEqual(rows.map(r => r.title), ['legacy attempt']);
+  // With no uuid on the ref, file matching alone is used.
+  assert.equal(quizAttempts(feed, { file: 'pure_2023.json' }).length, 2);
+});
+
+test('esc survives a title that cannot convert to a string', () => {
+  const html = rowHtml(normalizeEntry({ quizTitle: Object.create(null) }));
+  assert.match(html, /<details class="ah-row">/);
+});

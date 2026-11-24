@@ -3,7 +3,15 @@
 // feed the streak widget reads) and returns HTML strings; the portal decides
 // where to mount them.
 
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const esc = (s) => {
+  // Stored scores are user data: a crafted value with a throwing toString
+  // (e.g. Object.create(null)) must not take down the whole panel.
+  try {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  } catch {
+    return '';
+  }
+};
 
 export const fmtDuration = (seconds) => {
   const s = Math.max(0, Math.round(+seconds || 0));
@@ -75,8 +83,13 @@ export function rowHtml(a) {
  * newest-first. `ref` = { file?, uuid? } (pass either or both). */
 export function quizAttempts(scores, ref = {}) {
   const feed = Array.isArray(scores) ? scores : [];
-  const wanted = feed.filter(e =>
-    (ref.file && e.quizFile === ref.file) || (ref.uuid && e.quizUuid === ref.uuid));
+  const wanted = feed.filter(e => {
+    if (ref.uuid && e.quizUuid === ref.uuid) return true;
+    // Filename fallback only when either side lacks a uuid — reusing a file
+    // name for a rewritten quiz must not inherit the old quiz's attempts.
+    return Boolean(ref.file) && e.quizFile === ref.file &&
+      (!e.quizUuid || !ref.uuid);
+  });
   return listAttempts(wanted);
 }
 
