@@ -110,7 +110,7 @@ describe('sparklinePoints + recentPcts', () => {
 test('groupByTopic per-question attribution: marks split across topics, run counted once per topic', () => {
   // A repeats twice in one paper — marks must sum and the run count stays 1
   const entries = [{
-    quizUuid: 'q1', score: 8, total: 15,
+    quizUuid: 'q1', score: 11, total: 15,
     perQuestion: [
       { topic: 'A', score: 4, marks: 5 },
       { topic: 'A', score: 3, marks: 5 },
