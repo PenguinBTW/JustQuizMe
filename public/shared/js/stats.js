@@ -23,7 +23,10 @@ export function topicsFor(score, uuidIndex = {}) {
     const t = cleanTopics(score.topics);
     if (t.length) return t;
   }
-  const idx = score ? uuidIndex[score.quizUuid] : undefined;
+  // scores.json is user-writable via the API — only index with primitive keys;
+  // an object UUID can never match a manifest entry anyway.
+  const uuid = score?.quizUuid;
+  const idx = (typeof uuid === 'string' || typeof uuid === 'number') ? uuidIndex[uuid] : undefined;
   if (Array.isArray(idx) && idx.length) {
     const t = cleanTopics(idx);
     if (t.length) return t;
@@ -42,11 +45,14 @@ export function groupByTopic(scores, uuidIndex = {}) {
     const score = Number(s?.score) || 0;
     const total = Number(s?.total) || 0;
     for (const topic of topicsFor(s, uuidIndex)) {
-      const g = groups.get(topic) || { topic, correct: 0, attempted: 0, runs: 0 };
+      // Case-fold the grouping key — 'Mechanics' and 'mechanics' are one
+      // syllabus topic; first-seen casing wins for display.
+      const key = topic.toLowerCase();
+      const g = groups.get(key) || { topic, correct: 0, attempted: 0, runs: 0 };
       g.correct += score;
       g.attempted += total;
       g.runs += 1;
-      groups.set(topic, g);
+      groups.set(key, g);
     }
   }
   const out = [...groups.values()].map(g => ({
