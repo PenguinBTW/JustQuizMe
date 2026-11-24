@@ -229,7 +229,12 @@ export async function renderSummaryReport() {
 
       <button class="btn btn-jade" id="finishReturnBtn" style="padding:10px 28px; font-size:14px;">Return to Question Banks</button>
     </div>
-  `;
+  
+      <div id="rw-root" style="margin-top:28px; text-align:left; max-height:520px; overflow:auto;">
+        <div class="mono" style="font-size:11.5px; color:var(--ink-muted); margin-bottom:8px;">REVIEW — question walk-through with mark scheme &amp; examiner feedback</div>
+        ${reviewWalkHtml(S.quiz.questions || [], S.answers || {})}
+      </div>
+    `;
 
   $('#finishReturnBtn')?.addEventListener('click', () => loadHome());
 }
