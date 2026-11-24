@@ -106,7 +106,8 @@ function adjustResumeElapsed(sv) {
   try {
     const away = Math.max(0, Math.floor((Date.now() - new Date(sv.savedAt).getTime()) / 1000));
     if (!away) return sv;
-    return { ...sv, elapsedSeconds: (sv.elapsedSeconds || 0) + away };
+    const cap = sv.timeLimitMinutes * 60;
+    return { ...sv, elapsedSeconds: Math.min(cap, (sv.elapsedSeconds || 0) + away) };
   } catch { return sv; }
 }
 

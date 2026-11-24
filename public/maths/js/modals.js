@@ -26,7 +26,7 @@ export function openSynthModal() {
       </div>
       <div class="subtopic-pills-wrap">
         ${t.subs.map((g, gi) => `
-          <span class="subtopic-chip checked" data-synth-sub="${esc(t.topic)}|${gi}">
+          <span class="subtopic-chip ${S.mixed.subs.has(`${t.topic}|${gi}`) ? 'checked' : ''}" data-synth-sub="${esc(t.topic)}|${gi}">
             <span class="custom-check">✓</span> ${esc(g.name)} <span class="mono" style="font-size:11px; color:var(--ink-muted);">(${g.questions.length})</span>
           </span>
         `).join('')}
@@ -195,7 +195,7 @@ export function regenTopicModal() {
   const pacePerMark = paceMinutesPerMark(S.mixed.pace);
   $('#modalExamBtn').textContent = pacePerMark == null
     ? 'Start Exam · untimed'
-    : `Start Exam · ${Math.max(5, Math.round(m.marks * pacePerMark))}m ⏱`;
+    : `Start Exam · ${Math.max(5, Math.round((m.tot || m.marks) * pacePerMark))}m ⏱`;
   $('#modalSummaryLine').textContent = `LIVE SUBTOPIC DISTRIBUTION · ${set.length} QUESTIONS (${tot} MARKS)`;
 
   const bySub = new Map();

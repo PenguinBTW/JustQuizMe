@@ -80,7 +80,7 @@ export async function finishQuiz(auto) {
   (S.quiz?.questions || []).forEach(q => {
     if (q.type !== 'multiple-choice') return;
     const ans = S.answers[ak(q)] || {};
-    if (ans.score == null && ans.selected != null || ans.picked != null) {
+    if (ans.score == null && ans.selected != null || ans.picked != null || (Array.isArray(ans.ticks) && ans.ticks.some(Boolean)) || (ans.score > 0)) {
       ans.score = ans.selected === q.correctIndex ? (+q.marks || 0) : 0;
     }
     if (ans.selected != null) ans.locked = true;
