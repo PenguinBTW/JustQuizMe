@@ -9,6 +9,7 @@ import {
 } from './renderers.js';
 import { finishQuiz } from './finish.js';
 import { renderRoom } from '../navigation.js';
+import { noteDwell } from '../timeHeatmap.js';
 
 export function beginRun(o) {
   let qs = o.quizLike.questions;
@@ -24,6 +25,9 @@ export function beginRun(o) {
   S.answers = o.resume?.answers ?? {};
   S.elapsed = o.resume?.elapsedSeconds ?? 0;
   S.startedAt = o.resume?.startedAt ?? new Date().toISOString();
+  S.qDwell = Object.fromEntries((o.resume?.questionTimes || []).map(t => [t.q, t.s || 0]));
+  S.qShownKey = null;
+  S.qShownAt = 0;
 
   clearInterval(S.timerId);
   S.room = 'runner';
@@ -55,6 +59,8 @@ export function chromeCount() {
 }
 
 export async function saveProgress() {
+  noteDwell(S.qDwell, S.qShownKey, S.qShownAt, Date.now());
+  S.qShownAt = Date.now();
   const body = {
     quizUuid: S.quiz.uuid,
     quizVersion: S.quiz.version,
@@ -63,6 +69,7 @@ export async function saveProgress() {
     questionIndex: S.idx,
     answers: S.answers,
     elapsedSeconds: S.elapsed,
+    questionTimes: S.quiz.questions.map(q => ({ q: ak(q), s: Math.round(S.qDwell[ak(q)] || 0) })),
     startedAt: S.startedAt,
     kind: S.quizMeta.virtual ? 'virtual' : 'file',
     title: S.quiz.title,
@@ -94,6 +101,13 @@ export function eyebrowLeft(q) {
 export function renderQ() {
   const q = S.quiz.questions[S.idx];
   const qs = S.quiz.questions;
+
+  // Credit dwell to whatever was on screen since the last render, then start
+  // the clock on this question. Re-renders of the same question correctly
+  // keep accumulating it.
+  noteDwell(S.qDwell, S.qShownKey, S.qShownAt, Date.now());
+  S.qShownKey = ak(q);
+  S.qShownAt = Date.now();
   const isLast = S.idx === qs.length - 1;
   const inQuiz = S.runMode === 'quiz';
 

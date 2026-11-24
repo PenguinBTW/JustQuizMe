@@ -3,6 +3,7 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
+import { timeStripHtml } from '../timeHeatmap.js';
 
 export function pastEntries() {
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -35,6 +36,7 @@ export function historyEntryHtml(a, retryLabel) {
         <div class="mono" style="font-size:12px; color:var(--ink-muted);">
           ${fmtDate(a.date)} · ${fmtDur((a.minutes || 0) * 60 + (a.seconds || 0))} · ${a.score}/${a.total} marks (${p}%)
         </div>
+        ${timeStripHtml(a.questionTimes)}
       </div>
       <div style="display:flex; align-items:center; gap:12px;">
         <span class="pill ${pillFor(p)}">${p}% · ${a.score}/${a.total}</span>

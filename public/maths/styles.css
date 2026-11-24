@@ -1190,3 +1190,17 @@
       .stage { max-width: 1080px; }
       .topbar { max-width: 1080px; }
     }
+
+/* Per-question dwell-time heat strip in history entries */
+.time-strip {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+  margin-top: 6px;
+}
+.time-tick {
+  display: inline-block;
+  width: 5px;
+  border-radius: 1.5px;
+}

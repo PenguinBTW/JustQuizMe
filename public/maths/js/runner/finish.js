@@ -5,9 +5,14 @@ import { api } from '../api.js';
 import { renderRoom } from '../navigation.js';
 import { renderQ } from './assessment.js';
 import { retryRun } from './starters.js';
+import { noteDwell } from '../timeHeatmap.js';
 
 export async function finishQuiz(auto = false) {
   clearInterval(S.timerId);
+
+  // Final dwell credit for the question left open on screen.
+  noteDwell(S.qDwell, S.qShownKey, S.qShownAt, Date.now());
+  S.qShownKey = null;
 
   for (const q of S.quiz.questions) {
     const k = ak(q);
@@ -35,6 +40,7 @@ export async function finishQuiz(auto = false) {
     minutes,
     seconds,
     exam: !!S.quiz.exam,
+    questionTimes: S.quiz.questions.map(q => ({ q: ak(q), s: Math.round(S.qDwell[ak(q)] || 0) })),
     date: new Date().toISOString()
   };
 
