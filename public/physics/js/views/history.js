@@ -3,7 +3,7 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
-import { attemptsForQuiz, sparklineSvg } from '../../../../shared/js/sparkline.js';
+import { attemptKey, groupAttempts, sparklineSvg } from '../../../../shared/js/sparkline.js';
 
 export function pastEntries(){
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -34,7 +34,7 @@ export function entryBreakdownLine(a){
   return bits.join(' · ');
 }
 
-export function historyEntryHtml(a, retryLabel){
+export function historyEntryHtml(a, retryLabel, spark){
   const p = pct(a);
   const canRetry = retryLabel && a.quizFile && a.quizFile !== 'mixed' && /\.json$/i.test(a.quizFile);
   return `<div class="history-entry">
@@ -48,7 +48,7 @@ export function historyEntryHtml(a, retryLabel){
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
-      ${sparklineSvg(attemptsForQuiz(S.scores, a.quizFile))}
+      ${spark || ''}
       <span class="pill ${pillFor(p)}">${p}% · ${a.score}/${a.total}</span>
       ${canRetry ? `<button class="btn" style="padding:5px 13px; font-size:12px;" data-retry-entry="${esc(a.quizUuid)}|${esc(a.quizFile)}">${esc(retryLabel)}</button>` : ''}
     </div>
@@ -57,6 +57,8 @@ export function historyEntryHtml(a, retryLabel){
 
 export function renderHistory(){
   const isPast = S.historySrc !== 'practice';
+  // Group every quiz's attempts in one pass — per-row scans would be O(n²).
+  const sparkGroups = groupAttempts(S.scores);
   let body = '';
   if (isPast){
     const list = pastEntries();
@@ -88,7 +90,7 @@ export function renderHistory(){
         </div>
       </div>
       <div class="card" style="padding: 10px 28px;">
-        ${list.map(a => historyEntryHtml(a, 'Retry Shuffle')).join('') || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No past-paper attempts logged yet.</p>'}
+        ${list.map(a => historyEntryHtml(a, 'Retry Shuffle', sparklineSvg(sparkGroups.get(attemptKey(a))))).join('') || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No past-paper attempts logged yet.</p>'}
       </div>
     </div>`;
   } else {
@@ -117,7 +119,7 @@ export function renderHistory(){
         </div>
       </div>
       <div class="card" style="padding: 10px 28px;">
-        ${list.map(a => historyEntryHtml(a, 'Retry Set')).join('') || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No practice-set attempts logged yet.</p>'}
+        ${list.map(a => historyEntryHtml(a, 'Retry Set', sparklineSvg(sparkGroups.get(attemptKey(a))))).join('') || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No practice-set attempts logged yet.</p>'}
       </div>
     </div>`;
   }
