@@ -21,7 +21,7 @@ export async function finishQuiz(auto = false) {
     }
   } catch { /* capture best-effort */ }
   // a suspended-then-woken tab must not record time past the deadline
-  if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
+  if (S.quiz && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   // the paper is done — the resume banner must not revive it
   S.save = null;
 

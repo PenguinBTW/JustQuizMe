@@ -34,7 +34,7 @@ export async function finishQuiz(auto = false){
     }
   } catch { /* capture best-effort */ }
   // a suspended-then-woken tab must not record time past the deadline
-  if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
+  if (S.quiz && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   for (const q of S.quiz.questions){
     const k = ak(q), a = S.answers[k];
     if (q.type === 'written' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, score: Math.min(n, q.marks) }; }
