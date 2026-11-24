@@ -34,6 +34,27 @@ test('spec carries ids, count, marks and a title', () => {
   assert.match(spec.title, /Retry missed/);
 });
 
+test('spec embeds dep stems not in the missed set and echoes provenance', () => {
+  const linked = [
+    { id: 'stem', marks: 3 },
+    { id: 'fup', marks: 2, dependsOn: [{ id: 'stem', showAnswer: true }] },
+    { id: 'other', marks: 1 },
+  ];
+  const spec = buildMissedSpec(linked, { stem: { score: 3 }, fup: { score: 0 }, other: { score: 1 } }, keyOf, {
+    uuid: 'set-uuid', category: 'normal', file: 'sets/x.json',
+  });
+  assert.deepEqual(spec.ids, ['fup']);
+  assert.deepEqual(spec.deps.map((q) => q.id), ['stem']); // context survives the subset
+  assert.deepEqual(spec.from, { uuid: 'set-uuid', category: 'normal', file: 'sets/x.json' });
+  // deps on a missed source aren't embedded (already in the run), strings work too
+  const spec2 = buildMissedSpec(
+    [{ id: 'a', marks: 1 }, { id: 'b', marks: 1, dependsOn: ['a'] }],
+    { a: { score: 0 }, b: { score: 0 } },
+    keyOf,
+  );
+  assert.equal(spec2.deps, undefined);
+});
+
 test('resolveSpec maps ids back to questions and drops unknown keys', () => {
   const spec = { kind: 'qs', ids: ['c', 'zz', 'a'] };
   assert.deepEqual(resolveSpec(spec, Q, keyOf).map((q) => q.id), ['c', 'a']);

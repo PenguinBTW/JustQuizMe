@@ -10,27 +10,42 @@ export function missedCount() {
 
 export function startQuestionsRun(qs, spec, shuffle = false) {
   if (!qs.length) return false;
-  const tot = qs.reduce((s, q) => s + (+q.marks || 0), 0);
-  S.returnRoom = 'past';
-  beginRun({
-    mode: 'quiz',
-    quizLike: {
-      uuid: MIXED_UUID,
-      version: 1,
-      title: `${spec?.title || 'Retry missed'} (${qs.length}Q)`,
-      timeLimitMinutes: null,
-      exam: false,
-      questions: shuffle ? orderTypeShuffled(qs) : qs,
-    },
-    meta: { category: 'past-paper', file: 'mixed', virtual: true },
-    retrySpec: spec || { kind: 'qs', ids: qs.map(ak), count: qs.length, marks: tot },
-  });
+  const from = spec?.from || {};
+  // beginRun resolves dependsOn against run questions + S._pastAll only, so a
+  // missed follow-up would lose a linked stem that wasn't itself missed —
+  // fold the spec's embedded dep stems in for the resolve, then restore.
+  const prevAll = S._pastAll;
+  if (spec?.deps?.length) {
+    S._pastAll = { ...(prevAll || {}), ...Object.fromEntries(spec.deps.map((q) => [ak(q), q])) };
+  }
+  try {
+    S.returnRoom = 'past';
+    beginRun({
+      mode: 'quiz',
+      quizLike: {
+        uuid: from.uuid || MIXED_UUID,
+        version: 1,
+        title: `${spec?.title || 'Retry missed'} (${qs.length}Q)`,
+        timeLimitMinutes: null,
+        exam: false,
+        questions: shuffle ? orderTypeShuffled(qs) : qs,
+      },
+      meta: { category: from.category || 'past-paper', file: from.file || 'mixed', virtual: true },
+      retrySpec: spec || { kind: 'qs', ids: qs.map(ak), count: qs.length },
+    });
+  } finally {
+    if (spec?.deps?.length) S._pastAll = prevAll;
+  }
   return true;
 }
 
 // Results-view button: re-run only the questions scored below full marks.
 export function retryMissed() {
-  const spec = buildMissedSpec(S.quiz?.questions || [], S.answers || {}, ak);
+  const spec = buildMissedSpec(S.quiz?.questions || [], S.answers || {}, ak, {
+    uuid: S.quiz?.uuid,
+    category: S.quizMeta?.category,
+    file: S.quizMeta?.file,
+  });
   if (!spec) return false;
   const qs = missedQuestions(S.quiz.questions, S.answers, ak);
   return startQuestionsRun(qs, spec);
