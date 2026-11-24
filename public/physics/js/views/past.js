@@ -6,6 +6,7 @@ import { openSynthModal, openTopicModal } from '../modals.js';
 import { openExploreList } from './explore.js';
 import { startSubQuiz, beginFileQuiz } from '../runner/starters.js';
 import { exploreFullFile } from './practice.js';
+import { coverageBlockHtml } from './coverage.js';
 
 export function synthPoolQ(){
   let q = 0;
@@ -51,6 +52,8 @@ export function renderPast(){
       <button class="btn btn-primary" id="synthContinueBtn" ${S.mixed.topics.size ? '' : 'disabled'}>Continue →</button>
     </div>
   </div>
+
+  ${coverageBlockHtml()}
 
   <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;">
     <h3 class="serif" style="font-size:24px;">Browse by Topic</h3>
