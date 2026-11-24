@@ -5,6 +5,7 @@ import { api, bestFor } from '../api.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { openExploreList } from './explore.js';
 import { beginFileQuiz } from '../runner/starters.js';
+import { weakestPanelHtml, wireWeakestPanel } from '../weakestPanel.js';
 
 export function renderPractice() {
   const cards = S.quizzes.normal.map(m => {
@@ -47,8 +48,9 @@ export function renderPractice() {
     `;
   }).join('') || '<div class="card"><p style="color:var(--ink-secondary);">No practice sets yet - add JSON to questions/normal/.</p></div>';
 
-  $('#stage').innerHTML = `${roomNav('practice')}${cards}`;
+  $('#stage').innerHTML = `${roomNav('practice')}${weakestPanelHtml()}${cards}`;
   wireRoomNav();
+  wireWeakestPanel();
   document.querySelectorAll('[data-practice-history]').forEach(b => {
     b.onclick = () => {
       S.room = 'history';

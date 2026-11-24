@@ -1190,3 +1190,14 @@
       .stage { max-width: 1080px; }
       .topbar { max-width: 1080px; }
     }
+
+/* Weakest-topics panel */
+.weak-panel { margin-bottom: 22px; }
+.weak-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.weak-head h3 { font-size: 20px; margin: 0; }
+.weak-list { list-style: none; margin: 0; padding: 0; }
+.weak-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.weak-topic { flex: 1 1 200px; }
+.weak-acc { font-size: 12.5px; color: var(--ink-muted); }
+.weak-acc.weak-low { color: var(--danger, #c0392b); font-weight: 600; }
+.weak-start { font-size: 12px; }
