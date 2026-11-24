@@ -3,6 +3,7 @@
 // across modes (per-question data present) while exam statistics can tell the
 // difference (flashcard: true — the explore-distinction pattern).
 import { deckFromQuestions, orderDeckByMastery } from './flashcards.js';
+import { recordGrade, orderCardsByDue } from './cardSchedule.js';
 import { computeMastery } from './mastery.js';
 import { buildUuidIndex, resolveScoreTopics } from './masteryUi.js';
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -13,7 +14,8 @@ export function buildSmartDeck(S, questions) {
   const resolveFn = s => resolveScoreTopics(s, uuidIndex);
   const rows = computeMastery(scores, resolveFn);
   const cards = deckFromQuestions(questions);
-  return orderDeckByMastery(cards, rows);
+  // mastery bands first, per-card due state breaks toward what needs reps now
+  return orderCardsByDue(orderDeckByMastery(cards, rows));
 }
 
 // Mounts a flashcard session into `stage`. Returns nothing; cleanup via onExit.
@@ -103,6 +105,7 @@ export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
   };
 
   const grade = got => {
+    try { recordGrade(cards[idx].key || cards[idx].id || cards[idx].front, got); } catch {}
     grades.push({ card: cards[idx], got });
     idx += 1; flipped = false;
     render();

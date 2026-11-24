@@ -22,6 +22,15 @@ export function renderPast() {
   const data = S._topicData || [];
   const masteryRows = computeMastery(S.scores, (s) => resolveScoreTopics(s, buildUuidIndex(S.quizzes)));
   const masteryByTopic = new Map(masteryRows.map(r => [r.topic, r]));
+  queueMicrotask(() => {
+    const dueChip = document.getElementById('dueReviewBtn');
+    if (!dueChip) return;
+    const due = dueReview(masteryRows);
+    if (!due.length) { dueChip.remove(); return; }
+    const overdue = due.filter(d => d.overdue).length;
+    dueChip.textContent = overdue ? `⏰ ${overdue} overdue` : `⏰ ${due.length} due soon`;
+    dueChip.title = due.slice(0, 5).map(d => `${d.topic} — ${d.label}`).join('\n');
+  });
   const comp1Topics = data.filter(t => t.component === '01');
   const comp2Topics = data.filter(t => t.component === '02');
 
@@ -80,6 +89,7 @@ export function renderPast() {
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="toggleMajorBtn">${allSel ? 'Deselect all' : 'Select all'}</button>
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="reviewWeakestBtn" title="Select your weakest topics and open the synthesizer">⚡ Review weakest</button>
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="smartCardsBtn" title="Flashcard session across all topics — weak-topic cards first">🂡 Smart cards</button>
+            <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="dueReviewBtn" title="Topics whose decayed mastery is due for review"></button>
           </div>
         </div>
       </div>
@@ -173,6 +183,19 @@ export function wirePastEvents() {
     if (!g) return;
     startCards(deckFromQuestions(g.questions || []), `${topic} — ${g.name}`);
   }));
+  $('#dueReviewBtn')?.addEventListener('click', () => {
+    const rows = computeMastery(S.scores, (s) => resolveScoreTopics(s, buildUuidIndex(S.quizzes)));
+    const due = dueReview(rows);
+    if (!due.length) return;
+    S.mixed.topics.clear(); S.mixed.subs.clear();
+    for (const d of due.slice(0, 3)) {
+      const t = (S._topicData || []).find(x => x.topic === d.topic);
+      if (!t) continue;
+      S.mixed.topics.add(t.topic);
+      t.subs.forEach((g, gi) => S.mixed.subs.add(`${t.topic}|${gi}`));
+    }
+    renderPast();
+  });
   $('#smartCardsBtn')?.addEventListener('click', () => {
     const all = (S._topicData || []).flatMap(t => (t.subs || []).flatMap(g => g.questions || []));
     startCards(buildSmartDeck(S, all).slice(0, 30), 'Smart cards');

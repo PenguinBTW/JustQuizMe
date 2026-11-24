@@ -63,7 +63,7 @@ export async function renderOverview(container) {
         </div>
         ${spark ? `<div class="ov-spark">${spark}</div>` : ''}
         <div class="mono ov-meta">
-          ${sum.weakCount ? `<span style="color:#e0735f;">${sum.weakCount} weak</span> · ` : ''}${sum.runs} run${sum.runs === 1 ? '' : 's'}${sum.questionsAttempted ? ` · ${sum.questionsAttempted} questions` : ''}
+          ${sum.dueCount ? `<span style="color:#e0a75f;" title="topics due for review as mastery decays">⏰ ${sum.dueCount} due</span> · ` : ''}${sum.weakCount ? `<span style="color:#e0735f;">${sum.weakCount} weak</span> · ` : ''}${sum.runs} run${sum.runs === 1 ? '' : 's'}${sum.questionsAttempted ? ` · ${sum.questionsAttempted} questions` : ''}
         </div>`
         : `<p class="mono ov-none">No practice yet</p>`}
       </a>`;

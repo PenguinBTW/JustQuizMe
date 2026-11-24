@@ -3,6 +3,7 @@
 // Mastery math comes from the shared mastery module — same model as the
 // per-portal dashboards, so numbers agree with what students see there.
 import { computeMastery } from './mastery.js';
+import { dueCount } from './dueReview.js';
 import { questionStats } from './progressMath.js';
 
 const DAY = 86400000;
@@ -29,6 +30,7 @@ export function subjectSummary(scores, now = Date.now()) {
   return {
     meanMastery: mean,
     weakCount,
+    dueCount: dueCount(rows),
     topicsPracticed: practiced.length,
     questionsAttempted: qs.attempted,
     runs: list.length,
