@@ -23,10 +23,12 @@ export function initTheme(){
 // ---------- boot ----------
 document.addEventListener('keydown', (e) => {
   const ae = document.activeElement;
+  // Escape dismisses modals even while a form control (e.g. the
+  // target-marks slider) has focus.
+  if (e.key === 'Escape'){ closeSynthModal(); closeTopicModal(); }
   // Skip while typing — but let arrows still navigate when a mark-scheme
   // checkbox or radio is focused (they don't consume arrow keys).
   if (ae?.isContentEditable || ae?.matches?.('textarea, select, input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="hidden"])')) return;
-  if (e.key === 'Escape'){ closeSynthModal(); closeTopicModal(); }
   if (e.key.toLowerCase() === 't') $('#themeBtn')?.click();
   if (S.quiz && !document.querySelector('.modal-backdrop.open')){
     if (e.repeat) return; // held key must not auto-advance / auto-submit

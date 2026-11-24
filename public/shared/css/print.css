@@ -1,0 +1,94 @@
+/* =========================================================================
+   Print paper stylesheet — exam-style output for #printRoot.
+   Screen: printRoot hidden. Print: only printRoot visible.
+   ========================================================================= */
+
+#printRoot { display: none; }
+
+@media print {
+  @page { margin: 18mm 16mm; }
+
+  body > *:not(#printRoot) { display: none !important; }
+  #printRoot { display: block !important; }
+
+  .print-paper {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: #111;
+    background: #fff;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  .print-head { border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 18px; }
+  .print-head h1 { font-size: 17pt; margin: 0 0 8px; font-weight: 700; }
+  .print-meta { width: 100%; border-collapse: collapse; font-size: 10pt; }
+  .print-meta td { padding: 2px 16px 2px 0; }
+  .print-blank { display: inline-block; min-width: 220px; border-bottom: 1px solid #555; }
+  .print-sub { margin-top: 6px; font-size: 8.5pt; color: #555; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .print-questions, .print-markscheme ol { list-style: none; margin: 0; padding: 0; }
+  .print-q { margin-bottom: 22px; break-inside: avoid; }
+  .print-q-head { display: flex; gap: 10px; align-items: flex-start; }
+  .print-q-num { font-weight: 700; min-width: 22px; }
+  .print-q-body { flex: 1; }
+  .print-marks { font-weight: 700; white-space: nowrap; }
+
+  .print-prompt { margin: 0 0 8px; }
+  .print-prompt code, .print-q code {
+    font-family: 'Courier New', monospace;
+    font-size: 9.5pt;
+    background: #f2f2f2;
+    padding: 0 3px;
+    border: 1px solid #ddd;
+  }
+
+  .print-guidance { font-size: 9.5pt; color: #444; font-style: italic; margin: 4px 0 8px; }
+  .print-code {
+    font-family: 'Courier New', monospace;
+    font-size: 9pt;
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+    white-space: pre-wrap;
+    margin: 6px 0;
+  }
+
+  .print-table { border-collapse: collapse; margin: 8px 0; font-size: 9.5pt; }
+  .print-table caption { font-size: 9pt; color: #444; text-align: left; margin-bottom: 4px; }
+  .print-table th, .print-table td { border: 1px solid #999; padding: 3px 8px; text-align: left; }
+  .print-table th { background: #eee; }
+
+  .print-fig { margin: 10px 0; break-inside: avoid; }
+  .print-fig img { max-width: 100%; max-height: 95mm; display: block; }
+  .print-fig figcaption { font-size: 8.5pt; color: #555; margin-top: 4px; }
+
+  .print-dep {
+    border: 1px solid #bbb;
+    background: #fafafa;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 9.5pt;
+  }
+  .print-dep-label { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #555; margin-bottom: 6px; }
+
+  .print-options { margin: 8px 0 8px 26px; padding: 0; }
+  .print-options li { margin-bottom: 6px; }
+
+  .print-work {
+    margin-top: 10px;
+    height: calc(var(--lines) * 9mm);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(9mm - 1px),
+      #bbb calc(9mm - 1px),
+      #bbb 9mm
+    );
+  }
+
+  .print-markscheme { break-before: page; }
+  .print-markscheme h2 { font-size: 15pt; border-bottom: 2px solid #111; padding-bottom: 8px; margin: 0 0 14px; }
+  .print-markscheme li { margin-bottom: 10px; }
+  .print-ms { margin: 4px 0 4px 22px; padding: 0; }
+  .print-ms li { margin-bottom: 3px; }
+}

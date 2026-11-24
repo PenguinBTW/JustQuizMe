@@ -22,9 +22,8 @@ export function initTheme() {
 // Global hotkeys
 document.addEventListener('keydown', (e) => {
   const ae = document.activeElement;
-  // Skip while typing — but let arrows still navigate when a mark-scheme
-  // checkbox or radio is focused (they don't consume arrow keys).
-  if (ae?.isContentEditable || ae?.matches?.('textarea, select, input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="hidden"])')) return;
+  // Escape dismisses modals even while a form control (e.g. the
+  // target-marks slider) has focus.
   if (e.key === 'Escape') {
     if (document.querySelector('.modal-backdrop.open')) {
       $('#synthModal')?.classList.remove('open');
@@ -32,6 +31,9 @@ document.addEventListener('keydown', (e) => {
       restoreModalFocus();
     }
   }
+  // Skip while typing — but let arrows still navigate when a mark-scheme
+  // checkbox or radio is focused (they don't consume arrow keys).
+  if (ae?.isContentEditable || ae?.matches?.('textarea, select, input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="hidden"])')) return;
   if (e.key.toLowerCase() === 't') $('#themeBtn')?.click();
   if (S.quiz && !document.querySelector('.modal-backdrop.open')) {
     if (e.repeat) return; // held key must not auto-advance / auto-submit
