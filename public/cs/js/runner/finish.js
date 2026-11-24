@@ -43,6 +43,10 @@ export async function finishQuiz(auto) {
         evaluateTruthTable(q, ans);
       } else if (q.type === 'calculation') {
         evaluateCalculation(q, ans);
+      } else if (q.type === 'multiple-choice') {
+        // exam MCQs stay unlocked and unscored during the paper — mark them now
+        ans.score = ans.selected != null && ans.selected === q.correctIndex ? (+q.marks || 0) : 0;
+        ans.locked = true;
       }
     });
 

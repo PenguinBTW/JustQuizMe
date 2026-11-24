@@ -1128,6 +1128,7 @@
 .opt-card.is-correct { border: 1.5px solid var(--green); background: var(--green-soft); }
 .opt-card.is-wrong { border: 1.5px solid var(--red); background: var(--red-soft); }
 .opt-card.is-dim { opacity: 0.72; }
+.opt-card.is-selected { border: 1.5px solid var(--accent); background: var(--accent-soft, rgba(90,120,255,0.10)); }
 .opt-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
 .opt-sub { display: block; font-size: 13px; color: var(--ink-muted); margin-top: 6px; }
 .opt-card.is-correct .opt-sub { color: var(--ink-secondary); }

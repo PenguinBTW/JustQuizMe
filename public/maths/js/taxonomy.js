@@ -80,7 +80,9 @@ export function pickExact(pool, target) {
   for (let s = target; s >= 0; s--) {
     if (dp[s] && dp[s].length) return { set: dp[s], tot: s };
   }
-  return { set: pool.length ? [pool[0]] : [], tot: pool.length ? (+pool[0].marks || 0) : 0 };
+  if (!pool.length) return { set: [], tot: 0 };
+  const smallest = pool.reduce((a, b) => ((+b.marks || 0) < (+a.marks || 0) ? b : a));
+  return { set: [smallest], tot: +smallest.marks || 0 };
 }
 
 export function pickForMode(pool, mode, target) {

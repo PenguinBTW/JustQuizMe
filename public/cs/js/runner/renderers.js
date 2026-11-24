@@ -22,6 +22,8 @@ export function renderQuestionSpecifics(q) {
             if (i === q.correctIndex) cls += ' is-correct';
             else if (ans.selected === i) cls += ' is-wrong';
             else cls += ' is-dim';
+          } else if (S.runMode === 'exam' && ans.selected === i) {
+            cls += ' is-selected';
           }
           return `
             <button class="${cls}" data-opt-idx="${i}" ${ans.locked ? 'disabled' : ''}>
@@ -34,7 +36,7 @@ export function renderQuestionSpecifics(q) {
           `;
         }).join('')}
       </div>
-      ${ans.locked ? `
+      ${ans.locked && S.runMode !== 'exam' ? `
         <div class="${ans.selected === q.correctIndex ? 'note-ok' : 'note-bad'}">
           ${ans.selected === q.correctIndex ? (q.feedbackCorrect || 'Correct!') : (q.feedbackWrong || 'Incorrect.')}
         </div>
@@ -609,9 +611,15 @@ export function wireQuestionInteractions(q) {
       b.onclick = () => {
         if (ans.locked) return;
         const i = +b.dataset.optIdx;
-        ans.selected = i;
-        ans.locked = true;
-        ans.score = (i === q.correctIndex) ? q.marks : 0;
+        if (S.runMode === 'exam') {
+          // exam mode: selections stay changeable until paper submission and
+          // must not reveal correctness mid-paper — scoring happens in finishQuiz
+          ans.selected = i;
+        } else {
+          ans.selected = i;
+          ans.locked = true;
+          ans.score = (i === q.correctIndex) ? q.marks : 0;
+        }
         renderQ();
       };
     });
