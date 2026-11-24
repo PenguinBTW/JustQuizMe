@@ -56,7 +56,7 @@ describe('shares/rowHtml/coverageHtml', () => {
     const html = rowHtml({ topic: 'A <b>', banked: 10, attempted: 4, correct: 2, partial: 1, incorrect: 1, accuracy: 0.5 }, esc);
     assert.match(html, /A &lt;b&gt;/);
     assert.match(html, /width:50%/);
-    assert.match(html, /4\/10/);
+    assert.match(html, /4 tries · 10Q/);
   });
   it('coverageHtml shows the empty state only when nothing attempted', () => {
     assert.match(coverageHtml(topicCoverage([], QUIZZES, TOPICS), esc), /No scored attempts/);

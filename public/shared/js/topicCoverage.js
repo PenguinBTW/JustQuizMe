@@ -5,33 +5,46 @@
 const CORRECT_MIN = 0.85;
 const PARTIAL_MIN = 0.4;
 
+/** Topic matching is case/whitespace-insensitive (bank tags are loose). */
+const normTopic = (t) => String(t).trim().replace(/\s+/g, ' ').toLowerCase();
+
 /**
  * @param {Array} scores    /api/scores entries ({quizUuid, score, total})
  * @param {Array} quizzes   quiz meta entries ({uuid, topics, questionCount})
  * @param {string[]} topics topic names to report, in display order
+ * @param {Object} [opts]   { mixedUuid, mixedTopics } — synthesized-quiz scores
+ *   (uuid has no catalog entry) attribute to `mixedTopics` instead.
  * @returns {Array} rows: {topic, banked, attempted, correct, partial,
  *   incorrect, accuracy} — accuracy = total marks got / total marks, null when
  *   no attempts. Sorted weakest-first; never-attempted topics sort last.
  */
-export function topicCoverage(scores, quizzes, topics) {
+export function topicCoverage(scores, quizzes, topics, opts = {}) {
   const metaByUuid = new Map((quizzes || []).map((m) => [m.uuid, m]));
-  const acc = new Map((topics || []).map((t) => [t, { topic: t, banked: 0, attempted: 0, correct: 0, partial: 0, incorrect: 0, got: 0, total: 0 }]));
+  const acc = new Map();
   for (const t of topics || []) {
-    const row = acc.get(t);
-    for (const m of quizzes || []) {
-      if ((m.topics || []).includes(t)) row.banked += m.questionCount || 0;
-    }
+    acc.set(normTopic(t), { topic: t, banked: 0, attempted: 0, correct: 0, partial: 0, incorrect: 0, got: 0, total: 0 });
   }
+  const topicOf = (tags) => {
+    const out = [];
+    for (const raw of tags || []) {
+      const row = acc.get(normTopic(raw));
+      if (row && !out.includes(row)) out.push(row);
+    }
+    return out;
+  };
+  for (const m of quizzes || []) {
+    for (const row of topicOf(m.topics)) row.banked += m.questionCount || 0;
+  }
+  const mixedRows = topicOf(opts.mixedTopics);
   for (const s of scores || []) {
     const m = metaByUuid.get(s.quizUuid);
-    if (!m) continue;
+    const rows = m ? topicOf(m.topics) : (s.quizUuid === opts.mixedUuid ? mixedRows : []);
+    if (!rows.length) continue;
     const got = Number(s.score) || 0;
     const total = Number(s.total) || 0;
     const pct = total > 0 ? got / total : 0;
     const bucket = pct >= CORRECT_MIN ? 'correct' : pct >= PARTIAL_MIN ? 'partial' : 'incorrect';
-    for (const t of m.topics || []) {
-      const row = acc.get(t);
-      if (!row) continue;
+    for (const row of rows) {
       row.attempted += 1;
       row[bucket] += 1;
       row.got += got;
@@ -54,10 +67,12 @@ export function shares(row) {
 export function rowHtml(row, esc) {
   const [c, p, i] = shares(row);
   const acc = row.accuracy == null ? '—' : `${Math.round(row.accuracy * 100)}%`;
-  return `<div class="coverage-row">
+  const seg = (cls, pct, n, label) =>
+    `<i class="${cls}" style="width:${pct}%" role="img" aria-label="${n} ${label}"></i>`;
+  return `<div class="coverage-row" title="${esc(row.topic)}: ${row.correct} correct, ${row.partial} partial, ${row.incorrect} incorrect of ${row.attempted} attempt(s)">
     <span class="coverage-name">${esc(row.topic)}</span>
-    <span class="coverage-bar"><i class="cov-c" style="width:${c}%"></i><i class="cov-p" style="width:${p}%"></i><i class="cov-i" style="width:${i}%"></i></span>
-    <span class="coverage-meta mono">${row.attempted}/${row.banked} · ${acc}</span>
+    <span class="coverage-bar" role="group" aria-label="${row.correct} correct, ${row.partial} partial, ${row.incorrect} incorrect">${seg('cov-c', c, row.correct, 'correct')}${seg('cov-p', p, row.partial, 'partial')}${seg('cov-i', i, row.incorrect, 'incorrect')}</span>
+    <span class="coverage-meta mono">${row.attempted} tries · ${row.banked}Q · ${acc}</span>
   </div>`;
 }
 
