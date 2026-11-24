@@ -49,7 +49,11 @@ function fakeDoc() {
     },
     createElement: (tag) => { const e = el(tag); e._doc = doc; return e; },
     addEventListener: (type, fn) => { listeners[type] = fn; },
-    keydown(key, extra = {}) { listeners.keydown({ key, preventDefault() {}, ...extra }); },
+    keydown(key, extra = {}) {
+      const e = { key, prevented: false, preventDefault() { this.prevented = true; }, ...extra };
+      listeners.keydown(e);
+      return e;
+    },
   };
   body._doc = doc; chrome._doc = doc;
   return doc;
@@ -104,9 +108,10 @@ test('Enter on a focused answer button clicks it — never advances', () => {
   const next = put('nextQ');
   const opt = el('button'); opt._doc = doc; doc.optBtns.push(opt);
   doc.activeElement = opt;
-  doc.keydown('Enter');
+  const e = doc.keydown('Enter');
   assert.equal(opt.clicks, 0, 'native activation owns the focused button');
   assert.equal(next.clicks, 0, 'Enter must not advance');
+  assert.equal(e.prevented, false, 'the key must be left for native activation');
 });
 
 test('key repeat cannot chain-advance or auto-submit', () => {
