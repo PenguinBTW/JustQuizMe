@@ -12,14 +12,20 @@ function statCell(label, value) {
 }
 
 function missingFieldsBlock(portal) {
+  if (portal.totalQuizzes === 0) {
+    return '<p class="mono" style="font-size:12px; color:var(--ink-muted,#6b7280);">no quiz manifests found in normal/ or past-paper/</p>';
+  }
   const entries = Object.entries(portal.missingFields).filter(([, n]) => n > 0);
   if (!entries.length) return '<p class="mono" style="font-size:12px; color:var(--cs);">✓ no missing fields</p>';
   return `<ul style="margin:6px 0 0; padding-left:18px; font-size:13px; color:var(--ink-secondary,#8892a4);">
     ${entries
-      .map(
-        ([field, n]) =>
-          `<li><strong>${esc(field)}</strong>: ${n} question${n === 1 ? '' : 's'}</li>`
-      )
+      .map(([field, n]) => {
+        const samples = (portal.missingFieldSamples[field] || []).slice(0, 8);
+        const extra = n - samples.length;
+        return `<li><strong>${esc(field)}</strong>: ${n} question${n === 1 ? '' : 's'}
+          <div class="mono" style="font-size:11px; color:var(--ink-muted,#6b7280);">${samples.map(esc).join(', ')}${extra > 0 ? `, +${extra} more` : ''}</div>
+        </li>`;
+      })
       .join('')}
   </ul>`;
 }
@@ -32,7 +38,7 @@ function marksDistBlock(portal) {
     <span class="mono" style="font-size:11px; color:var(--ink-muted,#6b7280); text-transform:uppercase; letter-spacing:.1em;">Marks distribution</span>
     ${entries
       .map(([marks, n]) => {
-        const pct = Math.round((n / max) * 100);
+        const pct = Math.round((n / max) * 76); // cap below 100% so the count never clips
         return `<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
           <span class="mono" style="width:42px; text-align:right;">${esc(marks)}m</span>
           <span style="flex:0 0 ${pct}%; min-width:2px; height:10px; background:var(--accent,#4a7dff); border-radius:2px;"></span>
@@ -51,7 +57,7 @@ function duplicatesBlock(portal) {
       ${portal.duplicateIds
         .map(
           (d) =>
-            `<li><strong>${esc(d.id)}</strong> ×${d.count} — ${d.files.map(esc).join(', ')}</li>`
+            `<li><strong>${esc(d.id)}</strong> ×${d.count} in ${esc(d.file)}</li>`
         )
         .join('')}
     </ul>
