@@ -22,6 +22,10 @@ export function retryMissed() {
     // Persisted on the spec so retryRun/save-resume reconstruct the same
     // mode conventions without re-reading the parent run.
     spec.exam = !!S.quiz?.exam;
+    // A retry of a retry inherits the original set size — otherwise a
+    // second-generation retry covering its whole parent subset would score
+    // as a "full set" and inflate personal bests on the original set.
+    if (S.retrySpec?.of) spec.of = S.retrySpec.of;
   }
   if (!spec) return false;
   const qs = resolveSpecQuestions(spec, S.quiz?.questions || [], ak);
