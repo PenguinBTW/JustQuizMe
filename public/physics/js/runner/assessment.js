@@ -46,7 +46,9 @@ export function startTimer(){
     }
   };
   upd();
-  S.timerId = setInterval(() => { S.elapsed++; upd(); }, 1000);
+  // wall-clock derived: a suspended tab can't stretch the clock
+  const tickBase = S.elapsed, tickT0 = Date.now();
+  S.timerId = setInterval(() => { S.elapsed = tickBase + Math.floor((Date.now() - tickT0) / 1000); upd(); }, 1000);
 }
 
 
@@ -75,7 +77,7 @@ export async function saveProgress(){
     questionIndex: S.idx, answers: S.answers, elapsedSeconds: S.elapsed, startedAt: S.startedAt,
     timeLimitMinutes: S.quiz.timeLimitMinutes || null,
     savedAt: new Date().toISOString(),
-    kind: S.quizMeta.virtual ? 'virtual' : 'file', title: S.quiz.title,
+    kind: S.quizMeta.virtual ? 'virtual' : 'file', title: S.quiz.title, exam: !!S.quiz.exam,
     order: S.quiz.questions.map(ak),
     questions: S.quizMeta.virtual ? S.quiz.questions : null,
     spec: S.retrySpec,

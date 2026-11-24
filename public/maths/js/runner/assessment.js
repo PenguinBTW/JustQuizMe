@@ -51,7 +51,9 @@ export function startTimer() {
     }
   };
   upd();
-  S.timerId = setInterval(() => { S.elapsed++; upd(); }, 1000);
+  // wall-clock derived: a suspended tab can't stretch the clock
+  const tickBase = S.elapsed, tickT0 = Date.now();
+  S.timerId = setInterval(() => { S.elapsed = tickBase + Math.floor((Date.now() - tickT0) / 1000); upd(); }, 1000);
 }
 
 export function chromeCount() {
