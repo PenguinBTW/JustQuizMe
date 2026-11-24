@@ -6,6 +6,7 @@ import { openSynthModal, openTopicModal } from '../modals.js';
 import { openExploreList } from './explore.js';
 import { startSubQuiz, beginFileQuiz } from '../runner/starters.js';
 import { exploreFullFile } from './practice.js';
+import { sectionHtml as attemptHistoryHtml } from '../../../shared/js/attemptHistory.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -91,6 +92,8 @@ export function renderPast() {
         </div>`;
       }).join('')}
     </div>
+
+    ${attemptHistoryHtml(S.scores)}
 
     <details class="fullpapers">
       <summary><span>Full Sets · A-Z</span><span class="mono" style="font-size:12px; color:var(--ink-muted);">${S.quizzes['past-paper'].length} sets</span></summary>
