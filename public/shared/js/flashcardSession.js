@@ -17,7 +17,10 @@ export function buildSmartDeck(S, questions) {
 }
 
 // Mounts a flashcard session into `stage`. Returns nothing; cleanup via onExit.
+let fcSessionSeq = 0;
+
 export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
+  const sessionToken = 'fc' + (++fcSessionSeq);
   const cards = deck || [];
   let idx = 0;
   let flipped = false;
@@ -28,8 +31,10 @@ export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
   const finish = async () => {
     if (finished) return;
     finished = true;
+    delete stage.dataset.fcSession;
     if (keyHandler) document.removeEventListener('keydown', keyHandler);
-    const total = cards.reduce((s, c) => s + (c.marks || 1), 0);
+    // honest accounting: ungraded cards never happened — they are not zeros
+    const total = grades.reduce((s, g) => s + (g.card.marks || 1), 0);
     const got = grades.reduce((s, g) => s + (g.got ? (g.card.marks || 1) : 0), 0);
     const seen = grades.length;
     const topics = [...new Set(cards.map(c => c.topic).filter(Boolean))];
@@ -79,7 +84,7 @@ export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
           <button class="fc-exit" id="fcExit" title="End session (esc)">✕</button>
         </div>
         <div class="fc-card">
-          <div class="fc-front">${esc(c.front)}</div>
+          <div class="fc-front">${esc(c.front).replace(/\n/g, '<br>')}</div>
           ${flipped ? `<div class="fc-back">${esc(c.back).replace(/\n/g, '<br>')}</div>` : `<div class="fc-flip-hint">space to flip</div>`}
         </div>
         ${flipped ? `
@@ -105,7 +110,7 @@ export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
 
   keyHandler = e => {
     // self-cleanup: navigating away mid-session must not leave live shortcuts
-    if (!document.contains(stage) || !stage.querySelector('.fc-session')) {
+    if (!document.contains(stage) || stage.dataset.fcSession !== sessionToken) {
       document.removeEventListener('keydown', keyHandler);
       return;
     }
@@ -117,6 +122,8 @@ export function mountFlashcards({ S, stage, deck, portal, title, onExit }) {
     if (flipped && (e.key === '2' || e.key === 'ArrowRight' || e.key === 'Enter')) grade(true);
   };
   document.addEventListener('keydown', keyHandler);
+
+  stage.dataset.fcSession = sessionToken;
 
   if (!cards.length) {
     stage.innerHTML = `<div class="fc-done"><h2>No flashcards</h2><p class="fc-hint">None of these questions suit flashcard treatment (need short definite answers).</p><button class="btn btn-primary" id="fcBack">Back</button></div>`;

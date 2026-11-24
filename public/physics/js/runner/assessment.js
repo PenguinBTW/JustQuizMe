@@ -202,12 +202,13 @@ export function renderQ(){
 }
 
 export function navBack(){
-  if (S.idx > 0){ S.idx--; renderQ(); }
+  if (S.idx > 0){ saveCurrent(S.quiz.questions[S.idx]); S.idx--; renderQ(); }
   else if (S.runMode === 'explore') goExploreBack();
   else { S.room = S.returnRoom || 'past'; renderRoom(); }
 }
 
 export function navNext(lockFn){
   if (lockFn) lockFn();
+  saveCurrent(S.quiz.questions[S.idx]);
   if (S.idx < S.quiz.questions.length - 1){ S.idx++; renderQ(); }
 }

@@ -4,7 +4,7 @@ import { cardFromQuestion, deckFromQuestions, orderDeckByMastery } from '../publ
 
 test('mcq card: stem front, correct option back', () => {
   const c = cardFromQuestion({ type: 'multiple-choice', prompt: 'What?', options: ['A', 'B'], correctIndex: 1, marks: 1, topic: 'T' });
-  assert.equal(c.front, 'What?');
+  assert.equal(c.front, 'What?\nA. A\nB. B');
   assert.equal(c.back, 'B');
   assert.equal(c.marks, 1);
 });

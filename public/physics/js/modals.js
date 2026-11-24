@@ -96,7 +96,10 @@ export function regenTopicModal(){
   const { set, tot } = pickForMode(c.all, m.mode, m.marks);
   m.set = set; m.tot = tot;
   $('#modalMarksLabel').textContent = `${m.marks} marks`;
-  $('#modalExamBtn').textContent = `Start Exam · ${Math.round(m.marks * 1.5)}m ⏱`;
+  const pacePerMark = paceMinutesPerMark(S.mixed.pace);
+  $('#modalExamBtn').textContent = pacePerMark == null
+    ? 'Start Exam · untimed'
+    : `Start Exam · ${Math.max(5, Math.round((m.tot || m.marks) * pacePerMark))}m ⏱`;
   $('#modalSummaryLine').textContent = `LIVE SUBTOPIC DISTRIBUTION · ${set.length} QUESTIONS (${tot} MARKS)`;
   const bySub = new Map();
   for (const q of set){

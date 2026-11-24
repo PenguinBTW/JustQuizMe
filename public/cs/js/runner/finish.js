@@ -5,6 +5,8 @@ import { api, loadHome } from '../api.js';
 import { evaluateTraceTable, evaluateTruthTable, evaluateCalculation } from './evaluators.js';
 
 export async function finishQuiz(auto) {
+  if (S._finishing) return;
+  S._finishing = true;
   clearInterval(S.timerId);
   // a suspended-then-woken tab must not record time past the deadline
   if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));

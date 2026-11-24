@@ -21,6 +21,8 @@ export function quizScore(){
 }
 
 export async function finishQuiz(auto = false){
+  if (S._finishing) return;
+  S._finishing = true;
   if (auto === true) S.timeExpired = true;
   clearInterval(S.timerId);
   // capture whatever is mid-typing in the visible calculation input — a manual
@@ -34,7 +36,7 @@ export async function finishQuiz(auto = false){
     }
   } catch { /* capture best-effort */ }
   // a suspended-then-woken tab must not record time past the deadline
-  if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
+  if (S.quiz && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   for (const q of S.quiz.questions){
     const k = ak(q), a = S.answers[k];
     if (q.type === 'written' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, score: Math.min(n, q.marks) }; }
@@ -47,7 +49,7 @@ export async function finishQuiz(auto = false){
         // typed answer must not earn zero for want of a click
         const v = parseFloat(a?.finalValue);
         const correct = a?.finalValue != null && numOk(v, q.answer, q.tolerancePercent ?? 2.5);
-        S.answers[k] = { ...(a || {}), locked: true, loggedWrong: !correct && (a?.attempts || 0) > 0, soloCorrect: correct || undefined, score: correct ? q.marks : 0 };
+        S.answers[k] = { ...(a || {}), locked: true, loggedWrong: !correct && (a?.attempts || 0) > 0, score: correct ? q.marks : 0 };
       }
     }
   }

@@ -7,6 +7,8 @@ import { renderQ } from './assessment.js';
 import { retryRun } from './starters.js';
 
 export async function finishQuiz(auto = false) {
+  if (S._finishing) return;
+  S._finishing = true;
   if (auto === true) S.timeExpired = true;
   clearInterval(S.timerId);
   // capture mid-typing inputs on the visible question — same answer expiry would grade

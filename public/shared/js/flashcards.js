@@ -16,17 +16,18 @@ export function cardFromQuestion(q) {
     const correct = Array.isArray(q.options) ? q.options[q.correctIndex] : null;
     const text = correct && (typeof correct === 'object' ? correct.text : correct);
     if (!text) return null;
-    return { front, back: String(text), topic: q.topic || q._topic || null, marks: +q.marks || 1, id: q.id || null };
+    const choices = q.options.map((o, i) => `${String.fromCharCode(65 + i)}. ${typeof o === 'object' ? o.text : o}`).join('\n');
+    return { front: `${front}\n${choices}`, back: String(text), topic: q.topic || q._topic || null, marks: +q.marks || 1, id: q.id || null, key: q._key || q.id || null };
   }
   if (q.type === 'written' || q.type === 'self-marked') {
     const scheme = Array.isArray(q.markScheme) ? q.markScheme.filter(Boolean) : [];
     if (!scheme.length) return null;
-    return { front, back: scheme.map(s => `• ${typeof s === 'object' ? s.text || s.point || '' : s}`).join('\n'), topic: q.topic || q._topic || null, marks: +q.marks || 1, id: q.id || null };
+    return { front, back: scheme.map(s => `• ${typeof s === 'object' ? s.text || s.point || '' : s}`).join('\n'), topic: q.topic || q._topic || null, marks: +q.marks || 1, id: q.id || null, key: q._key || q.id || null };
   }
   if (q.type === 'calculation') {
     const ans = q.answer ?? q.correctAnswer ?? q.expected;
     if (ans == null || ans === '') return null;
-    return { front, back: String(ans), topic: q.topic || q._topic || null, marks: +q.marks || 1, id: q.id || null };
+    return { front, back: String(ans), topic: q.topic || q._topic || null, marks: +q.marks || 1, id: q.id || null, key: q._key || q.id || null };
   }
   return null;
 }
@@ -34,7 +35,7 @@ export function cardFromQuestion(q) {
 export function deckFromQuestions(questions) {
   const seen = new Set();
   return (questions || []).map(cardFromQuestion).filter(Boolean).filter(c => {
-    const key = c.id || c.front;
+    const key = c.key || c.front;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
