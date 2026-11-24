@@ -8,7 +8,7 @@ import { beginFileQuiz } from '../runner/starters.js';
 // back to the source uuid only when the entry ends with the marker and its
 // base is a real manifest uuid
 const RETRY_MARK = ':retry-missed';
-const srcUuid = (u) => (u || '').endsWith(RETRY_MARK) ? u.slice(0, -RETRY_MARK.length) : '';
+const srcUuid = (u) => (u || '').replace(/(:retry-missed)+$/, '');
 
 export function pastEntries() {
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -73,12 +73,12 @@ export function renderHistory() {
           <div class="history-stat-card">
             <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Past-Paper Average</span>
             <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${avg}%</div>
-            <span class="mono" style="font-size:12px; color:var(--ink-secondary);">${list.length} logged session${list.length === 1 ? '' : 's'}</span>
+            <span class="mono" style="font-size:12px; color:var(--ink-secondary);">${base.length} logged session${base.length === 1 ? '' : 's'}</span>
           </div>
           <div class="history-stat-card">
             <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Marks Completed</span>
             <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${num(earned)} <span style="font-size:20px; color:var(--ink-muted);">/ ${num(bankTotal)}</span></div>
-            <span class="mono" style="font-size:12px; color:var(--ink-secondary);">across all past sessions</span>
+            <span class="mono" style="font-size:12px; color:var(--ink-secondary);">across full past-paper sessions</span>
           </div>
           <div class="history-stat-card">
             <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Success Rate</span>
