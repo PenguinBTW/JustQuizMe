@@ -53,7 +53,19 @@ function decorate(card, m) {
     });
     const more = card.querySelector('.mode-badge:not([data-kind])');
     const moreText = m.extra > 0 ? `+${m.extra} more` : '';
-    if (more && more.textContent !== moreText) more.textContent = moreText;
+    if (more) {
+      if (more.textContent !== moreText) more.textContent = moreText;
+    } else if (m.extra > 0) {
+      const chip = document.createElement('span');
+      chip.className = 'mode-badge';
+      chip.textContent = moreText;
+      card.querySelector('.mode-badges')!.appendChild(chip);
+    }
+    return;
+  }
+  // set/picker cards carry a run-start action; results/info cards don't
+  if (!card.classList.contains('subtopic-card') &&
+      !card.querySelector('[data-practice-start], [data-quiz-file], [data-exam-file], [data-practice-explore], .btn-practice-start, [data-idx]')) {
     return;
   }
   const row = document.createElement('div');
@@ -78,9 +90,7 @@ function sweep() {
   // scores may have changed since page load (a finished run refreshes them)
   if (lastFetch && Date.now() - lastFetch > STALE_MS) model = null;
   if (!model) { load().then(sweep); return; }
-  // set/picker cards live in the topic/subtopic grids; .card elsewhere
-  // (results summary, info banners) is not a badge surface
-  document.querySelectorAll('.subtopic-card, .subtopic-grid .card, .topic-grid .card')
+  document.querySelectorAll('.subtopic-card, .card')
     .forEach((c) => decorate(c, model));
 }
 
