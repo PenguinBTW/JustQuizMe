@@ -52,31 +52,32 @@ export function reviewQueue(scores = S.scores) {
 
 // Queue items -> fetch refs { category, file, keys: [questionId] } for a
 // retry spec, prioritised by repeat misses then marks lost, deck-capped.
-export function planReviewRefs(items, quizzes, cap = REVIEW_DECK_CAP) {
-  const picked = [...items]
-    .sort((a, b) => (b.misses - a.misses) || ((b.lost ?? 0) - (a.lost ?? 0)))
-    .slice(0, cap);
-  const byFile = new Map();
-  for (const it of picked) {
-    const sep = it.key.indexOf(':');
-    const file = `${it.key.slice(0, sep)}.json`;
-    const ref = byFile.get(file) || { file, keys: [] };
-    ref.keys.push(it.key.slice(sep + 1));
-    byFile.set(file, ref);
+export function planReviewRefs(items, quizzes) {
+  // Keys are lowercase; restore each file's real name from quiz metadata so
+  // fetches work on case-sensitive filesystems (`Mock2024.json`).
+  const meta = new Map();
+  for (const [category, list] of [['normal', quizzes?.normal], ['past-paper', quizzes?.['past-paper']]]) {
+    for (const m of list || []) meta.set(String(m.file).toLowerCase(), { file: m.file, category });
   }
-  const normalFiles = new Set((quizzes?.normal || []).map((m) => String(m.file).toLowerCase()));
-  return [...byFile.values()].map((r) => ({
-    category: normalFiles.has(r.file.toLowerCase()) ? 'normal' : 'past-paper',
-    ...r
-  }));
+  const byFile = new Map();
+  for (const it of [...items].sort((a, b) => (b.misses - a.misses) || ((b.lost ?? 0) - (a.lost ?? 0)))) {
+    const sep = it.key.indexOf(':');
+    const lower = `${it.key.slice(0, sep)}.json`;
+    const hit = meta.get(lower);
+    const ref = byFile.get(lower) || { category: hit?.category || 'past-paper', file: hit?.file || lower, keys: [] };
+    ref.keys.push(it.key.slice(sep + 1));
+    byFile.set(lower, ref);
+  }
+  return [...byFile.values()];
 }
 
 // Resolves refs into pool-stamped questions (`<fileBase>:<id>` keys) via
 // an injected fetcher so this stays free of the api module.
-export async function resolveReviewDeck(refs, fetchQuiz) {
+export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) {
   const set = [];
   let tot = 0;
   for (const ref of refs || []) {
+    if (set.length >= cap) break;
     let quiz;
     try {
       quiz = await fetchQuiz(ref.category, ref.file);
@@ -86,6 +87,7 @@ export async function resolveReviewDeck(refs, fetchQuiz) {
     if (!quiz) continue;
     const wanted = new Set((ref.keys || []).map((k) => String(k).toLowerCase()));
     for (const q of stampPool(quiz, ref.file)) {
+      if (set.length >= cap) break;
       if (wanted.has(String(q.id).toLowerCase())) {
         set.push(q);
         tot += q.marks || 0;

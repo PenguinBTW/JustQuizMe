@@ -73,9 +73,12 @@ export async function finishQuiz(auto) {
     }
   }
 
-  // Clear save file
-  try { await api('/api/save', { method: 'DELETE' }); } catch {}
-  S.save = null;
+  // Clear save file — only when the stored save belongs to this run, so
+  // finishing one assessment can't delete another's saved progress.
+  if (S.save && S.save.quizUuid === S.quiz.uuid && S.save.quizFile === (S.quizMeta?.file || '')) {
+    try { await api('/api/save', { method: 'DELETE' }); } catch {}
+    S.save = null;
+  }
 
   renderSummaryReport();
 }
@@ -100,9 +103,13 @@ export async function renderSummaryReport() {
     earned += score;
 
     // Per-question outcome for the review queue: partial or zero credit
-    // re-queues the question, full marks clears it.
-    if (score >= qm) strong.push(ak(q));
-    else weak.push({ k: ak(q), got: score, marks: qm });
+    // re-queues the question, full marks clears it. Explore is unscored
+    // practice (bare ids, no source file) — recording it would queue
+    // unresolvable keys.
+    if (S.runMode !== 'explore') {
+      if (score >= qm) strong.push(ak(q));
+      else weak.push({ k: ak(q), got: score, marks: qm });
+    }
 
     if (q.type === 'multiple-choice') {
       breakdown.mcq.total += qm;
@@ -177,5 +184,8 @@ export async function renderSummaryReport() {
     </div>
   `;
 
-  $('#finishReturnBtn')?.addEventListener('click', () => loadHome());
+  $('#finishReturnBtn')?.addEventListener('click', () => {
+    S.room = S.returnRoom || 'past';
+    loadHome();
+  });
 }

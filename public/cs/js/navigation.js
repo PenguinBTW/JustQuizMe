@@ -89,7 +89,7 @@ export async function resumeSave() {
     questions: sv.questions || []
   };
   beginRun({
-    mode: 'quiz',
+    mode: sv.exam ? 'exam' : 'quiz',
     quizLike,
     meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true },
     resume: sv,
