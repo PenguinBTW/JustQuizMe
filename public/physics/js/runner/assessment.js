@@ -174,6 +174,10 @@ export function renderQ(){
     const on = isStarred(S.stars, makeStarRef(q, S.quizMeta, S.idx));
     starBtn.textContent = on ? '★' : '☆';
     starBtn.classList.toggle('starred', on);
+    const label = on ? 'Unstar this question' : 'Star this question';
+    starBtn.title = label;
+    starBtn.setAttribute('aria-label', label);
+    starBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
   };
   syncStarBtn();
   starBtn.onclick = async () => {

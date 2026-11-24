@@ -59,7 +59,7 @@ function createPhysicsRouter(quizService, saveService) {
       return res.status(400).json({ error: 'qid required' });
     }
     const star = {
-      key: b.key || `${b.file || ''}:${b.qid}`,
+      key: b.key || `${b.category || ''}|${b.file || ''}|${b.qid}`,
       qid: String(b.qid),
       file: typeof b.file === 'string' ? b.file : '',
       category: typeof b.category === 'string' ? b.category : '',

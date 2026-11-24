@@ -111,6 +111,7 @@ class SaveService {
     }
     const entry = { ...star, starredAt: new Date().toISOString() };
     list.unshift(entry);
+    if (list.length > 500) list.length = 500;
     fs.writeFileSync(this.starsFile, JSON.stringify(list, null, 2), 'utf8');
     return { starred: true, stars: list, entry };
   }

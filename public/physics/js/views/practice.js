@@ -1,6 +1,6 @@
 // Physics Practice Sets Room View
 import { S } from '../state.js';
-import { $, esc, stampFile } from '../utils.js';
+import { $, esc, stampPool } from '../utils.js';
 import { api, bestFor } from '../api.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { openExploreList } from './explore.js';
@@ -44,10 +44,10 @@ export function renderPractice(){
 
 export async function exploreNormalFile(file){
   const quiz = await api(`/api/quiz?category=normal&file=${encodeURIComponent(file)}`);
-  openExploreList(quiz.title, `${quiz.questions.length} questions · practice, no score`, stampFile(quiz), 'practice');
+  openExploreList(quiz.title, `${quiz.questions.length} questions · practice, no score`, stampPool(quiz, file, 'normal'), 'practice');
 }
 
 export async function exploreFullFile(category, file){
   const quiz = await api(`/api/quiz?category=${encodeURIComponent(category)}&file=${encodeURIComponent(file)}`);
-  openExploreList(quiz.title, `${quiz.questions.length} questions · practice, no score`, stampFile(quiz), 'past');
+  openExploreList(quiz.title, `${quiz.questions.length} questions · practice, no score`, stampPool(quiz, file, category), 'past');
 }
