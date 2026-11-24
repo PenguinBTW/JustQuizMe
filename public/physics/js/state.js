@@ -39,6 +39,6 @@ export const S = {
   topicDrafts: {},
   topicSets: {},
   _topicCache: new Map(),
-  mixed: { open: true, topics: new Set(), subs: new Set(), m: 20, mode: 'standard', set: [] },
+  mixed: { open: true, topics: new Set(), subs: new Set(), m: 20, mode: 'standard', pace: 'standard', set: [] },
   topicModal: null,
 };

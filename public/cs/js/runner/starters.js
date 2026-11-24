@@ -6,7 +6,8 @@ import { beginRun } from './assessment.js';
 
 // Exam pace → minutes per mark. null = untimed (opt-out of time pressure).
 export function paceMinutesPerMark(pace) {
-  return { untimed: null, relaxed: 1.5, standard: 1.07, strict: 0.9 }[pace] ?? 1.07;
+  const map = { untimed: null, relaxed: 1.5, standard: 1.07, strict: 0.9 };
+  return pace in map ? map[pace] : 1.07;
 }
 
 export function startMixedRun(exam) {

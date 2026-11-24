@@ -7,6 +7,7 @@ import { renderQ } from './assessment.js';
 import { retryRun } from './starters.js';
 
 export async function finishQuiz(auto = false) {
+  if (auto === true) S.timeExpired = true;
   clearInterval(S.timerId);
 
   for (const q of S.quiz.questions) {

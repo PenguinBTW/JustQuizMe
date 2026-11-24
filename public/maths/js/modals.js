@@ -3,6 +3,7 @@ import { S, OCR_MATHS_TOPIC_SPECS } from './state.js';
 import { $, esc } from './utils.js';
 import { mixedPool, topicDraft, pickForMode } from './taxonomy.js';
 import { startMixedSel, startTopicQuiz } from './runner/starters.js';
+import { paceMinutesPerMark } from './runner/starters.js';
 
 export function openSynthModal() {
   const data = (S._topicData || []).filter(t => S.mixed.topics.has(t.topic) && t.qcount > 0);
@@ -72,7 +73,7 @@ export function updateSynthModalMarks(val) {
   const m = Number(val);
   S.mixed.m = m;
   $('#synthModalMarksLabel').textContent = `${m} marks`;
-  $('#synthStartExamBtn').textContent = `Start Exam · ${Math.round(m * 1.5)}m ⏱`;
+  $('#synthStartExamBtn').textContent = paceMinutesPerMark(S.mixed.pace) == null ? 'Start Exam · untimed' : `Start Exam · ${Math.max(5, Math.round(m * paceMinutesPerMark(S.mixed.pace)))}m ⏱`;
 }
 
 export function toggleAllPopupSubtopics() {
@@ -103,6 +104,15 @@ export function wireModals() {
       document.querySelectorAll('#synthModeSeg button').forEach(x => x.classList.toggle('active', x === b));
     };
   });
+  document.querySelectorAll('#synthPaceSeg [data-pace]').forEach(b => {
+    b.classList.toggle('active', b.dataset.pace === S.mixed.pace);
+    b.onclick = () => {
+      S.mixed.pace = b.dataset.pace;
+      document.querySelectorAll('#synthPaceSeg [data-pace]').forEach(x => x.classList.toggle('active', x === b));
+      openSynthModal();
+    };
+  });
+
 
   $('#synthStartQuizBtn').onclick = () => { closeSynthModal(); startMixedSel(false); };
   $('#synthStartExamBtn').onclick = () => { closeSynthModal(); startMixedSel(true); };

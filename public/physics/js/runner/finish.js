@@ -20,6 +20,7 @@ export function quizScore(){
 }
 
 export async function finishQuiz(auto = false){
+  if (auto === true) S.timeExpired = true;
   clearInterval(S.timerId);
   for (const q of S.quiz.questions){
     const k = ak(q), a = S.answers[k];
@@ -48,7 +49,7 @@ export async function finishQuiz(auto = false){
     <span class="pill green" style="margin-bottom: 12px;">${saved ? 'Saved to data/scores.json' : '⚠ Could not save scores.json'}</span>
     <h1 class="serif" style="font-size: 64px; line-height: 1; margin-bottom: 8px;">${pctScore}%</h1>
     <p class="mono" style="font-size: 14px; color: var(--ink-secondary); margin-bottom: 28px;">
-      ${r.score} / ${r.total} Marks · ${fmtDur(S.elapsed)} · ${r.helped.length} Question${r.helped.length === 1 ? '' : 's'} Helped${auto ? ' · auto-finished: time limit reached' : ''}${S.quiz.exam ? ' · exam conditions (1.5 min/mark)' : ''}
+      ${r.score} / ${r.total} Marks · ${fmtDur(S.elapsed)} · ${r.helped.length} Question${r.helped.length === 1 ? '' : 's'} Helped${auto ? ' · auto-finished: time limit reached' : ''}${S.quiz.exam ? ' · exam conditions' : ''}
     </p>
     <div style="max-width: 560px; margin: 0 auto 32px; text-align:left;">
       ${row('Multiple Choice', r.mcq.got, r.mcq.total, 'green')}

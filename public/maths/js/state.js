@@ -45,6 +45,6 @@ export const S = {
   _topicCache: new Map(),
   _subCache: new Map(),
   _activeInputId: null,
-  mixed: { open: true, _init: false, topics: new Set(), subs: new Set(), m: 20, mode: 'standard', set: [] },
+  mixed: { open: true, _init: false, topics: new Set(), subs: new Set(), m: 20, mode: 'standard', pace: 'standard', set: [] },
   topicModal: null
 };

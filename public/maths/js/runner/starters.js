@@ -6,6 +6,13 @@ import { ensurePastFull, buildCaches, topicData, topicDraft, topicAllQs, pickFor
 import { renderRoom } from '../navigation.js';
 import { beginRun } from './assessment.js';
 
+
+// Exam pace → minutes per mark. null = untimed (opt-out of time pressure).
+export function paceMinutesPerMark(pace) {
+  const map = { untimed: null, relaxed: 1.5, standard: 1.07, strict: 0.9 };
+  return pace in map ? map[pace] : 1.07;
+}
+
 export function startMixedSel(exam) {
   const pool = mixedPool();
   if (!pool.length) return;
@@ -19,7 +26,7 @@ export function startMixedSel(exam) {
       uuid: MIXED_UUID,
       version: 1,
       title: `Mixed Mathematics · ${tot}m (${set.length}Q)`,
-      timeLimitMinutes: exam ? tot * 1.5 : null,
+      timeLimitMinutes: exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace))) : null,
       exam: !!exam,
       questions: set
     },
@@ -56,7 +63,7 @@ export function startTopicQuiz(ti, exam) {
       uuid: MIXED_UUID,
       version: 1,
       title: `${c.t.topic} · ${use.tot}-mark quiz`,
-      timeLimitMinutes: exam ? use.tot * 1.5 : null,
+      timeLimitMinutes: exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(use.tot * paceMinutesPerMark(S.mixed.pace))) : null,
       exam: !!exam,
       questions: use.set
     },
@@ -149,7 +156,7 @@ export async function retryRun() {
         uuid: MIXED_UUID,
         version: 1,
         title: `${r.topic} · ${tot}-mark quiz`,
-        timeLimitMinutes: r.exam ? tot * 1.5 : null,
+        timeLimitMinutes: r.exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace))) : null,
         exam: !!r.exam,
         questions: set
       },
@@ -179,7 +186,7 @@ export async function retryRun() {
         uuid: MIXED_UUID,
         version: 1,
         title: `Mixed Mathematics · ${tot}m (${set.length}Q)`,
-        timeLimitMinutes: r.exam ? tot * 1.5 : null,
+        timeLimitMinutes: r.exam && paceMinutesPerMark(S.mixed.pace) != null ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace))) : null,
         exam: !!r.exam,
         questions: set
       },

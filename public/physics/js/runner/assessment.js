@@ -40,6 +40,7 @@ export function startTimer(){
       mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
     }
     if (S.quiz.timeLimitMinutes && S.elapsed >= S.quiz.timeLimitMinutes * 60){
+      saveCurrent(S.quiz.questions[S.idx]);
       finishQuiz(true);
     }
   };
