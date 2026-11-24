@@ -52,7 +52,7 @@ function openOverlay(title, questions) {
   const ov = el('div', 'practice-overlay');
   ov.tabIndex = -1;
   ov.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') { ov.remove(); return; }
+    if (e.key === 'Escape') { close(); return; }
     if (e.key === 'Tab') {
       const btns = [...ov.querySelectorAll('button')].filter(b => !b.disabled);
       if (!btns.length) { e.preventDefault(); return; }
@@ -63,7 +63,7 @@ function openOverlay(title, questions) {
     }
   });
   const prevFocus = document.activeElement;
-  ov.addEventListener('DOMNodeRemoved', () => { try { prevFocus?.focus?.(); } catch {} });
+  const close = () => { ov.remove(); try { prevFocus?.focus?.(); } catch {} };
   setTimeout(() => ov.focus(), 0);
   const card = el('div', 'practice-card');
   ov.appendChild(card);
@@ -77,9 +77,9 @@ function openOverlay(title, questions) {
       card.appendChild(el('div', 'practice-q', `got ${s.got}/${s.total}`));
       card.appendChild(el('div', null, 'practice — not counted in stats'));
       const row = el('div', 'practice-row');
-      const close = el('button', 'btn btn-primary', 'Close');
-      close.onclick = () => ov.remove();
-      row.appendChild(close);
+      const closeBtn = el('button', 'btn btn-primary', 'Close');
+      close.onclick = close;
+      row.appendChild(closeBtn);
       card.appendChild(row);
       return;
     }
@@ -109,10 +109,13 @@ function openOverlay(title, questions) {
     }
     const quit = el('button', 'btn-ghost', '✕');
     quit.style.cssText = 'position:absolute;top:14px;right:16px;';
-    quit.onclick = () => ov.remove();
+    quit.onclick = close;
     card.appendChild(quit);
     card.appendChild(row);
     typeset(card);
+    // keep focus inside after the re-render swapped buttons
+    const first = card.querySelector('button');
+    first?.focus();
   };
   render(spec0);
 }

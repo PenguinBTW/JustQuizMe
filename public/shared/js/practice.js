@@ -50,10 +50,17 @@ export function questionOptions(q) {
 const fmt = (a) => {
   if (a == null) return null;
   if (typeof a === 'string' || typeof a === 'number') return String(a);
-  if (Array.isArray(a))
-    return a.map(x => (x && typeof x === 'object')
-      ? Object.entries(x).map(([k, v]) => `${k}: ${v}`).join(', ')
-      : String(x)).join(' · ');
+  if (Array.isArray(a)) {
+    const objs = a.filter(x => x && typeof x === 'object' && !Array.isArray(x));
+    if (objs.length === a.length && objs.length) {
+      // table-shaped rows (e.g. CS trace tables): keep the column labels once
+      const cols = [...new Set(objs.flatMap(o => Object.keys(o)))];
+      const head = cols.join(' | ');
+      const rows = objs.map(o => cols.map(c => o[c] ?? '').join(' | '));
+      return [head, ...rows].join('\n');
+    }
+    return a.map(String).join(' · ');
+  }
   if (typeof a === 'object')
     return Object.entries(a).map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`).join('\n');
   return String(a);
