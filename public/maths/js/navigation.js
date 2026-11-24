@@ -105,12 +105,18 @@ export async function resumeSave() {
 }
 
 export function resumeVirtual(sv) {
+  const questions = sv.questions || [];
+  const exam = !!sv.exam;
+  const marks = questions.reduce((s, q) => s + (+q.marks || 0), 0);
   const quizLike = {
     uuid: sv.quizUuid,
     version: sv.quizVersion ?? 1,
     title: sv.title || 'Saved quiz',
-    timeLimitMinutes: null,
-    questions: sv.questions || []
+    // Saved virtual runs persist `exam` — a resumed exam keeps its flag and
+    // its per-mark allowance instead of degrading to an untimed quiz.
+    timeLimitMinutes: exam ? marks * 1.5 : null,
+    exam,
+    questions
   };
   beginRun({
     mode: 'quiz',

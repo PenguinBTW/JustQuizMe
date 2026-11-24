@@ -49,7 +49,10 @@ export async function loadHome() {
 export function bestFor(uuid) {
   const a = S.scores.filter(s => s.quizUuid === uuid);
   if (!a.length) return null;
-  return a.reduce((m, x) => (x.score / m.total > m.score / m.total ? x : m), a[0]);
+  // Subset retries (missed-question runs) never outrank full-set attempts.
+  const pool = a.filter(s => !s.subset);
+  const cand = pool.length ? pool : a;
+  return cand.reduce((m, x) => (x.score / m.total > m.score / m.total ? x : m), cand[0]);
 }
 
 export function fmtSaved(iso) {

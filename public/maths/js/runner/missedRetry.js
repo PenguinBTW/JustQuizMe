@@ -18,6 +18,11 @@ export function retryMissed() {
     category: S.quizMeta?.category,
     file: S.quizMeta?.file,
   });
+  if (spec) {
+    // Persisted on the spec so retryRun/save-resume reconstruct the same
+    // mode conventions without re-reading the parent run.
+    spec.exam = !!S.quiz?.exam;
+  }
   if (!spec) return false;
   const qs = resolveSpecQuestions(spec, S.quiz?.questions || [], ak);
   if (!qs.length) return false;

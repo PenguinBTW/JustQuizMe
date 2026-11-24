@@ -33,6 +33,9 @@ export async function finishQuiz(auto = false) {
     quizTitle: S.quiz.title,
     score: totalScore,
     total: maxMarks,
+    // 'qs' retry runs are subsets — flagged so best-attempt rankings don't
+    // let a perfect subset overwrite a full set's personal best.
+    subset: S.retrySpec?.kind === 'qs' || undefined,
     minutes,
     seconds,
     exam: !!S.quiz.exam,

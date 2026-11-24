@@ -89,10 +89,12 @@ export function renderHistory() {
   } else {
     const list = practiceEntries();
     const runs = list.slice().reverse();
-    const best = list.length
-      ? list.reduce(
+    const full = list.filter((x) => !x.subset);
+    const cand = full.length ? full : list;
+    const best = cand.length
+      ? cand.reduce(
           (m, x) => (x.total && x.score / x.total > (m.total ? m.score / m.total : -1) ? x : m),
-          list[0]
+          cand[0]
         )
       : null;
     const bp = best ? pct(best) : 0;

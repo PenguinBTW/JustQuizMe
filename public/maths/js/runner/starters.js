@@ -1,6 +1,6 @@
 // Maths Quiz Run Starters
 import { S, MIXED_UUID } from '../state.js';
-import { orderTypeShuffled, stampFile } from '../utils.js';
+import { ak, orderTypeShuffled, stampFile } from '../utils.js';
 import { api } from '../api.js';
 import { ensurePastFull, buildCaches, topicData, topicDraft, topicAllQs, pickForMode, mixedPool } from '../taxonomy.js';
 import { renderRoom } from '../navigation.js';
@@ -184,6 +184,33 @@ export async function retryRun() {
         questions: set
       },
       meta: { category: 'past-paper', file: 'mixed', virtual: true },
+      retrySpec: r
+    });
+    return;
+  }
+  if (r.kind === 'qs') {
+    // 'qs' = explicit question-key subset (retry-missed runs). Resolve the
+    // spec ids against the run's own questions — still in S.quiz on the
+    // results view.
+    const byKey = new Map((S.quiz?.questions || []).map((q) => [ak(q), q]));
+    const set = (r.ids || []).map((id) => byKey.get(id)).filter(Boolean);
+    if (!set.length) {
+      S.room = 'past';
+      return renderRoom();
+    }
+    const from = r.from || {};
+    S.returnRoom = 'past';
+    beginRun({
+      mode: 'quiz',
+      quizLike: {
+        uuid: from.uuid || MIXED_UUID,
+        version: from.version ?? 1,
+        title: `${r.title || 'Retry missed'} (${set.length}Q)`,
+        timeLimitMinutes: r.exam ? (r.marks || set.reduce((s, q) => s + (+q.marks || 0), 0)) * 1.5 : null,
+        exam: !!r.exam,
+        questions: set
+      },
+      meta: { category: from.category || 'past-paper', file: from.file || 'mixed', virtual: true },
       retrySpec: r
     });
     return;
