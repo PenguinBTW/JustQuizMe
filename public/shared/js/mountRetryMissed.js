@@ -41,14 +41,17 @@ export function registerRetryMissed({ S, beginRun, keyOf }) {
       const questions = questionsFromRefs(S.quiz.questions, missed);
       if (!questions.length) return;
       // keep linked-question context (physics resolveDeps): predecessors
-      // dropped from the missed subset must still resolve their dep stems,
-      // so seed them into the dep pool S._pastAll when it exists
+      // dropped from the missed subset must still resolve their dep stems.
+      // Seed them into the dep pool S._pastAll only for the duration of
+      // beginRun (resolveDeps runs synchronously inside it) so a cached
+      // predecessor never leaks into a later run whose own set reuses the id
+      const depAdded = [];
       if (S._pastAll) {
         for (const q of questions) {
           for (const d of q.dependsOn || []) {
             if (!d?.id || S._pastAll[d.id]) continue;
             const pred = S.quiz.questions.find(p => keyOf(p) === d.id || p.id === d.id);
-            if (pred) S._pastAll[d.id] = pred;
+            if (pred) { S._pastAll[d.id] = pred; depAdded.push(d.id); }
           }
         }
       }
@@ -69,6 +72,7 @@ export function registerRetryMissed({ S, beginRun, keyOf }) {
         // "try again" still replays the source run
         retrySpec: S.retrySpec,
       });
+      for (const id of depAdded) delete S._pastAll[id];
     });
     anchor.insertAdjacentElement('beforebegin', btn);
   };

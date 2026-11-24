@@ -4,9 +4,11 @@ import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
 
-// retry-missed runs are saved under '<sourceUuid>:retry-missed' — match on
-// the source uuid so retried attempts still show in history
-const srcUuid = (u) => (u || '').split(':retry-missed')[0];
+// retry-missed runs are saved under '<sourceUuid>:retry-missed' — map them
+// back to the source uuid only when the entry ends with the marker and its
+// base is a real manifest uuid
+const RETRY_MARK = ':retry-missed';
+const srcUuid = (u) => (u || '').endsWith(RETRY_MARK) ? u.slice(0, -RETRY_MARK.length) : '';
 
 export function pastEntries(){
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -63,10 +65,12 @@ export function renderHistory(){
   if (isPast){
     const list = pastEntries();
     const bankTotal = S.quizzes['past-paper'].reduce((s, m) => s + m.totalMarks, 0);
-    const avg = list.length ? Math.round(list.reduce((s, a) => s + (a.total ? a.score / a.total : 0), 0) / list.length * 100) : 0;
-    const earned = list.reduce((s, a) => s + (a.score || 0), 0);
+    // retry subsets stay listed but don't count toward aggregate stats
+    const base = list.filter(x => !(x.quizUuid || '').endsWith(RETRY_MARK));
+    const avg = base.length ? Math.round(base.reduce((s, a) => s + (a.total ? a.score / a.total : 0), 0) / base.length * 100) : 0;
+    const earned = base.reduce((s, a) => s + (a.score || 0), 0);
     let soloGot = 0, soloTot = 0, helpedN = 0;
-    for (const a of list){
+    for (const a of base){
       if (a.breakdown?.cSolo){ soloGot += a.breakdown.cSolo.got || 0; soloTot += a.breakdown.cSolo.total || 0; }
       helpedN += (a.helped || []).length;
     }
@@ -96,7 +100,9 @@ export function renderHistory(){
   } else {
     const list = practiceEntries();
     const runs = list.slice().reverse();
-    const best = list.length ? list.reduce((m, x) => (x.total && x.score / x.total > (m.total ? m.score / m.total : -1)) ? x : m, list[0]) : null;
+    // retry subsets stay listed but mustn't outrank full sets on the best card
+    const base = list.filter(x => !(x.quizUuid || '').endsWith(RETRY_MARK));
+    const best = base.length ? base.reduce((m, x) => (x.total && x.score / x.total > (m.total ? m.score / m.total : -1)) ? x : m, base[0]) : null;
     const bp = best ? pct(best) : 0;
     const ver = best ? (S.quizzes.normal.find(m => m.uuid === best.quizUuid)?.version ?? best.quizVersion ?? 1) : '-';
     const helpTrend = runs.length >= 2 ? `${(runs[0].helped || []).length} → ${(runs[runs.length - 1].helped || []).length}` : '-';
