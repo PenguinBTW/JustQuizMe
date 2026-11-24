@@ -49,7 +49,7 @@ export async function loadHome() {
 export function bestFor(uuid) {
   const a = S.scores.filter(s => s.quizUuid === uuid);
   if (!a.length) return null;
-  return a.reduce((m, x) => (x.score / m.total > m.score / m.total ? x : m), a[0]);
+  return a.reduce((m, x) => (x.score / x.total > m.score / m.total ? x : m), a[0]);
 }
 
 export function fmtSaved(iso) {
