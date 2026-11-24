@@ -3,6 +3,7 @@ import { S } from './state.js';
 import { $ } from './utils.js';
 import { loadHome } from './api.js';
 import { renderRoom } from './navigation.js';
+import './stats.js';
 import { startMixedRun } from './runner/starters.js';
 
 export function initTheme() {
