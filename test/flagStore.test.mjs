@@ -34,6 +34,22 @@ test('flagKey / sameFlag identity is (portal, fileBase, questionId, at)', () => 
   assert.ok(sameFlag(F({ questionId: 7 }), F({ questionId: '7' })));
 });
 
+test('flagKey does not collide on concatenated field boundaries', () => {
+  const k1 = flagKey(F({ fileBase: 'paper1', questionId: '23' }));
+  const k2 = flagKey(F({ fileBase: 'paper12', questionId: '3' }));
+  assert.notEqual(k1, k2);
+});
+
+test('sameFlag with an id selector matches only that id', () => {
+  // The server never field-matches an id-bearing selector: a stored legacy
+  // row with identical fields but no id must NOT match (the twin-collision
+  // bug the id exists to prevent).
+  const legacyTwin = F({ questionId: 'q3' }); // no id, same fields
+  const sel = { ...F(), id: 'b2' };
+  assert.ok(!sameFlag(sel, legacyTwin));
+  assert.ok(sameFlag(sel, { ...F({ questionId: 'other' }), id: 'b2' }));
+});
+
 test('removeFlag removes only the first matching row', () => {
   const target = F();
   const flags = [F({ questionId: 'q1' }), target, F({ questionId: 'q3' })];
