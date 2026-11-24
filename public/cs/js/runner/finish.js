@@ -137,6 +137,7 @@ export async function renderSummaryReport() {
         quizUuid: S.quiz.uuid || MIXED_UUID,
         quizVersion: S.quiz.version || 1,
         quizFile: S.quizMeta?.file || '',
+        category: S.quizMeta?.category || 'normal',
         quizTitle: S.quiz.title || 'OCR CS Assessment',
         score: earned,
         total,

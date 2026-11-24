@@ -41,7 +41,6 @@ export async function startReviewRun(exam) {
 async function runReviewSpec(spec) {
   const { set, tot } = await resolveReviewDeck(spec.items, fetchQuizForCategory);
   if (!set.length) return alert('No questions found in the review queue.');
-  S.returnRoom = 'history';
   beginRun({
     mode: spec.exam ? 'exam' : 'quiz',
     quizLike: {
@@ -52,6 +51,7 @@ async function runReviewSpec(spec) {
       questions: orderTypeShuffled(set)
     },
     meta: { category: 'normal', file: 'review', virtual: true },
+    returnRoom: 'history',
     retrySpec: spec
   });
 }

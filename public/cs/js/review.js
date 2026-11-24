@@ -34,6 +34,7 @@ export function reviewQueue(scores = S.scores) {
           lost: w?.marks != null ? w.marks - (w.got ?? 0) : null,
           quizTitle: e?.quizTitle || '',
           quizFile: e?.quizFile || '',
+          cat: e?.category || null,
           date: e?.date || ''
         });
         order.push(key);
@@ -50,49 +51,66 @@ export function reviewQueue(scores = S.scores) {
   return order.filter((k) => status.get(k) === 'weak').map((k) => detail.get(k));
 }
 
-// Queue items -> fetch refs { category, file, keys: [questionId] } for a
-// retry spec, prioritised by repeat misses then marks lost, deck-capped.
+// Queue items -> fetch refs { category, file, keys: [{ id, r }] } for a
+// retry spec, sorted by repeat misses then marks lost; r keeps each key's
+// global rank so the deck fills in priority order across files.
 export function planReviewRefs(items, quizzes) {
   // Keys are lowercase; restore each file's real name from quiz metadata so
-  // fetches work on case-sensitive filesystems (`Mock2024.json`).
+  // fetches work on case-sensitive filesystems (`Mock2024.json`). A basename
+  // can exist in both banks — prefer the bank the score entry was recorded
+  // under (it.cat), and remember the other as `alt` for a fallback fetch.
   const meta = new Map();
   for (const [category, list] of [['normal', quizzes?.normal], ['past-paper', quizzes?.['past-paper']]]) {
-    for (const m of list || []) meta.set(String(m.file).toLowerCase(), { file: m.file, category });
+    for (const m of list || []) {
+      const lower = String(m.file).toLowerCase();
+      const cands = meta.get(lower) || [];
+      cands.push({ file: m.file, category });
+      meta.set(lower, cands);
+    }
   }
-  const byFile = new Map();
-  for (const it of [...items].sort((a, b) => (b.misses - a.misses) || ((b.lost ?? 0) - (a.lost ?? 0)))) {
-    const sep = it.key.indexOf(':');
-    const lower = `${it.key.slice(0, sep)}.json`;
-    const hit = meta.get(lower);
-    const ref = byFile.get(lower) || { category: hit?.category || 'past-paper', file: hit?.file || lower, keys: [] };
-    ref.keys.push(it.key.slice(sep + 1));
-    byFile.set(lower, ref);
-  }
-  return [...byFile.values()];
+  const byBank = new Map();
+  [...items]
+    .sort((a, b) => (b.misses - a.misses) || ((b.lost ?? 0) - (a.lost ?? 0)))
+    .forEach((it, r) => {
+      const sep = it.key.indexOf(':');
+      const lower = `${it.key.slice(0, sep)}.json`;
+      const cands = meta.get(lower) || [];
+      const hit = cands.find((c) => c.category === it.cat) || cands[0] || { file: lower, category: 'past-paper' };
+      const alt = cands.find((c) => c !== hit) || null;
+      const groupKey = `${hit.category}|${hit.file}`;
+      const ref = byBank.get(groupKey) || { category: hit.category, file: hit.file, alt, keys: [] };
+      ref.keys.push({ id: it.key.slice(sep + 1), r });
+      byBank.set(groupKey, ref);
+    });
+  return [...byBank.values()];
 }
 
 // Resolves refs into pool-stamped questions (`<fileBase>:<id>` keys) via
-// an injected fetcher so this stays free of the api module.
+// an injected fetcher so this stays free of the api module. The deck fills
+// in queue-rank order — not file order — so high-priority misses always win
+// slots over easier ones in other files.
 export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) {
-  const set = [];
-  let tot = 0;
+  const found = [];
   for (const ref of refs || []) {
-    if (set.length >= cap) break;
-    let quiz;
-    try {
-      quiz = await fetchQuiz(ref.category, ref.file);
-    } catch {
-      continue;
-    }
-    if (!quiz) continue;
-    const wanted = new Set((ref.keys || []).map((k) => String(k).toLowerCase()));
-    for (const q of stampPool(quiz, ref.file)) {
-      if (set.length >= cap) break;
-      if (wanted.has(String(q.id).toLowerCase())) {
-        set.push(q);
-        tot += q.marks || 0;
+    const wanted = new Map((ref.keys || []).map((k) => [String(k.id).toLowerCase(), k.r]));
+    for (const bank of [ref, ref.alt].filter(Boolean)) {
+      if (!wanted.size) break;
+      let quiz;
+      try {
+        quiz = await fetchQuiz(bank.category, bank.file);
+      } catch {
+        continue;
+      }
+      if (!quiz) continue;
+      for (const q of stampPool(quiz, ref.file)) {
+        const r = wanted.get(String(q.id).toLowerCase());
+        if (r !== undefined) {
+          wanted.delete(String(q.id).toLowerCase());
+          found.push({ q, r });
+        }
       }
     }
   }
-  return { set, tot };
+  const set = found.sort((a, b) => a.r - b.r).slice(0, cap).map((x) => x.q);
+  return { set, tot: set.reduce((s, q) => s + (q.marks || 0), 0) };
 }
