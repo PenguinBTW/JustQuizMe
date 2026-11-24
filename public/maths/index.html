@@ -113,5 +113,10 @@ window.renderMath = function () {
 </div>
 
 <script type="module" src="js/main.js"></script>
+<script type="module">
+  import { S } from './js/state.js';
+  import { registerDaily } from '/shared/js/mountDaily.js';
+  registerDaily({ portal: 'maths', S });
+</script>
 </body>
 </html>
