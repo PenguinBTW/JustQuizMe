@@ -3,6 +3,9 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
+import { openExploreList } from './explore.js';
+import { api } from '../api.js';
+import { normalizeStars, resolveStarred } from '../stars.js';
 
 export function pastEntries(){
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -127,15 +130,26 @@ export function renderHistory(){
       <h2 class="serif" style="font-size: 28px; line-height: 1.15;">Recorded Sessions &amp; Telemetry</h2>
       <p style="font-size: 13.5px; color: var(--ink-secondary);">Every completed run logged newest-first with per-type breakdowns and helped question IDs.</p>
     </div>
-    <div class="segmented">
-      <button class="${isPast ? 'active' : ''}" id="histTabPast">Past Papers (${pastEntries().length})</button>
-      <button class="${!isPast ? 'active' : ''}" id="histTabPractice">Practice Sets (${practiceEntries().length})</button>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <button class="btn-ghost mono stars-chip" id="starsChip" style="font-size:12px;">★ starred (${normalizeStars(S.stars).length})</button>
+      <div class="segmented">
+        <button class="${isPast ? 'active' : ''}" id="histTabPast">Past Papers (${pastEntries().length})</button>
+        <button class="${!isPast ? 'active' : ''}" id="histTabPractice">Practice Sets (${practiceEntries().length})</button>
+      </div>
     </div>
   </div>
   ${body}`;
   wireRoomNav();
   $('#histTabPast').onclick = () => { S.historySrc = 'past'; renderRoom(); };
   $('#histTabPractice').onclick = () => { S.historySrc = 'practice'; renderRoom(); };
+  $('#starsChip').onclick = async () => {
+    const stars = normalizeStars(S.stars);
+    if (!stars.length) return;
+    const qs = await resolveStarred(stars, (category, file) =>
+      api(`/api/quiz?category=${encodeURIComponent(category)}&file=${encodeURIComponent(file)}`));
+    if (!qs.length) return;
+    openExploreList('★ Starred', `${qs.length} saved question${qs.length === 1 ? '' : 's'} across ${new Set(stars.map(s => s.file)).size} quiz${new Set(stars.map(s => s.file)).size === 1 ? '' : 'zes'}`, qs, 'history');
+  };
   document.querySelectorAll('[data-retry-entry]').forEach(b => b.onclick = () => {
     const [uuid, file] = b.dataset.retryEntry.split('|');
     const inNormal = S.quizzes.normal.some(m => m.file === file);

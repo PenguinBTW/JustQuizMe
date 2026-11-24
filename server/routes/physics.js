@@ -49,6 +49,28 @@ function createPhysicsRouter(quizService, saveService) {
     res.json({ ok: true });
   });
 
+  router.get('/stars', (req, res) => {
+    res.json(saveService.getStars());
+  });
+
+  router.post('/stars', (req, res) => {
+    const b = req.body || {};
+    if (!b.qid || typeof b.qid !== 'string' || !b.qid.trim()) {
+      return res.status(400).json({ error: 'qid required' });
+    }
+    const star = {
+      key: b.key || `${b.file || ''}:${b.qid}`,
+      qid: String(b.qid),
+      file: typeof b.file === 'string' ? b.file : '',
+      category: typeof b.category === 'string' ? b.category : '',
+      index: Number.isInteger(b.index) && b.index >= 0 ? b.index : null,
+      topic: typeof b.topic === 'string' ? b.topic : '',
+      subtopic: typeof b.subtopic === 'string' ? b.subtopic : '',
+      title: typeof b.title === 'string' ? b.title : ''
+    };
+    res.json({ ok: true, ...saveService.toggleStar(star) });
+  });
+
   return router;
 }
 

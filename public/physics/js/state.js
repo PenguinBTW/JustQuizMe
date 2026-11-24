@@ -19,6 +19,7 @@ export const MIXED_UUID = 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
 export const S = {
   quizzes: { normal: [], 'past-paper': [] },
   scores: [],
+  stars: [],
   save: null,
   saveDismissed: false,
   room: 'past',

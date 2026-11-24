@@ -13,12 +13,13 @@ export async function api(p, opt){
 
 export async function loadHome(){
   $('#stage').innerHTML = '<div class="card"><p class="mono" style="color:var(--ink-muted);">Loading question bank…</p></div>';
-  const [q, scores, save] = await Promise.all([
-    api('/api/quizzes'), api('/api/scores'), api('/api/save').catch(()=>null)
+  const [q, scores, save, stars] = await Promise.all([
+    api('/api/quizzes'), api('/api/scores'), api('/api/save').catch(()=>null), api('/api/stars').catch(()=>[])
   ]);
   S.quizzes = q || { normal: [], 'past-paper': [] };
   S.scores = Array.isArray(scores) ? scores : [];
   S.save = save;
+  S.stars = Array.isArray(stars) ? stars : [];
   await ensurePastFull();
   buildCaches();
   // Mixed builder defaults: every topic + subtopic selected (pool = whole bank).

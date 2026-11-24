@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { resolveDeps, depHtml, mcqHtml, writtenHtml, selfMarkedHtml, calcHtml, wireQ } from './renderers.js';
 import { finishQuiz } from './finish.js';
 import { goExploreBack } from '../views/explore.js';
+import { makeStarRef, isStarred } from '../stars.js';
 import { renderRoom } from '../navigation.js';
 
 export function beginRun(o){
@@ -145,6 +146,7 @@ export function renderQ(){
     <div class="chrome-cluster">
       <button class="btn-ghost" id="backTop">← Previous question</button>
       ${inQuiz ? '<button class="btn-ghost mono" style="font-size:12px;" id="saveBtn" title="Save progress to resume later">Save</button>' : ''}
+      <button class="btn-ghost mono star-btn" id="starQ" title="Star this question" aria-label="Star this question"></button>
     </div>
     <span class="mono chrome-mid" id="chromeMid"></span>
     <span class="mono" id="chromeRight"></span>
@@ -167,6 +169,21 @@ export function renderQ(){
   wireQ(q);
   $('#backTop').onclick = navBack;
   $('#prevQ').onclick = navBack;
+  const starBtn = $('#starQ');
+  const syncStarBtn = () => {
+    const on = isStarred(S.stars, makeStarRef(q, S.quizMeta, S.idx));
+    starBtn.textContent = on ? '★' : '☆';
+    starBtn.classList.toggle('starred', on);
+  };
+  syncStarBtn();
+  starBtn.onclick = async () => {
+    const ref = makeStarRef(q, S.quizMeta, S.idx);
+    try {
+      const r = await api('/api/stars', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ref) });
+      if (Array.isArray(r.stars)) S.stars = r.stars;
+    } catch {}
+    syncStarBtn();
+  };
   const sv = $('#saveBtn');
   if (sv) sv.onclick = saveProgress;
   if (window.renderMath) window.renderMath();

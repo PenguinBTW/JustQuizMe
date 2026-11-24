@@ -1095,3 +1095,9 @@ details.fullpapers summary:hover { color: var(--accent); }
   .stage { max-width: 1080px; }
   .topbar { max-width: 1080px; }
 }
+
+/* Starred questions */
+.star-btn { font-size: 14px; padding: 4px 10px; line-height: 1.2; color: var(--ink-muted); }
+.star-btn.starred { color: var(--amber, #d8a24a); }
+.stars-chip { border: 1px solid var(--line, rgba(255,255,255,.14)); border-radius: 999px; padding: 5px 14px; }
+.stars-chip:hover { border-color: var(--amber, #d8a24a); color: var(--amber, #d8a24a); }

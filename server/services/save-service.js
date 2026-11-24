@@ -13,6 +13,7 @@ class SaveService {
 
     this.scoresFile = path.join(this.dataDir, 'scores.json');
     this.saveFile = path.join(this.dataDir, 'save.json');
+    this.starsFile = path.join(this.dataDir, 'stars.json');
 
     this.initStorage();
   }
@@ -29,6 +30,10 @@ class SaveService {
       } else {
         fs.writeFileSync(this.scoresFile, '[]', 'utf8');
       }
+    }
+
+    if (!fs.existsSync(this.starsFile)) {
+      fs.writeFileSync(this.starsFile, '[]', 'utf8');
     }
 
     if (!fs.existsSync(this.saveFile)) {
@@ -87,6 +92,27 @@ class SaveService {
   clearSave() {
     fs.writeFileSync(this.saveFile, 'null', 'utf8');
     return true;
+  }
+
+  getStars() {
+    const list = this.readJson(this.starsFile, []);
+    return Array.isArray(list) ? list : [];
+  }
+
+  // Toggle a starred question by `key`; a star payload is stored verbatim
+  // (plus starredAt) so clients can render lists without re-deriving fields.
+  toggleStar(star) {
+    const list = this.getStars();
+    const idx = list.findIndex(s => s && s.key === star.key);
+    if (idx >= 0) {
+      list.splice(idx, 1);
+      fs.writeFileSync(this.starsFile, JSON.stringify(list, null, 2), 'utf8');
+      return { starred: false, stars: list };
+    }
+    const entry = { ...star, starredAt: new Date().toISOString() };
+    list.unshift(entry);
+    fs.writeFileSync(this.starsFile, JSON.stringify(list, null, 2), 'utf8');
+    return { starred: true, stars: list, entry };
   }
 }
 
