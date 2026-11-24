@@ -4,7 +4,7 @@ import { $, esc, ak, chipify } from '../utils.js';
 import { areMathEqual, cleanMathStr } from '../cas.js';
 import { mathKeypadHtml } from './keypad.js';
 import { renderQ } from './assessment.js';
-import { attachChromeFlagButton } from '../../../shared/js/flags.js';
+import { attachChromeFlagButton, resolveFlagBank } from '../../../shared/js/flags.js';
 
 // 1. Multiple Choice
 export function mcqHtml(q) {
@@ -662,7 +662,7 @@ export function wireQ(q) {
   attachChromeFlagButton(() => ({
     portal: 'maths',
     fileBase: q._srcFile || S.quizMeta?.file || '',
-    category: S.quizMeta?.category,
+    category: resolveFlagBank(q._srcFile || S.quizMeta?.file, S.quizzes) || S.quizMeta?.category,
     questionId: q.id || String(S.idx),
     questionLabel: `Q${S.idx + 1} of ${S.quiz.questions.length}`
   }));

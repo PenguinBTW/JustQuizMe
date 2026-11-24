@@ -6,7 +6,7 @@ import { renderPromptHtml, evaluateTraceTable, evaluateTruthTable, evaluateCalcu
 import { saveCurrent, saveProgress, renderQ } from './assessment.js';
 import { finishQuiz } from './finish.js';
 import { renderRoom } from '../navigation.js';
-import { attachChromeFlagButton } from '../../../shared/js/flags.js';
+import { attachChromeFlagButton, resolveFlagBank } from '../../../shared/js/flags.js';
 
 export function renderQuestionSpecifics(q) {
   const ans = S.answers[ak(q)] || {};
@@ -567,7 +567,7 @@ export function wireQuestionInteractions(q) {
   attachChromeFlagButton(() => ({
     portal: 'cs',
     fileBase: q._srcFile || S.quizMeta?.file || '',
-    category: S.quizMeta?.category,
+    category: resolveFlagBank(q._srcFile || S.quizMeta?.file, S.quizzes) || S.quizMeta?.category,
     questionId: q.id || k,
     questionLabel: `Question ${S.idx + 1} of ${S.quiz.questions.length}`
   }));

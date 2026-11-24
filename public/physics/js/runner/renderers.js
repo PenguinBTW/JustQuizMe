@@ -4,7 +4,7 @@ import { $, esc, ak, chipify, tableHtml, imgSrc, qImages, imgHtml } from '../uti
 import { renderQ, navNext, progress } from './assessment.js';
 import { finishQuiz } from './finish.js';
 import { goExploreBack } from '../views/explore.js';
-import { attachChromeFlagButton } from '../../../shared/js/flags.js';
+import { attachChromeFlagButton, resolveFlagBank } from '../../../shared/js/flags.js';
 
 export function normalizeDeps(deps){
   if (!Array.isArray(deps)) return [];
@@ -144,7 +144,7 @@ export function wireQ(q){
   attachChromeFlagButton(() => ({
     portal: 'physics',
     fileBase: q._srcFile || S.quizMeta?.file || '',
-    category: S.quizMeta?.category,
+    category: resolveFlagBank(q._srcFile || S.quizMeta?.file, S.quizzes) || S.quizMeta?.category,
     questionId: q.id || String(S.idx),
     questionLabel: `Q${S.idx + 1} of ${S.quiz.questions.length}`
   }));

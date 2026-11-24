@@ -116,6 +116,7 @@ export function openFlagDialog(ctx) {
     let reason = null;
     let pending = false;
     let okTimer = null;
+    let closed = false;
 
     REASONS.forEach((r) => {
       const b = document.createElement('button');
@@ -132,6 +133,8 @@ export function openFlagDialog(ctx) {
     });
 
     const close = (result) => {
+      if (closed) return; // Esc during a pending submit must not re-close into a later dialog
+      closed = true;
       if (okTimer) clearTimeout(okTimer); // a later dialog must not inherit this dialog's timer
       overlay.remove();
       document.removeEventListener('keydown', onKey);
@@ -190,6 +193,18 @@ export function openFlagDialog(ctx) {
  * `getCtx` is evaluated on each click so live runner state (idx, meta) is used.
  * Returns the button element, or null when the chrome isn't rendered.
  */
+// Which bank does a question's source file live in? Deck meta.category describes
+// how the run was launched (a synthesized CS topic deck is 'normal' even though
+// every question came from 'past-paper'), so for flagged reports we resolve the
+// bank from the file itself when we can.
+export function resolveFlagBank(fileBase, quizzes) {
+  if (!fileBase || !quizzes) return undefined;
+  for (const [category, list] of Object.entries(quizzes)) {
+    if ((list || []).some((m) => m && m.file === fileBase)) return category;
+  }
+  return undefined;
+}
+
 export function attachChromeFlagButton(getCtx) {
   const chromeRight = document.getElementById('chromeRight');
   const chrome = chromeRight?.parentElement;
