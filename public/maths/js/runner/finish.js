@@ -83,7 +83,7 @@ export async function finishQuiz(auto = false) {
       <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
         <button class="btn" id="retryResBtn">Retry Assessment ⟳</button>
         <button class="btn" id="exploreResBtn">Explore Questions ↗</button>
-        <button class="btn btn-primary" id="backResBtn">Back to Past Papers</button>
+        <button class="btn btn-primary" id="backResBtn">${S.returnRoom === 'practice' ? 'Back to Topic Sets' : 'Back to Past Papers'}</button>
       </div>
     </div>
 

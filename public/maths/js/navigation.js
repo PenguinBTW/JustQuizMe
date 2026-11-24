@@ -105,6 +105,7 @@ export async function resumeSave() {
 }
 
 export function resumeVirtual(sv) {
+  S.returnRoom = null;
   const quizLike = {
     uuid: sv.quizUuid,
     version: sv.quizVersion ?? 1,
