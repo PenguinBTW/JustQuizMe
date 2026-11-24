@@ -9,6 +9,7 @@ import { renderRoom } from '../navigation.js';
 
 export function beginRun(o){
   S.timeExpired = false;
+  S._finishing = false;
   let qs = o.quizLike.questions;
   if (o.resume?.order){
     const pos = new Map(o.resume.order.map((k, i) => [k, i]));

@@ -9,6 +9,7 @@ import { finishQuiz } from './finish.js';
 
 export function beginRun(o) {
   S.timeExpired = false;
+  S._finishing = false;
   S.quiz = { ...o.quizLike };
   S.quizMeta = o.meta;
   S.runMode = o.mode;
