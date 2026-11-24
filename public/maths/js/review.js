@@ -95,13 +95,14 @@ export function planReviewRefs(items, quizzes) {
   }
   const picked = [...items].sort((a, b) => (b.misses - a.misses) || ((b.lost ?? 0) - (a.lost ?? 0)));
   const byFile = new Map();
-  for (const it of picked) {
+  picked.forEach((it, rank) => {
     const cat = it.cat || 'past-paper';
     const refKey = `${cat}|${it.fileKey}`;
-    const ref = byFile.get(refKey) || { category: cat, file: fileIndex.get(refKey) || `${it.fileKey}.json`, keys: [] };
+    const ref = byFile.get(refKey) || { category: cat, file: fileIndex.get(refKey) || `${it.fileKey}.json`, keys: [], ranks: {} };
     ref.keys.push(it.qid);
+    ref.ranks[it.qid] = rank;
     byFile.set(refKey, ref);
-  }
+  });
   return [...byFile.values()];
 }
 
@@ -111,9 +112,8 @@ export function planReviewRefs(items, quizzes) {
 // revised banks can't starve the deck. `pool` carries every fetched
 // question (past-paper stamps) for dependency lookups.
 export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) {
-  const set = [];
+  const candidates = [];
   const pool = [];
-  let tot = 0;
   for (const ref of refs || []) {
     let quiz;
     try {
@@ -122,18 +122,22 @@ export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) 
       continue;
     }
     if (!quiz) continue;
-    const wanted = new Set((ref.keys || []).map((k) => String(k).toLowerCase()));
+    const wanted = new Map();
+    (ref.keys || []).forEach((k, i) => wanted.set(String(k).toLowerCase(), ref.ranks?.[k] ?? i));
     for (const q of stampPool(quiz, ref.file)) {
       pool.push(q);
-      if (set.length >= cap) continue;
-      if (wanted.has(String(q.id).toLowerCase())) {
+      const rank = wanted.get(String(q.id).toLowerCase());
+      if (rank != null) {
         // Normal-bank questions get an 'n|' _key so outcomes recorded on the
         // review deck match the file-run keys for the same bank.
-        set.push(ref.category === 'normal' ? { ...q, _key: `n|${q._key.toLowerCase()}` } : q);
-        tot += q.marks || 0;
+        candidates.push({ q: ref.category === 'normal' ? { ...q, _key: `n|${q._key.toLowerCase()}` } : q, rank });
       }
     }
-    if (set.length >= cap) break;
   }
+  // Global priority order, not file order — a repeat miss in a later file
+  // still outranks a one-off in an earlier one.
+  candidates.sort((a, b) => a.rank - b.rank);
+  const set = candidates.slice(0, cap).map((c) => c.q);
+  const tot = set.reduce((s, q) => s + (q.marks || 0), 0);
   return { set, tot, pool };
 }

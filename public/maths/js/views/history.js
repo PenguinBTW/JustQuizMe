@@ -3,7 +3,7 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz, startReviewRun } from '../runner/starters.js';
-import { reviewQueue, REVIEW_DECK_CAP } from '../review.js';
+import { reviewQueue, REVIEW_DECK_CAP, REVIEW_UUID } from '../review.js';
 
 export function pastEntries() {
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -11,7 +11,7 @@ export function pastEntries() {
 }
 
 export function practiceEntries() {
-  const uuids = new Set(S.quizzes.normal.map(m => m.uuid));
+  const uuids = new Set([...S.quizzes.normal.map(m => m.uuid), REVIEW_UUID]);
   return S.scores.filter(s => uuids.has(s.quizUuid)).slice().reverse();
 }
 
