@@ -202,10 +202,10 @@ function initQuickKeys() {
     }
     if (k === 's') {
       disarm();
-      const slider = document.getElementById('marksSlider');
-      if (slider) {
-        slider.scrollIntoView({ block: 'center' }); // centred: slider visible + tabs above in view
-        slider.focus({ preventScroll: true });
+      const tab = document.querySelector('.synth-tab-btn.active') || document.querySelector('.synth-tab-btn');
+      if (tab) {
+        document.getElementById('synthesizer')?.scrollIntoView({ block: 'start' });
+        tab.focus({ preventScroll: true }); // lands on the visible first control; slider is a Tab away
       } else {
         document.getElementById('synthesizer')?.scrollIntoView({ behavior: 'smooth' });
       }
