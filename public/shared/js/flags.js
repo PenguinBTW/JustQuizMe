@@ -47,6 +47,25 @@ export async function postFlag(payload) {
   return res.json();
 }
 
+export async function deleteFlag(flag) {
+  const res = await fetch('/api/flags', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      portal: flag.portal,
+      fileBase: flag.fileBase,
+      questionId: flag.questionId,
+      at: flag.at,
+    }),
+  });
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try { msg = (await res.json()).error || msg; } catch {}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+
 export async function fetchFlags() {
   const res = await fetch('/api/flags');
   if (!res.ok) {

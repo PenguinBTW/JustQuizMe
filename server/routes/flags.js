@@ -83,6 +83,34 @@ function createFlagsRouter() {
     res.json({ ok: true, count: flags.length });
   });
 
+  // Unflag: removes the first stored flag matching the identity fields
+  // (portal + fileBase + questionId + at — `at` discriminates repeat flags
+  // of the same question, since POST deliberately doesn't dedupe).
+  router.delete('/flags', (req, res) => {
+    const body = req.body;
+    if (!body || typeof body !== 'object' || typeof body.at !== 'string' || !body.at) {
+      return res.status(400).json({ error: 'expected {portal, fileBase, questionId, at}' });
+    }
+    const flags = readFlags();
+    if (flags === null) {
+      return res.status(500).json({ error: 'flags store is corrupt and could not be read' });
+    }
+    const i = flags.findIndex((f) =>
+      f.portal === body.portal &&
+      f.fileBase === body.fileBase &&
+      String(f.questionId) === String(body.questionId) &&
+      f.at === body.at
+    );
+    if (i < 0) return res.status(404).json({ error: 'no matching flag' });
+    flags.splice(i, 1);
+    try {
+      writeFlags(flags);
+    } catch (err) {
+      return res.status(500).json({ error: 'failed to persist unflag: ' + err.message });
+    }
+    res.json({ ok: true, count: flags.length });
+  });
+
   return router;
 }
 
