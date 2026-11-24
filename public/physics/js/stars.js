@@ -12,11 +12,12 @@ export function starKey(ref) {
 // q: question object (may carry _srcFile in topic-pool runs);
 // meta: S.quizMeta ({category, file, title?}); index: position in the run.
 export function makeStarRef(q, meta, index) {
+  const qid = q._origQid || q.id; // resolveStarred may alias a collided id
   const file = q._srcFile || (meta && meta.file) || '';
   const category = q._srcCat || (meta && meta.category) || '';
   return {
-    key: starKey({ category, file, qid: q.id }),
-    qid: q.id,
+    key: starKey({ category, file, qid }),
+    qid,
     file,
     category,
     index: Number.isInteger(index) ? index : null,
@@ -55,7 +56,7 @@ export async function resolveStarred(stars, loadQuiz) {
   const cache = new Map();
   const out = [];
   const emitted = new Set(); // runner answer state is keyed by question id:
-                           // the same file:qid in two banks would collide.
+                           // the same id in two banks needs a unique alias.
   for (const s of stars || []) {
     if (!s || !s.file || !s.qid) continue;
     const ck = `${s.category}|${s.file}`;
@@ -64,9 +65,16 @@ export async function resolveStarred(stars, loadQuiz) {
     if (!quiz) continue;
     const qs = quiz.questions || [];
     const q = qs[s.index] && qs[s.index].id === s.qid ? qs[s.index] : qs.find(x => x.id === s.qid);
-    if (q && !emitted.has(q.id)) {
+    if (!q) continue;
+    const src = { _srcFile: q._srcFile || s.file, _srcCat: q._srcCat || s.category };
+    if (emitted.has(q.id)) {
+      // Same id from another quiz: alias it so answer state stays unique,
+      // keep _origQid so the star toggle still hits the stored key.
+      out.push({ ...q, ...src, id: `${q.id}·${s.category || out.length}`, _origQid: q.id });
+      emitted.add(`${q.id}·${s.category}`);
+    } else {
       emitted.add(q.id);
-      out.push({ ...q, _srcFile: q._srcFile || s.file, _srcCat: q._srcCat || s.category });
+      out.push({ ...q, ...src });
     }
   }
   return out;
