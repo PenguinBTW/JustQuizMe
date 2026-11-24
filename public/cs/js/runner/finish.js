@@ -115,26 +115,29 @@ export async function renderSummaryReport() {
   const pct = Math.round((earned / (total || 1)) * 100);
 
   // Save to scores.json
+  const scoreEntry = {
+    quizUuid: S.quiz.uuid || MIXED_UUID,
+    quizVersion: S.quiz.version || 1,
+    quizFile: S.quizMeta?.file || '',
+    quizTitle: S.quiz.title || 'OCR CS Assessment',
+    score: earned,
+    total,
+    minutes: Math.floor(S.elapsed / 60),
+    seconds: S.elapsed,
+    exam: S.runMode === 'exam',
+    topics: [...new Set((S.quiz.questions || []).map(q => q._topic).filter(Boolean))],
+    breakdown
+  };
   try {
     await api('/api/scores', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        quizUuid: S.quiz.uuid || MIXED_UUID,
-        quizVersion: S.quiz.version || 1,
-        quizFile: S.quizMeta?.file || '',
-        quizTitle: S.quiz.title || 'OCR CS Assessment',
-        score: earned,
-        total,
-        minutes: Math.floor(S.elapsed / 60),
-        seconds: S.elapsed,
-        exam: S.runMode === 'exam',
-        topics: [...new Set((S.quiz.questions || []).map(q => q._topic).filter(Boolean))],
-        breakdown
-      })
+      body: JSON.stringify(scoreEntry)
     });
-    // keep the in-memory list in sync so Stats/CSV see the run that just saved
-    S.scores = await api('/api/scores').catch(() => S.scores);
+    // keep the in-memory list in sync so Stats/CSV see the run that just
+    // saved — mirrors the server's newest-first unshift + 500-entry cap
+    (S.scores = S.scores || []).unshift({ ...scoreEntry, date: new Date().toISOString() });
+    if (S.scores.length > 500) S.scores.length = 500;
   } catch {}
 
   $('#stage').innerHTML = `
