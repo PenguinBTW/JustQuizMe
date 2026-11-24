@@ -27,16 +27,18 @@ function uuidIndex() {
 function statsHtml() {
   const scores = S.scores || [];
   const groups = groupByTopic(scores, uuidIndex());
-  const weak = weakestTopic(groups);
+  // 'Mixed practice' pools unattributed runs — it can't name a syllabus topic
+  // to revise, so skip it for the callout.
+  const weak = weakestTopic(groups.filter(g => g.topic !== 'Mixed practice'));
   const streak = streakDays(scores.map(s => s.date));
   const pcts = recentPcts(scores, 14);
   const pts = sparklinePoints(pcts, { w: 160, h: 30 });
-  const overall = scores.length
-    ? Math.round(scores.reduce((a, s) => a + (s.total ? s.score / s.total : 0), 0) / scores.length * 100)
-    : 0;
+  // Marks-weighted so 'overall' uses the same units as the per-topic bars.
+  const totals = scores.reduce((a, s) => ({ c: a.c + (Number(s.score) || 0), t: a.t + (Number(s.total) || 0) }), { c: 0, t: 0 });
+  const overall = totals.t ? Math.round((totals.c / totals.t) * 100) : 0;
 
-  const tabClone = (id, label, active = '') =>
-    `<button class="room-tab ${active}" data-stats-room="${id}">${label}</button>`;
+  const tabClone = (id, label, active = '', extra = '') =>
+    `<button class="room-tab ${active}" data-stats-room="${id}" ${extra}>${label}</button>`;
 
   const bars = groups
     .map(g => {
@@ -56,9 +58,9 @@ function statsHtml() {
   <div class="room-nav">
     <div class="room-tabs">
       ${tabClone('past', 'Past Papers')}
-      ${tabClone('practice', 'Topic Sets')}
+      ${(S.quizzes.normal || []).length ? tabClone('practice', 'Topic Sets') : ''}
       ${tabClone('history', 'Telemetry History')}
-      ${tabClone('stats', 'Stats', 'active')}
+      ${tabClone('stats', 'Stats', 'active', `id="${TAB_ID}"`)}
     </div>
     <span class="mono" style="font-size:12px; color:var(--ink-muted);">data/scores.json · ${scores.length} runs</span>
   </div>
@@ -84,7 +86,9 @@ function statsHtml() {
         ? `<div style="margin-top:18px;">
             <div class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase; margin-bottom:6px;">Last ${pcts.length} runs</div>
             <svg class="stat-spark" viewBox="0 0 160 30" preserveAspectRatio="none" role="img" aria-label="Recent accuracy sparkline">
-              <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              ${pcts.length === 1
+                ? `<circle cx="${pts.split(',')[0]}" cy="${pts.split(',')[1]}" r="3" fill="var(--accent)"/>`
+                : `<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`}
             </svg>
           </div>`
         : ''

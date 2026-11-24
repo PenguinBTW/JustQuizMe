@@ -19,6 +19,13 @@ describe('topicsFor', () => {
     assert.deepEqual(topicsFor(run({ quizTitle: 'Mixed · custom paper' })), ['Mixed practice']);
     assert.deepEqual(topicsFor(run({})), ['Mixed practice']);
   });
+  test('malformed saved topics never throw or leak junk', () => {
+    assert.deepEqual(topicsFor(run({ topics: [null, { bad: 1 }, ' Algebra '] })), ['Algebra']);
+    assert.deepEqual(topicsFor(run({ topics: [null, undefined, {}] })), ['Mixed practice']);
+    const long = 'x'.repeat(500);
+    assert.equal(topicsFor(run({ topics: [long] }))[0].length, 80);
+    assert.deepEqual(topicsFor(run({ quizUuid: '__proto__' }), {}), ['Mixed practice']);
+  });
 });
 
 describe('groupByTopic', () => {

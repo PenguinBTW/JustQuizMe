@@ -1,19 +1,34 @@
 // JustQuizMe stats dashboard — pure helpers (group-by-topic, streaks, sparkline).
 // No DOM; every function takes plain data and returns plain data/strings.
 
+// Coerce a stored topic name — scores.json is user-writable via the API, so
+// entries can be malformed (objects, nulls, huge strings). Never throw.
+function cleanTopics(list) {
+  const out = [];
+  for (const t of list) {
+    if (typeof t !== 'string' && typeof t !== 'number') continue;
+    let s = '';
+    try { s = String(t).trim(); } catch { continue; }
+    if (s) out.push(s.slice(0, 80));
+  }
+  return out;
+}
+
 // Resolve which topics a score entry covered.
 // Order: entry.topics[] → quizTitle prefix before ' · ' → uuidIndex fallback → 'Mixed practice'.
 export function topicsFor(score, uuidIndex = {}) {
   if (Array.isArray(score?.topics) && score.topics.length) {
-    return score.topics.map(t => String(t).trim()).filter(Boolean);
+    const t = cleanTopics(score.topics);
+    if (t.length) return t;
   }
-  const idx = uuidIndex[score?.quizUuid];
+  const idx = score ? uuidIndex[score.quizUuid] : undefined;
   if (Array.isArray(idx) && idx.length) {
-    return idx.map(t => String(t).trim()).filter(Boolean);
+    const t = cleanTopics(idx);
+    if (t.length) return t;
   }
   const title = typeof score?.quizTitle === 'string' ? score.quizTitle : '';
   const head = title.split(' · ')[0].trim();
-  if (head && !/^(mixed|custom|past paper)/i.test(head)) return [head];
+  if (head && !/^(mixed|custom|past paper)/i.test(head)) return [head.slice(0, 80)];
   return ['Mixed practice'];
 }
 
