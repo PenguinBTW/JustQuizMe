@@ -6,6 +6,8 @@ import { evaluateTraceTable, evaluateTruthTable, evaluateCalculation } from './e
 
 export async function finishQuiz(auto) {
   clearInterval(S.timerId);
+  // a suspended-then-woken tab must not record time past the deadline
+  if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   if (auto === true) S.timeExpired = true;
 
   // If Exam Mode, run batch code tests strictly once now!
@@ -137,7 +139,7 @@ export async function renderSummaryReport() {
     const score = Math.min(qm, Math.max(0, ans.score || 0));
     const hasTableInput = (Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim())))
       || (ans.outputs && typeof ans.outputs === 'object' && Object.values(ans.outputs).some(v => String(v ?? '').trim()));
-    const attempted = !!(ans.selected != null || (ans.text && ans.text.trim())
+    const attempted = !!(ans.selected != null || ans.picked != null || (Array.isArray(ans.ticks) && ans.ticks.some(Boolean)) || (ans.score > 0) || (ans.text && ans.text.trim())
       || (ans.code && ans.code.trim() && (() => {
         const sc = q.starterCode;
         const starters = typeof sc === 'string' ? [sc] : (sc && typeof sc === 'object' ? Object.values(sc) : []);

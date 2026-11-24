@@ -161,6 +161,8 @@ export function saveCurrent(q) {
 }
 
 export async function saveProgress() {
+  // snapshot must include what is mid-typing right now
+  try { saveCurrent(S.quiz.questions[S.idx]); } catch {}
   const body = {
     quizUuid: S.quiz.uuid,
     quizVersion: S.quiz.version,
@@ -171,6 +173,7 @@ export async function saveProgress() {
     elapsedSeconds: S.elapsed,
     startedAt: S.startedAt,
     timeLimitMinutes: S.quiz.timeLimitMinutes || null,
+    untimed: !!S.quiz.untimed,
     savedAt: new Date().toISOString(),
     title: S.quiz.title,
     exam: S.runMode === 'exam',
