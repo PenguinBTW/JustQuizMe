@@ -68,6 +68,10 @@ export async function initStreakWidget(rootId = 'streakWidget') {
           <span class="streak-num">${s.last7Total}</span>
           <span class="streak-label">attempts / 7d</span>
         </div>
+        <div class="streak-figure">
+          <span class="streak-num">${s.total}</span>
+          <span class="streak-label">quizzes total</span>
+        </div>
       </div>
       <div class="streak-strip" aria-hidden="true">${strip}</div>
       <span class="visually-hidden">Last 7 days — ${stripText}</span>

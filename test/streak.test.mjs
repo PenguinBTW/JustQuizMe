@@ -12,7 +12,7 @@ const day = (daysAgo, time = '10:00:00Z') => {
 
 test('empty data → all zeros, seven-day strip', () => {
   const s = computeStreak([], NOW);
-  assert.deepEqual(s, { current: 0, best: 0, last7: [0, 0, 0, 0, 0, 0, 0], last7Total: 0 });
+  assert.deepEqual(s, { current: 0, best: 0, last7: [0, 0, 0, 0, 0, 0, 0], last7Total: 0, total: 0 });
 });
 
 test('consecutive days ending today → current streak counts back', () => {
@@ -63,6 +63,7 @@ test('attempts straddling midnight land on different days', () => {
 test('last-7 strip counts attempts per day, oldest → today', () => {
   const s = computeStreak([day(0), day(0), day(2), day(6), day(6), day(6), day(9)], NOW);
   assert.deepEqual(s.last7, [3, 0, 0, 0, 1, 0, 2]);
+  assert.equal(s.total, 7); // includes the attempt 9 days ago, outside the strip
   assert.equal(s.last7Total, 6);
 });
 

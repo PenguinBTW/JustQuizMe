@@ -51,5 +51,9 @@ export function computeStreak(dates, now = new Date()) {
     last7Total += n;
   }
 
-  return { current, best, last7, last7Total };
+  // All-time attempt count across every stored day.
+  let total = 0;
+  for (const n of counts.values()) total += n;
+
+  return { current, best, last7, last7Total, total };
 }
