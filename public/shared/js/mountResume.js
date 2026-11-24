@@ -57,6 +57,11 @@ export function mountResume({ portal, isHome, host, snapshot, isDone, resume, do
     h.insertBefore(chip, h.firstChild);
   }
 
+  // This tab's last accepted save — used to tell our own writes from another
+  // tab's, and to detect genuine new progress in this tab.
+  const mine = { savedAt: 0, sig: null };
+  const sameSet = (a, b) => JSON.stringify(a.order) === JSON.stringify(b.order);
+
   function tick() {
     // isDone() returns the finished run's quizUuid, or null when not done —
     // completion clears only that attempt's anchor, never another tab's newer save.
@@ -67,15 +72,27 @@ export function mountResume({ portal, isHome, host, snapshot, isDone, resume, do
     }
     const snap = snapshot && snapshot();
     if (snap) {
-      // Don't let a regressed same-quiz run (e.g. a URL-param relaunch after
-      // reload, or a stale tab) clobber a further-along autosave: same quiz
-      // must reach at least the stored position or have answered more.
       const prev = loadAnchor(portal, store);
-      const regressed =
-        prev && prev.quizUuid === snap.quizUuid &&
-        snap.qIndex < prev.qIndex &&
+      const snapSig = `${snap.quizUuid}|${snap.qIndex}|${answeredCount(snap)}`;
+      // A relaunched copy of the same question set (URL-param relaunch, stale
+      // tab) starts over with less elapsed time and no more locked answers —
+      // don't let it overwrite the further-along save. Backtracking inside a
+      // live run keeps growing elapsed, so it still saves.
+      const relaunched =
+        prev && prev.quizUuid === snap.quizUuid && sameSet(prev, snap) &&
+        snap.elapsed < prev.elapsed - 5 &&
         answeredCount(snap) <= answeredCount(prev);
-      if (!regressed) saveAnchor(snap, store);
+      // An anchor from another tab for a *different* quiz is newer work —
+      // an idle tab can't clobber it, but genuine new progress here can.
+      const foreign = prev && prev.quizUuid !== snap.quizUuid && prev.savedAt > mine.savedAt;
+      const myProgress = snapSig !== mine.sig;
+      if (!relaunched && (!foreign || myProgress)) {
+        const a = saveAnchor(snap, store);
+        if (a) {
+          mine.savedAt = a.savedAt;
+          mine.sig = snapSig;
+        }
+      }
     }
     render();
   }
