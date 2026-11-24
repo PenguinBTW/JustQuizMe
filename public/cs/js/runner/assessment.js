@@ -8,12 +8,13 @@ import { renderQuestionSpecifics, wireQuestionInteractions } from './renderers.j
 import { finishQuiz } from './finish.js';
 
 export function beginRun(o) {
+  S.timeExpired = false;
   S.quiz = { ...o.quizLike };
   S.quizMeta = o.meta;
   S.runMode = o.mode;
   if (o.mode === 'exam') {
     S.quiz.exam = true;
-    if (!S.quiz.timeLimitMinutes) {
+    if (!('timeLimitMinutes' in o.quizLike)) {
       const totMarks = (S.quiz.questions || []).reduce((s, q) => s + (+q.marks || 0), 0);
       S.quiz.timeLimitMinutes = Math.max(5, Math.round(totMarks * 1.07));
     }
@@ -168,6 +169,7 @@ export async function saveProgress() {
     elapsedSeconds: S.elapsed,
     startedAt: S.startedAt,
     timeLimitMinutes: S.quiz.timeLimitMinutes || null,
+    savedAt: new Date().toISOString(),
     title: S.quiz.title,
     exam: S.runMode === 'exam',
     questions: S.quiz.questions

@@ -81,8 +81,18 @@ export function wireResumeBanner() {
   };
 }
 
+// A timed exam's deadline is wall-clock honest: time spent away counts.
+function adjustResumeElapsed(sv) {
+  if (!sv || !sv.exam || !sv.timeLimitMinutes || !sv.savedAt) return sv;
+  try {
+    const away = Math.max(0, Math.floor((Date.now() - new Date(sv.savedAt).getTime()) / 1000));
+    if (!away) return sv;
+    return { ...sv, elapsedSeconds: (sv.elapsedSeconds || 0) + away };
+  } catch { return sv; }
+}
+
 export async function resumeSave() {
-  const sv = S.save;
+  const sv = adjustResumeElapsed(S.save);
   if (!sv) return;
   const quizLike = {
     uuid: sv.quizUuid,

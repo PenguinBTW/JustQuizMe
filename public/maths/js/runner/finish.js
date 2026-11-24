@@ -34,10 +34,9 @@ export async function finishQuiz(auto = false) {
     const score = Math.min(qm, Math.max(0, ans.score || 0));
     const hasTableInput = (Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim())))
       || (ans.outputs && typeof ans.outputs === 'object' && Object.values(ans.outputs).some(v => String(v ?? '').trim()));
-    const attempted = !!(ans.selected != null || (ans.text && ans.text.trim())
+    const attempted = !!(ans.selected != null || ans.picked != null || (ans.text && ans.text.trim())
       || (ans.code && ans.code.trim())
-      || hasTableInput
-      || ans.revealed || ans.tickedCount != null || (ans.ticked && ans.ticked.length));
+      || hasTableInput || ans.tickedCount != null || (ans.ticked && ans.ticked.length));
     return {
       id: q.id || null,
       topic: q.topic || q._topic || null,
