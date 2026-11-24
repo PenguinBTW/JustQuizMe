@@ -71,6 +71,59 @@ export function rowHtml(a) {
   </details>`;
 }
 
+/** Attempts belonging to one quiz — matched on quizFile or quizUuid,
+ * newest-first. `ref` = { file?, uuid? } (pass either or both). */
+export function quizAttempts(scores, ref = {}) {
+  const feed = Array.isArray(scores) ? scores : [];
+  const wanted = feed.filter(e =>
+    (ref.file && e.quizFile === ref.file) || (ref.uuid && e.quizUuid === ref.uuid));
+  return listAttempts(wanted);
+}
+
+/** Badge stats for one quiz: count, best %, latest %, direction the score
+ * moved between the two most recent attempts ('up' | 'down' | 'flat'). */
+export function quizStats(rows) {
+  const n = Array.isArray(rows) ? rows.length : 0;
+  if (!n) return { count: 0, best: 0, last: 0, trend: 'flat' };
+  const best = Math.max(...rows.map(r => r.pct));
+  const last = rows[0].pct;
+  const prev = n > 1 ? rows[1].pct : null;
+  const trend = prev == null ? 'flat' : last > prev ? 'up' : last < prev ? 'down' : 'flat';
+  return { count: n, best, last, trend };
+}
+
+const TREND_GLYPH = { up: '↗', down: '↘', flat: '→' };
+
+/** One compact row for the expanded list. */
+function quizRowHtml(a) {
+  return `
+    <div class="qh-entry">
+      <span class="qh-entry-date mono">${esc(fmtDate(a.date))}</span>
+      <span class="qh-entry-mode mono">${a.mode}</span>
+      <span class="qh-entry-score mono">${a.score}/${a.total} <span class="qh-pct">${a.pct}%</span></span>
+      <span class="qh-entry-dur mono">${fmtDuration(a.seconds)}</span>
+    </div>`;
+}
+
+/** Collapsed-by-default per-quiz history block: a small badge in the row's
+ * summary line; expanding shows each past attempt (date, mode, score,
+ * duration). Renders an empty "no attempts" badge when the quiz is fresh. */
+export function quizHistoryHtml(scores, ref = {}) {
+  const rows = quizAttempts(scores, ref);
+  const st = quizStats(rows);
+  if (!st.count) {
+    // Nothing to expand — render the badge inert.
+    return `<span class="qh-badge qh-badge-empty mono">no attempts yet</span>`;
+  }
+  const badge = `${st.count} attempt${st.count === 1 ? '' : 's'} · best ${st.best}% ${TREND_GLYPH[st.trend]}`;
+  const body = rows.map(quizRowHtml).join('');
+  return `
+  <details class="qh">
+    <summary><span class="qh-badge mono">${esc(badge)}</span><span class="qh-chev">▾</span></summary>
+    <div class="qh-list">${body}</div>
+  </details>`;
+}
+
 /** Full panel markup; empty feed renders the empty state. */
 export function sectionHtml(scores, { title = 'Attempt history', limit = 12 } = {}) {
   const rows = listAttempts(scores, { limit });

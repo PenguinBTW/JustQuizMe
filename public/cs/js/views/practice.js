@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { roomNav, wireRoomNav, resumeBannerHtml, wireResumeBanner } from '../navigation.js';
 import { openExploreList } from './explore.js';
 import { beginRun } from '../runner/assessment.js';
+import { quizHistoryHtml } from '../../../shared/js/attemptHistory.js';
 
 export function renderPractice() {
   const list = S.quizzes.normal || [];
@@ -23,6 +24,7 @@ export function renderPractice() {
             <div class="mono" style="font-size:12px; color:var(--ink-muted);">
               ${q.questionCount} Questions · ${q.totalMarks} Marks · Topics: ${(q.topics || []).join(' · ')}
             </div>
+            ${quizHistoryHtml(S.scores, { file: q.file, uuid: q.uuid })}
           </div>
           <div style="display:flex; gap:8px;">
             <button class="btn" data-explore-file="normal|${esc(q.file)}">Explore</button>
