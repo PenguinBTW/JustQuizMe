@@ -97,8 +97,18 @@ export function wireResumeBanner() {
     };
 }
 
+// A timed exam's deadline is wall-clock honest: time spent away counts.
+function adjustResumeElapsed(sv) {
+  if (!sv || !sv.exam || !sv.timeLimitMinutes || !sv.savedAt) return sv;
+  try {
+    const away = Math.max(0, Math.floor((Date.now() - new Date(sv.savedAt).getTime()) / 1000));
+    if (!away) return sv;
+    return { ...sv, elapsedSeconds: (sv.elapsedSeconds || 0) + away };
+  } catch { return sv; }
+}
+
 export async function resumeSave() {
-  const sv = S.save;
+  const sv = adjustResumeElapsed(S.save);
   if (!sv) return;
   if (sv.kind === 'virtual') return resumeVirtual(sv);
   await beginFileQuiz(sv.category, sv.quizFile, sv.category === 'past-paper', sv);
@@ -109,7 +119,8 @@ export function resumeVirtual(sv) {
     uuid: sv.quizUuid,
     version: sv.quizVersion ?? 1,
     title: sv.title || 'Saved quiz',
-    timeLimitMinutes: null,
+    timeLimitMinutes: sv.timeLimitMinutes || null,
+    exam: !!sv.exam,
     questions: sv.questions || []
   };
   beginRun({
