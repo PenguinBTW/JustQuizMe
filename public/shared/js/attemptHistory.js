@@ -79,8 +79,10 @@ export function rowHtml(a) {
   </details>`;
 }
 
-/** Attempts belonging to one quiz — matched on quizFile or quizUuid,
- * newest-first. `ref` = { file?, uuid? } (pass either or both). */
+/** Attempts belonging to one quiz, newest-first. `ref` = { file?, uuid? }.
+ * Matching contract: a UUID match always wins; a filename match counts only
+ * when the entry or the ref lacks a UUID — a rewritten quiz that keeps its
+ * file name must not inherit the old quiz's attempts. */
 export function quizAttempts(scores, ref = {}) {
   const feed = Array.isArray(scores) ? scores : [];
   const wanted = feed.filter(e => {

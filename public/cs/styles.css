@@ -1780,7 +1780,7 @@ details.fullpapers summary:hover { color: var(--accent); }
 .qh-pct { color: var(--accent); font-weight: 600; margin-left: 4px; }
 
 @media (max-width: 560px) {
+  /* Reflow to two columns instead of dropping fields — the second row keeps
+     mode + duration visible on phones. */
   .qh-entry { grid-template-columns: 1fr auto; }
-  .qh-entry-dur { display: none; }
-  .qh-entry-mode { display: none; }
 }
