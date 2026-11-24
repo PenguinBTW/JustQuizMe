@@ -97,6 +97,7 @@ export async function resumeSave() {
     version: sv.quizVersion ?? 1,
     title: sv.title || 'Saved quiz',
     timeLimitMinutes: sv.timeLimitMinutes || null,
+    untimed: !!sv.untimed,
     questions: sv.questions || []
   };
   beginRun({

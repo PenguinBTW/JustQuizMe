@@ -23,6 +23,18 @@ export function quizScore(){
 export async function finishQuiz(auto = false){
   if (auto === true) S.timeExpired = true;
   clearInterval(S.timerId);
+  // capture whatever is mid-typing in the visible calculation input — a manual
+  // finish must grade the same answer expiry would have
+  try {
+    const cur = (S.quiz.questions || [])[S.idx];
+    const inp = $('#calcInput');
+    if (cur && cur.type === 'calculation' && inp) {
+      const k = ak(cur);
+      S.answers[k] = { ...(S.answers[k] || {}), finalValue: inp.value };
+    }
+  } catch { /* capture best-effort */ }
+  // a suspended-then-woken tab must not record time past the deadline
+  if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   for (const q of S.quiz.questions){
     const k = ak(q), a = S.answers[k];
     if (q.type === 'written' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, score: Math.min(n, q.marks) }; }
@@ -40,7 +52,7 @@ export async function finishQuiz(auto = false){
     }
   }
   const r = quizScore();
-  const entry = { quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, quizTitle: S.quiz.title, score: r.score, total: r.total, minutes: Math.round(S.elapsed / 60), seconds: S.elapsed, helped: r.helped, exam: !!S.quiz.exam, topics: [...new Set((S.quiz.questions || []).map(q => q.topic || q._topic).filter(Boolean))], perQuestion: (S.quiz.questions || []).map(q => { const ans = S.answers[ak(q)] || {}; const qm = +q.marks || 0; return { id: q.id || null, topic: q.topic || q._topic || null, subtopic: q.subtopic || null, type: q.type, score: Math.min(qm, Math.max(0, ans.score || 0)), marks: qm, attempted: !!(ans.selected != null || ans.picked != null || (Array.isArray(ans.ticks) && ans.ticks.some(Boolean)) || (ans.score > 0) || (ans.text && ans.text.trim()) || (ans.code && ans.code.trim()) || (Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim()))) || (ans.outputs && typeof ans.outputs === 'object' && Object.values(ans.outputs).some(v => String(v ?? '').trim())) || ans.tickedCount != null || (ans.ticked && ans.ticked.length)) }; }), breakdown: { mcq: r.mcq, written: r.w, cSolo: r.c, self: r.s }, date: new Date().toISOString() };
+  const entry = { quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, quizTitle: S.quiz.title, score: r.score, total: r.total, minutes: Math.round(S.elapsed / 60), seconds: S.elapsed, helped: r.helped, exam: !!S.quiz.exam, topics: [...new Set((S.quiz.questions || []).map(q => q.topic || q._topic).filter(Boolean))], perQuestion: (S.quiz.questions || []).map(q => { const ans = S.answers[ak(q)] || {}; const qm = +q.marks || 0; return { id: q.id || null, topic: q.topic || q._topic || null, subtopic: q.subtopic || null, type: q.type, score: Math.min(qm, Math.max(0, ans.score || 0)), marks: qm, attempted: !!(ans.selected != null || ans.picked != null || (ans.finalValue != null && String(ans.finalValue).trim()) || (ans.proofText && ans.proofText.trim()) || (ans.targetVal && String(ans.targetVal).trim()) || (Array.isArray(ans.ticks) && ans.ticks.some(Boolean)) || (ans.score > 0) || (ans.text && ans.text.trim()) || (ans.code && ans.code.trim()) || (Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim()))) || (ans.outputs && typeof ans.outputs === 'object' && Object.values(ans.outputs).some(v => String(v ?? '').trim())) || ans.tickedCount != null || (ans.ticked && ans.ticked.length)) }; }), breakdown: { mcq: r.mcq, written: r.w, cSolo: r.c, self: r.s }, date: new Date().toISOString() };
   let saved = null;
   try { await api('/api/scores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) }); saved = true; } catch { saved = false; }
   try { await api('/api/save', { method: 'DELETE' }); } catch {}

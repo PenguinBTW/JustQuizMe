@@ -76,6 +76,7 @@ export async function saveProgress(){
     quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, category: S.quizMeta.category,
     questionIndex: S.idx, answers: S.answers, elapsedSeconds: S.elapsed, startedAt: S.startedAt,
     timeLimitMinutes: S.quiz.timeLimitMinutes || null,
+    untimed: !!S.quiz.untimed,
     savedAt: new Date().toISOString(),
     kind: S.quizMeta.virtual ? 'virtual' : 'file', title: S.quiz.title, exam: !!S.quiz.exam,
     order: S.quiz.questions.map(ak),

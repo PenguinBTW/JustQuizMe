@@ -92,6 +92,7 @@ export async function saveProgress() {
     elapsedSeconds: S.elapsed,
     startedAt: S.startedAt,
     timeLimitMinutes: S.quiz.timeLimitMinutes || null,
+    untimed: !!S.quiz.untimed,
     savedAt: new Date().toISOString(),
     kind: S.quizMeta.virtual ? 'virtual' : 'file',
     title: S.quiz.title,

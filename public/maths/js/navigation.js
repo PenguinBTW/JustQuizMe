@@ -121,6 +121,7 @@ export function resumeVirtual(sv) {
     version: sv.quizVersion ?? 1,
     title: sv.title || 'Saved quiz',
     timeLimitMinutes: sv.timeLimitMinutes || null,
+    untimed: !!sv.untimed,
     exam: !!sv.exam,
     questions: sv.questions || []
   };
