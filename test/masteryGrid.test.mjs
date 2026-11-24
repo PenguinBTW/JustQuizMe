@@ -79,3 +79,13 @@ test('topicAccuracy folds case-variant labels into the canonical casing', () => 
   assert.deepEqual(Object.keys(acc).sort(), ['Algebra', 'Trigonometry']);
   assert.equal(acc.Algebra.total, 6);
 });
+
+test('syllabus casing wins when a bank label differs only by case', () => {
+  const acc = topicAccuracy(
+    [{ topics: ['algebra'], score: 4, total: 8 }],
+    {},
+    new Set(['Algebra', 'algebra'])  // syllabus first, bank label second
+  );
+  assert.equal(Object.keys(acc).length, 1);
+  assert.equal(acc.Algebra.total, 8);
+});

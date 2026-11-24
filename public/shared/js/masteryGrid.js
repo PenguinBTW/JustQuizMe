@@ -40,7 +40,14 @@ export function topicsFor(attempt, uuidIndex = {}, known = null) {
 // attributed fully to each one (marks were spread across them).
 export function topicAccuracy(attempts, uuidIndex = {}, known = null) {
   if (known instanceof Set) {
-    known = new Map([...known].map(k => [String(k).toLowerCase(), k]));
+    // First casing wins — the caller puts the portal taxonomy first, so a
+    // bank label differing only in case folds into the syllabus casing.
+    const m = new Map();
+    for (const k of known) {
+      const l = String(k).toLowerCase();
+      if (!m.has(l)) m.set(l, k);
+    }
+    known = m;
   }
   const groups = new Map();
   for (const a of attempts || []) {
