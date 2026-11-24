@@ -76,9 +76,9 @@ function questionBody(q, imgRoot) {
     parts.push(tableHtml({ headers: ['#', ...q.columns.map(String)], rows: rows.map((r, i) => [i + 1, ...(Array.isArray(r) ? r : [r])]) }));
   }
   // CS truth table: inputs with the output column(s) left blank.
-  if ((Array.isArray(q.inputs) || Array.isArray(q.outputs)) && Array.isArray(q.rows)) {
-    const ins = q.inputs || [], outs = q.outputs || [];
-    parts.push(tableHtml({ headers: [...ins, ...outs], rows: q.rows.map(r => [...(r?.inputs || []), ...outs.map(() => '')]) }));
+  if (q.type === 'truth-table') {
+    const ins = q.inputs || ['A', 'B'], outs = q.outputs || ['Q'], rows = q.rows || [];
+    parts.push(tableHtml({ headers: [...ins, ...outs], rows: rows.map(r => [...(r?.inputs || []), ...outs.map(() => '')]) }));
   }
   // CS code-requirement: supplied sandbox files and starter code.
   if (q.mockFiles && typeof q.mockFiles === 'object') {
