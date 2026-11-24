@@ -6,8 +6,11 @@ import { timerSpec, tick, mmss, parseChromeCount, parseRemaining } from './examT
 const CHIP_ID = 'jqmExamPace';
 const DOT = { ahead: '#2e9e5b', on: '#d9a02b', behind: '#d94f3d' };
 
-// Best estimate of the current run's total seconds — max remaining ever seen.
+// Run tracking: remaining only shrinks within a run, so a jump-up means a new
+// exam started — as does the chip being absent for a picker round-trip.
 let totalSec = 0;
+let lastRem = 0;
+let lastSeen = 0;
 
 function ensureStyle() {
   if (document.getElementById('jqm-exam-pace-style')) return;
@@ -57,17 +60,24 @@ function tryMount() {
   const qc = parseChromeCount(mid.textContent);
   const rem = parseRemaining(mid.textContent);
   if (!qc || rem == null) return;
-  // Chip mounts with the runner (elapsed ≈ 0), so total ≈ first-seen remaining;
-  // remaining only shrinks within a run, so a header rebuild reusing the same
-  // run keeps the larger earlier total instead of resetting elapsed to 0.
-  totalSec = Math.max(totalSec, rem);
+  // Chip mounts with the runner (elapsed ≈ 0), so total ≈ first-seen remaining.
+  // A header rebuild mid-run keeps the established total; a new run (remaining
+  // jumped up, or the clock vanished for a picker round-trip) resets it.
+  const now = Date.now();
+  if (rem > lastRem + 2 || now - lastSeen > 3000) totalSec = rem;
+  lastRem = rem;
+  lastSeen = now;
   const spec = timerSpec({ totalMin: totalSec / 60, questionCount: qc.count });
   ensureStyle();
   const chip = document.createElement('span');
   chip.id = CHIP_ID;
   (mid.parentElement || mid).appendChild(chip);
   const iv = setInterval(() => {
-    if (!refresh(chip, spec)) clearInterval(iv);
+    lastSeen = Date.now();
+    const midNow = host();
+    const remNow = midNow ? parseRemaining(midNow.textContent) : null;
+    if (remNow != null) lastRem = remNow;
+    if (!refresh(chip, spec)) { lastRem = 0; lastSeen = Date.now(); clearInterval(iv); }
   }, 1000);
   refresh(chip, spec);
 }
