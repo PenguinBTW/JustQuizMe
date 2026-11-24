@@ -5,8 +5,9 @@
 
 @media print {
   @page { margin: 14mm 12mm; }
-  body > *:not(#printSheet) { display: none !important; }
-  #printSheet { display: block; color: #000; background: #fff; }
+  /* only while JS populated the sheet — otherwise the app prints as usual */
+  body.printing-sheet > *:not(#printSheet) { display: none !important; }
+  body.printing-sheet #printSheet { display: block; color: #000; background: #fff; }
   .print-sheet h1 { font-size: 20px; margin: 0 0 2mm; }
   .print-sheet .pr-sub { color: #333; font-size: 11px; margin: 0 0 4mm; }
   .print-sheet .pr-summary { font-size: 13px; margin: 0 0 5mm; }

@@ -1,12 +1,22 @@
-// Glue between the finished run in S and the print-sheet model: builds the
-// hidden #printSheet section and calls window.print().
+// Glue between the finished run in S and the print-sheet model. The hidden
+// #printSheet section is populated on demand — by the Print button and by
+// any browser print (Ctrl+P) while the summary is on screen — and cleared
+// after printing so stale results never leak into a later printout.
 import { S } from './state.js';
 import { ak } from './utils.js';
 import { sheetModel, sheetHTML } from '../../shared/js/print-sheet.js';
 
-export function printResults() {
+/** Fill #printSheet from the run currently summarized on screen.
+ * Returns true when a sheet was written — false leaves the page printing
+ * normally (no summary visible → nothing to sheet-ify). */
+function populate() {
   const host = document.getElementById('printSheet');
-  if (!host || !S.quiz) return;
+  if (!host) return false;
+  // The summary card is the only view that renders this button.
+  if (!document.getElementById('finishPrintBtn') || !S.quiz) {
+    host.innerHTML = '';
+    return false;
+  }
   const model = sheetModel({
     title: S.quiz.title || 'Assessment',
     mode: S.runMode,
@@ -20,5 +30,18 @@ export function printResults() {
     })),
   });
   host.innerHTML = sheetHTML(model);
-  window.print();
+  return true;
 }
+
+export function printResults() {
+  if (populate()) window.print();
+}
+
+window.addEventListener('beforeprint', () => {
+  document.body.classList.toggle('printing-sheet', populate());
+});
+window.addEventListener('afterprint', () => {
+  document.body.classList.remove('printing-sheet');
+  const host = document.getElementById('printSheet');
+  if (host) host.innerHTML = '';
+});
