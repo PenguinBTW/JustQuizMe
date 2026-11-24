@@ -95,4 +95,14 @@ describe('sparklinePoints + recentPcts', () => {
     }
     assert.deepEqual(recentPcts([run({ score: 5, total: 10 }), run({ score: 9, total: 10, date: '2026-11-21' })]), [50, 90]);
   });
+  test('malformed dates sort to the front without throwing', () => {
+    const runs = [
+      run({ score: 8, total: 10, date: '2026-11-21' }),
+      run({ score: 2, total: 10, date: 'not-a-date' }),
+      run({ score: 6, total: 10, date: '2026-11-23' }),
+    ];
+    assert.deepEqual(recentPcts(runs), [20, 80, 60]);
+    // at the cutoff the undated run is the one dropped
+    assert.deepEqual(recentPcts(runs, 2), [80, 60]);
+  });
 });
