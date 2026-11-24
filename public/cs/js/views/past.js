@@ -5,6 +5,7 @@ import { roomNav, wireRoomNav, resumeBannerHtml, wireResumeBanner, renderRoom } 
 import { openSynthModal, openTopicModal } from '../modals.js';
 import { openExploreList } from './explore.js';
 import { startSubQuiz } from '../runner/starters.js';
+import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
 
 export function synthPoolQ() {
   let q = 0;
@@ -14,8 +15,24 @@ export function synthPoolQ() {
   return q;
 }
 
+// Minimal topic resolution: score entries carry topics[] written at finish time.
+// (shared/stats.js topicsFor adds quizTitle/uuid fallbacks — adopt it here when that lands.)
+function resolveScoreTopics(s) {
+  return Array.isArray(s?.topics) ? s.topics.filter(t => typeof t === 'string') : [];
+}
+
+function masteryBadge(row) {
+  if (!row) return '<span class="mastery-badge mastery-new" title="No practice history yet">new</span>';
+  const pct = Math.round(row.mastery * 100);
+  const cls = row.weak ? 'mastery-weak' : 'mastery-ok';
+  const label = row.weak ? 'needs review' : 'mastery';
+  return `<span class="mastery-badge ${cls}" title="${label} — ${pct}% over ${row.runs} run${row.runs === 1 ? '' : 's'}${row.daysSince != null ? `, last practiced ${row.daysSince}d ago` : ''}">${pct}%${row.weak ? ' ⚠' : ''}</span>`;
+}
+
 export function renderPast() {
   const data = S._topicData || [];
+  const masteryRows = computeMastery(S.scores, resolveScoreTopics);
+  const masteryByTopic = new Map(masteryRows.map(r => [r.topic, r]));
   const comp1Topics = data.filter(t => t.component === '01');
   const comp2Topics = data.filter(t => t.component === '02');
 
@@ -32,7 +49,7 @@ export function renderPast() {
       <div class="topic-cell ${sel ? 'selected' : ''}" data-synth-topic="${ti}">
         <div class="topic-cell-left">
           <span class="topic-check">✓</span>
-          <span class="topic-cell-title">${t.unit} ${esc(t.topic)}</span>
+          <span class="topic-cell-title">${t.unit} ${esc(t.topic)} ${masteryBadge(masteryByTopic.get(t.topic))}</span>
         </div>
         <div class="topic-cell-meta">${subSel}/${subTotal} · ${t.qcount}Q</div>
       </div>
@@ -72,6 +89,7 @@ export function renderPast() {
           <span class="mono" style="font-size:12px; color:var(--ink-muted);" id="synthPoolLabel"><span style="color:var(--accent); font-weight:600;">${S.mixed.topics.size}</span> topics · <span style="color:var(--accent); font-weight:600;">${num(synthPoolQ())}</span> Qs in pool</span>
           <div class="comp-quick-selects">
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="toggleMajorBtn">${allSel ? 'Deselect all' : 'Select all'}</button>
+            <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="reviewWeakestBtn" title="Select your weakest topics and open the synthesizer">⚡ Review weakest</button>
           </div>
         </div>
       </div>
@@ -115,7 +133,7 @@ export function renderPast() {
           <div class="accordion-header-row">
             <div class="acc-trigger-left" data-acc-toggle="${ti}">
               <span class="acc-num">${t.unit || String(ti + 1).padStart(2, '0')}</span>
-              <span class="acc-title">${esc(t.topic)}</span>
+              <span class="acc-title">${esc(t.topic)} ${masteryBadge(masteryByTopic.get(t.topic))}</span>
             </div>
             <div class="acc-right">
               <span class="mono" style="font-size:12px; color:var(--ink-muted);">${t.qcount} Qs · ${num(t.mmarks)} marks</span>
@@ -199,6 +217,21 @@ export function wirePastEvents() {
   });
 
   $('#synthContinueBtn')?.addEventListener('click', () => openSynthModal());
+
+  $('#reviewWeakestBtn')?.addEventListener('click', () => {
+    const rows = computeMastery(S.scores, resolveScoreTopics);
+    const picks = weakestTopics(rows, (S._topicData || []).map(t => t.topic), 3);
+    S.mixed.topics.clear();
+    S.mixed.subs.clear();
+    for (const pick of picks) {
+      const t = (S._topicData || []).find(x => x.topic === pick.topic);
+      if (!t) continue;
+      S.mixed.topics.add(t.topic);
+      t.subs.forEach((g, gi) => S.mixed.subs.add(`${t.topic}|${gi}`));
+    }
+    renderPast();
+    openSynthModal();
+  });
 
   document.querySelectorAll('[data-acc-toggle]').forEach(el => {
     el.onclick = () => {
