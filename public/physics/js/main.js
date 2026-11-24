@@ -5,6 +5,8 @@ import { loadHome } from './api.js';
 import { renderRoom } from './navigation.js';
 import { wireModals, closeSynthModal, closeTopicModal } from './modals.js';
 import { startMixedSel } from './runner/starters.js';
+import './stats.js';
+import './exportCsv.js';
 
 // ---------- theme (dark default) ----------
 export function initTheme(){

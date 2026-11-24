@@ -4,6 +4,7 @@ import { $ } from './utils.js';
 import { loadHome } from './api.js';
 import { renderRoom } from './navigation.js';
 import './stats.js';
+import './exportCsv.js';
 import { startMixedRun } from './runner/starters.js';
 
 export function initTheme() {
