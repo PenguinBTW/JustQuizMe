@@ -21,6 +21,7 @@ export function roomNav(active){
       <button class="room-tab ${active==='past'?'active':''}" data-room="past">Past Papers</button>
       ${nPractice > 0 ? `<button class="room-tab ${active==='practice'?'active':''}" data-room="practice">Practice Sets <span class="mono" style="font-size:13px;">(${nPractice})</span></button>` : ''}
       <button class="room-tab ${active==='history'?'active':''}" data-room="history">Attempt History</button>
+      <button class="room-tab ${active === 'progress' ? 'active' : ''}" data-room="progress">Progress</button>
     </div>
     <span class="mono" style="font-size:12px; color:var(--ink-muted);">${right}</span>
   </div>`;

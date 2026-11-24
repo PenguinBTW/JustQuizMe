@@ -29,6 +29,7 @@ export function roomNav(active) {
           : ''
       }
       <button class="room-tab ${active === 'history' ? 'active' : ''}" data-room="history">Telemetry History</button>
+      <button class="room-tab ${active === 'progress' ? 'active' : ''}" data-room="progress">Progress</button>
     </div>
     <span class="mono" style="font-size:12px; color:var(--ink-muted);">${right}</span>
   </div>`;
