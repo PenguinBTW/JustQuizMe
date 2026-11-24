@@ -133,7 +133,9 @@ export async function finishQuiz(auto = false) {
       questions: S.quiz.questions.filter((q) => (S.answers[ak(q)]?.score || 0) < q.marks),
       backRoom: 'past'
     };
-    S.answers = {}; // review mode unlocks controls — locked exam answers would stay disabled
+    // Review keeps prior working visible but unlocked: locked answers would
+    // keep inputs disabled, clearing them would discard the working.
+    for (const a of Object.values(S.answers)) a.locked = false;
     S.runMode = 'explore';
     S.idx = target;
     S.room = 'runner';
@@ -148,7 +150,7 @@ export async function finishQuiz(auto = false) {
       questions: S.quiz.questions,
       backRoom: 'past'
     };
-    S.answers = {};
+    for (const a of Object.values(S.answers)) a.locked = false;
     S.runMode = 'explore';
     S.idx = 0;
     S.room = 'runner';

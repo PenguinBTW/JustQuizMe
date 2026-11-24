@@ -47,8 +47,11 @@ export function startTimer() {
       mid.textContent = `${chromeCount()} · ⏱ ${fmtClock(S.elapsed)}`;
     }
   };
-  upd();
+  // Install the interval BEFORE the first update: when upd() auto-finishes
+  // an overdue run, finishQuiz's clearInterval must kill this timer too,
+  // or it keeps firing duplicate submissions until the room changes.
   S.timerId = setInterval(() => { S.elapsed++; upd(); }, 1000);
+  upd();
 }
 
 export function chromeCount() {
@@ -81,7 +84,9 @@ export async function saveProgress() {
   });
   // Refresh the in-memory save so Resume reflects this write, not the
   // snapshot loaded at page start.
-  S.save = { ...body, updatedAt: new Date().toISOString() };
+  // Deep-copy: a shared reference would let later edits leak into the
+  // cached save and show up in a same-page Resume.
+  S.save = JSON.parse(JSON.stringify({ ...body, updatedAt: new Date().toISOString() }));
   const b = $('#saveBtn');
   if (b) {
     b.classList.add('save-flash');
