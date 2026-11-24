@@ -47,10 +47,36 @@ export function questionOptions(q) {
   const o = q.options || q.choices;
   return Array.isArray(o) ? o : null;
 }
+const fmt = (a) => {
+  if (a == null) return null;
+  if (typeof a === 'string' || typeof a === 'number') return String(a);
+  if (Array.isArray(a))
+    return a.map(x => (x && typeof x === 'object')
+      ? Object.entries(x).map(([k, v]) => `${k}: ${v}`).join(', ')
+      : String(x)).join(' · ');
+  if (typeof a === 'object')
+    return Object.entries(a).map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`).join('\n');
+  return String(a);
+};
+
 export function questionAnswer(q) {
-  const a = q.answer ?? q.correct ?? q.markscheme ?? q.markScheme ?? q.model ?? q.solution;
-  if (a == null) return 'No answer recorded.';
-  if (typeof a === 'string') return a;
-  if (Array.isArray(a)) return a.map(String).join(' · ');
-  try { return JSON.stringify(a); } catch { return String(a); }
+  if (q.correctIndex != null && Array.isArray(q.options || q.choices)) {
+    const opts = q.options || q.choices;
+    const o = opts[q.correctIndex];
+    return o == null ? `option ${q.correctIndex + 1}` : (typeof o === 'string' ? o : (o.text || o.label || String(o)));
+  }
+  const a = fmt(q.answer ?? q.correct ?? q.markscheme ?? q.markScheme ?? q.model ?? q.solution
+    ?? q.answerText ?? q.expectedRows ?? q.expected);
+  return a == null ? 'No answer recorded.' : a;
+}
+
+// Supporting material a prompt depends on (diagram/table/code/context).
+export function questionMaterial(q) {
+  const out = [];
+  for (const k of ['context', 'stimulus', 'figure', 'diagram', 'code', 'table', 'passage', 'image']) {
+    const v = q[k];
+    const s = fmt(v);
+    if (s != null) out.push(s);
+  }
+  return out;
 }

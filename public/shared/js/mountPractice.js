@@ -1,7 +1,7 @@
 // Practice mount — injects a "Practice" button beside each start-quiz button
 // and runs a simplified self-check overlay: one question at a time, Reveal,
 // then "got it / missed it". Never touches stats, anchors or history.
-import { practiceSpec, reveal, mark, summary, questionText, questionOptions, questionAnswer } from './practice.js';
+import { practiceSpec, reveal, mark, summary, questionText, questionOptions, questionAnswer, questionMaterial } from './practice.js';
 
 const CSS = `
 .practice-btn { margin-left: 6px; padding: 6px 10px; font-size: 12px; }
@@ -33,9 +33,38 @@ function el(tag, cls, text) {
   return d;
 }
 
+function typeset(card) {
+  try {
+    if (window.renderMathInElement) {
+      window.renderMathInElement(card, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false }
+        ]
+      });
+    }
+  } catch { /* katex not loaded — raw text still readable */ }
+}
+
 function openOverlay(title, questions) {
   const spec0 = practiceSpec(questions);
   const ov = el('div', 'practice-overlay');
+  ov.tabIndex = -1;
+  ov.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { ov.remove(); return; }
+    if (e.key === 'Tab') {
+      const btns = [...ov.querySelectorAll('button')].filter(b => !b.disabled);
+      if (!btns.length) { e.preventDefault(); return; }
+      const i = btns.indexOf(document.activeElement);
+      const next = btns[(i + (e.shiftKey ? -1 : 1) + btns.length) % btns.length];
+      e.preventDefault();
+      next.focus();
+    }
+  });
+  const prevFocus = document.activeElement;
+  ov.addEventListener('DOMNodeRemoved', () => { try { prevFocus?.focus?.(); } catch {} });
+  setTimeout(() => ov.focus(), 0);
   const card = el('div', 'practice-card');
   ov.appendChild(card);
   document.body.appendChild(ov);
@@ -56,6 +85,8 @@ function openOverlay(title, questions) {
     }
     const item = spec.items[spec.idx];
     card.appendChild(el('h3', null, `${title} · ${spec.idx + 1}/${spec.items.length}`));
+    const mats = questionMaterial(item.q);
+    for (const m of mats) card.appendChild(el('div', 'practice-answer', m));
     card.appendChild(el('div', 'practice-q', questionText(item.q)));
     const opts = questionOptions(item.q);
     if (opts) {
@@ -81,6 +112,7 @@ function openOverlay(title, questions) {
     quit.onclick = () => ov.remove();
     card.appendChild(quit);
     card.appendChild(row);
+    typeset(card);
   };
   render(spec0);
 }
@@ -103,7 +135,15 @@ export function mountPractice({ portal, selector, collect, title }) {
         p.disabled = true;
         try {
           const qs = await collect(btn);
-          if (qs && qs.length) openOverlay(title || `${portal} practice`, qs);
+          if (qs && qs.length) {
+            openOverlay(title || `${portal} practice`, qs);
+          } else {
+            p.textContent = 'No questions';
+            setTimeout(() => { p.textContent = 'Practice'; }, 1800);
+          }
+        } catch {
+          p.textContent = 'Load failed';
+          setTimeout(() => { p.textContent = 'Practice'; }, 1800);
         } finally { p.disabled = false; }
       };
       btn.insertAdjacentElement('afterend', p);
