@@ -85,3 +85,27 @@ test('buildSmartDeck: not-yet-due weak card outranks overdue strong card; most-o
     throw new Error('weak card should lead despite strong card being overdue: ' + JSON.stringify(deck.map(c => c.key)));
   }
 });
+
+test('buildSmartDeck: within one mastery band, most-overdue card precedes newer-due card', async () => {
+  const store = {};
+  globalThis.localStorage = {
+    getItem: k => store[k] ?? null,
+    setItem: (k, v) => { store[k] = String(v); },
+    removeItem: k => { delete store[k]; },
+  };
+  globalThis.location = { pathname: '/cs/' };
+  const NOW = Date.now();
+  store['jqm-card-schedule-v1'] = JSON.stringify({
+    'cs:older-overdue': { interval: 2, due: NOW - 3 * 86400000, reps: 3 },
+    'cs:newer-overdue': { interval: 2, due: NOW - 1 * 86400000, reps: 3 },
+  });
+  const { buildSmartDeck } = await import('../public/shared/js/flashcardSession.js');
+  const questions = [
+    { id: 'n', type: 'multiple-choice', topic: 'Weak', prompt: 'newer', options: ['a', 'b'], correctIndex: 0, _key: 'newer-overdue', marks: 1 },
+    { id: 'o', type: 'multiple-choice', topic: 'Weak', prompt: 'older', options: ['a', 'b'], correctIndex: 0, _key: 'older-overdue', marks: 1 },
+  ];
+  const S = { scores: [{ date: new Date().toISOString(), score: 2, total: 10, topics: ['Weak'], quizUuid: 'u1' }], quizzes: {} };
+  const deck = buildSmartDeck(S, questions);
+  if (deck.length < 2) throw new Error('deck too small');
+  if (deck[0].key !== 'older-overdue') throw new Error('most-overdue should lead within band: ' + JSON.stringify(deck.map(c => c.key)));
+});

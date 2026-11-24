@@ -15,8 +15,13 @@ export function filterAttempts(entries, { topic, mode, from, to, search } = {}) 
       const topics = entryTopics(e);
       if (!topics.some(t => t.toLowerCase().includes(topic.toLowerCase()))) return false;
     }
-    if (from) { const d = new Date(e.date); if (!(d >= new Date(from))) return false; }
-    if (to) { const d = new Date(e.date); if (!(d <= new Date(to + 'T23:59:59'))) return false; }
+    // date inputs are local calendar days — compare in local time, end inclusive
+    if (from) { const d = new Date(e.date); if (!(d >= new Date(from + 'T00:00:00'))) return false; }
+    if (to) {
+      const end = new Date(to + 'T00:00:00');
+      end.setDate(end.getDate() + 1);
+      if (!(new Date(e.date) < end)) return false;
+    }
     if (search) {
       const hay = `${e.quizTitle || ''} ${e.quizFile || ''}`.toLowerCase();
       if (!hay.includes(search.toLowerCase())) return false;
@@ -35,13 +40,15 @@ function entryTopics(e) {
 // drilldownHtml(entry) — full reconstruction of one attempt.
 export function drilldownHtml(e) {
   if (!e || typeof e !== 'object') return '';
-  const pct = Math.round((e.score / (e.total || 1)) * 100);
+  const eScore = Number.isFinite(+e.score) ? +e.score : 0;
+  const eTotal = Number.isFinite(+e.total) && +e.total > 0 ? +e.total : 1;
+  const pct = Math.round((eScore / eTotal) * 100);
   const head = `
     <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:baseline; margin-bottom:12px;">
       <strong style="font-size:16px;">${esc(e.quizTitle || 'Assessment')}</strong>
       <span class="pill ${e.exam ? 'red' : ''}">${e.exam ? 'Exam' : 'Quiz'}${e.flashcard || e.type === 'flashcards' ? ' · flashcards' : ''}</span>
-      <span class="mono" style="font-size:12px; color:var(--ink-muted);">${e.minutes != null ? `${e.minutes}m ${(e.seconds || 0) % 60}s` : 'time not recorded'}</span>
-      <span class="mono" style="font-size:14px; font-weight:700; color:var(--accent);">${e.score}/${e.total} (${pct}%)</span>
+      <span class="mono" style="font-size:12px; color:var(--ink-muted);">${e.minutes != null ? `${e.minutes}m ${(e.seconds || 0) % 60}s` : 'time not recorded'}${e.breakdown?.coding ? ` · coding ${e.breakdown.coding.got}/${e.breakdown.coding.total}` : ''}</span>
+      <span class="mono" style="font-size:14px; font-weight:700; color:var(--accent);">${eScore}/${eTotal} (${pct}%)</span>
     </div>`;
   const pq = Array.isArray(e.perQuestion) ? e.perQuestion.filter(q => q && typeof q === 'object') : [];
   if (!pq.length) {
@@ -52,13 +59,17 @@ export function drilldownHtml(e) {
       ${entryTopics(e).length ? `<div style="font-size:12.5px; margin-top:8px;" class="mono">topics: ${entryTopics(e).map(esc).join(' · ')}</div>` : ''}`;
   }
   const rows = pq.map((q, i) => {
-    const qpct = q.marks ? Math.round((q.score / q.marks) * 100) : 0;
+    // coerce to finite numbers — scores.json is user-writable; raw values
+    // must never reach the HTML as markup.
+    const qm = Number.isFinite(+q.marks) ? +q.marks : 0;
+    const qs = Number.isFinite(+q.score) ? +q.score : 0;
+    const qpct = qm ? Math.round((qs / qm) * 100) : 0;
     const color = !q.attempted ? 'var(--ink-muted)' : qpct >= 70 ? 'var(--accent)' : qpct >= 40 ? '#e0a75f' : '#e0735f';
     return `<tr>
       <td class="mono" style="font-size:12px; padding:4px 8px;">${i + 1}</td>
       <td style="font-size:12.5px; padding:4px 8px;">${esc(q.subtopic || q.topic || '—')}</td>
       <td class="mono" style="font-size:12px; padding:4px 8px; color:var(--ink-muted);">${esc(q.type || '')}</td>
-      <td class="mono" style="font-size:12.5px; padding:4px 8px; color:${color}; font-weight:700;">${q.attempted ? `${q.score}/${q.marks}` : 'unattempted'}</td>
+      <td class="mono" style="font-size:12.5px; padding:4px 8px; color:${color}; font-weight:700;">${q.attempted ? `${qs}/${qm}` : 'unattempted'}</td>
     </tr>`;
   }).join('');
   return head + `
@@ -71,11 +82,22 @@ export function drilldownHtml(e) {
 
 // compareAttempts(entries, quizUuid) — same paper taken more than once:
 // per-topic deltas newest vs previous. Returns null when not comparable.
-export function compareAttempts(entries, quizUuid) {
-  const runs = (entries || []).filter(e => e && e.quizUuid === quizUuid && e.quizUuid !== 'flashcards')
+export function compareAttempts(entries, quizUuid, anchorDate) {
+  const ref = (entries || []).find(e => e && e.quizUuid === quizUuid);
+  const refFile = ref && ref.quizFile;
+  // subtopic quizzes share the bank uuid — only same-file runs are true retakes
+  const runs = (entries || []).filter(e => e && e.quizUuid === quizUuid && e.quizUuid !== 'flashcards'
+    && (!refFile || !e.quizFile || e.quizFile === refFile))
     .sort((a, b) => new Date(a.date) - new Date(b.date));
   if (runs.length < 2) return null;
-  const prev = runs[runs.length - 2], last = runs[runs.length - 1];
+  // anchor on the attempt being viewed when given (its date); otherwise latest
+  let li = runs.length - 1;
+  if (anchorDate) {
+    const ai = runs.findIndex(r => r.date === anchorDate);
+    if (ai >= 0) li = ai;
+  }
+  if (li < 1) return null; // first ever attempt has no predecessor
+  const prev = runs[li - 1], last = runs[li];
   const topicScores = e => {
     const m = new Map();
     const pq = Array.isArray(e.perQuestion) ? e.perQuestion : [];

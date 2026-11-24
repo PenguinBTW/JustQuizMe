@@ -173,7 +173,7 @@ function currentEntries() {
 }
 
 function wireDrilldown() {
-  const entries = currentEntries().slice().reverse(); // newest-first to match display
+  const entries = currentEntries().slice().reverse(); // newest-first, matches display
   const apply = () => {
     const topic = (document.getElementById('histTopic') || {}).value || '';
     const mode = (document.getElementById('histMode') || {}).value || '';
@@ -190,7 +190,7 @@ function wireDrilldown() {
             <strong style="font-size:15px;">${esc(a.quizTitle || 'Assessment')}</strong>
             ${a.exam ? '<span class="pill red">Exam</span>' : '<span class="pill">Quiz</span>'}
           </div>
-          <div class="mono" style="font-size:12px; color:var(--ink-muted);">${fmtDate(a.date)}${a.minutes != null ? ' · ' + a.minutes + 'm' : ''}</div>
+          <div class="mono" style="font-size:12px; color:var(--ink-muted);">${fmtDate(a.date)}${a.minutes != null ? ' · ' + a.minutes + 'm' : ''}${a.breakdown?.coding ? ' · coding ' + a.breakdown.coding.got + '/' + a.breakdown.coding.total : ''}</div>
           <div class="attempt-detail" style="margin-top:10px;"></div>
         </div>
         <div class="mono" style="font-size:18px; font-weight:700; color:var(--accent); white-space:nowrap;">
@@ -203,7 +203,7 @@ function wireDrilldown() {
         if (!detail) return;
         if (detail.innerHTML) { detail.innerHTML = ''; return; }
         const e = filtered[+el.dataset.attempt];
-        detail.innerHTML = drilldownHtml(e) + compareHtml(compareAttempts(entries, e.quizUuid));
+        detail.innerHTML = drilldownHtml(e) + compareHtml(compareAttempts(entries, e.quizUuid, e.date));
       });
     });
   };
