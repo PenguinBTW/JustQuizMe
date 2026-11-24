@@ -8,22 +8,14 @@
 const DEFAULTS = { width: 72, height: 20, pad: 3, maxPoints: 10 };
 
 /** Group key joining a quiz's identity — uuid alone collides on 'mixed',
- * file alone collides across practice/past-paper sets sharing a filename. */
+ * file alone collides across practice/past-paper sets sharing a filename.
+ * Returns null for non-primitive identifiers: stored rows are attacker-shaped
+ * and an object id could throw mid-coercion and kill the view. */
 export function attemptKey(s) {
-  return `${s.quizUuid}|${s.quizFile}`;
-}
-
-/**
- * Attempts for one quiz entry (uuid + file), oldest-first, last `max` kept.
- * Entries without a quizFile or the synthetic 'mixed' quiz have no series.
- */
-export function attemptsForQuiz(scores, entry, max = DEFAULTS.maxPoints) {
-  if (!Array.isArray(scores) || !entry?.quizFile || entry.quizFile === 'mixed') return [];
-  return scores
-    .filter(s => s.quizUuid === entry.quizUuid && s.quizFile === entry.quizFile && Number(s.total) > 0)
-    .slice(0, max)
-    .map(s => ({ score: Number(s.score) || 0, total: Number(s.total) }))
-    .reverse();
+  const f = s?.quizFile;
+  const u = s?.quizUuid;
+  if (typeof f !== 'string' || (typeof u !== 'string' && typeof u !== 'number')) return null;
+  return `${u}|${f}`;
 }
 
 /**
@@ -34,8 +26,9 @@ export function attemptsForQuiz(scores, entry, max = DEFAULTS.maxPoints) {
 export function groupAttempts(scores, max = DEFAULTS.maxPoints) {
   const m = new Map();
   for (const s of scores || []) {
-    if (!s.quizFile || s.quizFile === 'mixed' || !(Number(s.total) > 0)) continue;
+    if (s?.quizFile === 'mixed' || !(Number(s?.total) > 0)) continue;
     const k = attemptKey(s);
+    if (k === null) continue;
     const arr = m.get(k) ?? [];
     if (arr.length < max) arr.push({ score: Number(s.score) || 0, total: Number(s.total) });
     m.set(k, arr);
