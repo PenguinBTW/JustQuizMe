@@ -3,6 +3,7 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
+import { filterAttempts, drilldownHtml, compareAttempts, compareHtml } from '../../../shared/js/attemptDrilldown.js';
 
 export function pastEntries() {
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -78,9 +79,10 @@ export function renderHistory() {
             <span class="mono" style="font-size:12px; color:var(--accent);">Of Entire H240 Specification Bank</span>
           </div>
         </div>
-        <div class="card" style="padding: 10px 28px;">
+        ${filterBar()}
+          <div class="card" id="histList" style="padding:10px 28px;">
           ${
-            list.map(a => historyEntryHtml(a, 'Retry Shuffle')).join('') ||
+            "" ||
             '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No past-paper attempts logged yet.</p>'
           }
         </div>
@@ -119,9 +121,9 @@ export function renderHistory() {
             <span class="mono" style="font-size:12px; color:var(--accent);">Completed Curated Sets</span>
           </div>
         </div>
-        <div class="card" style="padding: 10px 28px;">
+        <div class="card" id="histList" style="padding:10px 28px;">
           ${
-            list.map(a => historyEntryHtml(a, 'Retry Set')).join('') ||
+            "" ||
             '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No topic-set attempts logged yet.</p>'
           }
         </div>
@@ -145,6 +147,7 @@ export function renderHistory() {
   `;
 
   wireRoomNav();
+  wireDrilldown(scores);
   $('#histTabPast').onclick = () => {
     S.historySrc = 'past';
     renderRoom();

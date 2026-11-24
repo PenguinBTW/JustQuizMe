@@ -3,6 +3,7 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
+import { filterAttempts, drilldownHtml, compareAttempts, compareHtml } from '../../../shared/js/attemptDrilldown.js';
 
 export function pastEntries(){
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -85,8 +86,9 @@ export function renderHistory(){
           <span class="mono" style="font-size:12px; color:var(--amber);">${helpedN} helped via steps</span>
         </div>
       </div>
-      <div class="card" style="padding: 10px 28px;">
-        ${list.map(a => historyEntryHtml(a, 'Retry Shuffle')).join('') || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No past-paper attempts logged yet.</p>'}
+      ${filterBar()}
+          <div class="card" id="histList" style="padding:10px 28px;">
+        ${"" || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No past-paper attempts logged yet.</p>'}
       </div>
     </div>`;
   } else {
@@ -114,8 +116,8 @@ export function renderHistory(){
           <span class="mono" style="font-size:12px; color:var(--green);">Across ${runs.length} full run${runs.length === 1 ? '' : 's'}</span>
         </div>
       </div>
-      <div class="card" style="padding: 10px 28px;">
-        ${list.map(a => historyEntryHtml(a, 'Retry Set')).join('') || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No practice-set attempts logged yet.</p>'}
+      <div class="card" id="histList" style="padding:10px 28px;">
+        ${"" || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">No practice-set attempts logged yet.</p>'}
       </div>
     </div>`;
   }
@@ -134,6 +136,7 @@ export function renderHistory(){
   </div>
   ${body}`;
   wireRoomNav();
+  wireDrilldown(scores);
   $('#histTabPast').onclick = () => { S.historySrc = 'past'; renderRoom(); };
   $('#histTabPractice').onclick = () => { S.historySrc = 'practice'; renderRoom(); };
   document.querySelectorAll('[data-retry-entry]').forEach(b => b.onclick = () => {
