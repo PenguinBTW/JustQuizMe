@@ -46,6 +46,7 @@ export async function finishQuiz(auto = false) {
       body: JSON.stringify(entry)
     });
     await api('/api/save', { method: 'DELETE' });
+    S.save = null; // drop the in-memory copy too or Resume still offers the finished run
     S.scores = await api('/api/scores').catch(() => []);
   } catch {}
 
@@ -132,6 +133,7 @@ export async function finishQuiz(auto = false) {
       questions: S.quiz.questions.filter((q) => (S.answers[ak(q)]?.score || 0) < q.marks),
       backRoom: 'past'
     };
+    S.answers = {}; // review mode unlocks controls — locked exam answers would stay disabled
     S.runMode = 'explore';
     S.idx = target;
     S.room = 'runner';
@@ -146,6 +148,7 @@ export async function finishQuiz(auto = false) {
       questions: S.quiz.questions,
       backRoom: 'past'
     };
+    S.answers = {};
     S.runMode = 'explore';
     S.idx = 0;
     S.room = 'runner';

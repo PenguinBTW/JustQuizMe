@@ -21,7 +21,9 @@ export function beginRun(o) {
   S.runMode = o.mode;
   S.retrySpec = o.retrySpec || null;
   S.idx = o.resume?.questionIndex ?? o.startIdx ?? 0;
-  S.answers = o.resume?.answers ?? {};
+  // Deep-copy the checkpoint: edits must not mutate the stored save object,
+  // or an unsaved resume would still restore those edits on the next open.
+  S.answers = o.resume?.answers ? JSON.parse(JSON.stringify(o.resume.answers)) : {};
   S.elapsed = o.resume?.elapsedSeconds ?? 0;
   S.startedAt = o.resume?.startedAt ?? new Date().toISOString();
 

@@ -109,7 +109,11 @@ export function resumeVirtual(sv) {
     uuid: sv.quizUuid,
     version: sv.quizVersion ?? 1,
     title: sv.title || 'Saved quiz',
-    timeLimitMinutes: sv.timeLimitMinutes ?? null,
+    // Saves predating the timeLimitMinutes field keep their exam flag but no
+    // limit: fall back to the standard marks*1.5 clock so they still auto-finish.
+    timeLimitMinutes: sv.timeLimitMinutes ?? (sv.exam
+      ? (sv.questions || []).reduce((s, q) => s + (q.marks || 0), 0) * 1.5
+      : null),
     exam: !!sv.exam,
     questions: sv.questions || []
   };
