@@ -8,6 +8,7 @@ import { goExploreBack } from '../views/explore.js';
 import { renderRoom } from '../navigation.js';
 
 export function beginRun(o){
+  S.timeExpired = false;
   let qs = o.quizLike.questions;
   if (o.resume?.order){
     const pos = new Map(o.resume.order.map((k, i) => [k, i]));
@@ -48,11 +49,32 @@ export function startTimer(){
   S.timerId = setInterval(() => { S.elapsed++; upd(); }, 1000);
 }
 
+
+export function saveCurrent(q) {
+  if (!q) return;
+  const k = ak(q);
+  S.answers[k] ||= {};
+  const ans = S.answers[k];
+  const sym = $('#symInput');
+  if (sym) ans.text = sym.value;
+  const tgt = $('#finalTargetInput');
+  if (tgt) ans.targetVal = tgt.value;
+  const proof = $('#proofText');
+  if (proof) ans.proofText = proof.value;
+  const calc = $('#calcInput');
+  if (calc) ans.finalValue = calc.value;
+  const essay = $('#essayText');
+  if (essay) ans.text = essay.value;
+  const selfNotes = $('#selfMarkNotes');
+  if (selfNotes) ans.text = selfNotes.value;
+}
+
 export async function saveProgress(){
   const body = {
     quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, category: S.quizMeta.category,
     questionIndex: S.idx, answers: S.answers, elapsedSeconds: S.elapsed, startedAt: S.startedAt,
     timeLimitMinutes: S.quiz.timeLimitMinutes || null,
+    savedAt: new Date().toISOString(),
     kind: S.quizMeta.virtual ? 'virtual' : 'file', title: S.quiz.title,
     order: S.quiz.questions.map(ak),
     questions: S.quizMeta.virtual ? S.quiz.questions : null,
