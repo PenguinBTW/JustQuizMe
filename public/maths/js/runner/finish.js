@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { renderRoom } from '../navigation.js';
 import { renderQ } from './assessment.js';
 import { retryRun } from './starters.js';
+import { reviewWalkHtml } from '../../../shared/js/reviewWalk.js';
 
 export async function finishQuiz(auto = false) {
   if (S._finishing) return;
@@ -139,7 +140,12 @@ export async function finishQuiz(auto = false) {
       </div>
       <div>${auditRows}</div>
     </div>
-  `;
+  
+      <div id="rw-root" style="margin-top:28px; text-align:left; max-height:520px; overflow:auto;">
+        <div class="mono" style="font-size:11.5px; color:var(--ink-muted); margin-bottom:8px;">REVIEW — question walk-through with mark scheme &amp; examiner feedback</div>
+        ${reviewWalkHtml(S.quiz.questions || [], S.answers || {})}
+      </div>
+    `;
 
   $('#retryResBtn').onclick = () => retryRun();
   $('#exploreResBtn').onclick = () => {

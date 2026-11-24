@@ -3,6 +3,7 @@ import { S, MIXED_UUID } from '../state.js';
 import { $, esc, fmtDur, ak } from '../utils.js';
 import { api, loadHome } from '../api.js';
 import { evaluateTraceTable, evaluateTruthTable, evaluateCalculation } from './evaluators.js';
+import { reviewWalkHtml } from '../../../shared/js/reviewWalk.js';
 
 export async function finishQuiz(auto) {
   if (S._finishing) return;
@@ -18,6 +19,11 @@ export async function finishQuiz(auto) {
       <div class="card" style="text-align:center; padding:40px;">
         <h2 class="serif" style="font-size:32px; margin-bottom:12px;">Evaluating Exam Submissions...</h2>
         <p class="mono" style="color:var(--accent);">Executing single-run requirement test suites for C#, OCR Pseudocode, LMC, Trace Tables, and Truth Tables...</p>
+      </div>
+    
+      <div id="rw-root" style="margin-top:28px; text-align:left; max-height:520px; overflow:auto;">
+        <div class="mono" style="font-size:11.5px; color:var(--ink-muted); margin-bottom:8px;">REVIEW — question walk-through with mark scheme &amp; examiner feedback</div>
+        ${reviewWalkHtml(S.quiz.questions || [], S.answers || {})}
       </div>
     `;
 

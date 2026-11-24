@@ -4,6 +4,7 @@ import { $, esc, ak, chipify } from '../utils.js';
 import { areMathEqual, cleanMathStr } from '../cas.js';
 import { mathKeypadHtml } from './keypad.js';
 import { renderQ } from './assessment.js';
+import { matchMistakes, feedbackHtml } from '../../../shared/js/answerFeedback.js';
 
 // 1. Multiple Choice
 export function mcqHtml(q) {
@@ -32,6 +33,7 @@ export function mcqHtml(q) {
   let fb = '';
   if (showResult) {
     fb = `<div class="${a.correct ? 'note-ok' : 'note-bad'}">${a.correct ? '✅ Correct: ' + esc(q.feedbackCorrect || 'Mark awarded.') : '❌ Not quite: ' + esc(q.feedbackWrong || ('Correct option: ' + ('ABCDEF'[q.correctIndex])))}</div>`;
+    fb += feedbackHtml(matchMistakes(q, a.selected ?? a.picked), esc);
   }
   return `
     <h2 class="q-heading">${chipify(q.prompt)}</h2>

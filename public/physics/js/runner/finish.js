@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { renderRoom } from '../navigation.js';
 import { retryRun } from './starters.js';
 import { numOk } from './renderers.js';
+import { reviewWalkHtml } from '../../../shared/js/reviewWalk.js';
 
 export function quizScore(){
   let score = 0, total = 0, mcq = { got: 0, total: 0 }, w = { got: 0, total: 0 }, c = { got: 0, total: 0 }, s = { got: 0, total: 0 };
@@ -90,7 +91,12 @@ export async function finishQuiz(auto = false){
       <button class="btn" id="backHomeBtn">Back to Library</button>
       <button class="btn btn-primary" id="retryBtn">Try Again (Fresh Shuffle)</button>
     </div>
-  </div>`;
+  </div>
+      <div id="rw-root" style="margin-top:28px; text-align:left; max-height:520px; overflow:auto;">
+        <div class="mono" style="font-size:11.5px; color:var(--ink-muted); margin-bottom:8px;">REVIEW — question walk-through with mark scheme &amp; examiner feedback</div>
+        ${reviewWalkHtml(S.quiz.questions || [], S.answers || {})}
+      </div>
+    `;
   $('#backHomeBtn').onclick = () => { S.room = S.returnRoom || 'past'; renderRoom(); };
   $('#retryBtn').onclick = () => retryRun();
   window.scrollTo(0, 0);

@@ -6,6 +6,7 @@ import { renderPromptHtml, evaluateTraceTable, evaluateTruthTable, evaluateCalcu
 import { saveCurrent, saveProgress, renderQ } from './assessment.js';
 import { finishQuiz } from './finish.js';
 import { renderRoom } from '../navigation.js';
+import { matchMistakes, feedbackHtml } from '../../../shared/js/answerFeedback.js';
 
 export function renderQuestionSpecifics(q) {
   const ans = S.answers[ak(q)] || {};
@@ -40,6 +41,7 @@ export function renderQuestionSpecifics(q) {
       ${ans.locked && S.runMode !== 'exam' ? `
         <div class="${ans.selected === q.correctIndex ? 'note-ok' : 'note-bad'}">
           ${ans.selected === q.correctIndex ? (q.feedbackCorrect || 'Correct!') : (q.feedbackWrong || 'Incorrect.')}
+          ${feedbackHtml(matchMistakes(q, ans.selected), esc)}
         </div>
       ` : ''}
     `;

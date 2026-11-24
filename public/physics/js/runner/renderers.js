@@ -4,6 +4,7 @@ import { $, esc, ak, chipify, tableHtml, imgSrc, qImages, imgHtml } from '../uti
 import { renderQ, navNext, progress } from './assessment.js';
 import { finishQuiz } from './finish.js';
 import { goExploreBack } from '../views/explore.js';
+import { matchMistakes, feedbackHtml } from '../../../shared/js/answerFeedback.js';
 
 export function normalizeDeps(deps){
   if (!Array.isArray(deps)) return [];
@@ -132,6 +133,7 @@ export function mcqHtml(q){
   else if (a.revealed) fb = `<div class="${a.picked === q.correctIndex ? 'note-ok' : 'note-bad'}">${a.picked === q.correctIndex ? '✅ <b>Correct.</b> ' + esc(q.feedbackCorrect || '') : '❌ <b>Not quite - try again.</b> ' + esc(q.feedbackWrong || '')}</div>
     <p class="note-line">Practice mode - pick freely, nothing is scored.</p>`;
   else fb = `<p class="note-line">Practice mode - pick freely, nothing is scored.</p>`;
+  fb += feedbackHtml(matchMistakes(q, a.picked ?? a.selected), esc);
   return `${promptHead(q)}${q.hint && showHelp ? `<div class="q-guide">Starter hint: ${esc(q.hint)}</div>` : ''}
   <div class="opt-grid">${opts}</div>${fb}`;
 }
