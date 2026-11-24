@@ -43,6 +43,21 @@ export function topicsFor(score, uuidIndex = {}) {
 export function groupByTopic(scores, uuidIndex = {}) {
   const groups = new Map();
   for (const s of scores || []) {
+    // prefer per-question records when present — the whole-paper smear is only
+    // the honest fallback for legacy entries without them
+    const pq = Array.isArray(s?.perQuestion) ? s.perQuestion.filter(r => r && typeof r === 'object' && typeof r.topic === 'string' && r.topic) : [];
+    if (pq.length) {
+      const touched = new Set();
+      for (const r of pq) {
+        const g = groups.get(r.topic) || { topic: r.topic, correct: 0, attempted: 0, runs: 0 };
+        g.correct += Math.max(0, Number(r.score) || 0);
+        g.attempted += Math.max(0, Number(r.marks) || 0);
+        touched.add(r.topic);
+        groups.set(r.topic, g);
+      }
+      for (const topic of touched) groups.get(topic).runs += 1;
+      continue;
+    }
     const score = Number(s?.score) || 0;
     const total = Number(s?.total) || 0;
     for (const topic of topicsFor(s, uuidIndex)) {
