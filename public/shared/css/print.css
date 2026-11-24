@@ -8,8 +8,10 @@
 @media print {
   @page { margin: 18mm 16mm; }
 
-  body > *:not(#printRoot) { display: none !important; }
-  #printRoot { display: block !important; }
+  /* Only when a paper has been built — plain Ctrl+P on any page still
+     prints the page itself. */
+  body:has(> #printRoot) > *:not(#printRoot) { display: none !important; }
+  body > #printRoot { display: block !important; }
 
   .print-paper {
     font-family: 'Georgia', 'Times New Roman', serif;

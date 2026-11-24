@@ -10,6 +10,11 @@ function chipify(text) {
   return esc(text).replace(/`([^`]+)`/g, '<code>$1</code>');
 }
 
+// MCQ options may be bare strings or {text, ...} objects.
+function optText(o) {
+  return typeof o === 'string' ? o : (o?.text ?? o?.label ?? '');
+}
+
 function tableHtml(table) {
   if (!table || !Array.isArray(table.rows) || !table.rows.length) return '';
   const head = Array.isArray(table.headers) && table.headers.length
@@ -50,6 +55,9 @@ function depHtml(q, imgRoot) {
       ${d.prompt ? `<p>${chipify(d.prompt)}</p>` : ''}
       ${d.table ? tableHtml(d.table) : ''}
       ${(d.images || []).map(it => `<figure class="print-fig"><img src="${esc(it.src)}" alt="${esc(it.alt || '')}"/>${it.caption ? `<figcaption>${esc(it.caption)}</figcaption>` : ''}</figure>`).join('')}
+      ${d.showAnswer && d.answer ? `<div><strong>${esc(d.answer.label || 'Answer')}:</strong> ${d.answer.text ? chipify(d.answer.text) : ''}
+        ${(d.answer.points || []).map(p => `<div>• ${esc(p)}</div>`).join('')}
+        ${d.answer.image ? `<figure class="print-fig"><img src="${esc(d.answer.image)}" alt="${esc(d.answer.alt || '')}"/></figure>` : ''}</div>` : ''}
     </div>`;
   }).join('');
 }
@@ -59,10 +67,33 @@ function questionBody(q, imgRoot) {
   if (q.guidance) parts.push(`<p class="print-guidance">${chipify(q.guidance)}</p>`);
   if (q.codeSnippet) parts.push(`<pre class="print-code">${esc(q.codeSnippet)}</pre>`);
   if (q.stemCode) parts.push(`<pre class="print-code">${esc(q.stemCode)}</pre>`);
+  if (q.formula) parts.push(`<pre class="print-code">${esc(q.formula)}</pre>`);
   parts.push(tableHtml(q.table));
   parts.push(imgHtml(q, imgRoot));
+  // CS trace table: columns plus any given starting rows.
+  if (Array.isArray(q.columns) && q.columns.length) {
+    const rows = Array.isArray(q.initialRows) && q.initialRows.length ? q.initialRows : Array.from({ length: 5 }, () => []);
+    parts.push(tableHtml({ headers: ['#', ...q.columns.map(String)], rows: rows.map((r, i) => [i + 1, ...(Array.isArray(r) ? r : [r])]) }));
+  }
+  // CS truth table: inputs with the output column(s) left blank.
+  if ((Array.isArray(q.inputs) || Array.isArray(q.outputs)) && Array.isArray(q.rows)) {
+    const ins = q.inputs || [], outs = q.outputs || [];
+    parts.push(tableHtml({ headers: [...ins, ...outs], rows: q.rows.map(r => [...(r?.inputs || []), ...outs.map(() => '')]) }));
+  }
+  // CS code-requirement: supplied sandbox files and starter code.
+  if (q.mockFiles && typeof q.mockFiles === 'object') {
+    for (const [fn, c] of Object.entries(q.mockFiles)) {
+      parts.push(`<div class="print-dep-label">File: ${esc(fn)}</div><pre class="print-code">${esc(String(c ?? ''))}</pre>`);
+    }
+  }
+  if (q.starterCode) {
+    const starters = typeof q.starterCode === 'string' ? [['', q.starterCode]] : Object.entries(q.starterCode);
+    for (const [lang, code] of starters) {
+      if (code) parts.push(`<div class="print-dep-label">Starter code${lang ? ' — ' + esc(lang) : ''}</div><pre class="print-code">${esc(String(code))}</pre>`);
+    }
+  }
   if (Array.isArray(q.options) && q.options.length) {
-    parts.push(`<ol class="print-options" type="A">${q.options.map(o => `<li>${chipify(o)}</li>`).join('')}</ol>`);
+    parts.push(`<ol class="print-options" type="A">${q.options.map(o => `<li>${chipify(optText(o))}</li>`).join('')}</ol>`);
   }
   if (Array.isArray(q.parts) && q.parts.length) {
     parts.push(`<ol class="print-options" type="a">${q.parts.map(p => `<li>${chipify(typeof p === 'string' ? p : (p.prompt || ''))}${typeof p === 'object' && p.marks ? ` <span class="print-marks">[${esc(p.marks)}]</span>` : ''}</li>`).join('')}</ol>`);
@@ -75,24 +106,31 @@ function questionBody(q, imgRoot) {
   return parts.join('');
 }
 
-function markSchemeHtml(q) {
+function markSchemeHtml(q, imgRoot) {
   const bits = [];
   if (q.type === 'multiple-choice' && q.correctIndex != null && Array.isArray(q.options)) {
-    bits.push(`<p>Correct answer: <strong>${'ABCDEFGH'[q.correctIndex] || q.correctIndex} — ${chipify(q.options[q.correctIndex])}</strong></p>`);
+    bits.push(`<p>Correct answer: <strong>${'ABCDEFGH'[q.correctIndex] || q.correctIndex} — ${chipify(optText(q.options[q.correctIndex]))}</strong></p>`);
   }
   if (q.answerText || q.answer) bits.push(`<p>${chipify(q.answerText || q.answer)}</p>`);
-  if (q.expected) bits.push(`<p>Expected: <code>${esc(q.expected)}</code></p>`);
+  if (q.answerImage) bits.push(`<figure class="print-fig"><img src="${esc(imgSrc(q.answerImage, q._imgBase, imgRoot))}" alt="${esc(q.answerAlt || 'Answer diagram')}"/></figure>`);
+  const expected = q.expected || (q.finalTarget && q.finalTarget.expected);
+  if (expected) bits.push(`<p>Expected: <code>${esc(expected)}</code></p>`);
   if (Array.isArray(q.markScheme) && q.markScheme.length) {
-    bits.push(`<ul class="print-ms">${q.markScheme.map(m => `<li><strong>[${m.marks ?? 1}m]</strong> ${chipify(m.text ?? m)}</li>`).join('')}</ul>`);
+    bits.push(`<ul class="print-ms">${q.markScheme.map(m => `<li><strong>[${esc(m.marks ?? 1)}m]</strong> ${chipify(m.text ?? m)}</li>`).join('')}</ul>`);
   }
   if (Array.isArray(q.indicativeContent) && q.indicativeContent.length) {
     bits.push(`<div class="print-dep-label">Indicative content</div><ul class="print-ms">${q.indicativeContent.map(p => `<li>${chipify(p)}</li>`).join('')}</ul>`);
   }
+  // Physics recovery steps carry title/equation/answer/unit.
   if (Array.isArray(q.steps) && q.steps.length) {
-    bits.push(`<ol class="print-ms">${q.steps.map(st => `<li>${chipify(typeof st === 'string' ? st : (st.text || st.expr || ''))}</li>`).join('')}</ol>`);
+    bits.push(`<ol class="print-ms">${q.steps.map(st => `<li>${typeof st === 'string' ? chipify(st) : `${chipify(st.title || st.text || '')}${st.equation ? ` — use <code>${esc(st.equation)}</code>` : ''}${st.answer != null ? ` = <strong>${esc(st.answer)}${st.unit ? ' ' + esc(st.unit) : ''}</strong>` : ''}`}</li>`).join('')}</ol>`);
+  }
+  // Maths derivation milestones: rubric title plus each field's expected expression.
+  if (Array.isArray(q.milestones) && q.milestones.length) {
+    bits.push(`<ul class="print-ms">${q.milestones.map(m => `<li><strong>${chipify(m.title || '')} [${esc(m.rubricMark || (m.marks != null ? m.marks + 'm' : ''))}]</strong>${(m.fields || []).map(f => `<div>• ${esc(f.label || f.key)}: <code>${esc(f.expected ?? '')}</code></div>`).join('')}</li>`).join('')}</ul>`);
   }
   if (Array.isArray(q.levels) && q.levels.length) {
-    bits.push(`<ul class="print-ms">${q.levels.map(l => `<li><strong>Level ${esc(l.level)} (${l.range?.[0]}–${l.range?.[1]}m):</strong> ${chipify(l.title || '')}</li>`).join('')}</ul>`);
+    bits.push(`<ul class="print-ms">${q.levels.map(l => `<li><strong>Level ${esc(l.level)} (${esc(l.range?.[0])}–${esc(l.range?.[1])}m):</strong> ${chipify(l.title || '')}</li>`).join('')}</ul>`);
   }
   return bits.join('');
 }
@@ -115,7 +153,7 @@ function buildPrintHtml({ title, portal, questions, withMarkScheme, timeLimitMin
   const ms = withMarkScheme ? `
     <section class="print-markscheme">
       <h2>Mark scheme</h2>
-      <ol>${questions.map((q, i) => `<li><div class="print-q-head"><span class="print-q-num">${i + 1}</span><div class="print-q-body">${markSchemeHtml(q) || '<p class="print-guidance">See mark scheme in-app.</p>'}</div><span class="print-marks">[${esc(q.marks ?? 0)}]</span></div></li>`).join('')}</ol>
+      <ol>${questions.map((q, i) => `<li><div class="print-q-head"><span class="print-q-num">${i + 1}</span><div class="print-q-body">${markSchemeHtml(q, imgRoot) || '<p class="print-guidance">See mark scheme in-app.</p>'}</div><span class="print-marks">[${esc(q.marks ?? 0)}]</span></div></li>`).join('')}</ol>
     </section>` : '';
   return `
     <div class="print-paper">
@@ -144,7 +182,9 @@ function renderMath(root) {
     renderMathInElement(root, {
       delimiters: [
         { left: '$$', right: '$$', display: true },
-        { left: '\\(', right: '\\)', display: false }
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
       ],
       throwError: false
     });
@@ -202,6 +242,13 @@ export function printPaper({ title, portal, questions, imgRoot, timeLimitMinutes
   }
   root.innerHTML = buildPrintHtml({ title, portal, questions, imgRoot, timeLimitMinutes, withMarkScheme });
   renderMath(root);
-  // Give images a tick to load before the dialog opens.
-  requestAnimationFrame(() => setTimeout(() => window.print(), 50));
+  // Wait for figure images to decode (capped) so the preview can't open blank.
+  const imgs = [...root.querySelectorAll('img')];
+  const wait = Promise.all(imgs.map((im) => (im.complete ? Promise.resolve() : im.decode().catch(() => {}))));
+  Promise.race([wait, new Promise((r) => setTimeout(r, 2000))]).then(() => {
+    requestAnimationFrame(() => setTimeout(() => window.print(), 50));
+  });
+  // After printing (or cancelling), drop the paper so a later plain Ctrl+P
+  // prints the page itself again instead of this export.
+  window.addEventListener('afterprint', () => root.remove(), { once: true });
 }
