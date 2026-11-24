@@ -56,7 +56,7 @@ function wireDrilldown(scores) {
         if (!detail) return;
         if (detail.innerHTML) { detail.innerHTML = ''; el.style.cursor = 'pointer'; return; }
         const e = list[idx];
-        detail.innerHTML = drilldownHtml(e) + compareHtml(compareAttempts(scores, e.quizUuid));
+        detail.innerHTML = drilldownHtml(e) + compareHtml(compareAttempts(scores, e.quizUuid, e.date));
       });
     });
   };
