@@ -24,7 +24,7 @@ export function startQuestionsRun(qs, spec, shuffle = false) {
       mode: 'quiz',
       quizLike: {
         uuid: from.uuid || MIXED_UUID,
-        version: 1,
+        version: from.version ?? 1,
         title: `${spec?.title || 'Retry missed'} (${qs.length}Q)`,
         timeLimitMinutes: null,
         exam: false,
@@ -43,6 +43,7 @@ export function startQuestionsRun(qs, spec, shuffle = false) {
 export function retryMissed() {
   const spec = buildMissedSpec(S.quiz?.questions || [], S.answers || {}, ak, {
     uuid: S.quiz?.uuid,
+    version: S.quiz?.version,
     category: S.quizMeta?.category,
     file: S.quizMeta?.file,
   });
