@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { ensurePastFull, buildCaches, topicData, topicDraft, topicAllQs, pickForMode, mixedPool } from '../taxonomy.js';
 import { renderRoom } from '../navigation.js';
 import { beginRun } from './assessment.js';
+import { retrySpecRun } from './retryMissed.js';
 
 export function startMixedSel(exam){
   const pool = mixedPool();
@@ -96,6 +97,7 @@ export async function beginFileQuiz(category, file, shuffleIt, resume){
 export async function retryRun(){
   const r = S.retrySpec;
   if (!r){ S.room = 'past'; return renderRoom(); }
+  if (r.kind === 'qs'){ if (retrySpecRun(r)) return; S.room = 'past'; return renderRoom(); }
   if (r.kind === 'mixed') return startMixedQuiz();
   if (r.kind === 'topic'){
     await ensurePastFull(); buildCaches();
