@@ -32,7 +32,8 @@ export async function finishQuiz(auto = false) {
     const ans = S.answers[ak(q)] || {};
     const qm = +q.marks || 0;
     const score = Math.min(qm, Math.max(0, ans.score || 0));
-    const hasTableInput = Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim()));
+    const hasTableInput = (Array.isArray(ans.rows) && ans.rows.some(r => Array.isArray(r) && r.some(c => String(c ?? '').trim())))
+      || (ans.outputs && typeof ans.outputs === 'object' && Object.values(ans.outputs).some(v => String(v ?? '').trim()));
     const attempted = !!(ans.selected != null || (ans.text && ans.text.trim())
       || (ans.code && ans.code.trim())
       || hasTableInput
