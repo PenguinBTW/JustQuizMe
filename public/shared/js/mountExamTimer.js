@@ -77,7 +77,9 @@ function tryMount() {
     const midNow = host();
     const remNow = midNow ? parseRemaining(midNow.textContent) : null;
     if (remNow != null) lastRem = remNow;
-    if (!refresh(chip, spec)) { lastRem = 0; lastSeen = Date.now(); clearInterval(iv); }
+    // Clock gone: keep lastRem — a same-run remount within ~3s continues the
+    // pace, while a new exam shows as a jump-up or a >3s gap.
+    if (!refresh(chip, spec)) { lastSeen = Date.now(); clearInterval(iv); }
   }, 1000);
   refresh(chip, spec);
 }
