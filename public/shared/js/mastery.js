@@ -79,6 +79,7 @@ export function computeMastery(scores, resolveTopics, now = new Date()) {
       if (!e.last || date > e.last) e.last = date;
     }
   }
+<<<<<<< HEAD
   const out = [...topics.values()].map(e => {
     // a topic can mix per-question and legacy entries: combine both signals
     // weighted as recorded (each entry contributes with its own decay weight).
@@ -98,9 +99,26 @@ export function computeMastery(scores, resolveTopics, now = new Date()) {
       mastery,
       runs: e.runs,
       daysSince: e.last ? Math.round(daysBetween(e.last, now)) : null,
-      weak: mastery < WEAK_THRESHOLD
+      weak: mastery < WEAK_THRESHOLD - 1e-9
     };
   });
+||||||| parent of ee4835f (fix: write topics into score entries; exclude empty topics from review-weakest; epsilon at weak threshold)
+  const out = [...topics.values()].map(e => ({
+    topic: e.topic,
+    mastery: e.wsum ? e.wpct / e.wsum : 0,
+    runs: e.runs,
+    daysSince: e.last ? Math.round(daysBetween(e.last, now)) : null,
+    weak: e.wsum ? (e.wpct / e.wsum) < WEAK_THRESHOLD : false
+  }));
+=======
+  const out = [...topics.values()].map(e => ({
+    topic: e.topic,
+    mastery: e.wsum ? e.wpct / e.wsum : 0,
+    runs: e.runs,
+    daysSince: e.last ? Math.round(daysBetween(e.last, now)) : null,
+    weak: e.wsum ? (e.wpct / e.wsum) < WEAK_THRESHOLD - 1e-9 : false
+  }));
+>>>>>>> ee4835f (fix: write topics into score entries; exclude empty topics from review-weakest; epsilon at weak threshold)
   // weakest first; ties broken by least-recently-practiced, then name
   out.sort((a, b) => a.mastery - b.mastery
     || (b.daysSince ?? 1e9) - (a.daysSince ?? 1e9)

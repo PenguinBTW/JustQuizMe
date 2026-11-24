@@ -167,7 +167,36 @@ export async function renderSummaryReport() {
     await api('/api/scores', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+<<<<<<< HEAD
       body: JSON.stringify(scoreEntry)
+||||||| parent of ee4835f (fix: write topics into score entries; exclude empty topics from review-weakest; epsilon at weak threshold)
+      body: JSON.stringify({
+        quizUuid: S.quiz.uuid || MIXED_UUID,
+        quizVersion: S.quiz.version || 1,
+        quizFile: S.quizMeta?.file || '',
+        quizTitle: S.quiz.title || 'OCR CS Assessment',
+        score: earned,
+        total,
+        minutes: Math.floor(S.elapsed / 60),
+        seconds: S.elapsed,
+        exam: S.runMode === 'exam',
+        breakdown
+      })
+=======
+      body: JSON.stringify({
+        quizUuid: S.quiz.uuid || MIXED_UUID,
+        quizVersion: S.quiz.version || 1,
+        quizFile: S.quizMeta?.file || '',
+        quizTitle: S.quiz.title || 'OCR CS Assessment',
+        score: earned,
+        total,
+        minutes: Math.floor(S.elapsed / 60),
+        seconds: S.elapsed,
+        exam: S.runMode === 'exam',
+        topics: [...new Set((S.quiz.questions || []).map(q => q.topic || q._topic).filter(Boolean))],
+        breakdown
+      })
+>>>>>>> ee4835f (fix: write topics into score entries; exclude empty topics from review-weakest; epsilon at weak threshold)
     });
     // keep the in-memory list in sync so Stats/CSV see the run that just
     // saved — mirrors the server's newest-first unshift + 500-entry cap
