@@ -179,6 +179,42 @@ function launchSynthesizedPaper() {
   window.location.href = targetUrl;
 }
 
+// Keyboard-first quick-start: a portal initial highlights its fleet card,
+// Enter launches it, 's' jumps to the synthesizer.
+const QUICK_KEYS = { c: 'card-cs', m: 'card-math', p: 'card-phys' };
+
+function initQuickKeys() {
+  let armedLink = null;
+  const disarm = () => {
+    document.querySelectorAll('.fleet-card.qk-armed').forEach(el => el.classList.remove('qk-armed'));
+    armedLink = null;
+  };
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+    const k = e.key.toLowerCase();
+    if (k === 'escape') { disarm(); return; }
+    if (k === 'enter' && armedLink) { armedLink.click(); return; }
+    if (k === 's') {
+      disarm();
+      document.getElementById('synthesizer')?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('marksSlider')?.focus({ preventScroll: true });
+      return;
+    }
+    const cardClass = QUICK_KEYS[k];
+    if (!cardClass) return;
+    const card = document.querySelector(`.fleet-card.${cardClass}`);
+    const link = card?.querySelector('.card-launch-btn');
+    if (!card || !link) return;
+    disarm();
+    card.classList.add('qk-armed');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    armedLink = link;
+    e.preventDefault();
+  });
+}
+
 // Window bindings for inline events
 window.toggleTheme = () => toggleTheme('themeToggleBtn');
 window.switchSubject = switchSubject;
@@ -202,6 +238,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initPhysicsChamber();
 
   loadLiveMetrics();
+  initQuickKeys();
   switchSubject('maths');
 
   const slider = document.getElementById('marksSlider');
