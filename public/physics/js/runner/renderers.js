@@ -4,6 +4,7 @@ import { $, esc, ak, chipify, tableHtml, imgSrc, qImages, imgHtml } from '../uti
 import { renderQ, navNext, progress } from './assessment.js';
 import { finishQuiz } from './finish.js';
 import { goExploreBack } from '../views/explore.js';
+import { attachChromeFlagButton } from '../../../shared/js/flags.js';
 
 export function normalizeDeps(deps){
   if (!Array.isArray(deps)) return [];
@@ -137,6 +138,16 @@ export function mcqHtml(q){
 }
 
 export function wireQ(q){
+  // Question issue flag — injected into the .q-chrome here so the chrome
+  // markup in assessment.js stays untouched. Mixed-deck questions carry
+  // _srcFile / id of their source paper so flags map back to the original file.
+  attachChromeFlagButton(() => ({
+    portal: 'physics',
+    fileBase: q._srcFile || S.quizMeta?.file || '',
+    questionId: q.id || String(S.idx),
+    questionLabel: `Q${S.idx + 1} of ${S.quiz.questions.length}`
+  }));
+
   if (q.type === 'multiple-choice'){
     document.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => {
       const i = +b.dataset.pick, k = ak(q);

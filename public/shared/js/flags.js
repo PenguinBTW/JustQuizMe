@@ -48,14 +48,14 @@ export async function postFlag(payload) {
 }
 
 export async function fetchFlags() {
-  try {
-    const res = await fetch('/api/flags');
-    if (!res.ok) return [];
-    const list = await res.json();
-    return Array.isArray(list) ? list : [];
-  } catch {
-    return [];
+  const res = await fetch('/api/flags');
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try { msg = (await res.json()).error || msg; } catch {}
+    throw new Error(msg);
   }
+  const list = await res.json();
+  return Array.isArray(list) ? list : [];
 }
 
 /**
@@ -64,7 +64,14 @@ export async function fetchFlags() {
  */
 export async function mountFlagBadge(el, { text = 'flagged' } = {}) {
   if (!el) return;
-  const flags = await fetchFlags();
+  let flags;
+  try {
+    flags = await fetchFlags();
+  } catch {
+    el.hidden = true;
+    el.style.display = 'none';
+    return;
+  }
   // style.display as well as hidden — class display rules (e.g. inline-flex) beat the attribute
   if (flags.length === 0) { el.hidden = true; el.style.display = 'none'; return; }
   el.hidden = false;
@@ -99,18 +106,23 @@ export function openFlagDialog(ctx) {
         </div>
       </div>`;
 
+    const card = overlay.querySelector('.jqm-flag-card');
     const chips = overlay.querySelector('.jqm-flag-chips');
     const submit = overlay.querySelector('[data-act="submit"]');
     const err = overlay.querySelector('.jqm-flag-err');
     const ok = overlay.querySelector('.jqm-flag-ok');
     const note = overlay.querySelector('textarea');
+    const prevFocus = document.activeElement;
     let reason = null;
+    let pending = false;
 
     REASONS.forEach((r) => {
       const b = document.createElement('button');
       b.className = 'jqm-flag-chip';
+      b.type = 'button';
       b.textContent = r.label;
       b.onclick = () => {
+        if (pending) return;
         reason = r.id;
         chips.querySelectorAll('.jqm-flag-chip').forEach((c) => c.classList.toggle('sel', c === b));
         submit.disabled = false;
@@ -118,13 +130,31 @@ export function openFlagDialog(ctx) {
       chips.appendChild(b);
     });
 
-    const close = (result) => { overlay.remove(); document.removeEventListener('keydown', onKey); resolve(result); };
-    const onKey = (e) => { if (e.key === 'Escape') close(false); };
+    const close = (result) => {
+      overlay.remove();
+      document.removeEventListener('keydown', onKey);
+      if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
+      resolve(result);
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') { close(false); return; }
+      if (e.key !== 'Tab') return;
+      // keep focus inside the dialog — Tab must not reach the runner behind the overlay
+      const focusables = [...card.querySelectorAll('button:not([disabled]), textarea')];
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      else if (!card.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    };
     document.addEventListener('keydown', onKey);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(false); });
     overlay.querySelector('[data-act="cancel"]').onclick = () => close(false);
 
     submit.onclick = async () => {
+      if (pending) return;
+      pending = true;
       submit.disabled = true;
       err.style.display = 'none';
       try {
@@ -138,6 +168,7 @@ export function openFlagDialog(ctx) {
         ok.style.display = 'inline';
         setTimeout(() => close(true), 700);
       } catch (e) {
+        pending = false;
         err.textContent = 'Flag failed: ' + e.message;
         err.style.display = 'inline';
         submit.disabled = false;
@@ -150,17 +181,24 @@ export function openFlagDialog(ctx) {
 }
 
 /**
- * Attach a small "⚑" flag button into `parent` (runner chrome).
- * Returns the button element.
+ * Insert the "⚑" flag button into the runner `.q-chrome`, just before
+ * `#chromeRight` — used by every portal's shared wireQ hook so the chrome
+ * markup in assessment.js stays untouched.
+ * `getCtx` is evaluated on each click so live runner state (idx, meta) is used.
+ * Returns the button element, or null when the chrome isn't rendered.
  */
-export function attachFlagButton(parent, ctx, { className = 'btn-ghost jqm-flag-btn' } = {}) {
-  if (!parent) return null;
+export function attachChromeFlagButton(getCtx) {
+  const chromeRight = document.getElementById('chromeRight');
+  const chrome = chromeRight?.parentElement;
+  if (!chrome || document.getElementById('flagQBtn')) return null;
   const b = document.createElement('button');
-  b.className = className;
+  b.id = 'flagQBtn';
+  b.className = 'btn-ghost mono';
   b.type = 'button';
   b.title = 'Flag an issue with this question';
-  b.textContent = '⚑ Flag';
-  b.onclick = () => openFlagDialog(ctx);
-  parent.appendChild(b);
+  b.style.cssText = 'font-size:12px;';
+  b.textContent = '⚑';
+  b.addEventListener('click', () => openFlagDialog(getCtx()));
+  chrome.insertBefore(b, chromeRight);
   return b;
 }

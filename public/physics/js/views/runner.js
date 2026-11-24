@@ -4,7 +4,6 @@ import { renderDiagram } from '../renderers/diagram.js';
 import { renderCalculation, wireCalculation, numOk } from '../renderers/calculation.js';
 import { renderMcq, wireMcq } from '../../cs/js/renderers/mcq.js';
 import { renderWritten, wireWritten } from '../../cs/js/renderers/written.js';
-import { openFlagDialog } from '../../../../shared/js/flags.js';
 
 export function renderQuestion(S) {
   const q = S.questions[S.idx];
@@ -41,7 +40,6 @@ export function renderQuestion(S) {
 
         <div style="display: flex; align-items: center; gap: 14px;">
           <span class="mono" id="examClockDisplay" style="font-size: 13.5px; font-weight: 600;">00:00</span>
-          <button class="btn btn-ghost" id="btnFlagQ" title="Flag an issue with this question" style="font-size: 12px;">⚑ Flag</button>
           <button class="btn btn-ghost" id="btnAbandonRun" style="font-size: 12px;">Exit</button>
         </div>
       </div>
@@ -108,13 +106,6 @@ export function wireQuestion(container, S, onNavigate, onFinish, onAbandon) {
   const nextBtn = container.querySelector('#btnNextQ');
   const finishBtn = container.querySelector('#btnFinishExam');
   const abandonBtn = container.querySelector('#btnAbandonRun');
-  const flagBtn = container.querySelector('#btnFlagQ');
-  if (flagBtn) flagBtn.onclick = () => openFlagDialog({
-    portal: 'physics',
-    fileBase: S.quizMeta?.file || '',
-    questionId: q.id || String(S.idx),
-    questionLabel: `Q${S.idx + 1} of ${S.questions.length}`
-  });
 
   if (prevBtn) prevBtn.onclick = () => onNavigate(S.idx - 1);
   if (nextBtn) nextBtn.onclick = () => onNavigate(S.idx + 1);

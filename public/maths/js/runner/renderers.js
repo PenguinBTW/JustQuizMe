@@ -4,6 +4,7 @@ import { $, esc, ak, chipify } from '../utils.js';
 import { areMathEqual, cleanMathStr } from '../cas.js';
 import { mathKeypadHtml } from './keypad.js';
 import { renderQ } from './assessment.js';
+import { attachChromeFlagButton } from '../../../shared/js/flags.js';
 
 // 1. Multiple Choice
 export function mcqHtml(q) {
@@ -655,6 +656,16 @@ export function wireCalc(q) {
 }
 
 export function wireQ(q) {
+  // Question issue flag — injected into the .q-chrome here so the chrome
+  // markup in assessment.js stays untouched. Mixed-deck questions carry
+  // _srcFile / id of their source paper so flags map back to the original file.
+  attachChromeFlagButton(() => ({
+    portal: 'maths',
+    fileBase: q._srcFile || S.quizMeta?.file || '',
+    questionId: q.id || String(S.idx),
+    questionLabel: `Q${S.idx + 1} of ${S.quiz.questions.length}`
+  }));
+
   if (q.type === 'multiple-choice') wireMcq(q);
   else if (q.type === 'symbolic-exact') wireSymbolic(q);
   else if (q.type === 'method-milestone') wireMilestone(q);

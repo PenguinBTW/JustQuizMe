@@ -6,7 +6,7 @@ import { renderPromptHtml, evaluateTraceTable, evaluateTruthTable, evaluateCalcu
 import { saveCurrent, saveProgress, renderQ } from './assessment.js';
 import { finishQuiz } from './finish.js';
 import { renderRoom } from '../navigation.js';
-import { openFlagDialog } from '../../../shared/js/flags.js';
+import { attachChromeFlagButton } from '../../../shared/js/flags.js';
 
 export function renderQuestionSpecifics(q) {
   const ans = S.answers[ak(q)] || {};
@@ -561,24 +561,15 @@ export function wireQuestionInteractions(q) {
   const ans = S.answers[k];
 
   // Question issue flag — injected into the runner chrome (kept out of
-  // assessment.js so the chrome markup there stays untouched)
-  const chrome = $('#chromeRight')?.parentElement;
-  if (chrome && !$('#flagQBtn')) {
-    const fb = document.createElement('button');
-    fb.id = 'flagQBtn';
-    fb.className = 'btn-ghost mono';
-    fb.type = 'button';
-    fb.title = 'Flag an issue with this question';
-    fb.style.cssText = 'font-size:12px;';
-    fb.textContent = '⚑';
-    fb.addEventListener('click', () => openFlagDialog({
-      portal: 'cs',
-      fileBase: S.quizMeta?.file || '',
-      questionId: k,
-      questionLabel: `Question ${S.idx + 1} of ${S.quiz.questions.length}`
-    }));
-    chrome.insertBefore(fb, $('#chromeRight'));
-  }
+  // assessment.js so the chrome markup there stays untouched). Mixed-deck
+  // questions carry _srcFile / id of their source paper, so flags map back
+  // to the original file rather than the synthesized deck's composite key.
+  attachChromeFlagButton(() => ({
+    portal: 'cs',
+    fileBase: q._srcFile || S.quizMeta?.file || '',
+    questionId: q.id || k,
+    questionLabel: `Question ${S.idx + 1} of ${S.quiz.questions.length}`
+  }));
 
   // Footer Navigation
   $('#backTop')?.addEventListener('click', () => {
