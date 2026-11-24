@@ -5,6 +5,7 @@ import { api, bestFor } from '../api.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { openExploreList } from './explore.js';
 import { beginFileQuiz } from '../runner/starters.js';
+import { modeAccuracyLine } from '../../../../shared/js/modeAccuracy.js';
 
 export function renderPractice() {
   const cards = S.quizzes.normal.map(m => {
@@ -32,6 +33,10 @@ export function renderPractice() {
         <div style="display:flex; align-items:center; justify-content:space-between; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:12px;">
           <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
             <span class="mono" style="font-size:12.5px; color:var(--ink-muted);">${m.questionCount} Questions · ${m.totalMarks} Marks · v${m.version ?? 1}</span>
+            ${(() => {
+              const line = modeAccuracyLine(S.scores, m.uuid);
+              return line ? `<span class="mono" style="font-size:12px; color:var(--ink-muted);">${esc(line)}</span>` : '';
+            })()}
             ${
               mine.length
                 ? `<button class="btn-ghost mono" style="font-size:12px;" data-practice-history="${esc(m.uuid)}">View Set History (${mine.length}) →</button>`
