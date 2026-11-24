@@ -47,6 +47,8 @@ test('empty run produces zero totals and no rows', () => {
 test('trimText strips html/latex/code and truncates', () => {
   assert.equal(trimText('<p>What is <b>abstraction</b>?</p>'), 'What is abstraction?');
   assert.equal(trimText('Compute $x^2$ now'), 'Compute (math) now');
+  assert.equal(trimText('Show that \\(x^2 > 0\\) holds'), 'Show that (math) holds');
+  assert.equal(trimText('a < b and c > d'), 'a < b and c > d');
   const long = 'x'.repeat(200);
   assert.equal(trimText(long).length, 140);
   assert.ok(trimText(long).endsWith('…'));
