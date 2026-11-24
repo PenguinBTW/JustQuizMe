@@ -5,7 +5,7 @@ import { api } from '../api.js';
 import { ensurePastFull, buildCaches, topicData, topicDraft, topicAllQs, pickForMode, mixedPool } from '../taxonomy.js';
 import { renderRoom } from '../navigation.js';
 import { beginRun } from './assessment.js';
-import { reviewQueue, planReviewRefs, resolveReviewDeck } from '../review.js';
+import { reviewQueue, planReviewRefs, resolveReviewDeck, REVIEW_DECK_CAP, REVIEW_UUID } from '../review.js';
 
 export function startMixedSel(exam){
   const pool = mixedPool();
@@ -109,13 +109,17 @@ export async function startReviewRun(exam){
 }
 
 async function runReviewSpec(spec){
-  const { set, tot } = await resolveReviewDeck(spec.items, fetchQuizForCategory);
+  const { set, tot, pool } = await resolveReviewDeck(spec.items, fetchQuizForCategory, REVIEW_DECK_CAP);
   if (!set.length){ S.room = 'history'; S.historySrc = 'review'; return renderRoom(); }
+  // Dependency stems for practice-bank questions live outside the past-paper
+  // pool — add the fetched sources so resolveDeps can find them.
+  for (const q of pool) (S._pastAll ||= {})[q._key] = q;
+  const practiceOnly = spec.items.every((r) => r.category === 'normal');
   S.returnRoom = 'history';
   beginRun({
     mode: 'quiz',
-    quizLike: { uuid: MIXED_UUID, version: 1, title: `Review Queue · ${tot}m (${set.length}Q)`, timeLimitMinutes: spec.exam ? tot * 1.5 : null, exam: !!spec.exam, questions: orderTypeShuffled(set) },
-    meta: { category: 'past-paper', file: 'mixed', virtual: true },
+    quizLike: { uuid: practiceOnly ? REVIEW_UUID : MIXED_UUID, version: 1, title: `Review Queue · ${tot}m (${set.length}Q)`, timeLimitMinutes: spec.exam ? tot * 1.5 : null, exam: !!spec.exam, questions: orderTypeShuffled(set) },
+    meta: { category: practiceOnly ? 'normal' : 'past-paper', file: 'mixed', virtual: true },
     retrySpec: spec,
   });
 }

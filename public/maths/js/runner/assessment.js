@@ -67,6 +67,7 @@ export async function saveProgress() {
     kind: S.quizMeta.virtual ? 'virtual' : 'file',
     title: S.quiz.title,
     exam: !!S.quiz.exam,
+    timeLimitMinutes: S.quiz.timeLimitMinutes ?? null,
     order: S.quiz.questions.map(ak),
     questions: S.quizMeta.virtual ? S.quiz.questions : null,
     spec: S.retrySpec

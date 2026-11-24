@@ -55,13 +55,12 @@ export function historyEntryHtml(a, retryLabel){
 }
 
 export function reviewRowHtml(i){
-  const sep = i.key.indexOf(':');
-  const file = i.key.slice(0, sep), qid = i.key.slice(sep + 1);
   return `<div class="history-entry">
     <div>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px; flex-wrap:wrap;">
-        <strong style="font-size:15.5px;">${esc(qid.toUpperCase())}</strong>
-        <span class="pill">${esc(file)}.json</span>
+        <strong style="font-size:15.5px;">${esc(i.qid.toUpperCase())}</strong>
+        <span class="pill">${esc(i.fileKey)}.json</span>
+        ${i.cat === 'normal' ? '<span class="pill">practice</span>' : ''}
         ${i.misses > 1 ? `<span class="pill red">${i.misses} misses</span>` : ''}
       </div>
       <div class="mono" style="font-size:12px; color:var(--ink-muted);">

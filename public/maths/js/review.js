@@ -5,20 +5,35 @@ import { S } from './state.js';
 import { stampPool } from './utils.js';
 
 export const REVIEW_DECK_CAP = 24;
+// Distinct uuid for practice-only review decks so their score entries stay
+// out of the past-paper history/stats (MIXED_UUID entries count there).
+export const REVIEW_UUID = '00000000-0000-4000-a000-00000000f00d';
 
 const fileBase = (f) => String(f || '').replace(/\.json$/i, '');
 
-// Question keys are namespaced to `<fileBase>:<questionId>` — pool-run
-// keys already carry the prefix, file-run keys get their attempt's file.
-// Lowercased so legacy uppercase `helped` entries match.
-export function normalizeKey(key, quizFile) {
+// Question keys are `<cat>|<fileBase>:<questionId>` lowercased, where cat is
+// 'p' (past-paper) or 'n' (normal/practice). Pool-stamped keys (`base:id`)
+// are always past-paper; bare ids take their attempt's category so two
+// same-named files in different banks stay distinct. Lowercased so legacy
+// uppercase `helped` entries still match.
+export function normalizeKey(key, quizFile, category) {
   const k = String(key || '').toLowerCase();
-  return k.includes(':') ? k : `${fileBase(quizFile).toLowerCase()}:${k}`;
+  if (k.includes('|')) return k;
+  if (k.includes(':')) return `p|${k}`;
+  const cat = category === 'normal' ? 'n' : 'p';
+  return `${cat}|${fileBase(quizFile).toLowerCase()}:${k}`;
 }
+
+const num = (v) => (Number.isFinite(+v) ? +v : 0);
+const numOrNull = (v) => (v != null && Number.isFinite(+v) ? +v : null);
 
 // Scores are stored newest-first: the most recent outcome for a question
 // decides — a later full-marks attempt clears it from the queue.
-export function reviewQueue(scores = S.scores) {
+export function reviewQueue(scores = S.scores, quizzes = S.quizzes) {
+  const uuidCat = new Map();
+  for (const m of quizzes?.normal || []) uuidCat.set(m.uuid, 'normal');
+  for (const m of quizzes?.['past-paper'] || []) uuidCat.set(m.uuid, 'past-paper');
+
   const status = new Map();
   const detail = new Map();
   const order = [];
@@ -26,12 +41,17 @@ export function reviewQueue(scores = S.scores) {
     if (!status.has(key)) {
       status.set(key, isWeak ? 'weak' : 'strong');
       if (isWeak) {
+        const got = num(w?.got);
+        const marks = numOrNull(w?.marks);
         detail.set(key, {
           key,
+          cat: key.charAt(0) === 'n' ? 'normal' : 'past-paper',
+          fileKey: key.slice(key.indexOf('|') + 1, key.lastIndexOf(':')),
+          qid: key.slice(key.lastIndexOf(':') + 1),
           misses: 1,
-          got: w?.got ?? 0,
-          marks: w?.marks ?? null,
-          lost: w?.marks != null ? w.marks - (w.got ?? 0) : null,
+          got,
+          marks,
+          lost: marks != null ? marks - got : null,
           quizTitle: e?.quizTitle || '',
           quizFile: e?.quizFile || '',
           date: e?.date || ''
@@ -44,40 +64,55 @@ export function reviewQueue(scores = S.scores) {
   };
   for (const e of scores || []) {
     const file = e?.quizFile || '';
-    for (const k of e?.strong || []) mark(normalizeKey(k, file), false, e);
-    for (const w of e?.weak || []) mark(normalizeKey(w?.k, file), true, e, w);
+    const cat = uuidCat.get(e?.quizUuid) || 'past-paper';
+    // One entry = one outcome per question: a helped question that also
+    // landed in weak counts as a single miss.
+    const seen = new Set();
+    const once = (key, isWeak, w) => {
+      const nk = normalizeKey(key, file, cat);
+      if (seen.has(nk)) return;
+      seen.add(nk);
+      mark(nk, isWeak, e, w);
+    };
+    for (const k of e?.strong || []) once(k, false);
+    for (const w of e?.weak || []) once(w?.k, true, w);
     // Entries recorded before weak/strong existed only kept helped ids —
     // a helped question scored 0, so it counts as weak.
-    for (const h of e?.helped || []) mark(normalizeKey(h, file), true, e);
+    for (const h of e?.helped || []) once(h, true);
   }
   return order.filter((k) => status.get(k) === 'weak').map((k) => detail.get(k));
 }
 
 // Queue items -> fetch refs { category, file, keys: [questionId] } for a
-// retry spec, prioritised by repeat misses then marks lost, deck-capped.
-export function planReviewRefs(items, quizzes, cap = REVIEW_DECK_CAP) {
-  const picked = [...items]
-    .sort((a, b) => (b.misses - a.misses) || ((b.lost ?? 0) - (a.lost ?? 0)))
-    .slice(0, cap);
+// retry spec, prioritised by repeat misses then marks lost.
+export function planReviewRefs(items, quizzes) {
+  // Real file casing comes from the bank listing (keys are lowercased).
+  const fileIndex = new Map();
+  for (const [cat, metas] of [['normal', quizzes?.normal], ['past-paper', quizzes?.['past-paper']]]) {
+    for (const m of metas || []) {
+      fileIndex.set(`${cat}|${fileBase(m.file).toLowerCase()}`, m.file);
+    }
+  }
+  const picked = [...items].sort((a, b) => (b.misses - a.misses) || ((b.lost ?? 0) - (a.lost ?? 0)));
   const byFile = new Map();
   for (const it of picked) {
-    const sep = it.key.indexOf(':');
-    const file = `${it.key.slice(0, sep)}.json`;
-    const ref = byFile.get(file) || { file, keys: [] };
-    ref.keys.push(it.key.slice(sep + 1));
-    byFile.set(file, ref);
+    const cat = it.cat || 'past-paper';
+    const refKey = `${cat}|${it.fileKey}`;
+    const ref = byFile.get(refKey) || { category: cat, file: fileIndex.get(refKey) || `${it.fileKey}.json`, keys: [] };
+    ref.keys.push(it.qid);
+    byFile.set(refKey, ref);
   }
-  const normalFiles = new Set((quizzes?.normal || []).map((m) => String(m.file).toLowerCase()));
-  return [...byFile.values()].map((r) => ({
-    category: normalFiles.has(r.file.toLowerCase()) ? 'normal' : 'past-paper',
-    ...r
-  }));
+  return [...byFile.values()];
 }
 
-// Resolves refs into pool-stamped questions (`<fileBase>:<id>` keys) via
-// an injected fetcher so this stays free of the api module.
-export async function resolveReviewDeck(refs, fetchQuiz) {
+// Resolves refs into pool-stamped questions via an injected fetcher so this
+// stays free of the api module. Refs are consumed in priority order and
+// resolution stops once `cap` questions are gathered, so missing files or
+// revised banks can't starve the deck. `pool` carries every fetched
+// question (past-paper stamps) for dependency lookups.
+export async function resolveReviewDeck(refs, fetchQuiz, cap = REVIEW_DECK_CAP) {
   const set = [];
+  const pool = [];
   let tot = 0;
   for (const ref of refs || []) {
     let quiz;
@@ -89,11 +124,16 @@ export async function resolveReviewDeck(refs, fetchQuiz) {
     if (!quiz) continue;
     const wanted = new Set((ref.keys || []).map((k) => String(k).toLowerCase()));
     for (const q of stampPool(quiz, ref.file)) {
+      pool.push(q);
+      if (set.length >= cap) continue;
       if (wanted.has(String(q.id).toLowerCase())) {
-        set.push(q);
+        // Normal-bank questions get an 'n|' _key so outcomes recorded on the
+        // review deck match the file-run keys for the same bank.
+        set.push(ref.category === 'normal' ? { ...q, _key: `n|${q._key.toLowerCase()}` } : q);
         tot += q.marks || 0;
       }
     }
+    if (set.length >= cap) break;
   }
-  return { set, tot };
+  return { set, tot, pool };
 }
