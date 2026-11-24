@@ -7,7 +7,7 @@ import { evaluateTraceTable, evaluateTruthTable, evaluateCalculation } from './e
 export async function finishQuiz(auto) {
   clearInterval(S.timerId);
   // a suspended-then-woken tab must not record time past the deadline
-  if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
+  if (S.quiz && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   if (auto === true) S.timeExpired = true;
 
   // If Exam Mode, run batch code tests strictly once now!

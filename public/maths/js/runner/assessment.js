@@ -173,8 +173,8 @@ export function renderQ() {
     else if (S.runMode === 'explore') { S.room = 'explore'; renderRoom(); }
     else { S.room = S.returnRoom || 'past'; renderRoom(); }
   };
-  $('#prevQ').onclick = () => { if (S.idx > 0) { S.idx--; renderQ(); } };
-  $('#nextQ').onclick = () => { if (S.idx < qs.length - 1) { S.idx++; renderQ(); } };
+  $('#prevQ').onclick = () => { if (S.idx > 0) { saveCurrent(qs[S.idx]); S.idx--; renderQ(); } };
+  $('#nextQ').onclick = () => { if (S.idx < qs.length - 1) { saveCurrent(qs[S.idx]); S.idx++; renderQ(); } };
   $('#finishQ').onclick = () => {
     if (S.runMode === 'explore') { S.room = 'explore'; renderRoom(); }
     else finishQuiz();
