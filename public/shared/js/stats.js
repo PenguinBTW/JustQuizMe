@@ -3,13 +3,15 @@
 
 // Coerce a stored topic name — scores.json is user-writable via the API, so
 // entries can be malformed (objects, nulls, huge strings). Never throw.
+// Names are kept whole (no truncation) so distinct long topics can't merge
+// in groupByTopic; the view truncates for display.
 function cleanTopics(list) {
   const out = [];
   for (const t of list) {
     if (typeof t !== 'string' && typeof t !== 'number') continue;
     let s = '';
     try { s = String(t).trim(); } catch { continue; }
-    if (s) out.push(s.slice(0, 80));
+    if (s) out.push(s);
   }
   return out;
 }
@@ -28,7 +30,7 @@ export function topicsFor(score, uuidIndex = {}) {
   }
   const title = typeof score?.quizTitle === 'string' ? score.quizTitle : '';
   const head = title.split(' · ')[0].trim();
-  if (head && !/^(mixed|custom|past paper)/i.test(head)) return [head.slice(0, 80)];
+  if (head && !/^(mixed|custom|past paper)/i.test(head)) return [head];
   return ['Mixed practice'];
 }
 

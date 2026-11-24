@@ -23,7 +23,8 @@ describe('topicsFor', () => {
     assert.deepEqual(topicsFor(run({ topics: [null, { bad: 1 }, ' Algebra '] })), ['Algebra']);
     assert.deepEqual(topicsFor(run({ topics: [null, undefined, {}] })), ['Mixed practice']);
     const long = 'x'.repeat(500);
-    assert.equal(topicsFor(run({ topics: [long] }))[0].length, 80);
+    // Full name kept — truncating for identity would merge distinct topics.
+    assert.equal(topicsFor(run({ topics: [long] }))[0], long);
     assert.deepEqual(topicsFor(run({ quizUuid: '__proto__' }), {}), ['Mixed practice']);
   });
 });

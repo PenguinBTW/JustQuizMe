@@ -1198,3 +1198,4 @@
 .stat-bar { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
 .stat-bar-fill { height: 100%; background: var(--accent); border-radius: 99px; }
 .stat-spark { width: 160px; height: 30px; display: block; }
+.stat-topic-head > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
