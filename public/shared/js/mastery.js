@@ -58,7 +58,7 @@ export function computeMastery(scores, resolveTopics, now = new Date()) {
     mastery: e.wsum ? e.wpct / e.wsum : 0,
     runs: e.runs,
     daysSince: e.last ? Math.round(daysBetween(e.last, now)) : null,
-    weak: e.wsum ? (e.wpct / e.wsum) < WEAK_THRESHOLD : false
+    weak: e.wsum ? (e.wpct / e.wsum) < WEAK_THRESHOLD - 1e-9 : false
   }));
   // weakest first; ties broken by least-recently-practiced, then name
   out.sort((a, b) => a.mastery - b.mastery

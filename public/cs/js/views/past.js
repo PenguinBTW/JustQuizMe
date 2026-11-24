@@ -220,7 +220,7 @@ export function wirePastEvents() {
 
   $('#reviewWeakestBtn')?.addEventListener('click', () => {
     const rows = computeMastery(S.scores, resolveScoreTopics);
-    const picks = weakestTopics(rows, (S._topicData || []).map(t => t.topic), 3);
+    const picks = weakestTopics(rows, (S._topicData || []).filter(t => t.qcount > 0).map(t => t.topic), 3);
     S.mixed.topics.clear();
     S.mixed.subs.clear();
     for (const pick of picks) {

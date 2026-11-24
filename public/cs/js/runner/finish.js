@@ -129,6 +129,7 @@ export async function renderSummaryReport() {
         minutes: Math.floor(S.elapsed / 60),
         seconds: S.elapsed,
         exam: S.runMode === 'exam',
+        topics: [...new Set((S.quiz.questions || []).map(q => q.topic || q._topic).filter(Boolean))],
         breakdown
       })
     });
