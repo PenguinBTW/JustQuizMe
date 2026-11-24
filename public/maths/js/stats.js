@@ -46,7 +46,7 @@ function statsHtml() {
       return `
       <div class="stat-topic">
         <div class="stat-topic-head">
-          <span>${esc(g.topic)}</span>
+          <span title="${esc(g.topic)}">${esc(g.topic)}</span>
           <span class="mono">${g.correct}/${g.attempted} marks · ${g.runs} run${g.runs === 1 ? '' : 's'} · ${g.pct}%</span>
         </div>
         <div class="stat-bar"><div class="stat-bar-fill" style="width:${pct}%;"></div></div>
@@ -79,7 +79,7 @@ function statsHtml() {
         <div class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Streak</div>
         <div class="serif" style="font-size:34px;">${streak}d</div>
       </div>
-      ${weak ? `<div style="margin-left:auto;"><span class="pill accent">Revise: ${esc(weak.topic)} — ${weak.pct}%</span></div>` : ''}
+      ${weak ? `<div style="margin-left:auto;min-width:0;"><span class="pill accent stat-weak" title="Revise: ${esc(weak.topic)} — ${weak.pct}%">Revise: ${esc(weak.topic)} — ${weak.pct}%</span></div>` : ''}
     </div>
     ${
       pts

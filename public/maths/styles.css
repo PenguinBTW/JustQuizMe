@@ -1199,3 +1199,4 @@
 .stat-bar-fill { height: 100%; background: var(--accent); border-radius: 99px; }
 .stat-spark { width: 160px; height: 30px; display: block; }
 .stat-topic-head > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stat-weak { display: inline-block; max-width: min(340px, 60vw); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
