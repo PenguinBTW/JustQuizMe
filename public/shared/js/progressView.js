@@ -75,7 +75,7 @@ export function progressHtml({ scores, quizzes, knownTopics, now = new Date() })
             <strong style="font-size:14.5px;">${esc(a.quizTitle || 'Assessment')}</strong>
             <div class="mono" style="font-size:11.5px; color:var(--ink-muted); margin-top:2px;">${esc(String(a.date || '').slice(0, 10))} · ${a.exam ? 'Exam' : 'Quiz'}</div>
           </div>
-          <span class="mono" style="font-weight:700; color:var(--accent);">${a.score}/${a.total} (${a.total ? Math.round(a.score / a.total * 100) : 0}%)</span>
+          <span class="mono" style="font-weight:700; color:var(--accent);">${+a.score || 0}/${+a.total || 0} (${+a.total ? Math.round((+a.score || 0) / +a.total * 100) : 0}%)</span>
         </div>`).join('')}
     </div>`;
 }
