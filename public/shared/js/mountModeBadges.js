@@ -43,15 +43,19 @@ async function load(force = false) {
 
 function decorate(card, m) {
   if (card.querySelector('.mode-badges')) {
-    // refresh counts on an already-decorated card after a new attempt
+    // refresh counts on an already-decorated card after a new attempt —
+    // compare before writing or each sweep retriggers the observer forever
     card.querySelectorAll('.mode-badge[data-kind]').forEach((chip, i) => {
       const b = m.badges[i];
-      if (b) chip.textContent = b.kind === 'new' ? `${b.icon} new` : `${b.icon} ${b.kind} ×${b.count}`;
+      if (!b) return;
+      const next = b.kind === 'new' ? `${b.icon} new` : `${b.icon} ${b.kind} ×${b.count}`;
+      if (chip.textContent !== next) chip.textContent = next;
     });
+    const more = card.querySelector('.mode-badge:not([data-kind])');
+    const moreText = m.extra > 0 ? `+${m.extra} more` : '';
+    if (more && more.textContent !== moreText) more.textContent = moreText;
     return;
   }
-  // only set/picker cards (they carry an action button); info banners stay clean
-  if (card.classList.contains('card') && !card.querySelector('button')) return;
   const row = document.createElement('div');
   row.className = 'mode-badges';
   for (const b of m.badges) {
@@ -74,7 +78,10 @@ function sweep() {
   // scores may have changed since page load (a finished run refreshes them)
   if (lastFetch && Date.now() - lastFetch > STALE_MS) model = null;
   if (!model) { load().then(sweep); return; }
-  document.querySelectorAll('.subtopic-card, .card').forEach((c) => decorate(c, model));
+  // set/picker cards live in the topic/subtopic grids; .card elsewhere
+  // (results summary, info banners) is not a badge surface
+  document.querySelectorAll('.subtopic-card, .subtopic-grid .card, .topic-grid .card')
+    .forEach((c) => decorate(c, model));
 }
 
 load().then(sweep);
