@@ -7,7 +7,7 @@ import { retryRun } from './starters.js';
 
 export function quizScore(){
   let score = 0, total = 0, mcq = { got: 0, total: 0 }, w = { got: 0, total: 0 }, c = { got: 0, total: 0 }, s = { got: 0, total: 0 };
-  const helped = [];
+  const helped = [], weak = [], strong = [];
   for (const q of S.quiz.questions){
     total += q.marks; const a = S.answers[ak(q)];
     const sc = a?.score ?? 0; score += sc;
@@ -15,8 +15,12 @@ export function quizScore(){
     else if (q.type === 'written'){ w.total += q.marks; w.got += sc; }
     else if (q.type === 'self-marked'){ s.total += q.marks; s.got += sc; }
     else { c.total += q.marks; c.got += sc; if (a?.helped) helped.push(ak(q).toUpperCase()); }
+    // Per-question outcome for the review queue: partial or zero credit
+    // re-queues the question, full marks clears it.
+    if (sc >= q.marks) strong.push(ak(q));
+    else weak.push({ k: ak(q), got: sc, marks: q.marks });
   }
-  return { score, total, mcq, w, c, s, helped };
+  return { score, total, mcq, w, c, s, helped, weak, strong };
 }
 
 export async function finishQuiz(auto = false){
@@ -29,7 +33,7 @@ export async function finishQuiz(auto = false){
     else if (q.type === 'calculation' && !(a?.locked)){ if (a?.helpedDone){ S.answers[k].score = 0; } else S.answers[k] = { ...(a || {}), locked: true, loggedWrong: (a?.attempts || 0) > 0, score: 0 }; }
   }
   const r = quizScore();
-  const entry = { quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, quizTitle: S.quiz.title, score: r.score, total: r.total, minutes: Math.round(S.elapsed / 60), seconds: S.elapsed, helped: r.helped, exam: !!S.quiz.exam, breakdown: { mcq: r.mcq, written: r.w, cSolo: r.c, self: r.s }, date: new Date().toISOString() };
+  const entry = { quizUuid: S.quiz.uuid, quizVersion: S.quiz.version, quizFile: S.quizMeta.file, quizTitle: S.quiz.title, score: r.score, total: r.total, minutes: Math.round(S.elapsed / 60), seconds: S.elapsed, helped: r.helped, weak: r.weak, strong: r.strong, exam: !!S.quiz.exam, breakdown: { mcq: r.mcq, written: r.w, cSolo: r.c, self: r.s }, date: new Date().toISOString() };
   let saved = null;
   try { await api('/api/scores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) }); saved = true; } catch { saved = false; }
   try { await api('/api/save', { method: 'DELETE' }); } catch {}

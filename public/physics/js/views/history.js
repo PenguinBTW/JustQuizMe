@@ -2,7 +2,8 @@
 import { S, MIXED_UUID } from '../state.js';
 import { $, esc, num, fmtDate, fmtDur } from '../utils.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
-import { beginFileQuiz } from '../runner/starters.js';
+import { beginFileQuiz, startReviewRun } from '../runner/starters.js';
+import { reviewQueue, REVIEW_DECK_CAP } from '../review.js';
 
 export function pastEntries(){
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
@@ -53,10 +54,61 @@ export function historyEntryHtml(a, retryLabel){
   </div>`;
 }
 
+export function reviewRowHtml(i){
+  const sep = i.key.indexOf(':');
+  const file = i.key.slice(0, sep), qid = i.key.slice(sep + 1);
+  return `<div class="history-entry">
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px; flex-wrap:wrap;">
+        <strong style="font-size:15.5px;">${esc(qid.toUpperCase())}</strong>
+        <span class="pill">${esc(file)}.json</span>
+        ${i.misses > 1 ? `<span class="pill red">${i.misses} misses</span>` : ''}
+      </div>
+      <div class="mono" style="font-size:12px; color:var(--ink-muted);">
+        ${esc(i.quizTitle || 'Quiz')} · last ${i.got}/${i.marks ?? '?'} marks${i.date ? ` · ${fmtDate(i.date)}` : ''}
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="pill ${i.lost != null && i.lost <= 1 ? 'amber' : 'red'}">${i.lost != null ? `${i.lost}m owed` : 'helped'}</span>
+    </div>
+  </div>`;
+}
+
 export function renderHistory(){
-  const isPast = S.historySrc !== 'practice';
+  const isReview = S.historySrc === 'review';
+  const isPast = !isReview && S.historySrc !== 'practice';
   let body = '';
-  if (isPast){
+  if (isReview){
+    const items = reviewQueue();
+    const owed = items.reduce((s, i) => s + (i.lost ?? 0), 0);
+    const repeat = items.filter(i => i.misses > 1).length;
+    body = `<div id="historyReviewView">
+      <div class="history-stats-grid">
+        <div class="history-stat-card">
+          <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Questions Queued</span>
+          <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${items.length}</div>
+          <span class="mono" style="font-size:12px; color:var(--ink-secondary);">missed or part-scored, latest outcome wins</span>
+        </div>
+        <div class="history-stat-card">
+          <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Marks Still Owed</span>
+          <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${num(owed)}</div>
+          <span class="mono" style="font-size:12px; color:var(--ink-secondary);">dropped on the most recent attempt</span>
+        </div>
+        <div class="history-stat-card">
+          <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Repeat Offenders</span>
+          <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${repeat}</div>
+          <span class="mono" style="font-size:12px; color:var(--amber);">weak across 2+ sessions</span>
+        </div>
+      </div>
+      ${items.length ? `<div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:18px;">
+        <button class="btn btn-primary" id="reviewStartBtn">Start Review Deck (${Math.min(items.length, REVIEW_DECK_CAP)}Q)</button>
+        <button class="btn" id="reviewExamBtn">Exam Conditions</button>
+      </div>` : ''}
+      <div class="card" style="padding: 10px 28px;">
+        ${items.map(reviewRowHtml).join('') || '<p class="mono" style="font-size:12.5px; color:var(--ink-muted); padding:18px 0;">Nothing queued — questions you miss or part-score will appear here after a run.</p>'}
+      </div>
+    </div>`;
+  } else if (isPast){
     const list = pastEntries();
     const bankTotal = S.quizzes['past-paper'].reduce((s, m) => s + m.totalMarks, 0);
     const avg = list.length ? Math.round(list.reduce((s, a) => s + (a.total ? a.score / a.total : 0), 0) / list.length * 100) : 0;
@@ -129,13 +181,19 @@ export function renderHistory(){
     </div>
     <div class="segmented">
       <button class="${isPast ? 'active' : ''}" id="histTabPast">Past Papers (${pastEntries().length})</button>
-      <button class="${!isPast ? 'active' : ''}" id="histTabPractice">Practice Sets (${practiceEntries().length})</button>
+      <button class="${!isPast && !isReview ? 'active' : ''}" id="histTabPractice">Practice Sets (${practiceEntries().length})</button>
+      <button class="${isReview ? 'active' : ''}" id="histTabReview">Review Queue (${reviewQueue().length})</button>
     </div>
   </div>
   ${body}`;
   wireRoomNav();
   $('#histTabPast').onclick = () => { S.historySrc = 'past'; renderRoom(); };
   $('#histTabPractice').onclick = () => { S.historySrc = 'practice'; renderRoom(); };
+  $('#histTabReview').onclick = () => { S.historySrc = 'review'; renderRoom(); };
+  const rsBtn = $('#reviewStartBtn');
+  if (rsBtn) rsBtn.onclick = () => startReviewRun(false);
+  const reBtn = $('#reviewExamBtn');
+  if (reBtn) reBtn.onclick = () => startReviewRun(true);
   document.querySelectorAll('[data-retry-entry]').forEach(b => b.onclick = () => {
     const [uuid, file] = b.dataset.retryEntry.split('|');
     const inNormal = S.quizzes.normal.some(m => m.file === file);

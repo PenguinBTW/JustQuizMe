@@ -17,9 +17,15 @@ export async function finishQuiz(auto = false) {
   }
 
   let totalScore = 0, maxMarks = 0;
+  const weak = [], strong = [];
   for (const q of S.quiz.questions) {
     maxMarks += q.marks;
-    totalScore += (S.answers[ak(q)]?.score || 0);
+    const sc = S.answers[ak(q)]?.score || 0;
+    totalScore += sc;
+    // Per-question outcome for the review queue: partial or zero credit
+    // re-queues the question, full marks clears it.
+    if (sc >= q.marks) strong.push(ak(q));
+    else weak.push({ k: ak(q), got: sc, marks: q.marks });
   }
 
   const minutes = Math.round(S.elapsed / 60);
@@ -34,6 +40,8 @@ export async function finishQuiz(auto = false) {
     total: maxMarks,
     minutes,
     seconds,
+    weak,
+    strong,
     exam: !!S.quiz.exam,
     date: new Date().toISOString()
   };
