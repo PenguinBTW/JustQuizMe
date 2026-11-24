@@ -107,12 +107,13 @@ describe('sparklinePoints + recentPcts', () => {
   });
 });
 
-test('groupByTopic per-question attribution: marks split across topics, run counted once per topic', async () => {
-  const { groupByTopic } = await import('../public/shared/js/stats.js');
+test('groupByTopic per-question attribution: marks split across topics, run counted once per topic', () => {
+  // A repeats twice in one paper — marks must sum and the run count stays 1
   const entries = [{
-    quizUuid: 'q1', score: 8, total: 10,
+    quizUuid: 'q1', score: 8, total: 15,
     perQuestion: [
       { topic: 'A', score: 4, marks: 5 },
+      { topic: 'A', score: 3, marks: 5 },
       { topic: 'B', score: 4, marks: 5 },
     ],
   }];
@@ -120,6 +121,7 @@ test('groupByTopic per-question attribution: marks split across topics, run coun
   const a = g.find(x => x.topic === 'A');
   const b = g.find(x => x.topic === 'B');
   if (!a || !b) throw new Error('topics missing');
-  if (a.correct !== 4 || a.attempted !== 5) throw new Error('per-question marks not used: ' + JSON.stringify(a));
+  if (a.correct !== 7 || a.attempted !== 10) throw new Error('repeated-topic marks not summed: ' + JSON.stringify(a));
+  if (b.correct !== 4 || b.attempted !== 5) throw new Error('per-question marks not used: ' + JSON.stringify(b));
   if (a.runs !== 1 || b.runs !== 1) throw new Error('run should count once per topic');
 });
