@@ -6,6 +6,7 @@ import { evaluateTraceTable, evaluateTruthTable, evaluateCalculation } from './e
 
 export async function finishQuiz(auto) {
   clearInterval(S.timerId);
+  if (auto === true) S.timeExpired = true;
 
   // If Exam Mode, run batch code tests strictly once now!
   if (S.runMode === 'exam') {
@@ -177,6 +178,7 @@ export async function renderSummaryReport() {
 
   $('#stage').innerHTML = `
     <div class="card" style="text-align:center; padding:44px 32px;">
+      ${S.timeExpired ? `<p class="mono" style="font-size:13px; color:var(--ink-secondary); margin-bottom:14px;">⏱ Time expired — your paper was submitted automatically with everything you had written.</p>` : ''}
       <span class="pill accent" style="margin-bottom:12px;">${S.runMode.toUpperCase()} MODE COMPLETE</span>
       <h1 class="serif" style="font-size:42px; margin-bottom:8px;">${esc(S.quiz.title)}</h1>
       <div style="font-size:56px; font-weight:700; color:var(--accent); font-family:'JetBrains Mono',monospace; margin:18px 0;">

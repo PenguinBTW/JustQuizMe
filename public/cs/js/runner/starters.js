@@ -4,6 +4,11 @@ import { orderTypeShuffled } from '../utils.js';
 import { mixedPool, pickForMode } from '../taxonomy.js';
 import { beginRun } from './assessment.js';
 
+// Exam pace → minutes per mark. null = untimed (opt-out of time pressure).
+export function paceMinutesPerMark(pace) {
+  return { untimed: null, relaxed: 1.5, standard: 1.07, strict: 0.9 }[pace] ?? 1.07;
+}
+
 export function startMixedRun(exam) {
   const pool = mixedPool();
   if (!pool.length) return alert('No questions found in chosen topics.');
@@ -15,7 +20,9 @@ export function startMixedRun(exam) {
       uuid: MIXED_UUID,
       version: 1,
       title: `Synthesized Paper · ${tot}m (${set.length}Q)`,
-      timeLimitMinutes: exam ? Math.round(tot * 1.07) : null,
+      timeLimitMinutes: exam && paceMinutesPerMark(S.mixed.pace) != null
+        ? Math.max(5, Math.round(tot * paceMinutesPerMark(S.mixed.pace)))
+        : null,
       exam: !!exam,
       questions: set
     },

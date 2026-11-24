@@ -2,7 +2,7 @@
 import { S, MIXED_UUID } from './state.js';
 import { $, esc } from './utils.js';
 import { mixedPool, pickForMode } from './taxonomy.js';
-import { startMixedRun } from './runner/starters.js';
+import { startMixedRun, paceMinutesPerMark } from './runner/starters.js';
 import { beginRun } from './runner/assessment.js';
 
 export function openSynthModal() {
@@ -38,8 +38,10 @@ export function openSynthModal() {
   $('#synthModalSlider').max = Math.max(10, Math.min(70, poolMarks));
   $('#synthModalSlider').value = Math.min(S.mixed.m, poolMarks);
   $('#synthModalMarksLabel').textContent = `${$('#synthModalSlider').value} marks`;
-  const mins = Math.round($('#synthModalSlider').value * 1.07);
-  $('#synthStartExamBtn').textContent = `Start Exam · ${mins}m ⏱`;
+  const pace = paceMinutesPerMark(S.mixed.pace);
+  $('#synthStartExamBtn').textContent = pace == null
+    ? 'Start Exam · untimed'
+    : `Start Exam · ${Math.max(5, Math.round($('#synthModalSlider').value * pace))}m ⏱`;
 
   $('#synthModal').classList.add('open');
 
@@ -57,8 +59,10 @@ export function openSynthModal() {
   $('#synthModalSlider').oninput = (e) => {
     S.mixed.m = +e.target.value;
     $('#synthModalMarksLabel').textContent = `${S.mixed.m} marks`;
-    const m = Math.round(S.mixed.m * 1.07);
-    $('#synthStartExamBtn').textContent = `Start Exam · ${m}m ⏱`;
+    const pm = paceMinutesPerMark(S.mixed.pace);
+    $('#synthStartExamBtn').textContent = pm == null
+      ? 'Start Exam · untimed'
+      : `Start Exam · ${Math.max(5, Math.round(S.mixed.m * pm))}m ⏱`;
   };
 
   document.querySelectorAll('[data-synth-sub]').forEach(el => {
@@ -69,6 +73,18 @@ export function openSynthModal() {
       openSynthModal();
     };
   });
+
+  document.querySelectorAll('#synthPaceSeg [data-pace]').forEach(b => {
+    b.onclick = () => {
+      S.mixed.pace = b.dataset.pace;
+      document.querySelectorAll('#synthPaceSeg [data-pace]').forEach(x => x.classList.toggle('active', x === b));
+      const pm2 = paceMinutesPerMark(S.mixed.pace);
+      $('#synthStartExamBtn').textContent = pm2 == null
+        ? 'Start Exam · untimed'
+        : `Start Exam · ${Math.max(5, Math.round(S.mixed.m * pm2))}m ⏱`;
+    };
+  });
+  document.querySelectorAll('#synthPaceSeg [data-pace]').forEach(x => x.classList.toggle('active', x.dataset.pace === S.mixed.pace));
 
   $('#synthStartQuizBtn').onclick = () => {
     $('#synthModal').classList.remove('open');

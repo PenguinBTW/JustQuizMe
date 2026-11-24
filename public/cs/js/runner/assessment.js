@@ -39,7 +39,11 @@ export function startTimer() {
     if (S.quiz.exam && lim) {
       const left = Math.max(0, Math.round(lim * 60 - S.elapsed));
       mid.innerHTML = `${esc(chromeCount())} · <span id="examClock" class="${left < 60 ? 'timer-warn' : ''}">⏱ ${fmtClock(left)} left</span>`;
-      if (left <= 0) finishQuiz(true);
+      if (left <= 0) {
+        // capture whatever is mid-typing before the auto-submit — no work lost
+        saveCurrent(S.quiz.questions[S.idx]);
+        finishQuiz(true);
+      }
     } else {
       mid.innerHTML = `${esc(chromeCount())} · <span>⏱ ${fmtClock(S.elapsed)}</span>`;
     }
