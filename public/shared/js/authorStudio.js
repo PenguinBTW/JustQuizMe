@@ -126,14 +126,13 @@ export function readForm(root, q) {
   if (Array.isArray(q.markScheme)) {
     root.querySelectorAll('.af-ms-marks').forEach(el => {
       if (!q.markScheme[+el.dataset.i]) return;
-      let v = +el.value || 1;
-      if (root.dataset && root.dataset.oneMarkPerPoint === '1') {
-        // the form offers no per-point mark input in this portal — preserve
-        // whatever the question already carries rather than crushing loaded
-        // multi-mark points to 1 (which then read as phantom unsaved edits)
-        v = (q.markScheme[+el.dataset.i] && Number.isFinite(+q.markScheme[+el.dataset.i].marks)) ? +q.markScheme[+el.dataset.i].marks : 1;
-      }
-      q.markScheme[+el.dataset.i].marks = v;
+      const cur = q.markScheme[+el.dataset.i];
+      // an author-typed value always wins; an empty/absent input never
+      // overwrites what the question already carries (loaded multi-mark
+      // points must round-trip untouched rather than crush to phantom edits)
+      const typed = el.value === '' || el.value == null ? NaN : +el.value;
+      if (Number.isFinite(typed)) q.markScheme[+el.dataset.i].marks = typed;
+      else if (!(cur && Number.isFinite(+cur.marks))) q.markScheme[+el.dataset.i].marks = 1;
     });
     root.querySelectorAll('.af-ms-text').forEach(el => { if (q.markScheme[+el.dataset.i]) q.markScheme[+el.dataset.i].text = el.value; });
   }
@@ -180,9 +179,16 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
 
   // form edits persist continuously (lightly debounced) — a half-written first
   // question must survive a tab switch even before anything reaches the bank
-  host.addEventListener('input', () => {
+  const schedulePersist = () => {
     clearTimeout(persistTimer);
     persistTimer = setTimeout(persistDraft, 400);
+  };
+  host.addEventListener('input', schedulePersist);
+  // radio correct-answer picks fire change, and button-driven mutations (new
+  // question, add-to-bank) fire neither reliably — persist on both
+  host.addEventListener('change', schedulePersist);
+  host.addEventListener('click', (ev) => {
+    if (ev.target && (ev.target.closest('.af-correct') || ev.target.closest('#af-newq') || ev.target.closest('#af-add'))) schedulePersist();
   });
 
   const render = () => {
