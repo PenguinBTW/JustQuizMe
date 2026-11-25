@@ -121,7 +121,7 @@ function contentKeyOf(e) {
     // topic+marks in the fingerprint: score writers save bare ids, so two
   // synthesized papers drawing the same id from different banks must not
   // collapse — their topic/marks context almost always differs
-  return pq.map(q => q && ((q.key || q.id || q.prompt || '') + '#' + (q.topic || '') + '#' + (q.marks ?? ''))).sort().join('|');
+  return pq.map(q => q && ((q.key || q.id || q.prompt || '') + '#' + (q.marks ?? ''))).sort().join('|');
 }
 
 // compareAttempts(entries, quizUuid) — same paper taken more than once:
