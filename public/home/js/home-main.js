@@ -228,8 +228,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const strip = document.createElement('div');
   strip.className = 'export-strip';
   strip.style.cssText = 'margin:10px 0; padding:10px 14px; border:1px solid var(--border); border-radius:8px; font-size:12.5px;';
-  strip.innerHTML = '<strong>Export progress</strong> <button id="tutorReportBtn" class="btn-ghost mono" style="font-size:11.5px; padding:3px 10px; margin-left:6px;">Tutor report</button> <span class="mono" style="font-size:11px; opacity:0.7;">CSV:</span> ' + ['cs', 'maths', 'physics'].map(portal =>
-    `<span style="margin-left:10px;">${portal}: <a href="/api/${portal}/export/attempts.csv" download>attempts</a> · <a href="/api/${portal}/export/topics.csv" download>topics</a></span>`
+  strip.innerHTML = '<strong>Export progress</strong> <button id="tutorReportBtn" class="btn-ghost mono" style="font-size:11.5px; padding:6px 10px; margin-left:6px; min-height:24px; box-sizing:border-box;">Tutor report</button> <span class="mono" style="font-size:11px; opacity:0.7;">CSV:</span> ' + ['cs', 'maths', 'physics'].map(portal =>
+    `<span style="margin-left:10px;">${portal}: <a href="/api/${portal}/export/attempts.csv" download style="display:inline-block; padding:6px 4px; min-height:24px; box-sizing:border-box;">attempts</a> · <a href="/api/${portal}/export/topics.csv" download style="display:inline-block; padding:6px 4px; min-height:24px; box-sizing:border-box;">topics</a></span>`
   ).join('');
   hostEl.parentNode.insertBefore(strip, hostEl);
   const trBtn = strip.querySelector('#tutorReportBtn');

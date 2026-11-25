@@ -30,7 +30,7 @@ class ExportService {
     for (const s of this.scores()) {
       for (const q of s.perQuestion || []) {
         if (!q || typeof q !== 'object') continue;
-        rows.push([s.date, portal, s.quizTitle || s.title || '', s.quizFile, q.key || '', q.id, q.topic, q.subtopic || '', q.type, +q.score || 0, +q.marks || 0, q.attempted === false ? 'no' : 'yes', s.exam ? 'yes' : 'no']);
+        rows.push([s.date, portal, s.quizTitle || s.title || '', s.quizFile, q.key || q.id || '', q.id, q.topic, q.subtopic || '', q.type, +q.score || 0, +q.marks || 0, q.attempted === false ? 'no' : 'yes', s.exam ? 'yes' : 'no']);
       }
     }
     return toCsv(rows);
