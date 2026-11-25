@@ -21,13 +21,35 @@ function answerText(q, ans) {
     if (picked == null) return '';
     return `${'ABCDEF'[picked] || picked + 1}. ${optText(q.options?.[picked])}`;
   }
-  if (ans.code && typeof ans.code === 'string' && ans.code.trim()) return ans.code;
+  if (ans.code && typeof ans.code === 'string' && ans.code.trim()) {
+    // prefilled starter code is not the student's answer — saveCurrent copies
+    // the editor even when untouched
+    const starter = q.starterCode || q.starter || '';
+    if (starter && ans.code.trim() === String(starter).trim()) return '';
+    return ans.code;
+  }
   // table-type answers (trace-table, truth-table): rows/outputs snapshots
   if (Array.isArray(ans.rows) && ans.rows.length) {
-    try { return ans.rows.map(r => Array.isArray(r) ? r.join(' | ') : String(r)).join('\n'); } catch {}
+    try {
+      // a cleared table leaves one empty row of bare separators — not an answer
+      const meaningful = ans.rows.filter(r => Array.isArray(r) ? r.some(c => String(c || '').trim()) : String(r || '').trim());
+      if (!meaningful.length) return '';
+      return meaningful.map(r => Array.isArray(r) ? r.join(' | ') : String(r)).join('\n');
+    } catch {}
   }
   if (ans.outputs && typeof ans.outputs === 'object') {
-    try { return Object.entries(ans.outputs).map(([k, v]) => `${k}: ${v}`).join('\n'); } catch {}
+    try {
+      const entries = Object.entries(ans.outputs).filter(([, v]) => v != null && v !== '');
+      if (!entries.length) return '';
+      // truth tables pair each output with its input column name when the
+      // question carries column definitions — fall back to sorted keys
+      const cols = (q.table && q.table.columns) || q.columns || null;
+      return entries.sort((a, b) => String(a[0]).localeCompare(String(b[0]), undefined, { numeric: true }))
+        .map(([k, v]) => {
+          const label = cols && cols[k] != null ? (cols[k].label || cols[k].name || k) : k;
+          return `${label}: ${v}`;
+        }).join('\n');
+    } catch {}
   }
   return ans.text || ans.proofText || ans.targetVal || ans.expected
     || (ans.finalValue != null ? String(ans.finalValue) : '') || '';
@@ -71,7 +93,7 @@ export function reviewWalkHtml(questions, answers) {
         </summary>
         <div style="margin-top:10px; display:grid; gap:8px;">
           <div style="font-size:13px; opacity:.9;">${esc(q.prompt || '').replace(/\$([^$]+)\$/g, '$1')}</div>
-          ${mine ? `<div style="font-size:13px;"><span class="mono" style="font-size:11px; color:var(--ink-muted);">YOUR ANSWER</span><div style="margin-top:2px;">${esc(mine)}</div></div>` : '<div class="mono" style="font-size:11.5px; color:var(--ink-muted);">unattempted</div>'}
+          ${mine ? `<div style="font-size:13px;"><span class="mono" style="font-size:11px; color:var(--ink-muted);">YOUR ANSWER</span><div style="margin-top:2px; white-space:pre-wrap; font-family:inherit;">${esc(mine)}</div></div>` : '<div class="mono" style="font-size:11.5px; color:var(--ink-muted);">unattempted</div>'}
           ${scheme ? `<div><span class="mono" style="font-size:11px; color:var(--ink-muted);">MARK SCHEME</span>${scheme}</div>` : ''}
           ${fb}
         </div>
