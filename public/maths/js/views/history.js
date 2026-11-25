@@ -209,7 +209,7 @@ function wireDrilldown() {
             <strong style="font-size:15px;">${esc(a.quizTitle || 'Assessment')}</strong>
             ${(a.flashcard || a.type === 'flashcards') ? '<span class="pill">Flashcards</span>' : a.exam ? '<span class="pill red">Exam</span>' : '<span class="pill">Quiz</span>'}
           </div>
-          <div class="mono" style="font-size:12px; color:var(--ink-muted);">${fmtDate(a.date)}${a.minutes != null ? ' · ' + a.minutes + 'm' : ''}${a.breakdown?.coding ? ' · coding ' + a.breakdown.coding.got + '/' + a.breakdown.coding.total : ''}</div>
+          <div class="mono" style="font-size:12px; color:var(--ink-muted);">${fmtDate(a.date)}${a.minutes != null ? ' · ' + a.minutes + 'm' : ''}${a.breakdown?.coding ? ' · coding ' + (+a.breakdown.coding.got || 0) + '/' + (+a.breakdown.coding.total || 0) : ''}</div>
           ${rfile ? `<button class="btn-ghost mono" style="font-size:11px; margin-top:4px;" data-retry-group="${esc(rfile.group)}" data-retry-file="${esc(rfile.file)}" data-retry-practice="${rfile.practice ? 1 : 0}">↻ retry</button>` : ''}
           <div class="attempt-detail" style="margin-top:10px;"></div>
         </div>
