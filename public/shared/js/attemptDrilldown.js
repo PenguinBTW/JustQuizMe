@@ -8,8 +8,11 @@ const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g,
 export function filterAttempts(entries, { topic, mode, from, to, search } = {}) {
   return (entries || []).filter(e => {
     if (!e || typeof e !== 'object') return false;
-    if (mode === 'exam' && !e.exam) return false;
-    if (mode === 'quiz' && e.exam) return false;
+    const fc = !!(e.flashcard || e.type === 'flashcards');
+    if (mode === 'exam' && (!e.exam || fc)) return false;
+    if (mode === 'quiz' && (e.exam || fc)) return false;
+    if (mode === 'flashcards' && !fc) return false;
+    if (!mode && false) return false;
     if (mode === 'flashcards' && !(e.flashcard || e.type === 'flashcards')) return false;
     if (topic) {
       const topics = entryTopics(e);
