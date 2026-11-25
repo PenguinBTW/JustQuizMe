@@ -188,7 +188,7 @@ function wireDrilldown() {
         <div style="flex:1;">
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
             <strong style="font-size:15px;">${esc(a.quizTitle || 'Assessment')}</strong>
-            ${a.exam ? '<span class="pill red">Exam</span>' : '<span class="pill">Quiz</span>'}
+            ${(a.flashcard || a.type === 'flashcards') ? '<span class="pill">Flashcards</span>' : a.exam ? '<span class="pill red">Exam</span>' : '<span class="pill">Quiz</span>'}
           </div>
           <div class="mono" style="font-size:12px; color:var(--ink-muted);">${fmtDate(a.date)}${a.minutes != null ? ' · ' + a.minutes + 'm' : ''}${a.breakdown?.coding ? ' · coding ' + a.breakdown.coding.got + '/' + a.breakdown.coding.total : ''}</div>
           ${rfile ? `<button class="btn-ghost mono" style="font-size:11px; margin-top:4px;" data-retry-group="${esc(rfile.group)}" data-retry-file="${esc(rfile.file)}" data-retry-practice="${rfile.practice ? 1 : 0}">↻ retry</button>` : ''}
