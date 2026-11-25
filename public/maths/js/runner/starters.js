@@ -235,12 +235,19 @@ export function startMockSeries({ breakMinutes = 10 } = {}) {
   // a series checkpoint shares the single save slot with ordinary quizzes —
   // preserve any in-progress save inside the series so it can be restored
   // when the series completes; warn before displacing it.
+  const priorSeries = S.save && S.save.seriesContinuation ? (S.save.series || null) : null;
+  const inherited = priorSeries && priorSeries.displacedSave ? priorSeries.displacedSave : null;
   if (S.save && !S.save.seriesContinuation) {
     const t = (S.save && S.save.title) || 'untitled session';
-    if (!confirm('Starting this mock series will pause your saved session "' + t + '" — it is restored automatically when the series finishes. Continue?')) return;
+    // a displaced TIMED exam's deadline honestly keeps running while the series
+    // is sat — the student must know before they trade their remaining time
+    const clockNote = (S.save.exam && S.save.timeLimitMinutes) ? ' Its exam clock keeps running while you sit the series.' : '';
+    if (!confirm('Starting this mock series will pause your saved session "' + t + '" — it is restored automatically when the series finishes.' + clockNote + ' Continue?')) return;
   }
   const series = createSeries(papers, { breakMinutes });
-  series.displacedSave = (S.save && !S.save.seriesContinuation) ? JSON.parse(JSON.stringify(S.save)) : null;
+  // a replacement series inherits the displaced quiz from the checkpoint it
+  // replaces — otherwise the paused session is lost without warning
+  series.displacedSave = (S.save && !S.save.seriesContinuation) ? JSON.parse(JSON.stringify(S.save)) : (inherited ? JSON.parse(JSON.stringify(inherited)) : null);
   series._sets = sets;
   S.series = series;
   beginSeriesPaper();
