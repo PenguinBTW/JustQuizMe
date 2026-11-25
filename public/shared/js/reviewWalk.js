@@ -31,10 +31,12 @@ function answerText(q, ans) {
   // table-type answers (trace-table, truth-table): rows/outputs snapshots
   if (Array.isArray(ans.rows) && ans.rows.length) {
     try {
-      // a cleared table leaves one empty row of bare separators — not an answer
-      const meaningful = ans.rows.filter(r => Array.isArray(r) ? r.some(c => String(c || '').trim()) : String(r || '').trim());
-      if (!meaningful.length) return '';
-      return meaningful.map(r => Array.isArray(r) ? r.join(' | ') : String(r)).join('\n');
+      // keep original row positions — grading evaluates rows by index, so
+      // dropping blank rows would shift answers onto the wrong rows here.
+      // a fully blank table (e.g. cleared) is unattempted.
+      const anyContent = ans.rows.some(r => Array.isArray(r) ? r.some(c => String(c || '').trim()) : String(r || '').trim());
+      if (!anyContent) return '';
+      return ans.rows.map(r => Array.isArray(r) ? r.join(' | ') : String(r)).join('\n');
     } catch {}
   }
   if (ans.outputs && typeof ans.outputs === 'object') {

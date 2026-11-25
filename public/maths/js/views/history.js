@@ -173,11 +173,24 @@ function currentEntries() {
   // flashcard sessions are their own mode — include them regardless of tab
   const fc = (Array.isArray(S.scores) ? S.scores : []).filter(x => x && (x.flashcard || x.type === 'flashcards'));
   const seen = new Set(base.map(x => x && x.date + '|' + x.quizUuid));
-  return base.concat(fc.filter(x => !seen.has(x.date + '|' + x.quizUuid)));
+  const merged = base.concat(fc.filter(x => !seen.has(x.date + '|' + x.quizUuid)));
+  // honest ordering: newest-first by date, not append order
+  return merged.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+}
+
+function retryableFile(a) {
+  // 'mixed'/generated assessments have no real bank file — retry would 404
+  const f = a && a.quizFile;
+  if (!f || f === 'mixed') return null;
+  const normal = (S.quizzes && S.quizzes.normal) || [];
+  const pp = (S.quizzes && S.quizzes['past-paper']) || [];
+  if (normal.some(m => m.file === f)) return { group: 'normal', file: f, practice: false };
+  if (pp.some(m => m.file === f)) return { group: 'past-paper', file: f, practice: true };
+  return null;
 }
 
 function wireDrilldown() {
-  const entries = currentEntries().slice().reverse(); // newest-first, matches display
+  const entries = currentEntries();
   const apply = () => {
     const topic = (document.getElementById('histTopic') || {}).value || '';
     const mode = (document.getElementById('histMode') || {}).value || '';
@@ -187,7 +200,9 @@ function wireDrilldown() {
     const filtered = filterAttempts(entries, { topic, mode, search, from, to });
     const host = document.getElementById('histList');
     if (!host) return;
-    host.innerHTML = filtered.map((a, i) => `
+    host.innerHTML = filtered.map((a, i) => {
+      const rfile = retryableFile(a);
+      return `
       <div class="history-entry" data-attempt="${i}" style="cursor:pointer;" tabindex="0" role="button" aria-expanded="false">
         <div style="flex:1;">
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
@@ -195,23 +210,35 @@ function wireDrilldown() {
             ${a.exam ? '<span class="pill red">Exam</span>' : '<span class="pill">Quiz</span>'}
           </div>
           <div class="mono" style="font-size:12px; color:var(--ink-muted);">${fmtDate(a.date)}${a.minutes != null ? ' · ' + a.minutes + 'm' : ''}${a.breakdown?.coding ? ' · coding ' + a.breakdown.coding.got + '/' + a.breakdown.coding.total : ''}</div>
-          ${a.quizFile ? `<button class="btn-ghost mono" style="font-size:11px; margin-top:4px;" data-retry-entry="${a.quizUuid}|${a.quizFile}" onclick="event.stopPropagation()">↻ retry</button>` : ''}
+          ${rfile ? `<button class="btn-ghost mono" style="font-size:11px; margin-top:4px;" data-retry-group="${esc(rfile.group)}" data-retry-file="${esc(rfile.file)}" data-retry-practice="${rfile.practice ? 1 : 0}">↻ retry</button>` : ''}
           <div class="attempt-detail" style="margin-top:10px;"></div>
         </div>
         <div class="mono" style="font-size:18px; font-weight:700; color:var(--accent); white-space:nowrap;">
           ${a.score} / ${a.total} <span style="font-size:13px; color:var(--ink-muted);">(${Math.round(a.score / (a.total || 1) * 100)}%)</span>
         </div>
-      </div>`).join('') || '<p class="mono" style="color:var(--ink-muted); padding:20px 0;">No attempts match these filters.</p>';
+      </div>`;
+    }).join('') || '<p class="mono" style="color:var(--ink-muted); padding:20px 0;">No attempts match these filters.</p>';
     host.querySelectorAll('[data-attempt]').forEach(el => {
       el.addEventListener('keydown', ev => {
+        // Enter/Space on an inner control (retry) belongs to that control
+        if (ev.target !== el) return;
         if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); el.click(); }
       });
-      el.addEventListener('click', () => {
+      el.addEventListener('click', ev => {
+        if (ev.target.closest('button')) return; // retry handles itself
         const detail = el.querySelector('.attempt-detail');
         if (!detail) return;
-        if (detail.innerHTML) { detail.innerHTML = ''; return; }
+        if (detail.innerHTML) { detail.innerHTML = ''; el.setAttribute('aria-expanded', 'false'); return; }
         const e = filtered[+el.dataset.attempt];
         detail.innerHTML = drilldownHtml(e) + compareHtml(compareAttempts(entries, e.quizUuid, e.date));
+        el.setAttribute('aria-expanded', 'true');
+      });
+    });
+    // retry bindings are re-attached after every re-render (filters replace rows)
+    host.querySelectorAll('[data-retry-file]').forEach(b => {
+      b.addEventListener('click', ev => {
+        ev.stopPropagation();
+        beginFileQuiz(b.dataset.retryGroup, b.dataset.retryFile, b.dataset.retryPractice === '1');
       });
     });
   };
