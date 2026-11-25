@@ -9,7 +9,9 @@
   "Fields",
   "Materials",
   "Electricity",
-  "Further mechanics"
+  "Further mechanics",
+  "Particle Physics",
+  "Thermal physics"
  ],
  "questions": [
   {
@@ -266,6 +268,109 @@
     "Slower: friction acts up the slope preventing the vehicle sliding inward",
     "Design depends on radius and speed only \u2014 mass cancels, so all vehicles share the same design speed",
     "Real design includes a friction margin, so the banking angle is a compromise across conditions"
+   ]
+  },
+  {
+   "id": "er6",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Particle Physics",
+   "subtopic": "Wave-Particle Duality",
+   "prompt": "Describe the experimental evidence that electrons exhibit both particle-like and wave-like behaviour, and discuss how the concept of wave-particle duality changed the physicist's model of matter.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: coherent structured account of diffraction evidence and particle interactions, with sustained discussion of the de broglie model and its consequences.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: correctly describes evidence for both behaviours with linked interpretations.",
+     "ao2": "Applies the concepts to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: names an experiment without correct interpretation.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "Electron diffraction: electrons accelerated through thin graphite (or across a crystal lattice) produce ring interference patterns \u2014 a wave phenomenon, with spacing matching de Broglie \u03bb = h/p",
+    "Particle behaviour: electrons arrive at detectors as individual localized impacts, are deflected in fields as discrete charges, and ionize atoms one event at a time",
+    "de Broglie hypothesis: all matter has an associated wavelength \u03bb = h/mv, confirmed quantitatively by diffraction experiments",
+    "Which behaviour is observed depends on the experiment \u2014 the two descriptions are complementary rather than contradictory",
+    "Consequences: quantization in atoms explained by standing-wave boundary conditions; led to electron microscopy exploiting small electron wavelengths for resolution beyond optical limits",
+    "The classical particle picture of matter as tiny billiard balls was replaced by a probabilistic quantum description"
+   ]
+  },
+  {
+   "id": "er7",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Thermal physics",
+   "subtopic": "First Law Applications",
+   "prompt": "A gas in a cylinder is compressed rapidly by a piston and then left to return to thermal equilibrium with its surroundings. Using the first law of thermodynamics, explain the energy transfers at each stage, and discuss why the rapidity of the compression matters.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: full analysis distinguishing adiabatic compression from equilibrium cooling, with sustained explanation of why compression rate determines heat transfer during the stroke.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: correctly applies \u03b4u = q + w to the stages with signs addressed.",
+     "ao2": "Applies the concepts to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: states the first law without correct application.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "First law: \u0394U = Q + W \u2014 work done ON the gas is positive W, heat transferred TO the gas is positive Q",
+    "Rapid compression: too fast for significant heat flow, approximately adiabatic \u2014 work input raises internal energy, so temperature rises",
+    "For an ideal gas internal energy depends only on temperature \u2014 the temperature rise measures the work transferred",
+    "After the stroke the hotter gas is out of equilibrium: heat flows out to the surroundings until temperatures equalize, with no further volume change so no further work",
+    "Slow (quasi-static) compression instead would approximate isothermal conditions \u2014 heat escapes during the stroke and far less temperature rise occurs",
+    "Practical relevance: diesel engines exploit near-adiabatic compression heating to ignite fuel; bicycle pumps warming is the same effect",
+    "Overall energy conserved: the work input ultimately leaves as heat to the surroundings"
    ]
   }
  ]

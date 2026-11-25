@@ -482,6 +482,112 @@
     "Ossification: middleboxes now assume TCP/IPv4, impeding deployment of alternatives \u2014 layering succeeded so well it froze",
     "Conclusion: layering is the architectural enabler, but the statement understates the co-evolution of key protocols"
    ]
+  },
+  {
+   "id": "er10",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "Encryption & State Access",
+   "prompt": "Some governments argue that encryption services should provide mechanisms for lawful access to plaintext when required by a court order. Discuss the technical and ethical arguments for and against building such access mechanisms into widely used encryption systems.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive accurate knowledge of end-to-end encryption, key escrow, attack surface expansion, and proportionality principles.",
+     "ao2": "Detailed sustained application: exceptional-access mathematics, historical examples, jurisdictional issues, target-vs-mass implications.",
+     "ao3": "Balanced nuanced evaluation weighing legitimate law-enforcement needs against systemic security weakening, reaching a substantiated conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of encryption, key management and the privacy-security tension.",
+     "ao2": "Applies arguments to lawful-access proposals with mostly clear reasoning.",
+     "ao3": "Evaluation present though imbalanced."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Isolated opinions about privacy or security.",
+     "ao2": "Barely linked to the scenario.",
+     "ao3": "One-sided assertion."
+    }
+   ],
+   "indicativeContent": [
+    "Any exceptional-access mechanism is itself an attack surface \u2014 a master key or escrowed key becomes a high-value target",
+    "End-to-end encryption means the provider holds no plaintext: lawful access requires redesigning the architecture, not just policy",
+    "The mathematics of cryptography does not distinguish good actors from bad \u2014 a weakness usable by one state is usable by others and by criminals",
+    "Historical precedent: key-escrow proposals (e.g. the 1990s Clipper chip) failed on both security and trust grounds",
+    "Legitimate needs: terrorism and child-protection investigations are real and serious \u2014 the argument is about means, not whether crime matters",
+    "Jurisdictional problem: a mechanism built for one country's courts is demanded by all jurisdictions including authoritarian ones",
+    "Proportionality alternative: targeted measures (device exploitation of specific suspects) preserve strong encryption for everyone else",
+    "Conclusion candidates: most experts judge systemic risk outweighs benefit, but students may argue calibrated compromises"
+   ]
+  },
+  {
+   "id": "er11",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Data Types & Structures",
+   "subtopic": "Compression Trade-offs",
+   "prompt": "A streaming service must choose compression approaches for its music and video catalogues. Evaluate the trade-offs between lossless and lossy compression for different media types and use cases, and recommend an approach for the service with justification.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive knowledge: entropy limits, psychoacoustic/visual models, bitrate ladders, archive-vs-distribution distinction.",
+     "ao2": "Detailed application: bandwidth adaptation, mobile data constraints, archival masters, codec generation loss.",
+     "ao3": "Balanced evaluation across use cases with a differentiated recommendation rather than a single answer, well substantiated."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of compression ratios, perceptual coding and reconstruction fidelity.",
+     "ao2": "Applies trade-offs to music and video streaming with reasonable clarity.",
+     "ao3": "Evaluation present but uneven."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Knows lossless and lossy differ.",
+     "ao2": "Generic statements.",
+     "ao3": "One-sided preference."
+    }
+   ],
+   "indicativeContent": [
+    "Lossless preserves every bit \u2014 essential for archival masters and editing pipelines where generation loss compounds",
+    "Lossy exploits perceptual models: psychoacoustics discards masked frequencies in audio; visual codecs exploit spatial/temporal redundancy",
+    "Compression ratios: lossy achieves orders of magnitude smaller files \u2014 critical at streaming scale and mobile bandwidth",
+    "Perceptual transparency: at sufficient bitrates most listeners cannot distinguish lossy from the source in controlled tests",
+    "Use-case differentiation: distribution favours lossy; production/archive demands lossless; download purchases may justify lossless tiers",
+    "Bitrate ladders: adaptive streaming serves multiple lossy encodings matched to connection quality in real time",
+    "Transcoding warning: re-encoding lossy content degrades quality further \u2014 masters must be lossless",
+    "Reasoned conclusion: hybrid \u2014 lossless archives, lossy distribution, tiered by context"
+   ]
   }
  ]
 }

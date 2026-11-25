@@ -8,7 +8,8 @@
   "Algebra, Polynomials & Proof",
   "Probability & Hypothesis Testing",
   "Kinematics & Projectiles",
-  "Numerical Methods"
+  "Numerical Methods",
+  "Integration"
  ],
  "questions": [
   {
@@ -213,6 +214,58 @@
     "Bracketing methods such as bisection converge slowly but cannot oscillate \u2014 robust when behaviour is unknown",
     "Newton\u2013Raphson converges quadratically near a root when f\u2032 is well-behaved \u2014 speed in exchange for fragility",
     "Practical solvers combine methods: bracketing for safety, Newton\u2013Raphson for polish"
+   ]
+  },
+  {
+   "id": "er5",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Integration",
+   "subtopic": "Technique Selection & Justification",
+   "prompt": "A student must evaluate \u222b x ln x dx, \u222b sin\u00b2x dx, and \u222b x/(x\u00b2+1) dx. For each integral, explain which technique you would choose and why, and discuss what features of an integrand signal the appropriate method \u2014 illustrating how wrong choices reveal themselves.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: all three correctly matched with precise structural justification (product of unlike types, power reduction, reverse chain rule) plus sustained discussion of recognition strategy.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: correct technique chosen for most integrals with feature-based reasoning.",
+     "ao2": "Applies the concepts to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: names a technique without linking it to integrand features.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "\u222b x ln x dx: integration by parts \u2014 ln x differentiates to 1/x simplifying away, while x integrates easily (LIATE-type heuristic: choose u = ln x)",
+    "\u222b sin\u00b2x dx: no product structure \u2014 use the double-angle identity cos 2x = 1 \u2212 2sin\u00b2x to linearize, then integrate directly",
+    "\u222b x/(x\u00b2+1) dx: numerator is a scalar multiple of the derivative of the denominator \u2014 reverse chain rule / recognition gives \u00bdln(x\u00b2+1) + c",
+    "Recognition strategy: ask what structure is present \u2014 product of unlike types suggests parts; composite with inner derivative present suggests substitution; even powers of trig suggest identities",
+    "Wrong choices reveal themselves: parts on sin\u00b2x cycles back to the original integral; substitution without the derivative present leaves a mixture of variables",
+    "Definite-check habit: differentiate the answer to verify \u2014 the strongest guard against misapplied technique",
+    "Fluency is pattern-recognition built from structural analysis, not memorised type-matching"
    ]
   }
  ]
