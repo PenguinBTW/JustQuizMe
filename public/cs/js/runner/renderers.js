@@ -681,14 +681,17 @@ export function wireQuestionInteractions(q) {
       renderQ();
     });
     document.querySelectorAll('[data-level-idx]').forEach(el => {
-      el.onclick = (e) => {
+      const activate = (e) => {
         if (e.target.tagName === 'INPUT') return;
         const lvlNum = +el.dataset.levelIdx;
         ans.selectedLevel = lvlNum;
         const matchedLvl = (q.levels || []).find(l => l.level === lvlNum);
         if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[0]);
         renderQ();
+        document.querySelector(`[data-level-idx="${lvlNum}"]`)?.focus();
       };
+      el.onclick = activate;
+      el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(e); } };
     });
     const slider = $('#levelMarkSlider');
     if (slider) {
@@ -701,13 +704,16 @@ export function wireQuestionInteractions(q) {
       };
     }
     document.querySelectorAll('[data-indicative-idx]').forEach(el => {
-      el.onclick = () => {
+      const toggle = () => {
         const pIdx = +el.dataset.indicativeIdx;
         ans.tickedIndicative ||= [];
         if (ans.tickedIndicative.includes(pIdx)) ans.tickedIndicative = ans.tickedIndicative.filter(i => i !== pIdx);
         else ans.tickedIndicative.push(pIdx);
         renderQ();
+        document.querySelector(`[data-indicative-idx="${pIdx}"]`)?.focus();
       };
+      el.onclick = toggle;
+      el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } };
     });
   }
 

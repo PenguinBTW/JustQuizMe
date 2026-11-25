@@ -6,7 +6,9 @@
  "specCode": "OCR H240",
  "topics": [
   "Algebra, Polynomials & Proof",
-  "Probability & Hypothesis Testing"
+  "Probability & Hypothesis Testing",
+  "Kinematics & Projectiles",
+  "Numerical Methods"
  ],
  "questions": [
   {
@@ -109,6 +111,108 @@
     "Sample size and variance considerations; possible confounders (motivation, selection)",
     "Multiple-comparison and replication concerns honestly raised",
     "Reasoned recommendation distinguishing evidence strength from decision factors"
+   ]
+  },
+  {
+   "id": "er3",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Kinematics & Projectiles",
+   "subtopic": "Modelling Assumptions Evaluation",
+   "prompt": "A student models a basketball free throw as a projectile moving under gravity alone. Discuss the assumptions built into this model, evaluate which are most questionable for a basketball, and explain how refining the model would change the predicted motion.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: systematic treatment prioritising air resistance with correct qualitative refinements.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: identifies several standard assumptions with sound evaluation of at least one.",
+     "ao2": "Applies the physics to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: lists an assumption without analysis.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "Standard assumptions: projectile is a particle, gravity constant, no air resistance, no wind, no spin effects",
+    "Basketball is light with large cross-section \u2014 air resistance is significant relative to its weight, the most questionable assumption",
+    "Drag reduces range and maximum height; the optimal launch angle drops below 45\u00b0",
+    "Constant g is excellent over a few metres; the particle assumption ignores spin but the Magnus effect is small for a gentle free throw",
+    "Refinement cost: drag models destroy closed-form solutions, requiring numerical methods \u2014 accuracy bought with complexity"
+   ]
+  },
+  {
+   "id": "er4",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Numerical Methods",
+   "subtopic": "Method Failure Analysis",
+   "prompt": "A student uses the Newton\u2013Raphson method to solve x\u00b3 \u2212 2x + 2 = 0, starting from x\u2080 = 0. The iteration fails to converge. Analyse why numerical root-finding methods can fail, using this example and others, and evaluate strategies for choosing methods and starting values that make failure less likely.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: precise analysis of failure mechanisms with evaluation of mitigation strategies.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: identifies genuine failure modes with correct reference to the example.",
+     "ao2": "Applies the physics to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: states failure can happen without mathematical reasons.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "x\u2080 = 0 gives x\u2081 = 1 then x\u2082 = 0 \u2014 the iteration oscillates in a cycle rather than converging (Newton\u2013Raphson can be periodic)",
+    "Failure mechanisms: f\u2032(x\u2099) \u2248 0 sends x\u2099\u208a\u2081 far away; cycles; divergence to infinity; convergence to an unintended root",
+    "For x\u00b3 \u2212 2x + 2 the derivative vanishes at x = \u00b1\u221a(2/3), creating a region where iterates behave erratically",
+    "Mitigation: sketch or evaluate f first \u2014 a sign change over [a, b] guarantees a root exists there",
+    "Bracketing methods such as bisection converge slowly but cannot oscillate \u2014 robust when behaviour is unknown",
+    "Newton\u2013Raphson converges quadratically near a root when f\u2032 is well-behaved \u2014 speed in exchange for fragility",
+    "Practical solvers combine methods: bracketing for safety, Newton\u2013Raphson for polish"
    ]
   }
  ]

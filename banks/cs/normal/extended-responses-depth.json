@@ -10,7 +10,8 @@
   "Software & Development",
   "Data Types & Structures",
   "Exchanging Data",
-  "Computational Thinking"
+  "Computational Thinking",
+  "Programming Techniques"
  ],
  "questions": [
   {
@@ -323,6 +324,163 @@
     "Decomposition into route representation, cost evaluation, improvement steps",
     "Evaluation: whether 'good enough' routes suffice commercially versus guaranteed-optimal cost",
     "Reasoned conclusion about acceptable approximation in practice"
+   ]
+  },
+  {
+   "id": "er7",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "AI & Algorithmic Decision-Making",
+   "prompt": "A hospital trust proposes triaging A&E patients using a machine-learning model trained on five years of historical admissions data. Discuss the ethical, legal and technical issues raised by deploying algorithmic decision-making in this context, and evaluate whether the benefits justify the risks.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive, accurate knowledge of training-data bias, concept drift, accountability, GDPR/DPA 2018 principles and human-in-the-loop design.",
+     "ao2": "Detailed, sustained application: historical admissions encode demographic bias, model errors have asymmetric costs, clinician override workflows.",
+     "ao3": "Balanced, nuanced evaluation weighing efficiency and consistency gains against fairness, accountability and automation-bias risks, reaching a substantiated conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Some accurate knowledge of training data, bias sources and data protection principles.",
+     "ao2": "Applies concepts to the triage scenario with mostly clear reasoning.",
+     "ao3": "Some evaluation present though imbalanced."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Isolated references to bias or privacy with little technical vocabulary.",
+     "ao2": "Little application to the hospital scenario.",
+     "ao3": "One-sided assertion."
+    }
+   ],
+   "indicativeContent": [
+    "Training data reflects historical practice: if past triage disadvantaged groups, the model inherits and amplifies that bias",
+    "Correlation vs causation \u2014 the model may proxy protected characteristics (postcode, language) even if excluded",
+    "GDPR/DPA 2018 Article 22: right not to be subject to solely automated decisions with significant effect; lawful basis and DPIA required",
+    "Accountability: when a triage decision harms a patient, responsibility is diffuse across vendor, trust and clinician",
+    "Automation bias: staff may defer to the model even when clinical judgement disagrees",
+    "Benefits: consistency, speed, 24/7 uniformity, freeing clinician time \u2014 strongest when the model augments rather than replaces judgement",
+    "Concept drift: disease patterns and population change, degrading model accuracy without monitoring"
+   ]
+  },
+  {
+   "id": "er8",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Programming Techniques",
+   "subtopic": "Paradigms & OOP Evaluation",
+   "prompt": "A software house must rebuild a large legacy procedural codebase (a payroll and HR system) and is deciding between an object-oriented and a functional design. Evaluate the suitability of object-oriented programming for large-scale business systems such as this, compared with alternative paradigms.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive knowledge of OOP principles, composition vs inheritance, functional immutability and modular design tradeoffs.",
+     "ao2": "Detailed application: payroll rules as polymorphic strategies, employee lifecycle as object state, immutability aiding audit trails.",
+     "ao3": "Balanced evaluation of maintainability, testability, team scaling and real-world modelling against OOP's verbosity and inheritance fragility, with a substantiated recommendation."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of encapsulation, inheritance, polymorphism and at least one alternative paradigm.",
+     "ao2": "Applies paradigm features to the business-system context with reasonable clarity.",
+     "ao3": "Evaluation present but unevenly developed."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Isolated facts about classes or inheritance.",
+     "ao2": "Generic statements unapplied to payroll/HR.",
+     "ao3": "One-sided preference without justification."
+    }
+   ],
+   "indicativeContent": [
+    "OOP strengths: encapsulation protects payroll invariants; polymorphism handles varied employee types cleanly",
+    "Domain modelling: business entities (employee, payslip, department) map naturally onto objects with identity and lifecycle",
+    "Inheritance pitfalls: fragile base classes, deep hierarchies resisting change \u2014 composition often preferable",
+    "Functional alternative: immutable data eases audit trails and concurrency; pure functions simplify testing of payroll calculations",
+    "Team scaling: encapsulation boundaries let large teams work in parallel with stable interfaces",
+    "Testing: OOP statefulness complicates unit tests; functional cores are trivially testable \u2014 hybrid designs common",
+    "Pragmatic conclusion: most large systems blend paradigms \u2014 OO structure with functional cores for calculation-heavy logic"
+   ]
+  },
+  {
+   "id": "er9",
+   "type": "extended-response",
+   "marks": 12,
+   "topic": "Exchanging Data",
+   "subtopic": "Protocol Design & Layering",
+   "prompt": "'The layered design of network protocol stacks is more important to the success of the internet than any individual protocol.' Discuss this statement with reference to the TCP/IP model, considering how layering affects interoperability, evolution and fault isolation.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      9,
+      12
+     ],
+     "ao1": "Comprehensive, accurate knowledge of layer responsibilities, encapsulation, protocol data units and standardisation processes.",
+     "ao2": "Detailed, coherent application: layer substitution examples (WiFi vs Ethernet, IPv4 vs IPv6), application protocols evolving independently of transport.",
+     "ao3": "Critical, balanced evaluation weighing the statement against counter-arguments (TCP's centrality, ossification, middlebox interference), reaching a substantiated judgement."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      5,
+      8
+     ],
+     "ao1": "Sound knowledge of the TCP/IP layers and the role of encapsulation, with some development.",
+     "ao2": "Applies layering to interoperability or evolution with mostly clear reasoning.",
+     "ao3": "Evaluation present though incomplete or unbalanced."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      4
+     ],
+     "ao1": "Names some protocols or layers without structure.",
+     "ao2": "Barely linked to the statement.",
+     "ao3": "Agreement or disagreement asserted without support."
+    }
+   ],
+   "indicativeContent": [
+    "Layer responsibilities: link (framing, MAC), internet (addressing/routing), transport (end-to-end reliability), application (service semantics)",
+    "Interoperability: a browser works identically over Ethernet, WiFi or 5G because only the link layer changes",
+    "Independent evolution: HTTP/1.1 \u2192 2 \u2192 3 progressed without rewriting IP; TLS inserted without altering applications",
+    "Encapsulation: each layer adds headers, treating the layer above as opaque payload \u2014 the mechanism enabling substitution",
+    "Fault isolation: layer boundaries localise failures \u2014 a cable fault is a link issue, congestion a transport concern",
+    "Counter-argument: the end-to-end reliability of TCP and universal addressing of IP are themselves pivotal achievements",
+    "Ossification: middleboxes now assume TCP/IPv4, impeding deployment of alternatives \u2014 layering succeeded so well it froze",
+    "Conclusion: layering is the architectural enabler, but the statement understates the co-evolution of key protocols"
    ]
   }
  ]

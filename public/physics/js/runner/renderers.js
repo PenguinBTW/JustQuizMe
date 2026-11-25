@@ -498,6 +498,7 @@ export function wireExtendedResponse(q) {
       const matchedLvl = (q.levels || []).find(l => l.level === lvlNum);
       if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[0]);
       renderQ();
+      document.querySelector(`[data-level-idx="${lvlNum}"]`)?.focus();
     };
     el.onclick = activate;
     el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(e); } };
@@ -519,6 +520,7 @@ export function wireExtendedResponse(q) {
       const pos = ans.tickedIndicative.indexOf(idx);
       if (pos >= 0) ans.tickedIndicative.splice(pos, 1); else ans.tickedIndicative.push(idx);
       renderQ();
+      document.querySelector(`[data-indicative-idx="${idx}"]`)?.focus();
     };
     el.onclick = toggle;
     el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } };

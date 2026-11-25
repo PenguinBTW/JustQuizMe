@@ -103,13 +103,12 @@ export function reviewWalkHtml(questions, answers) {
     const picked = ans.selected != null ? ans.selected : ans.picked;
     const raw = q.type === 'multiple-choice' ? picked : answerText(q, ans);
     const fb = feedbackHtml(matchMistakes(q, raw), esc);
-    const scheme = (q.type === 'extended-response' && levelsHtml(q)) || (q.markScheme || []).length
-      ? `<ul style="margin:6px 0 0 18px; font-size:13px; line-height:1.5;">${q.markScheme.map(m => `<li>${esc(m.text)} <span class="mono" style="color:var(--ink-muted); font-size:11px;">[${esc(m.marks)}]</span></li>`).join('')}</ul>`
-      : q.type === 'multiple-choice' && q.options
-        ? `<div style="font-size:13px; margin-top:6px;">Correct: <strong>${'ABCDEF'[q.correctIndex] || ''}. ${esc(optText(q.options[q.correctIndex]))}</strong></div>`
-        : q.answer != null
-          ? `<div style="font-size:13px; margin-top:6px;">Answer: <strong>${esc(q.answer)}</strong></div>`
-          : '';
+    let scheme = '';
+    const lvHtml = q.type === 'extended-response' ? levelsHtml(q) : '';
+    if (lvHtml) scheme = lvHtml;
+    else if ((q.markScheme || []).length) scheme = `<ul style="margin:6px 0 0 18px; font-size:13px; line-height:1.5;">${q.markScheme.map(m => `<li>${esc(m.text)} <span class="mono" style="color:var(--ink-muted); font-size:11px;">[${esc(m.marks)}]</span></li>`).join('')}</ul>`;
+    else if (q.type === 'multiple-choice' && q.options) scheme = `<div style="font-size:13px; margin-top:6px;">Correct: <strong>${'ABCDEF'[q.correctIndex] || ''}. ${esc(optText(q.options[q.correctIndex]))}</strong></div>`;
+    else if (q.answer != null) scheme = `<div style="font-size:13px; margin-top:6px;">Answer: <strong>${esc(q.answer)}</strong></div>`;
     const mine = answerText(q, ans);
     return `
       <details class="rw-item" style="border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:8px;">

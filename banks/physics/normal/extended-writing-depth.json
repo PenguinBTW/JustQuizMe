@@ -7,7 +7,9 @@
  "topics": [
   "Nuclear physics",
   "Fields",
-  "Materials"
+  "Materials",
+  "Electricity",
+  "Further mechanics"
  ],
  "questions": [
   {
@@ -161,6 +163,109 @@
     "Toughness against shock loading; fatigue resistance over repeated cycles",
     "Ductility as a safety feature \u2014 visible stretching before failure rather than brittle snap",
     "Corrosion considerations in the marine environment honestly weighed"
+   ]
+  },
+  {
+   "id": "er4",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Electricity",
+   "subtopic": "Experimental Design & Evaluation",
+   "prompt": "A student plans an experiment to determine the resistivity of a nichrome wire using a micrometer, a metre rule, an ammeter and a voltmeter. Describe how the experiment should be carried out and evaluate how the design minimises the uncertainty in the final value of resistivity.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: logically structured method plus sustained evaluation of uncertainty reduction.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: coherent method with correct measurements and some treatment of uncertainty.",
+     "ao2": "Applies the physics to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: fragments of method with no uncertainty awareness.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "Measure diameter with the micrometer at several positions and orientations along the wire; average to reduce random error",
+    "Measure length with the metre rule; contact resistance at crocodile clips is a systematic concern",
+    "Record V and I for several lengths or use a rheostat for multiple pairs; plot R against L",
+    "Resistivity \u03c1 = RA/L: the gradient of the R\u2013L graph multiplied by cross-sectional area A = \u03c0d\u00b2/4",
+    "Graph-gradient technique reduces the impact of zero errors compared with single-point calculation",
+    "Keep current low/short-lived to avoid heating \u2014 resistance rises with temperature, biasing \u03c1",
+    "Percentage uncertainty dominated by diameter because it enters as d\u00b2"
+   ]
+  },
+  {
+   "id": "er5",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Further mechanics",
+   "subtopic": "Circular Motion Applications",
+   "prompt": "A civil engineer designs a banked curve for a motorway. Explain, with reference to the forces acting on a vehicle, how banking allows the curve to be taken without friction at a design speed, and evaluate what happens when vehicles travel significantly faster or slower than this speed.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: full analysis with tan \u03b8 = v\u00b2/(rg) and evaluation of off-design-speed behaviour.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: correctly resolves weight and normal reaction, identifying the horizontal component as centripetal.",
+     "ao2": "Applies the physics to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: mentions centripetal force without correct force analysis.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "On a banked track the normal reaction tilts toward the centre; its horizontal component supplies centripetal force",
+    "At design speed no friction is needed: N sin \u03b8 = mv\u00b2/r and N cos \u03b8 = mg, giving tan \u03b8 = v\u00b2/(rg)",
+    "Faster than design speed: friction acts down the slope adding centripetal force; insufficient friction means sliding outward",
+    "Slower: friction acts up the slope preventing the vehicle sliding inward",
+    "Design depends on radius and speed only \u2014 mass cancels, so all vehicles share the same design speed",
+    "Real design includes a friction margin, so the banking angle is a compromise across conditions"
    ]
   }
  ]
