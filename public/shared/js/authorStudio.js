@@ -317,6 +317,15 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       try {
         readForm(host.querySelector('#af-formhost'), q);
         const qErrs = validateQuestion(q);
+        // stale-band invalidation at commit time only, scoped to the edited
+        // question, and BEFORE the fold-in deep copy — invalidating after the
+        // copy left the bank version carrying the band the form just dropped.
+        if (q && q.type === 'calculation' && q.answer != null
+            && q.tolerance && typeof q.tolerance === 'object'
+            && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)
+            && !(q.answer >= q.tolerance.min && q.answer <= q.tolerance.max)) {
+          delete q.tolerance;
+        }
         const banked = bank.questions.findIndex(x => x.id === q.id);
         if (banked >= 0) {
           const cur = JSON.stringify(bank.questions[banked]);
@@ -329,22 +338,6 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
             return;
           }
           if (dirty) bank.questions[banked] = JSON.parse(JSON.stringify(q));
-        }
-        // stale-band invalidation belongs at commit time, not per keystroke:
-        // readForm fires while typing and an intermediate value outside the
-        // band must not destroy it — but a band that no longer brackets the
-        // committed answer is stale state the grader would enforce against
-        // the author's own answer. Dropped honestly here; the editable
-        // percentage tolerance takes over.
-        // invalidation applies ONLY to the question the author just edited —
-        // sweeping the whole bank would silently destroy pre-existing bands
-        // on questions nobody touched in this session
-        const qq = q;
-        if (qq && qq.type === 'calculation' && qq.answer != null
-            && qq.tolerance && typeof qq.tolerance === 'object'
-            && isFinite(qq.tolerance.min) && isFinite(qq.tolerance.max)
-            && !(qq.answer >= qq.tolerance.min && qq.answer <= qq.tolerance.max)) {
-          delete qq.tolerance;
         }
         bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       } catch {}
