@@ -125,11 +125,16 @@ export function evaluateTraceTable(q, ans) {
 
   expectedRows.forEach((expRow, rIdx) => {
     const userRow = userRows[rIdx] || [];
+    // a row the student never touched must not score for its blank-expected
+    // cells — leaving everything empty would otherwise earn free marks on
+    // rows whose correct output is blank. Engagement = any non-empty entry.
+    const rowEngaged = (userRow || []).some(c => String(c ?? '').trim() !== '');
     expRow.forEach((expCell, cIdx) => {
       totalExpectedCells++;
       const userCell = String(userRow[cIdx] ?? '').trim();
       const expectedCell = String(expCell ?? '').trim();
-      const isMatch = userCell.toLowerCase() === expectedCell.toLowerCase();
+      let isMatch = userCell.toLowerCase() === expectedCell.toLowerCase();
+      if (isMatch && expectedCell === '' && !rowEngaged) isMatch = false;
       cellStatus[`${rIdx}_${cIdx}`] = isMatch ? 'correct' : 'wrong';
       if (isMatch) correctCells++;
     });
