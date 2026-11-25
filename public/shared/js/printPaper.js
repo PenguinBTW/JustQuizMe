@@ -7,15 +7,42 @@ function esc(s) {
 }
 
 // bank content is authorable in-app — printed HTML must not carry script
-// execution into the print window. keeps formatting markup, drops active content.
+// execution into the print window. Regex scrubbing cannot keep up with HTML's
+// parsing rules (svg/math/nested tags/entity-encoded attrs), so sanitize by
+// DOM: parse, walk, and drop everything outside a formatting whitelist.
+const PRINT_SAFE_TAGS = new Set([
+  'b','i','em','strong','u','s','sub','sup','span','div','p','br','hr',
+  'ul','ol','li','table','thead','tbody','tr','td','th','caption',
+  'h1','h2','h3','h4','h5','h6','pre','code','blockquote','small','mark'
+]);
 export function sanitizeHtml(html) {
-  return String(html == null ? '' : html)
-    .replace(/<\s*script[^>]*>[\s\S]*?<\s*\/\s*script\s*>/gi, '')
-    .replace(/<\s*script[^>]*\/?\s*>/gi, '')
-    .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
-    .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
-    .replace(/\son\w+\s*=\s*[^\s>]+/gi, '')
-    .replace(/javascript\s*:/gi, '');
+  const str = String(html == null ? '' : html);
+  if (typeof DOMParser === 'undefined') {
+    // non-DOM context (tests): fail closed — strip every tag
+    return str.replace(/<[^>]*>/g, '');
+  }
+  const doc = new DOMParser().parseFromString(str, 'text/html');
+  const clean = (el) => {
+    for (const attr of [...el.attributes]) {
+      // class is presentation-only; every other attribute (src, href, style,
+      // event handlers, srcset, formaction...) is executable surface
+      if (attr.name !== 'class') el.removeAttribute(attr.name);
+    }
+    for (const child of [...el.childNodes]) {
+      if (child.nodeType !== 1) continue;
+      const tag = child.tagName.toLowerCase();
+      if (!PRINT_SAFE_TAGS.has(tag)) {
+        // unwrap: keep the text content, drop the element — then rescan,
+        // because the unwrapped children may themselves be unsafe
+        child.replaceWith(...[...child.childNodes]);
+        clean(el);
+        return;
+      }
+      clean(child);
+    }
+  };
+  clean(doc.body);
+  return doc.body.innerHTML;
 }
 
 function optText(opt) {
