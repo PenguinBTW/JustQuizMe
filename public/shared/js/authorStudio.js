@@ -285,6 +285,12 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       // deep copy — a shallow copy shares the options/markScheme arrays, so
       // later form edits would silently mutate the banked question
       const snap = JSON.parse(JSON.stringify(q));
+      if (snap.type === 'calculation' && snap.answer != null
+          && snap.tolerance && typeof snap.tolerance === 'object'
+          && isFinite(snap.tolerance.min) && isFinite(snap.tolerance.max)
+          && !(snap.answer >= snap.tolerance.min && snap.answer <= snap.tolerance.max)) {
+        delete snap.tolerance;
+      }
       if (idx >= 0) bank.questions[idx] = snap; else bank.questions.push(snap);
       bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       persistDraft();
