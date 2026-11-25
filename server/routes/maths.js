@@ -38,7 +38,7 @@ function createMathsRouter(quizService, saveService) {
 
   router.post('/save', (req, res) => {
     const b = req.body || {};
-    if (!b.quizUuid || typeof b.questionIndex !== 'number') {
+    if (!b.seriesContinuation && (!b.quizUuid || typeof b.questionIndex !== 'number')) {
       return res.status(400).json({ error: 'quizUuid and questionIndex required' });
     }
     const doc = saveService.setSave(b);
