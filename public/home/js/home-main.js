@@ -228,7 +228,7 @@ window.addEventListener('DOMContentLoaded', () => {
   strip.className = 'export-strip';
   strip.style.cssText = 'margin:10px 0; padding:10px 14px; border:1px solid var(--border); border-radius:8px; font-size:12.5px;';
   strip.innerHTML = '<strong>Export progress (CSV)</strong> ' + ['cs', 'maths', 'physics'].map(portal =>
-    `<span style="margin-left:10px;">${portal}: <a href="/api/${portal}/export/attempts.csv" download>attempts</a> · <a href="/api/${portal}/export/topics.csv" download>topics</a></span>`
+    `<span style="margin-left:10px;">${portal}: <a href="/api/${portal}/export/attempts.csv" download style="display:inline-block; padding:6px 4px; min-height:24px; box-sizing:border-box;">attempts</a> · <a href="/api/${portal}/export/topics.csv" download style="display:inline-block; padding:6px 4px; min-height:24px; box-sizing:border-box;">topics</a></span>`
   ).join('');
   hostEl.parentNode.insertBefore(strip, hostEl);
 })();
