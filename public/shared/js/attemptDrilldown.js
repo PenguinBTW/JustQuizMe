@@ -107,14 +107,30 @@ export function drilldownHtml(e) {
     </table>`;
 }
 
+// contentKeyOf(entry) — a cheap fingerprint of WHICH questions were asked.
+// Synthesized mocks can share a quizUuid across genuinely different papers;
+// comparing those as "retakes" would show meaningless deltas. Entries without
+// per-question records can't be fingerprinted — null, and such entries only
+// match other unfingerprinted entries (legacy behaviour, honestly degrading).
+function contentKeyOf(e) {
+  const pq = Array.isArray(e.perQuestion) ? e.perQuestion : null;
+  if (!pq || !pq.length) return null;
+  return pq.map(q => q && (q.id || q.key || q.prompt || '')).join('|');
+}
+
 // compareAttempts(entries, quizUuid) — same paper taken more than once:
 // per-topic deltas newest vs previous. Returns null when not comparable.
 export function compareAttempts(entries, quizUuid, anchorDate) {
-  const ref = (entries || []).find(e => e && e.quizUuid === quizUuid);
+  const anchor = anchorDate ? (entries || []).find(e => e && e.date === anchorDate) : null;
+  const ref = anchor || (entries || []).find(e => e && e.quizUuid === quizUuid);
   const refFile = ref && ref.quizFile;
-  // subtopic quizzes share the bank uuid — only same-file runs are true retakes
+  const refKey = ref ? contentKeyOf(ref) : null;
+  // subtopic quizzes share the bank uuid — only same-file runs are true
+  // retakes; and when question content is recorded, only runs whose actual
+  // paper content matches count (same uuid ≠ same questions for synth mocks)
   const runs = (entries || []).filter(e => e && e.quizUuid === quizUuid && e.quizUuid !== 'flashcards'
-    && (!refFile || !e.quizFile || e.quizFile === refFile))
+    && (!refFile || !e.quizFile || e.quizFile === refFile)
+    && (refKey == null || contentKeyOf(e) === refKey))
     .sort((a, b) => new Date(a.date) - new Date(b.date));
   if (runs.length < 2) return null;
   // anchor on the attempt being viewed when given (its date); otherwise latest
