@@ -7,9 +7,21 @@ import { reviewWalkHtml } from '../../../shared/js/reviewWalk.js';
 import { paperPrintDoc, markSchemePrintDoc, openPrintWindow } from '../../../shared/js/printPaper.js';
 import { recordPaperResult, recordBreak, seriesProgress, breakScreenHtml, seriesFinishHtml, fmtClock } from '../../../shared/js/mockSeries.js';
 import { beginSeriesPaper } from './starters.js';
+import { unmarkedEssays, renderEssayMarkingStage } from '../../../shared/js/postExamMarking.js';
 
 export async function finishQuiz(auto) {
   if (S._finishing) return;
+  // essays written blind during exams must be self-marked against the level
+  // descriptors BEFORE scoring — interpose the marking stage once per finish
+  if (!S._essaysMarked && unmarkedEssays((S.quiz && S.quiz.questions) || [], S.answers, ak).length) {
+    S._finishing = true;
+    clearInterval(S.timerId);
+    renderEssayMarkingStage({
+      questions: S.quiz.questions, answers: S.answers, ak,
+      onDone: () => { S._finishing = false; S._essaysMarked = true; finishQuiz(auto); }
+    });
+    return;
+  }
   S._finishing = true;
   clearInterval(S.timerId);
   // a suspended-then-woken tab must not record time past the deadline
