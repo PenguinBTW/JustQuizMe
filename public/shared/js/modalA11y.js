@@ -9,6 +9,15 @@ export function wireModalA11y(root = document) {
       if (card && !card.getAttribute('role')) {
         card.setAttribute('role', 'dialog');
         card.setAttribute('aria-modal', 'true');
+        // name the dialog from its visible heading so screen readers
+        // announce what opened — unnamed dialogs are just "dialog"
+        if (!card.hasAttribute('aria-label') && !card.hasAttribute('aria-labelledby')) {
+          const h = card.querySelector('h1, h2, h3');
+          if (h) {
+            if (!h.id) h.id = 'modalh-' + Math.random().toString(36).slice(2, 8);
+            card.setAttribute('aria-labelledby', h.id);
+          }
+        }
       }
     });
   };
