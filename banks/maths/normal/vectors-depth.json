@@ -1,0 +1,205 @@
+{
+  "uuid": "a41bb006-0006-4000-8000-000000000006",
+  "version": 1,
+  "title": "Vectors in Depth — Geometry, Lines & Applications",
+  "subject": "maths",
+  "specCode": "H240/01",
+  "topics": ["Coordinate Geometry & Vectors"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Vector operations",
+      "prompt": "Given $\\mathbf{a} = 3\\mathbf{i} - 2\\mathbf{j}$ and $\\mathbf{b} = -\\mathbf{i} + 5\\mathbf{j}$, what is $2\\mathbf{a} - \\mathbf{b}$?",
+      "options": [
+        "$7\\mathbf{i} - 9\\mathbf{j}$",
+        "$5\\mathbf{i} - 9\\mathbf{j}$",
+        "$7\\mathbf{i} + \\mathbf{j}$",
+        "$5\\mathbf{i} + \\mathbf{j}$"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — $2\\mathbf{a} = 6\\mathbf{i} - 4\\mathbf{j}$; subtracting $\\mathbf{b}$: $6-(-1) = 7$ and $-4 - 5 = -9$.",
+      "feedbackWrong": "Subtracting a negative x-component: $6 - (-1) = 7$, and $-4 - 5 = -9$ — so $7\\mathbf{i} - 9\\mathbf{j}$.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Subtracts the negative x-component as if adding a negative — sign error.",
+          "correction": "$2\\mathbf{a} - \\mathbf{b}$ means $6 - (-1)$ for the i-component: subtracting a negative ADDS."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Dot product angle",
+      "prompt": "Vectors $\\mathbf{a} = \\mathbf{i} + 2\\mathbf{j}$ and $\\mathbf{b} = 3\\mathbf{i} - \\mathbf{j}$. Compute the dot product $\\mathbf{a} \\cdot \\mathbf{b}$.",
+      "answer": 1,
+      "tolerance": { "min": 0.9, "max": 1.1 },
+      "stepChecks": [
+        { "label": "$(1)(3) + (2)(-1)$", "marks": 1 },
+        { "label": "$= 3 - 2$", "marks": 1 },
+        { "label": "$= 1$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Straight-line vector equation",
+      "prompt": "Explain the meaning of each part of the vector equation of a line $\\mathbf{r} = \\mathbf{a} + t\\mathbf{d}$, and describe how you would find where two such lines intersect.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "$\\mathbf{a}$ is the position vector of a fixed point ON the line.",
+          "highlights": ["fixed point"]
+        },
+        {
+          "marks": 1,
+          "text": "$\\mathbf{d}$ is the direction vector; t is a scalar parameter ranging over all reals — each t gives one point.",
+          "highlights": ["direction", "parameter"]
+        },
+        {
+          "marks": 1,
+          "text": "For intersection: set the two equations equal with DIFFERENT parameters (e.g. t and s) since the point may occur at different parameter values.",
+          "highlights": ["different parameters"]
+        },
+        {
+          "marks": 1,
+          "text": "Equate i and j components for simultaneous equations in s and t, solve, and substitute back — checking consistency.",
+          "highlights": ["simultaneous", "substitute back"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "same parameter",
+          "misconception": "Uses one parameter t for both lines when finding intersections.",
+          "correction": "The lines are independent — the intersection point generally corresponds to different parameter values on each, so you need t AND s."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Parallel vectors",
+      "prompt": "Which vector is parallel to $4\\mathbf{i} - 6\\mathbf{j}$?",
+      "options": [
+        "$2\\mathbf{i} - 3\\mathbf{j}$",
+        "$-4\\mathbf{i} - 6\\mathbf{j}$",
+        "$6\\mathbf{i} + 4\\mathbf{j}$",
+        "$2\\mathbf{i} + 3\\mathbf{j}$"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — $2\\mathbf{i} - 3\\mathbf{j}$ is exactly half, a scalar multiple.",
+      "feedbackWrong": "Parallel vectors are scalar multiples: $\\frac{1}{2}(4\\mathbf{i} - 6\\mathbf{j}) = 2\\mathbf{i} - 3\\mathbf{j}$.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Ignores signs when checking proportionality.",
+          "correction": "Both components must scale by the SAME factor including sign — flipping one sign changes direction."
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Geometric proofs",
+      "prompt": "In triangle OAB, M is the midpoint of AB. Using vectors, prove that $\\overrightarrow{OM} = \\frac{1}{2}(\\mathbf{a} + \\mathbf{b})$ where $\\mathbf{a}$, $\\mathbf{b}$ are the position vectors of A and B.",
+      "guidance": "Write the journey O to M via A.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "$\\overrightarrow{OM} = \\overrightarrow{OA} + \\overrightarrow{AM}$ — vector addition along the path.",
+          "highlights": ["OA + AM"]
+        },
+        {
+          "marks": 1,
+          "text": "$\\overrightarrow{AB} = \\mathbf{b} - \\mathbf{a}$, so $\\overrightarrow{AM} = \\frac{1}{2}(\\mathbf{b} - \\mathbf{a})$.",
+          "highlights": ["b − a", "half"]
+        },
+        {
+          "marks": 1,
+          "text": "Substituting: $\\overrightarrow{OM} = \\mathbf{a} + \\frac{1}{2}(\\mathbf{b} - \\mathbf{a})$.",
+          "highlights": ["substituting"]
+        },
+        {
+          "marks": 1,
+          "text": "$= \\mathbf{a} - \\frac{1}{2}\\mathbf{a} + \\frac{1}{2}\\mathbf{b} = \\frac{1}{2}(\\mathbf{a} + \\mathbf{b})$ as required — a proof, not verification.",
+          "highlights": ["1/2(a + b)"]
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Unit vectors",
+      "prompt": "Find the magnitude of the unit vector in the direction of $6\\mathbf{i} + 8\\mathbf{j}$ — i.e. the magnitude OF that unit vector (a trivial check), then the x-component of the unit vector as a decimal.",
+      "answer": 0.6,
+      "tolerance": { "min": 0.59, "max": 0.61 },
+      "stepChecks": [
+        { "label": "Magnitude of original: $\\sqrt{36 + 64} = 10$", "marks": 1 },
+        { "label": "Unit vector: $\\frac{1}{10}(6\\mathbf{i} + 8\\mathbf{j})$", "marks": 1 },
+        { "label": "x-component $= 0.6$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Collinearity",
+      "prompt": "Points A, B, C are collinear. If $\\overrightarrow{AB} = 2\\mathbf{i} + 4\\mathbf{j}$, which could be $\\overrightarrow{BC}$?",
+      "options": [
+        "$\\mathbf{i} + 2\\mathbf{j}$",
+        "$2\\mathbf{i} - 4\\mathbf{j}$",
+        "$4\\mathbf{i} + 2\\mathbf{j}$",
+        "$-\\mathbf{i} + 2\\mathbf{j}$"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — $\\mathbf{i} + 2\\mathbf{j} = \\frac{1}{2}\\overrightarrow{AB}$, a scalar multiple, so the points lie on one straight line.",
+      "feedbackWrong": "Collinear means the segments share a direction — $\\overrightarrow{BC}$ must be a scalar multiple of $\\overrightarrow{AB}$: only $\\mathbf{i} + 2\\mathbf{j}$ is.",
+      "mistakes": [
+        {
+          "optionIndex": 2,
+          "misconception": "Matches magnitude instead of direction.",
+          "correction": "Collinearity is about direction, not length — only scalar multiples preserve direction."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "3D vectors",
+      "prompt": "A point P has position vector $2\\mathbf{i} - 3\\mathbf{j} + 4\\mathbf{k}$. Describe how to find its distance from the origin and compute it exactly in surd form.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Distance from origin = magnitude of the position vector (3D Pythagoras).",
+          "highlights": ["magnitude", "3D"]
+        },
+        {
+          "marks": 1,
+          "text": "$\\sqrt{2^2 + (-3)^2 + 4^2} = \\sqrt{4 + 9 + 16}$.",
+          "highlights": ["4 + 9 + 16"]
+        },
+        {
+          "marks": 1,
+          "text": "$= \\sqrt{29}$ units.",
+          "highlights": ["sqrt{29}", "29"]
+        }
+      ]
+    }
+  ]
+}
