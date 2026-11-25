@@ -76,7 +76,7 @@ function supplementHtml(q) {
   let out = '';
   const ctx = q.context || q.stem || q.instructions;
   if (ctx) out += `<div class="pq-context">${sanitizeHtml(ctx)}</div>`;
-  const algo = q.algorithm || q.pseudocode || q.code;
+  const algo = q.algorithm || q.pseudocode || q.code || q.codeSnippet;
   if (algo) out += `<pre class="pq-pre">${esc(algo)}</pre>`;
   const tbl = q.table || q.dataTable;
   if (tbl && Array.isArray(tbl.rows)) {
@@ -99,8 +99,22 @@ function supplementHtml(q) {
 // trace/truth tables print with their input cells filled and answer cells blank
 function blankTableHtml(q) {
   if (q.type === 'trace-table' && Array.isArray(q.columns)) {
-    const rows = Math.max(4, (q.expectedRows || 4) + 2);
-    return `<table class="pq-table pq-answertable"><tr>${q.columns.map(c => `<th>${esc(typeof c === 'object' ? c.label || c.name : c)}</th>`).join('')}</tr>${'<tr>' + q.columns.map(() => '<td>&nbsp;</td>').join('') + '</tr>'.repeat(rows)}</table>`;
+    const rows = Math.max(4, ((Array.isArray(q.expectedRows) ? q.expectedRows.length : q.expectedRows) || 4) + 2);
+    // starting state is a given, not an answer — print it filled in
+    const init = Array.isArray(q.initialRows) && q.initialRows.length
+      ? q.initialRows.map(r => `<tr>${(Array.isArray(r) ? r : [r]).map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')
+      : '';
+    return `<table class="pq-table pq-answertable"><tr>${q.columns.map(c => `<th>${esc(typeof c === 'object' ? c.label || c.name : c)}</th>`).join('')}</tr>${init}${'<tr>' + q.columns.map(() => '<td>&nbsp;</td>').join('') + '</tr>'.repeat(rows)}</table>`;
+  }
+  // schema-documented truth tables carry inputs/outputs arrays, not columns:
+  // input columns are givens (filled), output columns are the answer cells (blank)
+  if (q.type === 'truth-table' && Array.isArray(q.inputs) && Array.isArray(q.outputs)) {
+    const cols = [...q.inputs, ...q.outputs];
+    const rows = Array.isArray(q.rows) ? q.rows : [];
+    return `<table class="pq-table pq-answertable"><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr>${rows.map(r => {
+      const ins = Array.isArray(r && r.inputs) ? r.inputs : [];
+      return `<tr>${cols.map((c, ci) => `<td>${ci < q.inputs.length ? esc(ins[ci] != null ? ins[ci] : '') : '&nbsp;'}</td>`).join('')}</tr>`;
+    }).join('')}</table>`;
   }
   if (q.type === 'truth-table' && Array.isArray(q.columns)) {
     const cols = q.columns;
