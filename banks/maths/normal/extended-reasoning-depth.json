@@ -263,7 +263,7 @@
     "\u222b sin\u00b2x dx: no product structure \u2014 use the double-angle identity cos 2x = 1 \u2212 2sin\u00b2x to linearize, then integrate directly",
     "\u222b x/(x\u00b2+1) dx: numerator is a scalar multiple of the derivative of the denominator \u2014 reverse chain rule / recognition gives \u00bdln(x\u00b2+1) + c",
     "Recognition strategy: ask what structure is present \u2014 product of unlike types suggests parts; composite with inner derivative present suggests substitution; even powers of trig suggest identities",
-    "Wrong choices reveal themselves: parts on sin\u00b2x appears circular yet CAN be rearranged via cos\u00b2x = 1 \u2212 sin\u00b2x to solve for the original integral \u2014 it works but demands awkward manipulation the double-angle identity avoids; substitution without the inner derivative present leaves a hopeless mixture of variables",
+    "Wrong choices reveal themselves: parts on sin\u00b2x appears circular yet CAN be rearranged via cos\u00b2x = 1 \u2212 sin\u00b2x to solve for the original integral \u2014 it works but demands awkward manipulation the double-angle identity avoids; substitution only succeeds when the original variable can be eliminated entirely \u2014 having the inner derivative present makes this immediate, its absence usually strands mixed variables (though algebraic elimination occasionally rescues it, as with u = ln x in the first example)",
     "Definite-check habit: differentiate the answer to verify \u2014 the strongest guard against misapplied technique",
     "Fluency is pattern-recognition built from structural analysis, not memorised type-matching"
    ]
