@@ -1,7 +1,9 @@
 const express = require('express');
+const FlagService = require('../services/flag-service');
 
 function createPhysicsRouter(quizService, saveService) {
   const router = express.Router();
+  const flagService = new FlagService(saveService.dataDir);
 
   router.get('/health', (req, res) => {
     res.json({ ok: true, subject: 'Physics', board: 'AQA 7408' });
@@ -118,7 +120,28 @@ function createPhysicsRouter(quizService, saveService) {
     catch (e) { res.status(500).json({ error: 'bank file unreadable' }); }
   });
 
+
+  router.get('/flags', (req, res) => {
+    res.json(flagService.list());
+  });
+
+  router.post('/flags', (req, res) => {
+    const b = req.body || {};
+    if (!b.questionId || typeof b.issue !== 'string' || !b.issue.trim()) {
+      return res.status(400).json({ error: 'questionId and issue are required' });
+    }
+    const entry = flagService.add({
+      questionId: String(b.questionId),
+      bankFile: String(b.bankFile || ''),
+      topic: String(b.topic || ''),
+      issue: b.issue.trim().slice(0, 2000),
+      portal: 'physics',
+    });
+    res.status(201).json(entry);
+  });
+
   return router;
 }
+
 
 module.exports = createPhysicsRouter;

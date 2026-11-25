@@ -1,10 +1,12 @@
 const express = require('express');
+const FlagService = require('../services/flag-service');
 const { runOcrPseudocode } = require('../services/runners/ocr-pseudo');
 const { runCsharpCode } = require('../services/runners/csharp-runner');
 const { runLMC } = require('../services/runners/lmc-runner');
 
 function createCsRouter(quizService, saveService) {
   const router = express.Router();
+  const flagService = new FlagService(saveService.dataDir);
 
   router.get('/health', (req, res) => {
     res.json({ ok: true, subject: 'Computer Science', board: 'OCR H446' });
@@ -183,7 +185,28 @@ function createCsRouter(quizService, saveService) {
     catch (e) { res.status(500).json({ error: 'bank file unreadable' }); }
   });
 
+
+  router.get('/flags', (req, res) => {
+    res.json(flagService.list());
+  });
+
+  router.post('/flags', (req, res) => {
+    const b = req.body || {};
+    if (!b.questionId || typeof b.issue !== 'string' || !b.issue.trim()) {
+      return res.status(400).json({ error: 'questionId and issue are required' });
+    }
+    const entry = flagService.add({
+      questionId: String(b.questionId),
+      bankFile: String(b.bankFile || ''),
+      topic: String(b.topic || ''),
+      issue: b.issue.trim().slice(0, 2000),
+      portal: 'cs',
+    });
+    res.status(201).json(entry);
+  });
+
   return router;
 }
+
 
 module.exports = createCsRouter;
