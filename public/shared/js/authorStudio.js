@@ -336,15 +336,15 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         // committed answer is stale state the grader would enforce against
         // the author's own answer. Dropped honestly here; the editable
         // percentage tolerance takes over.
-        for (const qq of bank.questions) {
-          // only genuine min/max bands invalidate this way — percent/absolute
-          // forms stay valid regardless of the answer and must never be dropped
-          if (qq && qq.type === 'calculation' && qq.answer != null
-              && qq.tolerance && typeof qq.tolerance === 'object'
-              && isFinite(qq.tolerance.min) && isFinite(qq.tolerance.max)
-              && !(qq.answer >= qq.tolerance.min && qq.answer <= qq.tolerance.max)) {
-            delete qq.tolerance;
-          }
+        // invalidation applies ONLY to the question the author just edited —
+        // sweeping the whole bank would silently destroy pre-existing bands
+        // on questions nobody touched in this session
+        const qq = q;
+        if (qq && qq.type === 'calculation' && qq.answer != null
+            && qq.tolerance && typeof qq.tolerance === 'object'
+            && isFinite(qq.tolerance.min) && isFinite(qq.tolerance.max)
+            && !(qq.answer >= qq.tolerance.min && qq.answer <= qq.tolerance.max)) {
+          delete qq.tolerance;
         }
         bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       } catch {}
