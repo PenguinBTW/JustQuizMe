@@ -58,3 +58,15 @@ test('compareAttempts does not compare synthesized mocks that share a uuid but d
   const same = [mk(['a', 'b'], '2024-01-01', 5), mk(['a', 'b'], '2024-01-02', 8)];
   assert.ok(compareAttempts(same, 'mixed', '2024-01-02'));
 });
+
+test('same bare ids from different bank contexts do not compare as retakes', async () => {
+  const { compareAttempts } = await import('../public/shared/js/attemptDrilldown.js');
+  const mk = (topic, date, score) => ({
+    quizUuid: 'mixed', quizFile: null, date, score, total: 10,
+    perQuestion: [{ id: 'q1', topic, marks: 5, score }],
+  });
+  const runs = [mk('Algebra', '2024-01-01', 3), mk('Statistics', '2024-01-02', 5)];
+  assert.equal(compareAttempts(runs, 'mixed', '2024-01-02'), null);
+  const same = [mk('Algebra', '2024-01-01', 3), mk('Algebra', '2024-01-02', 5)];
+  assert.ok(compareAttempts(same, 'mixed', '2024-01-02'));
+});
