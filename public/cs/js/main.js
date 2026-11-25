@@ -76,3 +76,4 @@ loadHome().then(() => {
   console.error('Failed to load CS banks:', err);
   $('#stage').innerHTML = '<div class="card"><p style="color:var(--ink-secondary);">Could not reach the server. Start it with <span class="mono">node main/server/index.js</span>, then reload.</p></div>';
 });
+import './masteryMount.js';
