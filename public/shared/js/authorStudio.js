@@ -122,14 +122,6 @@ export function readForm(root, q) {
     q.answer = raw === '' || raw == null ? undefined : +raw;
     const tol = val('#af-tolerance');
     if (tol !== '' && tol != null) q.tolerancePercent = +tol;
-    // the studio offers no {min,max} band editing — a loaded band that no
-    // longer brackets the (possibly edited) answer is stale state the grader
-    // would enforce against the author's own answer. Drop it honestly: the
-    // percentage tolerance takes over, which the author CAN see and edit.
-    if (q.answer != null && q.tolerance && typeof q.tolerance === 'object'
-        && !(q.answer >= q.tolerance.min && q.answer <= q.tolerance.max)) {
-      delete q.tolerance;
-    }
   }
   if (Array.isArray(q.markScheme)) {
     root.querySelectorAll('.af-ms-marks').forEach(el => {
@@ -337,6 +329,19 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
             return;
           }
           if (dirty) bank.questions[banked] = JSON.parse(JSON.stringify(q));
+        }
+        // stale-band invalidation belongs at commit time, not per keystroke:
+        // readForm fires while typing and an intermediate value outside the
+        // band must not destroy it — but a band that no longer brackets the
+        // committed answer is stale state the grader would enforce against
+        // the author's own answer. Dropped honestly here; the editable
+        // percentage tolerance takes over.
+        for (const qq of bank.questions) {
+          if (qq && qq.type === 'calculation' && qq.answer != null
+              && qq.tolerance && typeof qq.tolerance === 'object'
+              && !(qq.answer >= qq.tolerance.min && qq.answer <= qq.tolerance.max)) {
+            delete qq.tolerance;
+          }
         }
         bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       } catch {}
