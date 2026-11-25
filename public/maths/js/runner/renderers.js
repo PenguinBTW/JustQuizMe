@@ -1,7 +1,7 @@
 // Maths Question Renderers (Symbolic CAS, Milestone, Proof, Hypothesis, Mechanics, Graph, Written, Calc)
 import { S } from '../state.js';
 import { $, esc, ak, chipify } from '../utils.js';
-import { areMathEqual, cleanMathStr } from '../cas.js';
+import { areMathEqual, cleanMathStr, evalMathExprClient } from '../cas.js';
 import { mathKeypadHtml } from './keypad.js';
 import { renderQ } from './assessment.js';
 import { matchMistakes, feedbackHtml } from '../../../shared/js/answerFeedback.js';
@@ -637,13 +637,14 @@ export function mathCalcOk(val, q) {
   if (!raw) return false; // blank answers never earn marks, even when 0 is in band
   if (q && q.tolerance && typeof q.tolerance === 'object'
       && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)) {
-    const v = Number(raw);
-    if (isFinite(v)) return v >= q.tolerance.min && v <= q.tolerance.max;
-    // fractions/expressions: evaluate algebraically first, then band-test the value
-    if (areMathEqual(raw, q.answer)) return true;
-    return false;
+    let v = Number(raw);
+    if (!isFinite(v)) {
+      // fractions/expressions: evaluate numerically, then band-test the value
+      v = evalMathExprClient(cleanMathStr(raw), {});
+    }
+    return isFinite(v) && !isNaN(v) && v >= q.tolerance.min && v <= q.tolerance.max;
   }
-  return areMathEqual(raw, q.answer);
+  return areMathEqual(raw, q.expected || q.answer);
 }
 
 export function wireCalc(q) {
