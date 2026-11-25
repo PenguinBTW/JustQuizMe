@@ -157,13 +157,19 @@ export function questionBlockHtml(q, n, { scheme = false, exactCalculations = fa
     body = `<ol class="pq-opts" type="A">${q.options.map(o => `<li>${sanitizeHtml(optText(o))}</li>`).join('')}</ol>`;
   }
   if (scheme) {
-    const ms = Array.isArray(q.markScheme) && q.markScheme.length
-      ? `<ul class="pq-scheme">${q.markScheme.map(m => `<li>${esc(typeof m === 'object' ? m.text : m)} <span class="pq-mmark">[${typeof m === 'object' ? m.marks : 1}]</span></li>`).join('')}</ul>`
-      : q.type === 'multiple-choice'
-        ? `<div class="pq-ansline">Correct answer: <strong>${'ABCDEF'[q.correctIndex] || '?'}</strong></div>`
-        : q.answer != null
-          ? `<div class="pq-ansline">Answer: <strong>${esc(q.answer)}</strong>${exactCalculations ? '' : q.tolerance != null ? ` (${fmtTolerance(q.tolerance)})` : q.tolerancePercent != null ? ` (±${esc(q.tolerancePercent)}%)` : ''}</div>`
-          : '';
+    let ms = '';
+    if (q.type === 'extended-response' && Array.isArray(q.levels) && q.levels.length) {
+      ms = `<ul class="pq-scheme">${q.levels.map(l => `<li><strong>${esc(l.title)}</strong> <span class="pq-mmark">[${l.range[0]}–${l.range[1]}]</span><br><span style="font-size:9.5pt;">AO1: ${esc(l.ao1)}<br>AO2: ${esc(l.ao2)}<br>AO3: ${esc(l.ao3)}</span></li>`).join('')}</ul>`;
+      if ((q.indicativeContent || []).length) {
+        ms += `<div class="pq-ansline">Indicative content:</div><ul class="pq-scheme">${q.indicativeContent.map(pt => `<li>${esc(pt)}</li>`).join('')}</ul>`;
+      }
+    } else if (Array.isArray(q.markScheme) && q.markScheme.length) {
+      ms = `<ul class="pq-scheme">${q.markScheme.map(m => `<li>${esc(typeof m === 'object' ? m.text : m)} <span class="pq-mmark">[${typeof m === 'object' ? m.marks : 1}]</span></li>`).join('')}</ul>`;
+    } else if (q.type === 'multiple-choice') {
+      ms = `<div class="pq-ansline">Correct answer: <strong>${'ABCDEF'[q.correctIndex] || '?'}</strong></div>`;
+    } else if (q.answer != null) {
+      ms = `<div class="pq-ansline">Answer: <strong>${esc(q.answer)}</strong>${exactCalculations ? '' : q.tolerance != null ? ` (${fmtTolerance(q.tolerance)})` : q.tolerancePercent != null ? ` (±${esc(q.tolerancePercent)}%)` : ''}</div>`;
+    }
     const mistakes = Array.isArray(q.mistakes) && q.mistakes.length
       ? `<div class="pq-mistakes"><div class="pq-mtitle">Common errors</div><ul>${q.mistakes.map(m => `<li><em>${esc(m.misconception || m.error || '')}</em>${m.correction ? ` — ${esc(m.correction)}` : ''}</li>`).join('')}</ul></div>`
       : '';

@@ -6,7 +6,7 @@ import { wireKeypad } from './keypad.js';
 import {
   mcqHtml, symbolicHtml, milestoneHtml, proofHtml, hypothesisHtml,
   mechanicsHtml, graphFeaturesHtml, writtenHtml, selfMarkedHtml, calcHtml, wireQ
-} from './renderers.js';
+, extendedResponseHtml } from './renderers.js';
 import { finishQuiz } from './finish.js';
 import { renderRoom } from '../navigation.js';
 
@@ -142,6 +142,7 @@ export function renderQ() {
   else if (q.type === 'statistics-hypothesis') body = hypothesisHtml(q);
   else if (q.type === 'mechanics-vector-fbd') body = mechanicsHtml(q);
   else if (q.type === 'graph-features') body = graphFeaturesHtml(q);
+  else if (q.type === 'extended-response') body = extendedResponseHtml(q);
   else if (q.type === 'written') body = writtenHtml(q);
   else if (q.type === 'self-marked') body = selfMarkedHtml(q);
   else body = calcHtml(q);
