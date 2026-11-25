@@ -65,3 +65,24 @@ test('blank tables: trace tables print starting state filled, answer rows empty'
   assert.ok(blankCells >= 4, `expected several writable cells across the blank rows, got ${blankCells}`);
   assert.ok(!/<td>3<\/td>/.test(d), 'expected trace values must not leak onto the student paper');
 });
+
+test('teacher scheme prints trace-table and truth-table solutions', () => {
+  const q = {
+    id: 't1', type: 'trace-table', marks: 4, prompt: 'trace it',
+    columns: ['x', 'count', 'output'],
+    expectedRows: [['6', '1', ''], ['3', '2', '4']]
+  };
+  const html = questionBlockHtml(q, 1, { scheme: true });
+  assert.match(html, /<th>x<\/th>/);
+  assert.match(html, /<td>6<\/td>/);
+  assert.match(html, /<td>4<\/td>/, 'final output value printed in scheme');
+
+  const tt = {
+    id: 't2', type: 'truth-table', marks: 2, prompt: 'complete',
+    inputs: ['A', 'B'], outputs: ['Q'],
+    rows: [{ inputs: ['0', '1'], expected: ['1'] }]
+  };
+  const h2 = questionBlockHtml(tt, 2, { scheme: true });
+  assert.match(h2, /<th>Q<\/th>/);
+  assert.match(h2, /<td>1<\/td>/, 'expected output printed in scheme');
+});
