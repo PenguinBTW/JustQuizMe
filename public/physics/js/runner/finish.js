@@ -60,9 +60,8 @@ export async function finishQuiz(auto = false){
   try {
     const cur = await api('/api/save');
     const mine = cur && (cur.quizUuid === S.quiz.uuid || cur.uuid === S.quiz.uuid) && (!cur.quizFile || cur.quizFile === S.quizMeta?.file);
-    if (mine) await api('/api/save', { method: 'DELETE' });
+    if (mine) { await api('/api/save', { method: 'DELETE' }); S.save = null; }
   } catch {}
-  S.save = null;
   S.scores = await api('/api/scores').catch(() => []);
   S.room = 'results';
   const pctScore = r.total ? Math.round(r.score / r.total * 100) : 0;
