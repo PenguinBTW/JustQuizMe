@@ -59,14 +59,24 @@ test('compareAttempts does not compare synthesized mocks that share a uuid but d
   assert.ok(compareAttempts(same, 'mixed', '2024-01-02'));
 });
 
-test('same bare ids from different bank contexts do not compare as retakes', async () => {
+test('file-qualified keys separate cross-bank collisions; re-tagging does not split retakes', async () => {
   const { compareAttempts } = await import('../public/shared/js/attemptDrilldown.js');
-  const mk = (topic, date, score) => ({
+  // cross-bank: writers stamp file-qualified keys, so identical bare ids in
+  // different bank files fingerprint differently and never compare
+  const mkKey = (key, date, score, topic) => ({
+    quizUuid: 'mixed', quizFile: null, date, score, total: 10,
+    perQuestion: [{ key, id: 'q1', topic, marks: 5, score }],
+  });
+  const runs = [mkKey('bankA:q1', '2024-01-01', 3, 'Algebra'), mkKey('bankB:q1', '2024-01-02', 5, 'Algebra')];
+  assert.equal(compareAttempts(runs, 'mixed', '2024-01-02'), null);
+  // re-tagging: same questions, author corrected only the topic — still a retake
+  const same = [mkKey('bankA:q1', '2024-01-01', 3, 'Algebra'), mkKey('bankA:q1', '2024-01-02', 5, 'Statistics')];
+  assert.ok(compareAttempts(same, 'mixed', '2024-01-02'));
+  // legacy entries without qualified keys still compare (old behaviour kept)
+  const legacy = (topic, date, score) => ({
     quizUuid: 'mixed', quizFile: null, date, score, total: 10,
     perQuestion: [{ id: 'q1', topic, marks: 5, score }],
   });
-  const runs = [mk('Algebra', '2024-01-01', 3), mk('Statistics', '2024-01-02', 5)];
-  assert.equal(compareAttempts(runs, 'mixed', '2024-01-02'), null);
-  const same = [mk('Algebra', '2024-01-01', 3), mk('Algebra', '2024-01-02', 5)];
-  assert.ok(compareAttempts(same, 'mixed', '2024-01-02'));
+  const leg = [legacy('Algebra', '2024-01-01', 3), legacy('Algebra', '2024-01-02', 5)];
+  assert.ok(compareAttempts(leg, 'mixed', '2024-01-02'));
 });
