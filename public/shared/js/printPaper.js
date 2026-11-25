@@ -3,7 +3,7 @@
 // zero dependencies beyond the KaTeX CDN already used by the portals.
 
 function esc(s) {
-  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 // bank content is authorable in-app — printed HTML must not carry script
@@ -89,7 +89,7 @@ function blankTableHtml(q) {
   return '';
 }
 
-export function questionBlockHtml(q, n, { scheme = false } = {}) {
+export function questionBlockHtml(q, n, { scheme = false, exactCalculations = false } = {}) {
   const marks = +q.marks || 0;
   let body = '';
   if (q.type === 'multiple-choice' && Array.isArray(q.options)) {
@@ -101,7 +101,7 @@ export function questionBlockHtml(q, n, { scheme = false } = {}) {
       : q.type === 'multiple-choice'
         ? `<div class="pq-ansline">Correct answer: <strong>${'ABCDEF'[q.correctIndex] || '?'}</strong></div>`
         : q.answer != null
-          ? `<div class="pq-ansline">Answer: <strong>${esc(q.answer)}</strong>${q.tolerance != null ? ` (${fmtTolerance(q.tolerance)})` : q.tolerancePercent != null ? ` (±${esc(q.tolerancePercent)}%)` : ''}</div>`
+          ? `<div class="pq-ansline">Answer: <strong>${esc(q.answer)}</strong>${exactCalculations ? '' : q.tolerance != null ? ` (${fmtTolerance(q.tolerance)})` : q.tolerancePercent != null ? ` (±${esc(q.tolerancePercent)}%)` : ''}</div>`
           : '';
     const mistakes = Array.isArray(q.mistakes) && q.mistakes.length
       ? `<div class="pq-mistakes"><div class="pq-mtitle">Common errors</div><ul>${q.mistakes.map(m => `<li><em>${esc(m.misconception || m.error || '')}</em>${m.correction ? ` — ${esc(m.correction)}` : ''}</li>`).join('')}</ul></div>`
@@ -177,7 +177,6 @@ ${bodyHtml}
   window.addEventListener('load', () => {
     try { renderMathInElement(document.body, { delimiters: [
       { left: '$$', right: '$$', display: true },
-      { left: '\\[', right: '\\]', display: true },
       { left: '$', right: '$', display: false }
       // note: \\(...\\) deliberately excluded — prose parentheses like (x + 1)
       // would be eaten as math and printed without their brackets
@@ -194,9 +193,9 @@ export function paperPrintDoc({ title, portal, timeMinutes, questions }) {
   return docShell({ title, portal, timeMinutes, totalMarks: total, teacher: false, bodyHtml: body });
 }
 
-export function markSchemePrintDoc({ title, portal, timeMinutes, questions }) {
+export function markSchemePrintDoc({ title, portal, timeMinutes, questions, exactCalculations = false }) {
   const total = (questions || []).reduce((s, q) => s + (+q.marks || 0), 0);
-  const body = (questions || []).map((q, i) => questionBlockHtml(q, i + 1, { scheme: true })).join('\n');
+  const body = (questions || []).map((q, i) => questionBlockHtml(q, i + 1, { scheme: true, exactCalculations })).join('\n');
   return docShell({ title: `${title} — Mark Scheme`, portal, timeMinutes, totalMarks: total, teacher: true, bodyHtml: body });
 }
 

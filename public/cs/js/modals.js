@@ -48,7 +48,7 @@ function wireSynthPrint(portalLabel) {
       p.sig = settingsSig();
       _printPick = p;
     }
-    openPrintWindow(markSchemePrintDoc({ title: _printPick.title, portal: portalLabel, timeMinutes: _printPick.timeMinutes, questions: _printPick.set }));
+    openPrintWindow(markSchemePrintDoc({ title: _printPick.title, portal: portalLabel, timeMinutes: _printPick.timeMinutes, questions: _printPick.set, exactCalculations: true }));
   };
 }
 
