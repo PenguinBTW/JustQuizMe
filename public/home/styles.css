@@ -1308,6 +1308,6 @@ body {
   .synth-tabs, .synth-tabs-row, .subject-tabs, .tabs { flex-wrap: wrap; }
   .synth-tab-btn { flex: 1 1 auto; min-width: 0; }
   pre, pre.ascii-display, .ascii-display pre { white-space: pre-wrap !important; word-break: break-word; max-width: 100%; }
-  button, [role="button"] { min-height: 24px; }
+  button, [role="button"], .ov-att-link { min-height: 24px; display: inline-flex; align-items: center; }
   .card, .panel { overflow-wrap: break-word; }
 }
