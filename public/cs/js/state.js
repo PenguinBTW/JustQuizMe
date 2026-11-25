@@ -40,3 +40,11 @@ export const S = {
   mixed: { open: true, topics: new Set(), subs: new Set(), m: 30, mode: 'standard', pace: 'standard', set: [] },
   topicModal: null
 };
+
+// Retry-missed-results button — runner imports are hoisted but only used on
+// results-screen clicks, so the module cycle (state → assessment → state)
+// stays harmless.
+import { beginRun } from './runner/assessment.js';
+import { ak } from './utils.js';
+import { registerRetryMissed } from '../../shared/js/mountRetryMissed.js';
+registerRetryMissed({ S, beginRun, keyOf: ak });

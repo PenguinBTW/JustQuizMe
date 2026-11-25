@@ -5,14 +5,20 @@ import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { beginFileQuiz } from '../runner/starters.js';
 import { filterAttempts, drilldownHtml, compareAttempts, compareHtml } from '../../../shared/js/attemptDrilldown.js';
 
+// retry-missed runs are saved under '<sourceUuid>:retry-missed' — map them
+// back to the source uuid only when the entry ends with the marker and its
+// base is a real manifest uuid
+const RETRY_MARK = ':retry-missed';
+const srcUuid = (u) => (u || '').replace(/(:retry-missed)+$/, '');
+
 export function pastEntries() {
   const uuids = new Set([...S.quizzes['past-paper'].map(m => m.uuid), MIXED_UUID]);
-  return S.scores.filter(s => uuids.has(s.quizUuid)).slice().reverse();
+  return S.scores.filter(s => uuids.has(s.quizUuid) || uuids.has(srcUuid(s.quizUuid))).slice().reverse();
 }
 
 export function practiceEntries() {
   const uuids = new Set(S.quizzes.normal.map(m => m.uuid));
-  return S.scores.filter(s => uuids.has(s.quizUuid)).slice().reverse();
+  return S.scores.filter(s => uuids.has(s.quizUuid) || uuids.has(srcUuid(s.quizUuid))).slice().reverse();
 }
 
 export function pct(a) {
@@ -55,10 +61,12 @@ export function renderHistory() {
   if (isPast) {
     const list = pastEntries();
     const bankTotal = S.quizzes['past-paper'].reduce((s, m) => s + m.totalMarks, 0);
-    const avg = list.length
-      ? Math.round(list.reduce((s, a) => s + (a.total ? a.score / a.total : 0), 0) / list.length * 100)
+    // retry subsets stay listed but don't count toward aggregate stats
+    const base = list.filter(x => !(x.quizUuid || '').endsWith(RETRY_MARK));
+    const avg = base.length
+      ? Math.round(base.reduce((s, a) => s + (a.total ? a.score / a.total : 0), 0) / base.length * 100)
       : 0;
-    const earned = list.reduce((s, a) => s + (a.score || 0), 0);
+    const earned = base.reduce((s, a) => s + (a.score || 0), 0);
 
     body = `
       <div id="historyPastView">
@@ -66,12 +74,12 @@ export function renderHistory() {
           <div class="history-stat-card">
             <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Past-Paper Average</span>
             <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${avg}%</div>
-            <span class="mono" style="font-size:12px; color:var(--ink-secondary);">${list.length} logged session${list.length === 1 ? '' : 's'}</span>
+            <span class="mono" style="font-size:12px; color:var(--ink-secondary);">${base.length} logged session${base.length === 1 ? '' : 's'}</span>
           </div>
           <div class="history-stat-card">
             <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Marks Completed</span>
             <div class="serif" style="font-size:36px; line-height:1.1; margin-top:4px;">${num(earned)} <span style="font-size:20px; color:var(--ink-muted);">/ ${num(bankTotal)}</span></div>
-            <span class="mono" style="font-size:12px; color:var(--ink-secondary);">across all past sessions</span>
+            <span class="mono" style="font-size:12px; color:var(--ink-secondary);">across full past-paper sessions</span>
           </div>
           <div class="history-stat-card">
             <span class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Success Rate</span>
@@ -91,10 +99,12 @@ export function renderHistory() {
   } else {
     const list = practiceEntries();
     const runs = list.slice().reverse();
-    const best = list.length
-      ? list.reduce(
+    // retry subsets stay listed but mustn't outrank full sets on the best card
+    const base = list.filter(x => !(x.quizUuid || '').endsWith(RETRY_MARK));
+    const best = base.length
+      ? base.reduce(
           (m, x) => (x.total && x.score / x.total > (m.total ? m.score / m.total : -1) ? x : m),
-          list[0]
+          base[0]
         )
       : null;
     const bp = best ? pct(best) : 0;
