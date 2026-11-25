@@ -83,7 +83,13 @@ class QuizService {
     // high precedence first: external library shadows bundled repo banks
     for (const roots of [...this.scanRoots].reverse()) {
       const full = path.join(roots[key], cleanName);
-      if (fs.existsSync(full)) return full;
+      if (!fs.existsSync(full)) continue;
+      // a malformed override must not shadow a valid bank beneath it —
+      // fall through to the next root rather than serving 'Quiz not found'
+      try {
+        const quiz = JSON.parse(fs.readFileSync(full, 'utf8'));
+        if (quiz && Array.isArray(quiz.questions)) return full;
+      } catch {}
     }
     return null;
   }
