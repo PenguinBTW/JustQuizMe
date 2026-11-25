@@ -642,7 +642,8 @@ export function mathCalcOk(val, q) {
       // fractions/expressions: evaluate numerically, then band-test the value —
       // but only input shaped like arithmetic; commas/comparisons/letters make
       // the JS evaluator produce garbage (e.g. "1,450" -> 450, "2<3" -> 1)
-      if (!/^[\d\s+\-*/().^%]+$/.test(raw)) return false;
+      const stripped = raw.replace(/\b(sqrt|sin|cos|tan|asin|acos|atan|ln|log|exp|abs|pi|e)\b/gi, '');
+      if (!/^[\d\s+\-*/().^%]+$/.test(stripped)) return false;
       v = evalMathExprClient(cleanMathStr(raw), {});
     }
     const eps = 1e-9 * Math.max(1, Math.abs(q.tolerance.min), Math.abs(q.tolerance.max));
