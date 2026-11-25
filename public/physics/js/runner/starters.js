@@ -157,7 +157,7 @@ export function startMockSeries({ breakMinutes = 10 } = {}) {
   // multi-tagged questions repeat across topics — dedupe by id so one
   // question can't land in both papers or score twice within one
   const seen = new Set();
-  const all = allRaw.filter(q => { const k = q.id || q.uuid || JSON.stringify(q).length + q.prompt; if (seen.has(k)) return false; seen.add(k); return true; });
+  const all = allRaw.filter(q => { const k = q._key || (q._srcFile ? q._srcFile + ":" + q.id : null) || q.id || q.uuid || JSON.stringify(q).length + q.prompt; if (seen.has(k)) return false; seen.add(k); return true; });
   if (all.length < 8) return alert('Not enough questions in the bank to assemble a mock series.');
   const pace = paceMinutesPerMark(S.mixed.pace);
   const papers = [];
