@@ -328,9 +328,13 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         if (item.id && ids.has(item.id)) { dupes++; return; }
         if (!item.id) item.id = `q${Date.now().toString(36)}${i}`;
         // external converters often emit numeric strings — coerce before merge so
-        // the studio's numeric validation and the server's lenient one agree
-        if (typeof item.answer === 'string' && item.answer.trim() !== '' && isFinite(+item.answer)) item.answer = +item.answer;
-        if (typeof item.tolerancePercent === 'string' && item.tolerancePercent.trim() !== '' && isFinite(+item.tolerancePercent)) item.tolerancePercent = +item.tolerancePercent;
+        // the studio's numeric validation and the server's lenient one agree.
+        // Calculation items only: coercing display strings like "0" elsewhere would
+        // turn them falsy for truthiness-based consumers (e.g. self-marked solutions)
+        if (item.type === 'calculation') {
+          if (typeof item.answer === 'string' && item.answer.trim() !== '' && isFinite(+item.answer)) item.answer = +item.answer;
+          if (typeof item.tolerancePercent === 'string' && item.tolerancePercent.trim() !== '' && isFinite(+item.tolerancePercent)) item.tolerancePercent = +item.tolerancePercent;
+        }
         ids.add(item.id);
         bank.questions.push(JSON.parse(JSON.stringify(item)));
         added++;
