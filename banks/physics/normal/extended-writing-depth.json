@@ -19,7 +19,7 @@
    "id": "er1",
    "type": "extended-response",
    "marks": 6,
-   "topic": "Nuclear & Particle Physics",
+   "topic": "Nuclear physics",
    "subtopic": "Radioactive decay applications",
    "prompt": "A hospital is choosing between technetium-99m (half-life 6 hours, gamma emitter) and iodine-131 (half-life 8 days, beta and gamma emitter) for thyroid imaging. Evaluate the physics factors that should inform this choice.",
    "levels": [
@@ -70,7 +70,7 @@
    "id": "er2",
    "type": "extended-response",
    "marks": 6,
-   "topic": "Fields & Further Mechanics",
+   "topic": "Fields",
    "subtopic": "Gravitational and electric field comparison",
    "prompt": "Compare and contrast gravitational and electric fields, using their similarities and differences to explain why electrostatic forces dominate at atomic scales while gravity dominates at planetary scales.",
    "levels": [
@@ -121,7 +121,7 @@
    "id": "er3",
    "type": "extended-response",
    "marks": 6,
-   "topic": "Mechanics & Materials",
+   "topic": "Materials",
    "subtopic": "Material selection physics",
    "prompt": "An engineer must choose a material for the cable of a crane lifting loads in a shipyard. Evaluate the mechanical properties the material must have and how stress-strain behaviour informs the choice.",
    "levels": [

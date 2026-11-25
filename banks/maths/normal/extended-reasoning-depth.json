@@ -18,7 +18,7 @@
    "id": "er1",
    "type": "extended-response",
    "marks": 6,
-   "topic": "Proof & Reasoning",
+   "topic": "Algebra, Polynomials & Proof",
    "subtopic": "Extended mathematical argument",
    "prompt": "Prove or disprove: the sum of any three consecutive integers is divisible by 3. Your response should present a complete mathematical argument and evaluate whether the claim generalises to any n consecutive integers.",
    "levels": [
@@ -69,7 +69,7 @@
    "id": "er2",
    "type": "extended-response",
    "marks": 6,
-   "topic": "Statistical Reasoning",
+   "topic": "Probability & Hypothesis Testing",
    "subtopic": "Interpreting significance",
    "prompt": "A school trials a new revision technique. Mean test scores rise from 64% to 67% with a sample of 30 students. A hypothesis test gives p = 0.04. Evaluate what the school can and cannot conclude, and whether they should adopt the technique.",
    "levels": [

@@ -22,7 +22,7 @@
    "id": "er1",
    "type": "extended-response",
    "marks": 9,
-   "topic": "Legal, Ethical & Environmental",
+   "topic": "Legal, Moral & Cultural",
    "subtopic": "Data protection & privacy",
    "prompt": "A hospital trust plans to migrate patient records to a third-party cloud provider based overseas. Discuss the legal and ethical issues the trust must consider before proceeding.",
    "levels": [
@@ -126,7 +126,7 @@
    "id": "er3",
    "type": "extended-response",
    "marks": 12,
-   "topic": "Systems Architecture & Software Development",
+   "topic": "Software & Development",
    "subtopic": "Testing & evaluation",
    "prompt": "A team is about to release a payroll system used by 4,000 employees. Discuss the testing strategies the team should employ before release, and evaluate how they should prioritise their limited remaining testing time.",
    "levels": [
@@ -179,7 +179,7 @@
    "id": "er4",
    "type": "extended-response",
    "marks": 9,
-   "topic": "Data Types, Structures & Exchanging Data",
+   "topic": "Data Types & Structures",
    "subtopic": "Database design choices",
    "prompt": "A school currently stores all student data in one large flat-file table. Evaluate the benefits of normalising this data into a relational database design.",
    "levels": [
@@ -231,7 +231,7 @@
    "id": "er5",
    "type": "extended-response",
    "marks": 9,
-   "topic": "Exchanging Data & Networks",
+   "topic": "Exchanging Data",
    "subtopic": "Network security",
    "prompt": "A small business runs a wireless network for staff and guests. Discuss the security threats this network faces and evaluate the measures the business should implement.",
    "levels": [
