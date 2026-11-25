@@ -104,7 +104,8 @@ function blankTableHtml(q) {
     const init = Array.isArray(q.initialRows) && q.initialRows.length
       ? q.initialRows.map(r => `<tr>${(Array.isArray(r) ? r : [r]).map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')
       : '';
-    return `<table class="pq-table pq-answertable"><tr>${q.columns.map(c => `<th>${esc(typeof c === 'object' ? c.label || c.name : c)}</th>`).join('')}</tr>${init}${'<tr>' + q.columns.map(() => '<td>&nbsp;</td>').join('') + '</tr>'.repeat(rows)}</table>`;
+    const blankRow = '<tr>' + q.columns.map(() => '<td>&nbsp;</td>').join('') + '</tr>';
+    return `<table class="pq-table pq-answertable"><tr>${q.columns.map(c => `<th>${esc(typeof c === 'object' ? c.label || c.name : c)}</th>`).join('')}</tr>${init}${blankRow.repeat(rows)}</table>`;
   }
   // schema-documented truth tables carry inputs/outputs arrays, not columns:
   // input columns are givens (filled), output columns are the answer cells (blank)

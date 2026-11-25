@@ -61,6 +61,7 @@ test('blank tables: trace tables print starting state filled, answer rows empty'
   assert.ok(d.includes('>-</td>'), 'initial row marker prints as a given');
   assert.ok(d.includes('<td>0</td>'), 'initial state values print');
   // answer rows must be empty cells
-  assert.ok(d.includes('<td>&nbsp;</td>'), 'blank writable rows present');
+  const blankCells = (d.match(/<td>&nbsp;<\/td>/g) || []).length;
+  assert.ok(blankCells >= 4, `expected several writable cells across the blank rows, got ${blankCells}`);
   assert.ok(!/<td>3<\/td>/.test(d), 'expected trace values must not leak onto the student paper');
 });
