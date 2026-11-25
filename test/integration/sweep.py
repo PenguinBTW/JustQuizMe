@@ -203,6 +203,14 @@ async def sweep_portal(pw, portal):
 
     # 9. author studio roundtrip: validate rejection of empty save
     try:
+        # close any modal left open by earlier flows (print leaves synth open)
+        x = await page.query_selector('#synthClose, .modal-backdrop button:has-text("✕")')
+        if x:
+            try: await x.click()
+            except Exception: pass
+            await page.wait_for_timeout(300)
+        await page.keyboard.press('Escape')
+        await page.wait_for_timeout(200)
         tab = await page.query_selector('[data-room="author"]')
         ok = False
         if tab:
