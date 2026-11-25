@@ -200,6 +200,7 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
             <input id="af-banktitle" value="${esc(bank.title)}" placeholder="bank title…" style="padding:6px 10px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px; width:200px;" />
             <input id="af-loadfile" placeholder="edit existing file…" style="padding:6px 10px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px; width:160px;" />
             <button class="btn-ghost mono" id="af-load" style="font-size:11.5px;">load</button>
+            <button class="btn-ghost mono" id="af-import" style="font-size:11.5px;" title="Paste bank or question-array JSON to merge into this bank">import JSON</button>
             <span class="mono" style="font-size:11px; color:var(--ink-muted);">${bank.questions.length} question${bank.questions.length === 1 ? '' : 's'} in bank</span>
           </div>
           <div id="af-formhost">${questionFormHtml(q, errs, portal)}</div>
@@ -292,6 +293,44 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       render();
     });
     host.querySelector('#af-newq')?.addEventListener('click', () => { q = blankQuestion(q.type); render(); });
+    // import JSON: accept a whole bank object or a bare question array;
+    // validate every question, merge the valid ones, report per-item failures
+    host.querySelector('#af-import')?.addEventListener('click', () => {
+      const status = host.querySelector('#af-status');
+      const raw = window.prompt('Paste bank JSON ({title, questions:[…]}) or a bare question array:');
+      if (!raw || !raw.trim()) return;
+      let parsed;
+      try { parsed = JSON.parse(raw); } catch (e) {
+        if (status) status.textContent = `import failed: not valid JSON (${String(e.message || e).slice(0, 80)})`;
+        return;
+      }
+      const questions = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.questions) ? parsed.questions : null);
+      if (!questions) {
+        if (status) status.textContent = 'import failed: JSON is neither a question array nor a bank object with questions[]';
+        return;
+      }
+      if (!Array.isArray(parsed) && typeof parsed.title === 'string' && parsed.title.trim() && bank.questions.length === 0) {
+        bank.title = parsed.title.trim();
+      }
+      let added = 0, dupes = 0;
+      const failures = [];
+      const ids = new Set(bank.questions.map(x => x.id));
+      questions.forEach((item, i) => {
+        const errs = validateQuestion(item);
+        if (errs.length) { failures.push(`#${i + 1}: ${errs[0]}`); return; }
+        if (item.id && ids.has(item.id)) { dupes++; return; }
+        if (!item.id) item.id = `q${Date.now().toString(36)}${i}`;
+        ids.add(item.id);
+        bank.questions.push(JSON.parse(JSON.stringify(item)));
+        added++;
+      });
+      persistDraft();
+      render();
+      const status2 = host.querySelector('#af-status');
+      if (status2) status2.textContent =
+        `import: ${added} added${dupes ? `, ${dupes} duplicate id${dupes === 1 ? '' : 's'} skipped` : ''}` +
+        (failures.length ? ` — ${failures.length} invalid: ${failures.slice(0, 3).join(' · ')}${failures.length > 3 ? ` (+${failures.length - 3} more)` : ''}` : '');
+    });
     host.querySelectorAll('[data-editq]').forEach(el => el.addEventListener('click', () => {
       q = JSON.parse(JSON.stringify(bank.questions[+el.dataset.editq]));
       render();
