@@ -51,7 +51,11 @@ function safeFileName(name) {
 // author-entered metadata is rendered into portal pages — strip markup so a
 // crafted topic/title can't carry script into learners' browsers
 function stripTags(v) {
-  return typeof v === 'string' ? v.replace(/<[^>]*>/g, '') : v;
+  // escape rather than strip: legitimate text like List<int> keeps its meaning
+  // (rendered as inert entities downstream), while markup can never execute
+  return typeof v === 'string'
+    ? v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    : v;
 }
 
 function sanitizeBankMeta(bank) {
@@ -95,6 +99,9 @@ function saveAuthoredBank(normalDir, bank, fileName) {
       for (const q of existing.questions || []) if (q && q.id) byId.set(q.id, q);
       for (const q of bank.questions || []) if (q && q.id) byId.set(q.id, q);
       merged.questions = [...byId.values()];
+      // topic lists must union — otherwise concurrent drafts adding questions
+      // under different topics leave a covered topic out of the catalogue
+      merged.topics = [...new Set([...(existing.topics || []), ...(bank.topics || []), ...merged.questions.map(q => q && q.topic).filter(Boolean)])];
       const mErrs = validateBank(merged);
       if (mErrs.length) {
         const e = new Error('merged bank invalid');

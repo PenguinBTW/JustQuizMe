@@ -23,8 +23,8 @@ export function blankQuestion(type = 'multiple-choice') {
   return q;
 }
 
-// questionFormHtml(q, errs) — type-specific structured form
-export function questionFormHtml(q, errs = []) {
+// questionFormHtml(q, errs, portal) — type-specific structured form
+export function questionFormHtml(q, errs = [], portal = 'cs') {
   const tf = TYPE_FIELDS[q.type] || [];
   const errBox = errs.length
     ? `<div style="margin:10px 0; padding:8px 12px; border-left:3px solid #e0735f; background:rgba(224,115,95,.08); border-radius:4px; font-size:12.5px;">${errs.map(e => `<div>⚠ ${esc(e)}</div>`).join('')}</div>`
@@ -51,7 +51,7 @@ export function questionFormHtml(q, errs = []) {
         </div>` : ''}
       ${q.type === 'calculation' ? `
         <label style="font-size:12px;">numeric answer<br><input id="af-answer" type="number" step="any" value="${q.answer != null ? q.answer : ''}" style="padding:6px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px;" /></label>
-        <label style="font-size:12px;">tolerance %<br><input id="af-tolerance" type="number" step="any" min="0" value="${q.tolerancePercent != null ? q.tolerancePercent : ''}" style="padding:6px; width:80px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px;" /></label>` : ''}
+${portal === 'physics' ? `<label style="font-size:12px;">tolerance %<br><input id="af-tolerance" type="number" step="any" min="0" value="${q.tolerancePercent != null ? q.tolerancePercent : ''}" style="padding:6px; width:80px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px;" /></label>` : ''}` : ''}
       ${tf.includes('markScheme') ? `
         <div><span class="mono" style="font-size:11px; color:var(--ink-muted);">MARK SCHEME — points must sum to ${q.marks}</span>
         ${(q.markScheme || []).map((m, i) => `
@@ -94,7 +94,7 @@ export function previewHtml(q) {
     <div style="padding:16px; border:1px dashed var(--border); border-radius:8px;">
       <div class="mono" style="font-size:10.5px; color:var(--ink-muted); margin-bottom:6px;">STUDENT PREVIEW · ${esc(q.type)} · ${q.marks} mark${q.marks === 1 ? '' : 's'}</div>
       <div style="font-size:14.5px; line-height:1.55;">${q.prompt
-        ? esc(q.prompt).replace(/```([\s\S]*?)```/g, (_, code) => `<pre style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:12px; white-space:pre-wrap; margin:6px 0;">${code}</pre>`).replace(/\n/g, '<br>')
+        ? esc(q.prompt).replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => `<pre style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:12px; white-space:pre-wrap; margin:6px 0;">${code}</pre>`).replace(/\n/g, '<br>')
         : '<span style="opacity:.4">prompt appears here…</span>'}</div>
       <div style="margin-top:10px;">${body}</div>
     </div>`;
@@ -170,7 +170,7 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
             <button class="btn-ghost mono" id="af-load" style="font-size:11.5px;">load</button>
             <span class="mono" style="font-size:11px; color:var(--ink-muted);">${bank.questions.length} question${bank.questions.length === 1 ? '' : 's'} in bank</span>
           </div>
-          <div id="af-formhost">${questionFormHtml(q, errs)}</div>
+          <div id="af-formhost">${questionFormHtml(q, errs, portal)}</div>
           <div style="display:flex; gap:8px; margin-top:12px;">
             <button class="btn btn-primary" id="af-addq">add to bank</button>
             <button class="btn-ghost" id="af-newq">new question</button>
@@ -192,7 +192,7 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
     const refresh = () => {
       readForm(formhost, q);
       const errs = validateQuestion(q);
-      formhost.innerHTML = questionFormHtml(q, errs);
+      formhost.innerHTML = questionFormHtml(q, errs, portal);
       host.querySelector('#af-preview').innerHTML = previewHtml(q);
       wireForm();
     };
@@ -250,7 +250,10 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       const status = host.querySelector('#af-status');
       if (errs.length) { status.textContent = '✗ fix validation errors first'; status.style.color = '#e0735f'; return; }
       const idx = bank.questions.findIndex(x => x.id === q.id);
-      if (idx >= 0) bank.questions[idx] = { ...q }; else bank.questions.push({ ...q });
+      // deep copy — a shallow copy shares the options/markScheme arrays, so
+      // later form edits would silently mutate the banked question
+      const snap = JSON.parse(JSON.stringify(q));
+      if (idx >= 0) bank.questions[idx] = snap; else bank.questions.push(snap);
       bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       persistDraft();
       q = blankQuestion(q.type);
@@ -285,7 +288,7 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         const banked = bank.questions.findIndex(x => x.id === q.id);
         if (banked >= 0 && !qErrs.length) {
           const cur = JSON.stringify(bank.questions[banked]);
-          if (JSON.stringify(q) !== cur) bank.questions[banked] = { ...q };
+          if (JSON.stringify(q) !== cur) bank.questions[banked] = JSON.parse(JSON.stringify(q));
         }
         bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       } catch {}
