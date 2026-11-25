@@ -24,6 +24,7 @@ export function evalMathExprClient(expr, vars = {}) {
       .replace(/\)([a-zA-Z0-9(])/g, ')*$1')
       .replace(/sqrt\(/g, 'Math.sqrt(')
       .replace(/ln\(/g, 'Math.log(')
+      .replace(/log\(/g, 'Math.log10(')
       .replace(/sin\(/g, 'Math.sin(')
       .replace(/cos\(/g, 'Math.cos(')
       .replace(/tan\(/g, 'Math.tan(')
