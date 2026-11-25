@@ -273,6 +273,12 @@ export function wireSelfMarked(q){
 
 // ----- Calculation -----
 export function numOk(v, target, tol = 2.5){ if (!isFinite(v) || !isFinite(target)) return false; if (target === 0) return Math.abs(v) < 1e-9; return Math.abs(v - target) / Math.abs(target) * 100 <= tol; }
+// declared absolute tolerance bands take precedence over the percentage
+// default — printed schemes publish the band, so online grading must agree
+export function bandOk(v, q) {
+  if (q && q.tolerance && typeof q.tolerance === 'object') return isFinite(v) && v >= q.tolerance.min && v <= q.tolerance.max;
+  return numOk(v, q ? q.answer : NaN, (q && q.tolerancePercent) ?? 2.5);
+}
 
 export function stepBlocks(q, a, enabled){
   return (q.steps || []).map((s, i) => {
@@ -360,7 +366,7 @@ export function wireCalc(q){
       const v = parseFloat($('#calcInput').value);
       a.finalValue = $('#calcInput').value;
       a.attempts = (a.attempts || 0) + 1;
-      a.lastOk = numOk(v, q.answer, tol);
+      a.lastOk = bandOk(v, q);
       renderQ();
     };
     const ss = $('#showStepsBtn');
@@ -374,7 +380,7 @@ export function wireCalc(q){
     const v = parseFloat($('#calcInput').value);
     a.finalValue = $('#calcInput').value;
     a.attempts = (a.attempts || 0) + 1;
-    if (numOk(v, q.answer, tol)){ a.soloCorrect = true; a.locked = true; a.score = q.marks; }
+    if (bandOk(v, q)){ a.soloCorrect = true; a.locked = true; a.score = q.marks; }
     else { a.loggedWrong = true; a.locked = true; a.score = 0; a.steps = a.steps || []; }
     renderQ();
   };
