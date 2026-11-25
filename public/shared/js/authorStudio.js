@@ -153,10 +153,18 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
     if (draft && draft.bank && Array.isArray(draft.bank.questions) && draft.bank.questions.length) {
       bank = draft.bank;
       editFile = draft.editFile || null;
+      // the half-finished question in the form is work too — restore it
+      if (draft.q && typeof draft.q === 'object' && draft.q.type) q = draft.q;
     }
   } catch {}
   const persistDraft = () => {
-    try { localStorage.setItem(draftKey, JSON.stringify({ bank, editFile })); } catch {}
+    try {
+      // capture the live form state before stashing — leaving the tab must not
+      // erase a half-written question
+      const form = host.querySelector('#af-formhost');
+      if (form) try { readForm(form, q); } catch {}
+      localStorage.setItem(draftKey, JSON.stringify({ bank, editFile, q }));
+    } catch {}
   };
 
   const render = () => {
@@ -286,9 +294,17 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         readForm(host.querySelector('#af-formhost'), q);
         const qErrs = validateQuestion(q);
         const banked = bank.questions.findIndex(x => x.id === q.id);
-        if (banked >= 0 && !qErrs.length) {
+        if (banked >= 0) {
           const cur = JSON.stringify(bank.questions[banked]);
-          if (JSON.stringify(q) !== cur) bank.questions[banked] = JSON.parse(JSON.stringify(q));
+          const dirty = JSON.stringify(q) !== cur;
+          if (dirty && qErrs.length) {
+            // the author edited a banked question but it does not validate —
+            // writing the bank now would silently discard those edits
+            status.textContent = '✗ question "' + q.id + '" has unsaved edits that do not validate: ' + qErrs[0];
+            status.style.color = '#e0735f';
+            return;
+          }
+          if (dirty) bank.questions[banked] = JSON.parse(JSON.stringify(q));
         }
         bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       } catch {}

@@ -71,8 +71,15 @@ function createMathsRouter(quizService, saveService) {
     // browsers send cross-origin POSTs to localhost even without CORS permission
     // (no-cors writes execute blind) — any Origin that is not this machine is a drive-by.
     const origin = req.headers.origin;
-    if (origin && !/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(origin)) {
-      return res.status(403).json({ error: 'cross-origin writes rejected' });
+    if (origin) {
+      // same-origin writes are always fine (even over hosts-file aliases);
+      // cross-origin writes are drive-bys regardless of which host they name
+      let originHost = null;
+      try { originHost = new URL(origin).host; } catch {}
+      const localNamed = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(origin);
+      if (!localNamed && originHost !== String(req.headers.host || '')) {
+        return res.status(403).json({ error: 'cross-origin writes rejected' });
+      }
     }
     try {
       const b = req.body || {};
