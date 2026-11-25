@@ -42,3 +42,25 @@ test('object-form MCQ options render their text', () => {
   const q = { type: 'multiple-choice', marks: 1, prompt: 'p', options: [{ text: 'obj-opt' }], correctIndex: 0 };
   assert.ok(questionBlockHtml(q, 1).includes('obj-opt'));
 });
+
+test('blank tables: truth-table inputs print as givens (incl. zero) without leaking outputs', () => {
+  const tt = { type: 'truth-table', marks: 3, prompt: 'complete', inputs: ['A', 'B'], outputs: ['Q'], rows: [{ inputs: [0, 0], expected: [1] }, { inputs: [1, 1], expected: [0] }] };
+  const d = paperPrintDoc({ title: 'P', portal: 'CS', questions: [tt] });
+  assert.match(d, /<th>A<\/th>/);
+  assert.match(d, /<th>Q<\/th>/);
+  assert.ok(d.includes('>0</td>'), 'zero-valued input givens must print');
+  const nbspRowEnds = (d.match(/<td>&nbsp;<\/td><\/tr>/g) || []).length;
+  assert.strictEqual(nbspRowEnds, 2, 'every output-column cell is blank — no expected outputs leak');
+  const s2 = markSchemePrintDoc({ title: 'P', portal: 'CS', questions: [tt] });
+  assert.ok(s2.length > 0);
+});
+
+test('blank tables: trace tables print starting state filled, answer rows empty', () => {
+  const tr = { type: 'trace-table', marks: 4, prompt: 'trace', columns: ['i', 'sum'], initialRows: [['-', '0']], expectedRows: [['0', '3'], ['1', '4']] };
+  const d = paperPrintDoc({ title: 'P', portal: 'CS', questions: [tr] });
+  assert.ok(d.includes('>-</td>'), 'initial row marker prints as a given');
+  assert.ok(d.includes('<td>0</td>'), 'initial state values print');
+  // answer rows must be empty cells
+  assert.ok(d.includes('<td>&nbsp;</td>'), 'blank writable rows present');
+  assert.ok(!/<td>3<\/td>/.test(d), 'expected trace values must not leak onto the student paper');
+});
