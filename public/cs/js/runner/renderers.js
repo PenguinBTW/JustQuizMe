@@ -111,9 +111,11 @@ export function renderQuestionSpecifics(q) {
       <textarea class="essay-pad" id="essayText" placeholder="Write your extended technical response here (include detailed concepts, laws/standards, algorithmic implications, and balanced evaluation)..." style="min-height:220px;" ${isLocked ? 'readonly' : ''}>${esc(ans.text || '')}</textarea>
 
       ${!ans.revealed ? `
-        <div style="margin-top:16px;">
+        ${(S.quiz && S.quiz.exam)
+          ? `<div class="mono" style="margin-top:16px; font-size:12px; color:var(--ink-muted);">Exam mode — the mark scheme stays hidden until you finish; you'll mark this afterwards against the official descriptors.</div>`
+          : `<div style="margin-top:16px;">
           <button class="btn btn-primary" id="revealLevelsBtn">Compare with Levels of Response Rubric &amp; Indicative Content ↓</button>
-        </div>
+        </div>`}
       ` : `
         <div style="margin-top:28px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -125,7 +127,7 @@ export function renderQuestionSpecifics(q) {
             ${levels.map((lvl) => {
               const isSelected = ans.selectedLevel === lvl.level;
               return `
-                <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}">
+                <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}" tabindex="0" role="button" aria-pressed="${isSelected}">
                   <div class="level-card-top">
                     <strong style="font-size:15px;">${esc(lvl.title)}</strong>
                     <span class="format-badge">${lvl.range[0]}-${lvl.range[1]} Marks</span>
@@ -138,8 +140,8 @@ export function renderQuestionSpecifics(q) {
                   ${isSelected ? `
                     <div style="display:flex; align-items:center; gap:14px; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border);">
                       <span class="mono" style="font-size:12px; font-weight:600;">Allocate Marks:</span>
-                      <input type="range" id="levelMarkSlider" min="${lvl.range[0]}" max="${lvl.range[1]}" value="${ans.score ?? lvl.range[1]}" style="flex:1;" />
-                      <span class="mono" id="sliderValDisplay" style="font-size:14px; font-weight:700; color:var(--accent); min-width:32px;">${ans.score ?? lvl.range[1]}m</span>
+                      <input type="range" id="levelMarkSlider" min="${lvl.range[0]}" max="${lvl.range[1]}" value="${ans.score ?? lvl.range[0]}" style="flex:1;" />
+                      <span class="mono" id="sliderValDisplay" style="font-size:14px; font-weight:700; color:var(--accent); min-width:32px;">${ans.score ?? lvl.range[0]}m</span>
                     </div>
                   ` : ''}
                 </div>
@@ -153,7 +155,7 @@ export function renderQuestionSpecifics(q) {
               ${q.indicativeContent.map((point, pIdx) => {
                 const isTicked = (ans.tickedIndicative || []).includes(pIdx);
                 return `
-                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}">
+                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}" tabindex="0" role="checkbox" aria-checked="${isTicked}">
                     <span class="mono" style="color:var(--accent); font-weight:700;">${isTicked ? '☑' : '☐'}</span>
                     <div style="font-size:13.5px;">${formatPrompt(point)}</div>
                   </div>
@@ -677,18 +679,21 @@ export function wireQuestionInteractions(q) {
     $('#revealLevelsBtn')?.addEventListener('click', () => {
       ans.revealed = true;
       ans.selectedLevel ||= 2;
-      ans.score = Math.min(+q.marks || 0, ans.score != null ? ans.score : (q.levels?.[1]?.range[1] || Math.round(q.marks * 0.6)));
+      ans.score = Math.min(+q.marks || 0, ans.score != null ? ans.score : (q.levels?.find(l=>l.level===2)?.range[0] || 1));
       renderQ();
     });
     document.querySelectorAll('[data-level-idx]').forEach(el => {
-      el.onclick = (e) => {
+      const activate = (e) => {
         if (e.target.tagName === 'INPUT') return;
         const lvlNum = +el.dataset.levelIdx;
         ans.selectedLevel = lvlNum;
         const matchedLvl = (q.levels || []).find(l => l.level === lvlNum);
-        if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[1]);
+        if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[0]);
         renderQ();
+        document.querySelector(`[data-level-idx="${lvlNum}"]`)?.focus();
       };
+      el.onclick = activate;
+      el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) activate(e); } };
     });
     const slider = $('#levelMarkSlider');
     if (slider) {
@@ -701,13 +706,16 @@ export function wireQuestionInteractions(q) {
       };
     }
     document.querySelectorAll('[data-indicative-idx]').forEach(el => {
-      el.onclick = () => {
+      const toggle = () => {
         const pIdx = +el.dataset.indicativeIdx;
         ans.tickedIndicative ||= [];
         if (ans.tickedIndicative.includes(pIdx)) ans.tickedIndicative = ans.tickedIndicative.filter(i => i !== pIdx);
         else ans.tickedIndicative.push(pIdx);
         renderQ();
+        document.querySelector(`[data-indicative-idx="${pIdx}"]`)?.focus();
       };
+      el.onclick = toggle;
+      el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) toggle(); } };
     });
   }
 

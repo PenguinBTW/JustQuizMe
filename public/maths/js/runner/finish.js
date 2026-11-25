@@ -9,6 +9,7 @@ import { reviewWalkHtml } from '../../../shared/js/reviewWalk.js';
 import { recordPaperResult, recordBreak, seriesProgress, breakScreenHtml, seriesFinishHtml, fmtClock } from '../../../shared/js/mockSeries.js';
 import { beginSeriesPaper } from './starters.js';
 import { paperPrintDoc, markSchemePrintDoc, openPrintWindow } from '../../../shared/js/printPaper.js';
+import { unmarkedEssays, renderEssayMarkingStage } from '../../../shared/js/postExamMarking.js';
 
 export async function finishQuiz(auto = false) {
   if (S._finishing) return;
@@ -26,6 +27,17 @@ export async function finishQuiz(auto = false) {
       if (sym) S.answers[k] = { ...(S.answers[k] || {}), text: sym.value };
     }
   } catch { /* capture best-effort */ }
+  // essays written blind during exams must be self-marked against the level
+  // descriptors BEFORE scoring — interpose the marking stage once per finish
+  if (unmarkedEssays((S.quiz && S.quiz.questions) || [], S.answers, ak).length) {
+    S._finishing = true;
+    clearInterval(S.timerId);
+    renderEssayMarkingStage({
+      questions: S.quiz.questions, answers: S.answers, ak,
+      onDone: () => { S._finishing = false; finishQuiz(auto); }
+    });
+    return;
+  }
   // a suspended-then-woken tab must not record time past the deadline
   if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   // the resume banner is corrected by the ownership check below — a

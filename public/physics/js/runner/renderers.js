@@ -170,7 +170,8 @@ export function wireQ(q){
       renderQ();
     });
     wireNav();
-  } else if (q.type === 'written'){ wireWritten(q); }
+  } else if (q.type === 'extended-response'){ wireExtendedResponse(q); wireNav(); }
+  else if (q.type === 'written'){ wireWritten(q); }
   else if (q.type === 'self-marked'){ wireSelfMarked(q); }
   else { wireCalc(q); }
 }
@@ -403,5 +404,127 @@ export function wireStepChecks(q, a){
     } else if (numOk(v, s.answer, s.tolerancePercent ?? tol)){ a.steps[i].correct = true; }
     else { a.steps[i].failed = true; }
     renderQ();
+  });
+}
+
+// Extended Response (Levels of Response extended writing/reasoning)
+export function extendedResponseHtml(q) {
+  const a = S.answers[ak(q)] || {};
+  const isLocked = !!a.revealed;
+  const wordCount = (a.text || '').trim().split(/\s+/).filter(Boolean).length;
+  const levels = q.levels || [];
+  return `
+    <h2 class="q-heading">${chipify(q.prompt)}</h2>
+    ${q.guidance ? `<div class="q-guide">${chipify(q.guidance)}</div>` : ''}
+    <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 0 6px;">
+      <span class="mono" style="font-size:11.5px; color:var(--ink-muted); text-transform:uppercase;">EXTENDED RESPONSE ${isLocked ? '(LOCKED AFTER REVEALING RUBRIC)' : ''}</span>
+      <span class="word-counter" id="wordCount">${wordCount} words</span>
+    </div>
+    <textarea class="essay-pad" id="essayText" placeholder="Write your extended response here — structured argument, correct terminology, and a justified conclusion..." style="min-height:220px;" ${isLocked ? 'readonly' : ''}>${esc(a.text || '')}</textarea>
+    ${!a.revealed ? `
+      ${(S.quiz && S.quiz.exam)
+        ? `<div class="mono" style="margin-top:16px; font-size:12px; color:var(--ink-muted);">Exam mode — the mark scheme stays hidden until you finish; you'll mark this afterwards against the official descriptors.</div>`
+        : `<div style="margin-top:16px;"><button class="btn btn-primary" id="revealLevelsBtn">Compare with Levels of Response Rubric &amp; Indicative Content ↓</button></div>`}
+    ` : `
+      <div style="margin-top:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span class="mono" style="font-size:11.5px; color:var(--ink-muted); text-transform:uppercase;">LEVEL DESCRIPTORS</span>
+          <span class="pill green" id="levelAwardedPill">${Math.min(+q.marks || 0, a.score != null ? a.score : 0)} / ${q.marks} marks</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+          ${levels.map((lvl) => {
+            const isSelected = a.selectedLevel === lvl.level;
+            return `
+              <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}" tabindex="0" role="button" aria-pressed="${isSelected}">
+                <div class="level-card-top">
+                  <strong style="font-size:15px;">${esc(lvl.title)}</strong>
+                  <span class="format-badge">${lvl.range[0]}-${lvl.range[1]} Marks</span>
+                </div>
+                <div style="font-size:13px; color:var(--ink-secondary); line-height:1.5; margin-top:6px;">
+                  <div><strong>AO1:</strong> ${esc(lvl.ao1)}</div>
+                  <div style="margin-top:3px;"><strong>AO2:</strong> ${esc(lvl.ao2)}</div>
+                  <div style="margin-top:3px;"><strong>AO3:</strong> ${esc(lvl.ao3)}</div>
+                </div>
+                ${isSelected ? `
+                  <div style="display:flex; align-items:center; gap:14px; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border);">
+                    <span class="mono" style="font-size:12px; font-weight:600;">Allocate Marks:</span>
+                    <input type="range" id="levelMarkSlider" min="${lvl.range[0]}" max="${lvl.range[1]}" value="${a.score ?? lvl.range[0]}" style="flex:1;" />
+                    <span class="mono" id="sliderValDisplay" style="font-size:14px; font-weight:700; color:var(--accent); min-width:32px;">${a.score ?? lvl.range[0]}m</span>
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+        ${(q.indicativeContent && q.indicativeContent.length) ? `
+          <div class="mono" style="font-size:11.5px; color:var(--ink-muted); text-transform:uppercase; margin-bottom:10px;">INDICATIVE CONTENT CHECKLIST</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${q.indicativeContent.map((point, pIdx) => {
+              const isTicked = (a.tickedIndicative || []).includes(pIdx);
+              return `
+                <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}" tabindex="0" role="checkbox" aria-checked="${isTicked}">
+                  <span class="mono" style="color:var(--accent); font-weight:700;">${isTicked ? '☑' : '☐'}</span>
+                  <div style="font-size:13.5px;">${esc(point)}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `}
+  `;
+}
+
+export function wireExtendedResponse(q) {
+  const ans = S.answers[ak(q)] ||= {};
+  const txt = $('#essayText');
+  if (txt) {
+    txt.oninput = (e) => {
+      ans.text = e.target.value;
+      const words = (e.target.value || '').trim().split(/\s+/).filter(Boolean).length;
+      const wc = $('#wordCount');
+      if (wc) wc.textContent = `${words} words`;
+    };
+  }
+  $('#revealLevelsBtn')?.addEventListener('click', () => {
+    ans.revealed = true;
+    ans.selectedLevel ||= 2;
+    ans.score = Math.min(+q.marks || 0, ans.score != null ? ans.score : ((q.levels || []).find(l => l.level === 2)?.range[0] || 1));
+    renderQ();
+  });
+  document.querySelectorAll('[data-level-idx]').forEach(el => {
+    const activate = (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      const lvlNum = +el.dataset.levelIdx;
+      ans.selectedLevel = lvlNum;
+      const matchedLvl = (q.levels || []).find(l => l.level === lvlNum);
+      if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[0]);
+      renderQ();
+      document.querySelector(`[data-level-idx="${lvlNum}"]`)?.focus();
+    };
+    el.onclick = activate;
+    el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) activate(e); } };
+  });
+  const slider = $('#levelMarkSlider');
+  if (slider) {
+    slider.oninput = (e) => {
+      ans.score = Math.min(+q.marks || 0, +e.target.value);
+      const disp = $('#sliderValDisplay');
+      if (disp) disp.textContent = `${ans.score}m`;
+      const pill = $('#levelAwardedPill');
+      if (pill) pill.textContent = `${ans.score} / ${q.marks} marks`;
+    };
+  }
+  document.querySelectorAll('[data-indicative-idx]').forEach(el => {
+    const toggle = () => {
+      const idx = +el.dataset.indicativeIdx;
+      ans.tickedIndicative = ans.tickedIndicative || [];
+      const pos = ans.tickedIndicative.indexOf(idx);
+      if (pos >= 0) ans.tickedIndicative.splice(pos, 1); else ans.tickedIndicative.push(idx);
+      renderQ();
+      document.querySelector(`[data-indicative-idx="${idx}"]`)?.focus();
+    };
+    el.onclick = toggle;
+    el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) toggle(); } };
   });
 }

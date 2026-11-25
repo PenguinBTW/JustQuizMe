@@ -89,18 +89,26 @@ export function reviewWalkHtml(questions, answers) {
     if (!wantPrefix && candidates.length === 1) return byId[candidates[0]];
     return {};
   };
+  const levelsHtml = q2 => {
+    if (q2.type !== 'extended-response') return '';
+    const lv = (q2.levels || []).map(l =>
+      `<li><strong>${esc(l.title)}</strong> <span class="mono" style="color:var(--ink-muted); font-size:11px;">[${l.range[0]}–${l.range[1]}]</span><div style="font-size:12px; opacity:.85;">AO1: ${esc(l.ao1)}<br>AO2: ${esc(l.ao2)}<br>AO3: ${esc(l.ao3)}</div></li>`).join('');
+    const ic = (q2.indicativeContent || []).length
+      ? `<div style="margin-top:6px;"><span class="mono" style="font-size:11px; color:var(--ink-muted);">INDICATIVE CONTENT</span><ul style="margin:4px 0 0 18px; font-size:12.5px; line-height:1.5;">${q2.indicativeContent.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>`
+      : '';
+    return `${lv ? `<ul style="margin:6px 0 0 18px; font-size:13px; line-height:1.5;">${lv}</ul>` : ''}${ic}`;
+  };
   return (questions || []).map((q, i) => {
     const ans = resolve(q);
     const picked = ans.selected != null ? ans.selected : ans.picked;
     const raw = q.type === 'multiple-choice' ? picked : answerText(q, ans);
     const fb = feedbackHtml(matchMistakes(q, raw), esc);
-    const scheme = (q.markScheme || []).length
-      ? `<ul style="margin:6px 0 0 18px; font-size:13px; line-height:1.5;">${q.markScheme.map(m => `<li>${esc(m.text)} <span class="mono" style="color:var(--ink-muted); font-size:11px;">[${esc(m.marks)}]</span></li>`).join('')}</ul>`
-      : q.type === 'multiple-choice' && q.options
-        ? `<div style="font-size:13px; margin-top:6px;">Correct: <strong>${'ABCDEF'[q.correctIndex] || ''}. ${esc(optText(q.options[q.correctIndex]))}</strong></div>`
-        : q.answer != null
-          ? `<div style="font-size:13px; margin-top:6px;">Answer: <strong>${esc(q.answer)}</strong></div>`
-          : '';
+    let scheme = '';
+    const lvHtml = q.type === 'extended-response' ? levelsHtml(q) : '';
+    if (lvHtml) scheme = lvHtml;
+    else if ((q.markScheme || []).length) scheme = `<ul style="margin:6px 0 0 18px; font-size:13px; line-height:1.5;">${q.markScheme.map(m => `<li>${esc(m.text)} <span class="mono" style="color:var(--ink-muted); font-size:11px;">[${esc(m.marks)}]</span></li>`).join('')}</ul>`;
+    else if (q.type === 'multiple-choice' && q.options) scheme = `<div style="font-size:13px; margin-top:6px;">Correct: <strong>${'ABCDEF'[q.correctIndex] || ''}. ${esc(optText(q.options[q.correctIndex]))}</strong></div>`;
+    else if (q.answer != null) scheme = `<div style="font-size:13px; margin-top:6px;">Answer: <strong>${esc(q.answer)}</strong></div>`;
     const mine = answerText(q, ans);
     return `
       <details class="rw-item" style="border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:8px;">

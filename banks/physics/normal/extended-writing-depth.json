@@ -1,0 +1,377 @@
+{
+ "uuid": "ph-er-5b2b762",
+ "version": 1,
+ "title": "Extended Writing \u2014 6-mark discursive",
+ "subject": "physics",
+ "specCode": "AQA",
+ "topics": [
+  "Nuclear physics",
+  "Fields",
+  "Materials",
+  "Electricity",
+  "Further mechanics",
+  "Particle Physics",
+  "Thermal physics"
+ ],
+ "questions": [
+  {
+   "id": "er1",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Nuclear physics",
+   "subtopic": "Radioactive decay applications",
+   "prompt": "A hospital is choosing between technetium-99m (half-life 6 hours, gamma emitter) and iodine-131 (half-life 8 days, beta and gamma emitter) for thyroid imaging. Evaluate the physics factors that should inform this choice.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Half-life: short enough to limit patient dose, long enough to complete imaging",
+    "Radiation type: gamma escapes the body for detection; beta is absorbed internally increasing dose",
+    "Ionisation density \u2014 beta more damaging per absorption",
+    "Energy of emitted gamma must suit the camera detection efficiency",
+    "Excretion/biological half-life interacts with physical half-life",
+    "Balanced conclusion justifying technetium-99m's dominance in diagnostic imaging"
+   ]
+  },
+  {
+   "id": "er2",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Fields",
+   "subtopic": "Gravitational and electric field comparison",
+   "prompt": "Compare and contrast gravitational and electric fields, using their similarities and differences to explain why electrostatic forces dominate at atomic scales while gravity dominates at planetary scales.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Both inverse-square, radial fields with potential proportional to 1/r",
+    "Gravity is always attractive; electric force attracts or repels by charge sign",
+    "Coupling constants differ by ~40 orders of magnitude for proton-scale interactions",
+    "Matter is electrically neutral at large scales \u2014 charge cancellation leaves gravity dominant",
+    "Shielding: gravity cannot be shielded; electric fields can be",
+    "Structured conclusion connecting field properties to the scale-dependent dominance"
+   ]
+  },
+  {
+   "id": "er3",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Materials",
+   "subtopic": "Material selection physics",
+   "prompt": "An engineer must choose a material for the cable of a crane lifting loads in a shipyard. Evaluate the mechanical properties the material must have and how stress-strain behaviour informs the choice.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "High tensile strength to support rated loads with safety factor",
+    "High Young modulus \u2014 small elastic extension keeps positioning precise",
+    "Elastic behaviour must extend well beyond working load: no plastic deformation in service",
+    "Toughness against shock loading; fatigue resistance over repeated cycles",
+    "Ductility as a safety feature \u2014 visible stretching before failure rather than brittle snap",
+    "Corrosion considerations in the marine environment honestly weighed"
+   ]
+  },
+  {
+   "id": "er4",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Electricity",
+   "subtopic": "Experimental Design & Evaluation",
+   "prompt": "A student plans an experiment to determine the resistivity of a nichrome wire using a micrometer, a metre rule, an ammeter and a voltmeter. Describe how the experiment should be carried out and evaluate how the design minimises the uncertainty in the final value of resistivity.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: logically structured method plus sustained evaluation of uncertainty reduction.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: coherent method with correct measurements and some treatment of uncertainty.",
+     "ao2": "Applies the physics to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: fragments of method with no uncertainty awareness.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "Measure diameter with the micrometer at several positions and orientations along the wire; average to reduce random error",
+    "Measure length with the metre rule; contact resistance at crocodile clips is a systematic concern",
+    "Record V and I at several measured lengths of wire (moving the crocodile clip to marked positions), computing R = V/I for each; plot R against L",
+    "Resistivity \u03c1 = RA/L: the gradient of the R\u2013L graph multiplied by cross-sectional area A = \u03c0d\u00b2/4",
+    "Graph-gradient technique reduces the impact of zero errors compared with single-point calculation",
+    "Keep current low/short-lived to avoid heating \u2014 resistance rises with temperature, biasing \u03c1",
+    "Percentage uncertainty dominated by diameter because it enters as d\u00b2"
+   ]
+  },
+  {
+   "id": "er5",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Further mechanics",
+   "subtopic": "Circular Motion Applications",
+   "prompt": "A civil engineer designs a banked curve for a motorway. Explain, with reference to the forces acting on a vehicle, how banking allows the curve to be taken without friction at a design speed, and evaluate what happens when vehicles travel significantly faster or slower than this speed.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: full analysis with tan \u03b8 = v\u00b2/(rg) and evaluation of off-design-speed behaviour.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: correctly resolves weight and normal reaction, identifying the horizontal component as centripetal.",
+     "ao2": "Applies the physics to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: mentions centripetal force without correct force analysis.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "On a banked track the normal reaction tilts toward the centre; its horizontal component supplies centripetal force",
+    "At design speed no friction is needed: N sin \u03b8 = mv\u00b2/r and N cos \u03b8 = mg, giving tan \u03b8 = v\u00b2/(rg)",
+    "Faster than design speed: friction acts down the slope adding centripetal force; insufficient friction means sliding outward",
+    "Slower: friction acts up the slope preventing the vehicle sliding inward",
+    "Design depends on radius and speed only \u2014 mass cancels, so all vehicles share the same design speed",
+    "Real design includes a friction margin, so the banking angle is a compromise across conditions"
+   ]
+  },
+  {
+   "id": "er6",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Particle Physics",
+   "subtopic": "Wave-Particle Duality",
+   "prompt": "Describe the experimental evidence that electrons exhibit both particle-like and wave-like behaviour, and discuss how the concept of wave-particle duality changed the physicist's model of matter.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: coherent structured account of diffraction evidence and particle interactions, with sustained discussion of the de broglie model and its consequences.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: correctly describes evidence for both behaviours with linked interpretations.",
+     "ao2": "Applies the concepts to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: names an experiment without correct interpretation.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "Electron diffraction: electrons accelerated through thin graphite (or across a crystal lattice) produce ring interference patterns \u2014 a wave phenomenon, with spacing matching de Broglie \u03bb = h/p",
+    "Particle behaviour: electrons arrive at detectors as individual localized impacts, are deflected in fields as discrete charges, and ionize atoms one event at a time",
+    "de Broglie hypothesis: all matter has an associated wavelength \u03bb = h/mv, confirmed quantitatively by diffraction experiments",
+    "Which behaviour is observed depends on the experiment \u2014 the two descriptions are complementary rather than contradictory",
+    "Consequences: quantization in atoms explained by standing-wave boundary conditions; led to electron microscopy exploiting small electron wavelengths for resolution beyond optical limits",
+    "The classical particle picture of matter as tiny billiard balls was replaced by a probabilistic quantum description"
+   ]
+  },
+  {
+   "id": "er7",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Thermal physics",
+   "subtopic": "First Law Applications",
+   "prompt": "A gas in a cylinder is compressed rapidly by a piston, which is then locked in place while the gas returns to thermal equilibrium with its surroundings. Using the first law of thermodynamics, explain the energy transfers at each stage, and discuss why the rapidity of the compression matters.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: full analysis distinguishing adiabatic compression from equilibrium cooling, with sustained explanation of why compression rate determines heat transfer during the stroke.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: correctly applies \u03b4u = q + w to the stages with signs addressed.",
+     "ao2": "Applies the concepts to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: states the first law without correct application.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "First law: \u0394U = Q + W \u2014 work done ON the gas is positive W, heat transferred TO the gas is positive Q",
+    "Rapid compression: too fast for significant heat flow, approximately adiabatic \u2014 work input raises internal energy, so temperature rises",
+    "For an ideal gas internal energy depends only on temperature \u2014 the temperature rise measures the work transferred",
+    "With the piston locked after the stroke, cooling occurs at constant volume \u2014 no further work is done, so the internal energy falls purely by heat transfer to the surroundings until temperatures equalize",
+    "Slow (quasi-static) compression instead would approximate isothermal conditions \u2014 heat escapes during the stroke and far less temperature rise occurs",
+    "Practical relevance: diesel engines exploit near-adiabatic compression heating to ignite fuel; bicycle pumps warming is the same effect",
+    "Overall energy conserved: the work input ultimately leaves as heat to the surroundings"
+   ]
+  }
+ ]
+}

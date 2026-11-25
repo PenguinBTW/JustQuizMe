@@ -2,7 +2,7 @@
 import { S } from '../state.js';
 import { $, esc, fmtClock, ak } from '../utils.js';
 import { api } from '../api.js';
-import { resolveDeps, depHtml, mcqHtml, writtenHtml, selfMarkedHtml, calcHtml, wireQ } from './renderers.js';
+import { resolveDeps, depHtml, mcqHtml, writtenHtml, selfMarkedHtml, calcHtml, extendedResponseHtml, wireQ } from './renderers.js';
 import { finishQuiz } from './finish.js';
 import { goExploreBack } from '../views/explore.js';
 import { renderRoom } from '../navigation.js';
@@ -174,6 +174,7 @@ export function renderQ(){
   const inQuiz = S.runMode === 'quiz';
   let body = '';
   if (q.type === 'multiple-choice') body = mcqHtml(q);
+  else if (q.type === 'extended-response') body = extendedResponseHtml(q);
   else if (q.type === 'written') body = writtenHtml(q);
   else if (q.type === 'self-marked') body = selfMarkedHtml(q);
   else body = calcHtml(q);

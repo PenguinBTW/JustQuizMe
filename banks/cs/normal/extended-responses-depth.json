@@ -1,0 +1,593 @@
+{
+ "uuid": "cs-er-5b2b762",
+ "version": 1,
+ "title": "Extended Responses \u2014 discursive depth",
+ "subject": "cs",
+ "specCode": "OCR H446",
+ "topics": [
+  "Legal, Moral & Cultural",
+  "Algorithms & Complexity",
+  "Software & Development",
+  "Data Types & Structures",
+  "Exchanging Data",
+  "Computational Thinking",
+  "Programming Techniques"
+ ],
+ "questions": [
+  {
+   "id": "er1",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "Data protection & privacy",
+   "prompt": "A hospital trust plans to migrate patient records to a third-party cloud provider based overseas. Discuss the legal and ethical issues the trust must consider before proceeding.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Data Protection Act 2018 / UK GDPR principles: lawfulness, purpose limitation, data minimisation",
+    "Rights of data subjects (access, erasure) and how outsourcing affects them",
+    "International transfer rules \u2014 adequacy, safeguards, or explicit consent required for overseas processing",
+    "Security obligations: encryption in transit/at rest, breach notification within 72 hours",
+    "Ethical duties beyond law: patient trust, re-identification risk from pseudonymised data",
+    "Accountability: the trust remains data controller even when processing is outsourced",
+    "Balanced conclusion weighing clinical/operational benefits against privacy risk"
+   ]
+  },
+  {
+   "id": "er2",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Algorithms & Complexity",
+   "subtopic": "Evaluating algorithm choices",
+   "prompt": "A logistics company processes delivery routes on datasets that are nearly sorted, with occasional new insertions. Evaluate whether insertion sort, merge sort, or quicksort is the best choice for their routing system, justifying your recommendation.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Insertion sort is O(n) on nearly-sorted input \u2014 adaptive behaviour suits this exact data profile",
+    "Merge sort guarantees O(n log n) regardless of input but costs O(n) extra memory",
+    "Quicksort averages O(n log n) but degrades to O(n\u00b2) on sorted/nearly-sorted data with naive pivot choice",
+    "Insertion sort's low overhead and in-place operation suit small-to-medium route lists",
+    "For large datasets the quadratic worst case of insertion sort may dominate \u2014 dataset size matters",
+    "Stability may matter if equal-priority deliveries must keep original ordering",
+    "Justified recommendation tied to the scenario's stated characteristics"
+   ]
+  },
+  {
+   "id": "er3",
+   "type": "extended-response",
+   "marks": 12,
+   "topic": "Software & Development",
+   "subtopic": "Testing & evaluation",
+   "prompt": "A team is about to release a payroll system used by 4,000 employees. Discuss the testing strategies the team should employ before release, and evaluate how they should prioritise their limited remaining testing time.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      9,
+      12
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      5,
+      8
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      4
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Unit testing of individual calculation modules (tax bands, pension deductions) with boundary values",
+    "Integration testing across module boundaries \u2014 payroll depends on HR records and banking output formats",
+    "Black-box vs white-box approaches and when each is appropriate",
+    "Alpha testing in-house, then beta/UAT with a pilot group of real payroll staff",
+    "Boundary/extreme test data: zero hours, maximum overtime, negative corrections, leap years",
+    "Regression testing after each fix to ensure earlier functionality survives",
+    "Prioritisation reasoning: financial correctness and legal compliance rank above cosmetic issues",
+    "Evaluation of residual risk \u2014 what it means to ship with known untested paths"
+   ]
+  },
+  {
+   "id": "er4",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Data Types & Structures",
+   "subtopic": "Database design choices",
+   "prompt": "A school currently stores all student data in one large flat-file table. Evaluate the benefits of normalising this data into a relational database design.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Data redundancy reduction \u2014 repeated student/contact details stored once",
+    "Update anomaly elimination \u2014 changing a tutor's room once instead of everywhere",
+    "Insertion/deletion anomalies explained with school-specific examples",
+    "Referential integrity through primary/foreign keys",
+    "Query flexibility via joins; reports impractical and error-prone in flat file",
+    "Counterpoints honestly evaluated: complexity cost, join performance overhead, staff training",
+    "Conclusion weighing scale of the school data against design effort"
+   ]
+  },
+  {
+   "id": "er5",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Exchanging Data",
+   "subtopic": "Network security",
+   "prompt": "A small business runs a wireless network for staff and guests. Discuss the security threats this network faces and evaluate the measures the business should implement.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Unauthorised access \u2014 weak/shared passwords, rogue devices, evil twin hotspots",
+    "Interception of unencrypted traffic \u2014 need for WPA2/WPA3 and TLS end-to-end",
+    "Guest network segmentation/VLAN isolation from business systems",
+    "MAC filtering limitations \u2014 trivially spoofed, not a real control",
+    "Firewall and intrusion detection roles",
+    "Physical and social-engineering vectors \u2014 honest evaluation that technical controls are partial",
+    "Proportionality: cost/complexity of measures weighed against the business's actual risk"
+   ]
+  },
+  {
+   "id": "er6",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Computational Thinking",
+   "subtopic": "Problem-solving approaches",
+   "prompt": "A programmer must build a system that finds the shortest path for a delivery van visiting twenty addresses. Evaluate the use of abstraction and heuristic approaches in making this problem tractable.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "The problem is a travelling salesman variant \u2014 exact brute force is factorial and intractable at n=20",
+    "Abstraction: road network as weighted graph, irrelevant detail (vehicle colour, road names) discarded",
+    "Heuristic tour-construction methods (nearest neighbour, 2-opt improvement) trade optimality for feasibility on large instances; point-to-point A* with an admissible heuristic remains optimal for individual legs but does not decide visiting order",
+    "Decomposition into route representation, cost evaluation, improvement steps",
+    "Evaluation: whether 'good enough' routes suffice commercially versus guaranteed-optimal cost",
+    "Reasoned conclusion about acceptable approximation in practice"
+   ]
+  },
+  {
+   "id": "er7",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "AI & Algorithmic Decision-Making",
+   "prompt": "A hospital trust proposes triaging A&E patients using a machine-learning model trained on five years of historical admissions data. Discuss the ethical, legal and technical issues raised by deploying algorithmic decision-making in this context, and evaluate whether the benefits justify the risks.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive, accurate knowledge of training-data bias, concept drift, accountability, GDPR/DPA 2018 principles and human-in-the-loop design.",
+     "ao2": "Detailed, sustained application: historical admissions encode demographic bias, model errors have asymmetric costs, clinician override workflows.",
+     "ao3": "Balanced, nuanced evaluation weighing efficiency and consistency gains against fairness, accountability and automation-bias risks, reaching a substantiated conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Some accurate knowledge of training data, bias sources and data protection principles.",
+     "ao2": "Applies concepts to the triage scenario with mostly clear reasoning.",
+     "ao3": "Some evaluation present though imbalanced."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Isolated references to bias or privacy with little technical vocabulary.",
+     "ao2": "Little application to the hospital scenario.",
+     "ao3": "One-sided assertion."
+    }
+   ],
+   "indicativeContent": [
+    "Training data reflects historical practice: if past triage disadvantaged groups, the model inherits and amplifies that bias",
+    "Correlation vs causation \u2014 the model may proxy protected characteristics (postcode, language) even if excluded",
+    "UK GDPR and DPA 2018 restrict solely automated decisions with significant effect (the relevant provisions now sit in Articles 22A\u201322D), with stricter conditions for special-category data such as health records; a lawful basis and DPIA are required",
+    "Accountability: when a triage decision harms a patient, responsibility is diffuse across vendor, trust and clinician",
+    "Automation bias: staff may defer to the model even when clinical judgement disagrees",
+    "Benefits: consistency, speed, 24/7 uniformity, freeing clinician time \u2014 strongest when the model augments rather than replaces judgement",
+    "Concept drift: disease patterns and population change, degrading model accuracy without monitoring"
+   ]
+  },
+  {
+   "id": "er8",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Programming Techniques",
+   "subtopic": "Paradigms & OOP Evaluation",
+   "prompt": "A software house must rebuild a large legacy procedural codebase (a payroll and HR system) and is deciding between an object-oriented and a functional design. Evaluate the suitability of object-oriented programming for large-scale business systems such as this, compared with alternative paradigms.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive knowledge of OOP principles, composition vs inheritance, functional immutability and modular design tradeoffs.",
+     "ao2": "Detailed application: payroll rules as polymorphic strategies, employee lifecycle as object state, immutability aiding audit trails.",
+     "ao3": "Balanced evaluation of maintainability, testability, team scaling and real-world modelling against OOP's verbosity and inheritance fragility, with a substantiated recommendation."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of encapsulation, inheritance, polymorphism and at least one alternative paradigm.",
+     "ao2": "Applies paradigm features to the business-system context with reasonable clarity.",
+     "ao3": "Evaluation present but unevenly developed."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Isolated facts about classes or inheritance.",
+     "ao2": "Generic statements unapplied to payroll/HR.",
+     "ao3": "One-sided preference without justification."
+    }
+   ],
+   "indicativeContent": [
+    "OOP strengths: encapsulation protects payroll invariants; polymorphism handles varied employee types cleanly",
+    "Domain modelling: business entities (employee, payslip, department) map naturally onto objects with identity and lifecycle",
+    "Inheritance pitfalls: fragile base classes, deep hierarchies resisting change \u2014 composition often preferable",
+    "Functional alternative: immutable data eases audit trails and concurrency; pure functions simplify testing of payroll calculations",
+    "Team scaling: encapsulation boundaries let large teams work in parallel with stable interfaces",
+    "Testing: OOP statefulness complicates unit tests; functional cores are trivially testable \u2014 hybrid designs common",
+    "Pragmatic conclusion: most large systems blend paradigms \u2014 OO structure with functional cores for calculation-heavy logic"
+   ]
+  },
+  {
+   "id": "er9",
+   "type": "extended-response",
+   "marks": 12,
+   "topic": "Exchanging Data",
+   "subtopic": "Protocol Design & Layering",
+   "prompt": "'The layered design of network protocol stacks is more important to the success of the internet than any individual protocol.' Discuss this statement with reference to the TCP/IP model, considering how layering affects interoperability, evolution and fault isolation.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      9,
+      12
+     ],
+     "ao1": "Comprehensive, accurate knowledge of layer responsibilities, encapsulation, protocol data units and standardisation processes.",
+     "ao2": "Detailed, coherent application: layer substitution examples (WiFi vs Ethernet, IPv4 vs IPv6), application protocols evolving independently of transport.",
+     "ao3": "Critical, balanced evaluation weighing the statement against counter-arguments (TCP's centrality, ossification, middlebox interference), reaching a substantiated judgement."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      5,
+      8
+     ],
+     "ao1": "Sound knowledge of the TCP/IP layers and the role of encapsulation, with some development.",
+     "ao2": "Applies layering to interoperability or evolution with mostly clear reasoning.",
+     "ao3": "Evaluation present though incomplete or unbalanced."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      4
+     ],
+     "ao1": "Names some protocols or layers without structure.",
+     "ao2": "Barely linked to the statement.",
+     "ao3": "Agreement or disagreement asserted without support."
+    }
+   ],
+   "indicativeContent": [
+    "Layer responsibilities: link (framing, MAC), internet (addressing/routing), transport (end-to-end reliability), application (service semantics)",
+    "Interoperability: a browser works identically over Ethernet, WiFi or 5G because only the link layer changes",
+    "Independent evolution: HTTP/1.1 \u2192 2 \u2192 3 progressed without rewriting IP; TLS inserted without altering applications",
+    "Encapsulation: each layer adds headers, treating the layer above as opaque payload \u2014 the mechanism enabling substitution",
+    "Fault isolation: layer boundaries localise failures \u2014 a cable fault is a link issue, congestion a transport concern",
+    "Counter-argument: the end-to-end reliability of TCP and universal addressing of IP are themselves pivotal achievements",
+    "Ossification: middleboxes now assume TCP/IPv4, impeding deployment of alternatives \u2014 layering succeeded so well it froze",
+    "Conclusion: layering is the architectural enabler, but the statement understates the co-evolution of key protocols"
+   ]
+  },
+  {
+   "id": "er10",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "Encryption & State Access",
+   "prompt": "Some governments argue that encryption services should provide mechanisms for lawful access to plaintext when required by a court order. Discuss the technical and ethical arguments for and against building such access mechanisms into widely used encryption systems.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive accurate knowledge of end-to-end encryption, key escrow, attack surface expansion, and proportionality principles.",
+     "ao2": "Detailed sustained application: exceptional-access mathematics, historical examples, jurisdictional issues, target-vs-mass implications.",
+     "ao3": "Balanced nuanced evaluation weighing legitimate law-enforcement needs against systemic security weakening, reaching a substantiated conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of encryption, key management and the privacy-security tension.",
+     "ao2": "Applies arguments to lawful-access proposals with mostly clear reasoning.",
+     "ao3": "Evaluation present though imbalanced."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Isolated opinions about privacy or security.",
+     "ao2": "Barely linked to the scenario.",
+     "ao3": "One-sided assertion."
+    }
+   ],
+   "indicativeContent": [
+    "Any exceptional-access mechanism is itself an attack surface \u2014 a master key or escrowed key becomes a high-value target",
+    "End-to-end encryption means the provider holds no plaintext: lawful access requires redesigning the architecture, not just policy",
+    "The mathematics of cryptography does not distinguish good actors from bad \u2014 a weakness usable by one state is usable by others and by criminals",
+    "Historical precedent: key-escrow proposals (e.g. the 1990s Clipper chip) failed on both security and trust grounds",
+    "Legitimate needs: terrorism and child-protection investigations are real and serious \u2014 the argument is about means, not whether crime matters",
+    "Jurisdictional problem: a mechanism built for one country's courts is demanded by all jurisdictions including authoritarian ones",
+    "Proportionality alternative: targeted measures (device exploitation of specific suspects) preserve strong encryption for everyone else",
+    "Conclusion candidates: most experts judge systemic risk outweighs benefit, but students may argue calibrated compromises"
+   ]
+  },
+  {
+   "id": "er11",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Exchanging Data",
+   "subtopic": "Compression Trade-offs",
+   "prompt": "A streaming service must choose compression approaches for its music and video catalogues. Evaluate the trade-offs between lossless and lossy compression for different media types and use cases, and recommend an approach for the service with justification.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      7,
+      9
+     ],
+     "ao1": "Comprehensive knowledge: entropy limits, psychoacoustic/visual models, bitrate ladders, archive-vs-distribution distinction.",
+     "ao2": "Detailed application: bandwidth adaptation, mobile data constraints, archival masters, codec generation loss.",
+     "ao3": "Balanced evaluation across use cases with a differentiated recommendation rather than a single answer, well substantiated."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      4,
+      6
+     ],
+     "ao1": "Sound knowledge of compression ratios, perceptual coding and reconstruction fidelity.",
+     "ao2": "Applies trade-offs to music and video streaming with reasonable clarity.",
+     "ao3": "Evaluation present but uneven."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      3
+     ],
+     "ao1": "Knows lossless and lossy differ.",
+     "ao2": "Generic statements.",
+     "ao3": "One-sided preference."
+    }
+   ],
+   "indicativeContent": [
+    "Lossless preserves every bit \u2014 essential for archival masters and editing pipelines where generation loss compounds",
+    "Lossy exploits perceptual models: psychoacoustics discards masked frequencies in audio; visual codecs exploit spatial/temporal redundancy",
+    "Compression ratios: against uncompressed media, lossy achieves one to two orders of magnitude smaller files (e.g. CD-quality audio ~10:1, video often 50:1+) \u2014 critical at streaming scale and mobile bandwidth",
+    "Perceptual transparency: at sufficient bitrates most listeners cannot distinguish lossy from the source in controlled tests",
+    "Use-case differentiation: distribution favours lossy; production/archive demands lossless; download purchases may justify lossless tiers",
+    "Bitrate ladders: adaptive streaming serves multiple lossy encodings matched to connection quality in real time",
+    "Transcoding warning: re-encoding lossy content degrades quality further \u2014 masters must be lossless",
+    "Reasoned conclusion: hybrid \u2014 lossless archives, lossy distribution, tiered by context"
+   ]
+  }
+ ]
+}

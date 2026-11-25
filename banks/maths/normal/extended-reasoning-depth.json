@@ -1,0 +1,272 @@
+{
+ "uuid": "ma-er-5b2b762",
+ "version": 1,
+ "title": "Extended Reasoning \u2014 proof & interpretation",
+ "subject": "maths",
+ "specCode": "OCR H240",
+ "topics": [
+  "Algebra, Polynomials & Proof",
+  "Probability & Hypothesis Testing",
+  "Kinematics & Projectiles",
+  "Numerical Methods",
+  "Integration"
+ ],
+ "questions": [
+  {
+   "id": "er1",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Algebra, Polynomials & Proof",
+   "subtopic": "Extended mathematical argument",
+   "prompt": "Prove or disprove: the sum of any three consecutive integers is divisible by 3. Your response should present a complete mathematical argument and evaluate whether the claim generalises to any n consecutive integers.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Algebraic representation n + (n+1) + (n+2) = 3n + 3 = 3(n+1) \u2014 constructive proof",
+    "Recognition that the factorised form proves divisibility for all integers n",
+    "Generalisation: sum of k consecutive integers is kn + k(k-1)/2",
+    "Divisibility by k holds when k is odd; fails for even k \u2014 counterexample needed",
+    "A counterexample for even case e.g. 1+2=3 not divisible by 2",
+    "Logical structure: claim, proof, generalisation hypothesis, verdict with justification"
+   ]
+  },
+  {
+   "id": "er2",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Probability & Hypothesis Testing",
+   "subtopic": "Interpreting significance",
+   "prompt": "A school trials a new revision technique. Mean test scores rise from 64% to 67% with a sample of 30 students. A hypothesis test gives p = 0.04. Evaluate what the school can and cannot conclude, and whether they should adopt the technique.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Correct interpretation of p=0.04: probability of such data (or more extreme) if no real effect",
+    "p does NOT measure the probability the technique works",
+    "Statistical significance vs practical significance \u2014 3% may not justify cost/disruption",
+    "Sample size and variance considerations; possible confounders (motivation, selection)",
+    "Multiple-comparison and replication concerns honestly raised",
+    "Reasoned recommendation distinguishing evidence strength from decision factors"
+   ]
+  },
+  {
+   "id": "er3",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Kinematics & Projectiles",
+   "subtopic": "Modelling Assumptions Evaluation",
+   "prompt": "A student models a basketball free throw as a projectile moving under gravity alone. Discuss the assumptions built into this model, evaluate which are most questionable for a basketball, and explain how refining the model would change the predicted motion.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: systematic treatment prioritising air resistance with correct qualitative refinements.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: identifies several standard assumptions with sound evaluation of at least one.",
+     "ao2": "Applies the physics to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: lists an assumption without analysis.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "Standard assumptions: projectile is a particle, gravity constant, no air resistance, no wind, no spin effects",
+    "Basketball is light with large cross-section \u2014 air resistance is significant relative to its weight, the most questionable assumption",
+    "Drag reduces range and maximum height and shifts the optimal launch angle away from the drag-free value \u2014 the direction and size of the shift depend on launch speed and the height difference between release and target, so in practice numerical simulation is needed rather than a fixed rule",
+    "Constant g is excellent over a few metres; the particle assumption ignores spin but the Magnus effect is small for a gentle free throw",
+    "Refinement cost: drag models destroy closed-form solutions, requiring numerical methods \u2014 accuracy bought with complexity"
+   ]
+  },
+  {
+   "id": "er4",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Numerical Methods",
+   "subtopic": "Method Failure Analysis",
+   "prompt": "A student uses the Newton\u2013Raphson method to solve x\u00b3 \u2212 2x + 2 = 0, starting from x\u2080 = 0. The iteration fails to converge. Analyse why numerical root-finding methods can fail, using this example and others, and evaluate strategies for choosing methods and starting values that make failure less likely.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: precise analysis of failure mechanisms with evaluation of mitigation strategies.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: identifies genuine failure modes with correct reference to the example.",
+     "ao2": "Applies the physics to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: states failure can happen without mathematical reasons.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "x\u2080 = 0 gives x\u2081 = 1 then x\u2082 = 0 \u2014 the iteration oscillates in a cycle rather than converging (Newton\u2013Raphson can be periodic)",
+    "Failure mechanisms: f\u2032(x\u2099) \u2248 0 sends x\u2099\u208a\u2081 far away; cycles; divergence to infinity; convergence to an unintended root",
+    "For x\u00b3 \u2212 2x + 2 the derivative vanishes at x = \u00b1\u221a(2/3), creating a region where iterates behave erratically",
+    "Mitigation: sketch or evaluate f first \u2014 for a continuous function a sign change over [a, b] guarantees a root there (intermediate value theorem); a discontinuity inside the interval voids the guarantee",
+    "Bracketing methods such as bisection converge slowly but cannot oscillate \u2014 robust when behaviour is unknown",
+    "Newton\u2013Raphson converges quadratically near a root when f\u2032 is well-behaved \u2014 speed in exchange for fragility",
+    "Practical solvers combine methods: bracketing for safety, Newton\u2013Raphson for polish"
+   ]
+  },
+  {
+   "id": "er5",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Integration",
+   "subtopic": "Technique Selection & Justification",
+   "prompt": "A student must evaluate \u222b x ln x dx, \u222b sin\u00b2x dx, and \u222b x/(x\u00b2+1) dx. For each integral, explain which technique you would choose and why, and discuss what features of an integrand signal the appropriate method \u2014 illustrating how wrong choices reveal themselves.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      5,
+      6
+     ],
+     "ao1": "Comprehensive accurate knowledge: all three correctly matched with precise structural justification (product of unlike types, power reduction, reverse chain rule) plus sustained discussion of recognition strategy.",
+     "ao2": "Fully sustained, logically structured application to the scenario.",
+     "ao3": "Balanced, well-justified evaluation reaching a supported conclusion."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      4
+     ],
+     "ao1": "Sound knowledge: correct technique chosen for most integrals with feature-based reasoning.",
+     "ao2": "Applies the concepts to the scenario with mostly coherent reasoning.",
+     "ao3": "Some evaluation, though uneven or incomplete."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Limited accurate knowledge: names a technique without linking it to integrand features.",
+     "ao2": "Fragmentary application to the scenario.",
+     "ao3": "Assertion without evaluation."
+    }
+   ],
+   "indicativeContent": [
+    "\u222b x ln x dx: integration by parts \u2014 ln x differentiates to 1/x simplifying away, while x integrates easily (LIATE-type heuristic: choose u = ln x)",
+    "\u222b sin\u00b2x dx: no product structure \u2014 use the double-angle identity cos 2x = 1 \u2212 2sin\u00b2x to linearize, then integrate directly",
+    "\u222b x/(x\u00b2+1) dx: numerator is a scalar multiple of the derivative of the denominator \u2014 reverse chain rule / recognition gives \u00bdln(x\u00b2+1) + c",
+    "Recognition strategy: ask what structure is present \u2014 product of unlike types suggests parts; composite with inner derivative present suggests substitution; even powers of trig suggest identities",
+    "Wrong choices reveal themselves: parts on sin\u00b2x appears circular yet CAN be rearranged via cos\u00b2x = 1 \u2212 sin\u00b2x to solve for the original integral \u2014 it works but demands awkward manipulation the double-angle identity avoids; substitution only succeeds when the original variable can be eliminated entirely \u2014 having the inner derivative present makes this immediate, its absence usually strands mixed variables (though algebraic elimination occasionally rescues it, as with u = ln x in the first example)",
+    "Definite-check habit: differentiate the answer to verify \u2014 the strongest guard against misapplied technique",
+    "Fluency is pattern-recognition built from structural analysis, not memorised type-matching"
+   ]
+  }
+ ]
+}
