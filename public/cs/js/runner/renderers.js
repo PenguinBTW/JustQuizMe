@@ -9,7 +9,10 @@ import { renderRoom } from '../navigation.js';
 import { matchMistakes, feedbackHtml } from '../../../shared/js/answerFeedback.js';
 
 export function renderQuestionSpecifics(q) {
-  const ans = S.answers[ak(q)] || {};
+  // initialise into the store, not a throwaway: table rows set up here must
+  // be the SAME object wireQuestionInteractions binds against, or Add Row
+  // and cell input target a rows array that was never persisted
+  const ans = S.answers[ak(q)] ||= {};
 
   // 1. Multiple Choice
   if (q.type === 'multiple-choice') {
