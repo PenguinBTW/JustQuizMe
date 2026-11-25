@@ -284,13 +284,17 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       const idx = bank.questions.findIndex(x => x.id === q.id);
       // deep copy — a shallow copy shares the options/markScheme arrays, so
       // later form edits would silently mutate the banked question
-      const snap = JSON.parse(JSON.stringify(q));
-      if (snap.type === 'calculation' && snap.answer != null
-          && snap.tolerance && typeof snap.tolerance === 'object'
-          && isFinite(snap.tolerance.min) && isFinite(snap.tolerance.max)
-          && !(snap.answer >= snap.tolerance.min && snap.answer <= snap.tolerance.max)) {
-        delete snap.tolerance;
+      // invalidate on the form question itself, before the snapshot — stripping
+      // only the snap would leave form and bank disagreeing, which draft
+      // restoration reads as an unfinished edit (and the next Add replaces
+      // instead of appending)
+      if (q.type === 'calculation' && q.answer != null
+          && q.tolerance && typeof q.tolerance === 'object'
+          && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)
+          && !(q.answer >= q.tolerance.min && q.answer <= q.tolerance.max)) {
+        delete q.tolerance;
       }
+      const snap = JSON.parse(JSON.stringify(q));
       if (idx >= 0) bank.questions[idx] = snap; else bank.questions.push(snap);
       bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       persistDraft();
