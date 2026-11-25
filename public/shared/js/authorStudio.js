@@ -312,9 +312,11 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       if (!Array.isArray(parsed) && typeof parsed.title === 'string' && parsed.title.trim() && bank.questions.length === 0) {
         bank.title = parsed.title.trim();
       }
-      // keep the source bank's image folder so relative diagram paths still resolve
+      // keep the source bank's image folder so relative diagram paths still resolve —
+      // but only once at least one of its questions actually merges, or an empty
+      // import would silently redirect this bank's own relative images
       if (!Array.isArray(parsed) && typeof parsed.imageFolder === 'string' && parsed.imageFolder && !bank.imageFolder) {
-        bank.imageFolder = parsed.imageFolder;
+        bank._pendingImageFolder = parsed.imageFolder;
       }
       let added = 0, dupes = 0;
       const failures = [];
@@ -325,17 +327,26 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         if (errs.length) { failures.push(`#${i + 1}: ${errs[0]}`); return; }
         if (item.id && ids.has(item.id)) { dupes++; return; }
         if (!item.id) item.id = `q${Date.now().toString(36)}${i}`;
+        // external converters often emit numeric strings — coerce before merge so
+        // the studio's numeric validation and the server's lenient one agree
+        if (typeof item.answer === 'string' && item.answer.trim() !== '' && isFinite(+item.answer)) item.answer = +item.answer;
+        if (typeof item.tolerancePercent === 'string' && item.tolerancePercent.trim() !== '' && isFinite(+item.tolerancePercent)) item.tolerancePercent = +item.tolerancePercent;
         ids.add(item.id);
         bank.questions.push(JSON.parse(JSON.stringify(item)));
         added++;
       });
+      if (added > 0 && bank._pendingImageFolder) {
+        bank.imageFolder = bank._pendingImageFolder;
+      }
+      delete bank._pendingImageFolder;
       // dependsOn references to skipped/duplicate ids would resolve against the wrong
-      // question in the destination bank — prune any reference that doesn't resolve here
+      // question in the destination bank — prune unresolvable references, preserving
+      // the original entry shape (plain id strings vs {id, …} objects) for valid ones
       const validIds = new Set(bank.questions.map(x => x.id));
       let pruned = 0;
       bank.questions.forEach(bq => {
         if (Array.isArray(bq.dependsOn)) {
-          const kept = bq.dependsOn.filter(d => validIds.has(d));
+          const kept = bq.dependsOn.filter(d => validIds.has(typeof d === 'object' && d !== null ? d.id : d));
           pruned += bq.dependsOn.length - kept.length;
           if (!kept.length) delete bq.dependsOn; else bq.dependsOn = kept;
         }
