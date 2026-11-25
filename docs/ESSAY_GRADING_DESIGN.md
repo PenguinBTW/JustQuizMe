@@ -13,9 +13,28 @@ OCR/AQA extended writing, where the scheme is **levels-of-response**: the marker
 the whole answer holistically and places it in a level by quality descriptors, then picks
 a mark within the level.
 
+## What already exists (correction to the naive framing)
+
+The CS portal runner **already implements** a levels-of-response self-marking flow
+for `extended-response` questions (`cs/js/runner/renderers.js`): write-first locking,
+reveal-after-answering, level cards with mark ranges and per-assessment-objective
+(AO1/AO2/AO3) descriptors, level selection, and indicative content. What is missing:
+
+1. **Coverage** — maths and physics runners have no extended-response levels UI at all;
+   only CS does.
+2. **Authored content** — the CS runner falls back to generic descriptors when a question
+   carries no `levels[]`; hardly any bank content authors per-question descriptors.
+3. **A schema contract** — the shape the CS runner reads (`levels[].range`, `ao1/ao2/ao3`,
+   `title`) is informal; validation doesn't know it, `marks` is still mandatory even though
+   it is derivable as the top level's max, and printPaper reads `marks` directly.
+
+So the real decision is not "introduce levels grading" but **standardize and extend what
+CS already does**: formalize the existing `levels[].range/ao*` shape (rather than inventing
+a new one — no migration needed), port the runner UI to maths/physics, and author content.
+
 ## Option A — rubric-ticks self-grading (status quo, extended)
 
-What it is: the existing model. Each question carries `markScheme: [{ label, marks }]`;
+What it is: the existing model. Each question carries `markScheme: [{ text, marks }]`;
 the student self-assesses point by point.
 
 Markscheme fidelity:
@@ -35,7 +54,7 @@ point-spotting instead of structured argument.
 
 UI/data implications: zero new schema — everything exists. Cost of doing nothing.
 
-## Option B — level-descriptor self-grading
+## Option B — level-descriptor self-grading (formalize + extend the CS implementation)
 
 What it is: schema gains per-question `levels: [{ level, minMarks, maxMarks, descriptor, indicativeContent }]`.
 After answering, the student reads their answer against the level descriptors, picks the
@@ -54,7 +73,12 @@ Level 4/4 every time) — but this is equally true of ticking every point today,
 discipline of reading descriptors is the pedagogically honest version.
 
 UI/data implications:
-- Schema: new optional `levels[]` array; `marks` derivable as max level mark.
+- Schema: formalize the existing informal shape — optional `levels[]` with
+  `{ level, title, range: [min, max], ao1, ao2, ao3 }` as the CS runner already reads it.
+  Contract decision needed: either `marks` stays mandatory (authors duplicate the top
+  range max — simple, printPaper unchanged) or loading derives `marks` from the top level
+  before validation/rendering (no duplication, one derivation point). Recommend keeping
+  `marks` mandatory and validating it equals the top level's max — cheapest correct contract.
 - Runner: new self-mark UI — level cards with descriptors, radio pick, then a mark slider
   within the level range. Moderate new component (~100 lines + styling), replacing the
   tick list for these questions.
@@ -72,7 +96,7 @@ Support both, chosen per question by what the real scheme actually is:
   the question carries.
 
 This is how the real exam boards work — papers mix both. Neither model is forced onto
-content it doesn't fit. Implementation cost is the level UI plus per-question authoring;
+content it doesn't fit. Implementation cost is the maths/physics UI port plus per-question authoring;
 the tick path is untouched. Migration is incremental — questions gain `levels[]` as their
 content pass reaches them, with no flag day.
 
