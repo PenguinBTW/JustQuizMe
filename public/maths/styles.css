@@ -1227,9 +1227,9 @@
   .room-tabs::-webkit-scrollbar { display: none; }
   .room-tab { font-size: 18px; white-space: nowrap; flex: 0 0 auto; }
   /* WCAG 2.2 target size minimum — primary actions were 19px tall */
-  button, .btn, [role="button"] { min-height: 24px; }
+  button, [role="button"] { min-height: 24px; }
   /* pre blocks (worked examples, code) wrap instead of overflowing */
-  pre { white-space: pre-wrap; word-break: break-word; max-width: 100%; }
+  pre, pre.ascii-display, pre.code-snippet, .ascii-display pre, .code-snippet pre { white-space: pre-wrap !important; word-break: break-word; max-width: 100%; }
   /* quiz chrome rows wrap rather than clip */
   .q-eyebrow, .eyebrow-row { flex-wrap: wrap; }
 }
