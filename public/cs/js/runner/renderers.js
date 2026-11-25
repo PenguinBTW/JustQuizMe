@@ -125,7 +125,7 @@ export function renderQuestionSpecifics(q) {
             ${levels.map((lvl) => {
               const isSelected = ans.selectedLevel === lvl.level;
               return `
-                <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}">
+                <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}" tabindex="0" role="button" aria-pressed="${isSelected}">
                   <div class="level-card-top">
                     <strong style="font-size:15px;">${esc(lvl.title)}</strong>
                     <span class="format-badge">${lvl.range[0]}-${lvl.range[1]} Marks</span>
@@ -153,7 +153,7 @@ export function renderQuestionSpecifics(q) {
               ${q.indicativeContent.map((point, pIdx) => {
                 const isTicked = (ans.tickedIndicative || []).includes(pIdx);
                 return `
-                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}">
+                  <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}" tabindex="0" role="checkbox" aria-checked="${isTicked}">
                     <span class="mono" style="color:var(--accent); font-weight:700;">${isTicked ? '☑' : '☐'}</span>
                     <div style="font-size:13.5px;">${formatPrompt(point)}</div>
                   </div>

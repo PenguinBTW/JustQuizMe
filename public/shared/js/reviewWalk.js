@@ -103,7 +103,7 @@ export function reviewWalkHtml(questions, answers) {
     const picked = ans.selected != null ? ans.selected : ans.picked;
     const raw = q.type === 'multiple-choice' ? picked : answerText(q, ans);
     const fb = feedbackHtml(matchMistakes(q, raw), esc);
-    const scheme = q.type === 'extended-response' ? levelsHtml(q) : (q.markScheme || []).length
+    const scheme = (q.type === 'extended-response' && levelsHtml(q)) || (q.markScheme || []).length
       ? `<ul style="margin:6px 0 0 18px; font-size:13px; line-height:1.5;">${q.markScheme.map(m => `<li>${esc(m.text)} <span class="mono" style="color:var(--ink-muted); font-size:11px;">[${esc(m.marks)}]</span></li>`).join('')}</ul>`
       : q.type === 'multiple-choice' && q.options
         ? `<div style="font-size:13px; margin-top:6px;">Correct: <strong>${'ABCDEF'[q.correctIndex] || ''}. ${esc(optText(q.options[q.correctIndex]))}</strong></div>`

@@ -18,7 +18,7 @@ export function quizScore(){
     const sc = a?.score ?? 0; score += sc;
     if (q.type === 'multiple-choice'){ mcq.total += q.marks; mcq.got += sc; }
     else if (q.type === 'written'){ w.total += q.marks; w.got += sc; }
-    else if (q.type === 'self-marked'){ s.total += q.marks; s.got += sc; }
+    else if (q.type === 'self-marked' || q.type === 'extended-response'){ s.total += q.marks; s.got += sc; }
     else { c.total += q.marks; c.got += sc; if (a?.helped) helped.push(ak(q).toUpperCase()); }
   }
   return { score, total, mcq, w, c, s, helped };

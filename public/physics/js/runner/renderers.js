@@ -433,7 +433,7 @@ export function extendedResponseHtml(q) {
           ${levels.map((lvl) => {
             const isSelected = a.selectedLevel === lvl.level;
             return `
-              <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}">
+              <div class="level-card ${isSelected ? 'selected' : ''}" data-level-idx="${lvl.level}" tabindex="0" role="button" aria-pressed="${isSelected}">
                 <div class="level-card-top">
                   <strong style="font-size:15px;">${esc(lvl.title)}</strong>
                   <span class="format-badge">${lvl.range[0]}-${lvl.range[1]} Marks</span>
@@ -460,7 +460,7 @@ export function extendedResponseHtml(q) {
             ${q.indicativeContent.map((point, pIdx) => {
               const isTicked = (a.tickedIndicative || []).includes(pIdx);
               return `
-                <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}">
+                <div class="ms-item ${isTicked ? 'checked' : ''}" data-indicative-idx="${pIdx}" tabindex="0" role="checkbox" aria-checked="${isTicked}">
                   <span class="mono" style="color:var(--accent); font-weight:700;">${isTicked ? '☑' : '☐'}</span>
                   <div style="font-size:13.5px;">${esc(point)}</div>
                 </div>
@@ -491,7 +491,7 @@ export function wireExtendedResponse(q) {
     renderQ();
   });
   document.querySelectorAll('[data-level-idx]').forEach(el => {
-    el.onclick = (e) => {
+    const activate = (e) => {
       if (e.target.tagName === 'INPUT') return;
       const lvlNum = +el.dataset.levelIdx;
       ans.selectedLevel = lvlNum;
@@ -499,6 +499,8 @@ export function wireExtendedResponse(q) {
       if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[0]);
       renderQ();
     };
+    el.onclick = activate;
+    el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(e); } };
   });
   const slider = $('#levelMarkSlider');
   if (slider) {
@@ -511,12 +513,14 @@ export function wireExtendedResponse(q) {
     };
   }
   document.querySelectorAll('[data-indicative-idx]').forEach(el => {
-    el.onclick = () => {
+    const toggle = () => {
       const idx = +el.dataset.indicativeIdx;
       ans.tickedIndicative = ans.tickedIndicative || [];
       const pos = ans.tickedIndicative.indexOf(idx);
       if (pos >= 0) ans.tickedIndicative.splice(pos, 1); else ans.tickedIndicative.push(idx);
       renderQ();
     };
+    el.onclick = toggle;
+    el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } };
   });
 }
