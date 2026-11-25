@@ -1,0 +1,126 @@
+{
+  "uuid": "a3e1b7c2-8f4b-5c6e-9d0a-2b5c7d8e9f0a",
+  "version": 1,
+  "title": "Nuclear, Astrophysics & Practical Skills — Final Depth Practice",
+  "subject": "physics",
+  "specCode": "7408/3",
+  "topics": ["Nuclear physics", "Astrophysics", "Practical Knowledge"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Nuclear physics",
+      "subtopic": "Decay",
+      "prompt": "In alpha decay, the nucleus emits:",
+      "options": ["A helium nucleus (2 protons, 2 neutrons)", "An electron", "A photon", "A neutron"],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — an alpha particle is ⁴₂He: 2 protons and 2 neutrons.",
+      "feedbackWrong": "Alpha is a helium-4 nucleus. Electrons are beta-minus; photons are gamma; neutrons are released in fission or beta-plus processes, not alpha.",
+      "mistakes": [
+        {"optionIndex": 1, "misconception": "Confuses alpha and beta radiation.", "correction": "Beta is an electron emitted when a neutron converts to a proton; alpha is the heavy helium nucleus — mass number drops by 4 in alpha, unchanged in beta."}
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Nuclear physics",
+      "subtopic": "Half-life",
+      "prompt": "A radioactive sample has activity 800 Bq. After 24 hours the activity is 50 Bq. Enter the half-life in hours.",
+      "answer": 6,
+      "tolerance": {"min": 5.8, "max": 6.2},
+      "stepChecks": [
+        {"label": "$800 \\to 400 \\to 200 \\to 100 \\to 50$: four halvings", "marks": 1},
+        {"label": "24 hours / 4 half-lives", "marks": 1},
+        {"label": "$T_{1/2} = 6$ hours", "marks": 1}
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Astrophysics",
+      "subtopic": "Stellar evolution",
+      "prompt": "A star like the Sun will end its life as:",
+      "options": ["A black hole", "A neutron star", "A white dwarf", "A supernova remnant"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — low-mass stars shed their outer layers as planetary nebulae, leaving white dwarf cores.",
+      "feedbackWrong": "Only high-mass stars (roughly above 8 solar masses) end as neutron stars or black holes — the Sun's remnant is a white dwarf.",
+      "mistakes": [
+        {"optionIndex": 3, "misconception": "Assumes all stars die in supernovae.", "correction": "Supernovae require high mass. Sun-like stars pass through red giant and planetary nebula stages to a quietly cooling white dwarf."}
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Astrophysics",
+      "subtopic": "Hubble's law",
+      "prompt": "A galaxy's light is redshifted, indicating recessional velocity 2100 km/s. Taking H₀ = 70 km/s/Mpc, enter the galaxy's distance in Mpc.",
+      "answer": 30,
+      "tolerance": {"min": 29.5, "max": 30.5},
+      "stepChecks": [
+        {"label": "Hubble's law: $v = H_0 d$", "marks": 1},
+        {"label": "$d = v/H_0 = 2100/70$", "marks": 1},
+        {"label": "$d = 30$ Mpc", "marks": 1}
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Practical Knowledge",
+      "subtopic": "Uncertainties",
+      "prompt": "A student measures a wire's diameter as 0.52 mm ± 0.01 mm and its length as 1.500 m ± 0.001 m. Explain which measurement contributes more uncertainty to the calculated cross-sectional area, and why the diameter matters especially much.",
+      "markScheme": [
+        {"marks": 1, "text": "Percentage uncertainty in diameter ≈ 0.01/0.52 ≈ 2%; in length ≈ 0.07%.", "highlights": ["2%", "percentage"]},
+        {"marks": 1, "text": "Diameter uncertainty dominates — it is far larger in percentage terms.", "highlights": ["diameter"]},
+        {"marks": 1, "text": "Area depends on d², so the diameter's percentage uncertainty doubles to ≈ 4%.", "highlights": ["d²", "double"]},
+        {"marks": 1, "text": "Conclusion: improving the diameter measurement (micrometer, repeated readings) reduces uncertainty most effectively.", "highlights": ["micrometer", "repeated"]}
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Practical Knowledge",
+      "subtopic": "Errors",
+      "prompt": "A thermometer consistently reads 2°C too high in every measurement. This is:",
+      "options": ["A random error", "A systematic error", "A zero error only", "Human error"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — a consistent offset in one direction is systematic; repeating measurements cannot average it away.",
+      "feedbackWrong": "Systematic errors shift all readings the same way — only recalibration fixes them. Random errors scatter both directions and reduce with repeats.",
+      "mistakes": [
+        {"optionIndex": 2, "misconception": "Assumes any offset must be a zero error.", "correction": "Zero error is one cause of systematic error, but a constant offset can also come from calibration drift or incorrect scaling — the category is systematic."}
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 3,
+      "topic": "Nuclear physics",
+      "subtopic": "Binding energy",
+      "prompt": "Explain why energy is released in nuclear fission, using the binding energy per nucleon curve.",
+      "markScheme": [
+        {"marks": 1, "text": "Heavy nuclei like uranium sit on the falling part of the curve beyond iron.", "highlights": ["iron", "curve"]},
+        {"marks": 1, "text": "Fission products have higher binding energy per nucleon than the parent nucleus.", "highlights": ["higher binding energy"]},
+        {"marks": 1, "text": "The difference in total binding energy corresponds to mass converted to energy via E = mc².", "highlights": ["E = mc²", "mass"]}
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Astrophysics",
+      "subtopic": "Magnitudes",
+      "prompt": "A star cluster is at a distance where light takes 1000 years to arrive. Enter the distance in parsecs using the approximation 1 parsec ≈ 3.26 light-years.",
+      "answer": 307,
+      "tolerance": {"min": 300, "max": 313},
+      "stepChecks": [
+        {"label": "$d = 1000/3.26$ ly → pc", "marks": 1},
+        {"label": "$d \\approx 307$ pc", "marks": 1}
+      ]
+    }
+  ]
+}

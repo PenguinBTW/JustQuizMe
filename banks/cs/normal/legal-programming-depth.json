@@ -1,0 +1,147 @@
+{
+  "uuid": "b4f2c8d3-9a5c-6d7f-0e1b-3c6d8e9f0a1b",
+  "version": 1,
+  "title": "Legal/Ethics & Programming — Final Depth Practice",
+  "subject": "computer-science",
+  "specCode": "H446/02",
+  "topics": ["Legal, Moral & Cultural", "Programming Techniques", "Software & Development"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Legal, Moral & Cultural",
+      "subtopic": "Data Protection Act",
+      "prompt": "Under the UK Data Protection Act 2018, which is a legal right of data subjects?",
+      "options": [
+        "To have inaccurate personal data corrected",
+        "To demand a copy of the organisation's source code",
+        "To prevent any automated processing of any kind",
+        "To access any other individual's data on request"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — the right to rectification of inaccurate personal data is a core GDPR/DPA right.",
+      "feedbackWrong": "Data subject rights cover access, rectification, erasure and objection for their own data — not others' data or the organisation's intellectual property.",
+      "mistakes": [
+        {"optionIndex": 2, "misconception": "Overstates the automated-processing objection right.", "correction": "Subjects can object to certain automated decisions with significant effect — not all automated processing, which is ubiquitous and lawful with a valid basis."}
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Legal, Moral & Cultural",
+      "subtopic": "Computer Misuse Act",
+      "prompt": "State the three offences defined by the Computer Misuse Act 1990 and give a one-line example of each.",
+      "markScheme": [
+        {"marks": 1, "text": "Unauthorised access to computer material — e.g. guessing someone's password and reading their files.", "highlights": ["unauthorised access", "password"]},
+        {"marks": 1, "text": "Unauthorised access with intent to commit further offences — e.g. accessing a system in order to commit fraud.", "highlights": ["intent", "fraud"]},
+        {"marks": 1, "text": "Unauthorised modification of computer material — e.g. planting malware or deleting/altering data.", "highlights": ["modification", "malware"]}
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Programming Techniques",
+      "subtopic": "Scope",
+      "prompt": "What is the key difference between a local and a global variable?",
+      "options": [
+        "A local variable exists only within the subroutine or block where it is declared",
+        "A local variable can be used anywhere in the program",
+        "A global variable is destroyed after each subroutine call",
+        "There is no practical difference"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — local variables are scoped to their declaring subroutine/block and invisible outside it.",
+      "feedbackWrong": "Scope: locals live inside their declaring subroutine or block only; globals are visible program-wide and persist.",
+      "mistakes": [
+        {"optionIndex": 2, "misconception": "Inverts the lifetimes.", "correction": "It's the local that dies when its subroutine returns — the global persists for the program's lifetime."}
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Programming Techniques",
+      "subtopic": "Recursion",
+      "prompt": "This recursive function computes triangular numbers:\n```\nfunction tri(n)\n  if n == 1 then return 1\n  return n + tri(n - 1)\nendfunction\n```\nEnter the value returned by tri(5).",
+      "answer": 15,
+      "tolerance": {"min": 14.9, "max": 15.1},
+      "stepChecks": [
+        {"label": "$5 + tri(4) = 5 + 4 + tri(3) = \\ldots$", "marks": 1},
+        {"label": "$5+4+3+2+1 = 15$", "marks": 1}
+      ],
+      "mistakes": [
+        {"pattern": "14", "misconception": "Stops the recursion one level early — misses the base-case term.", "correction": "The base case n=1 returns 1, which must be added: the sum is 5+4+3+2+1, all five terms."}
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Software & Development",
+      "subtopic": "Testing",
+      "prompt": "Explain the difference between black-box and white-box testing, and state one situation where each is the more appropriate choice.",
+      "markScheme": [
+        {"marks": 1, "text": "Black-box: tests inputs/outputs against the specification without knowledge of internal code.", "highlights": ["specification", "without"]},
+        {"marks": 1, "text": "White-box: tests designed with knowledge of the code structure, aiming to cover paths/branches.", "highlights": ["code", "paths"]},
+        {"marks": 1, "text": "Black-box appropriate: acceptance testing by users or independent testers verifying requirements.", "highlights": ["acceptance"]},
+        {"marks": 1, "text": "White-box appropriate: unit testing during development to exercise edge paths in the logic.", "highlights": ["unit", "edge"]}
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Software & Development",
+      "subtopic": "Development models",
+      "prompt": "Which characteristic defines agile development?",
+      "options": [
+        "Iterative cycles with working software delivered frequently and requirements revisited",
+        "All requirements fixed and documented before any coding begins",
+        "Testing happens only after the entire system is built",
+        "A single sequential pass through analysis, design, build, test"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — agile delivers working increments in short iterations and embraces changing requirements.",
+      "feedbackWrong": "Agile is iterative and incremental: frequent working releases, continuous feedback, evolving requirements — the opposite of waterfall's fixed sequential phases.",
+      "mistakes": [
+        {"optionIndex": 3, "misconception": "Describes waterfall, not agile.", "correction": "Single sequential passes are the waterfall model — agile deliberately repeats small cycles instead."}
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Programming Techniques",
+      "subtopic": "Validation",
+      "prompt": "List three input validation checks a program should apply when accepting a user's age in years, and state what each prevents.",
+      "markScheme": [
+        {"marks": 1, "text": "Type check — rejects non-numeric input that would crash arithmetic.", "highlights": ["type"]},
+        {"marks": 1, "text": "Range check — rejects impossible values (negative, or above ~120).", "highlights": ["range"]},
+        {"marks": 1, "text": "Presence/length check — rejects empty input before further processing.", "highlights": ["presence", "empty"]}
+      ]
+    },
+    {
+      "id": "mcq4",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Legal, Moral & Cultural",
+      "subtopic": "Licensing",
+      "prompt": "The key obligation the GPL open-source licence imposes on redistributors is:",
+      "options": [
+        "Derivative works must also be distributed under the GPL with source available",
+        "The software may never be sold",
+        "All derivative works must credit the original author in the program title",
+        "The licence prohibits commercial use"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — copyleft: GPL derivatives must stay GPL-licensed with source code available.",
+      "feedbackWrong": "GPL's copyleft requires derivatives to carry the same licence and offer source — commercial use and sale are explicitly permitted.",
+      "mistakes": [
+        {"optionIndex": 3, "misconception": "Confuses open source with non-commercial restrictions.", "correction": "Open source licences cannot prohibit commercial use — that would violate the Open Source Definition. GPL restricts licensing, not commerce."}
+      ]
+    }
+  ]
+}
