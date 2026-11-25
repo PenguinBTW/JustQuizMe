@@ -101,9 +101,8 @@ export async function finishQuiz(auto) {
   try {
     const cur = await api('/api/save');
     const mine = cur && (cur.quizUuid === S.quiz.uuid || cur.uuid === S.quiz.uuid) && (!cur.quizFile || cur.quizFile === (S.quizMeta && S.quizMeta.file));
-    if (mine) await api('/api/save', { method: 'DELETE' });
+    if (mine) { await api('/api/save', { method: 'DELETE' }); S.save = null; }
   } catch {}
-  S.save = null;
 
   renderSummaryReport();
 }
