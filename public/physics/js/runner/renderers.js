@@ -281,9 +281,9 @@ export function bandOk(v, q) {
 }
 
 export function stepBlocks(q, a, enabled){
-  return (q.steps || []).map((s, i) => {
+  return ((q.steps || (q.stepChecks||[]).map(sc=>({title:sc.label})) ) || []).map((s, i) => {
     const st = (a.steps || [])[i] || {};
-    const prevOk = (q.steps || []).slice(0, i).every((_, j) => ((a.steps || [])[j] || {}).correct);
+    const prevOk = ((q.steps || (q.stepChecks||[]).map(sc=>({title:sc.label})) ) || []).slice(0, i).every((_, j) => ((a.steps || [])[j] || {}).correct);
     const on = enabled && prevOk && !st.correct;
     return `<div class="recovery-step" ${st.correct ? 'style="border-color:var(--green);"' : ''}>
       <div>
@@ -302,12 +302,12 @@ export function calcHtml(q){
   const tol = q.tolerancePercent ?? 2.5;
   if (S.runMode === 'explore'){
     const showSteps = !!a.showSteps;
-    const done = (q.steps || []).length > 0 && (a.steps || []).filter(s => s.correct).length === (q.steps || []).length;
+    const done = ((q.steps || (q.stepChecks||[]).map(sc=>({title:sc.label})) ) || []).length > 0 && (a.steps || []).filter(s => s.correct).length === ((q.steps || (q.stepChecks||[]).map(sc=>({title:sc.label})) ) || []).length;
     return `${promptHead(q)}${q.guidance ? `<div class="q-guide">${esc(q.guidance)}</div>` : ''}
     <div class="answer-dock">
       <div class="unit-field"><input type="text" id="calcInput" placeholder="Value…" value="${esc(a.finalValue ?? '')}" /><span class="unit-tag">${esc(q.unit || '')}</span></div>
       <button class="btn btn-primary" id="checkCalc">Check Answer</button>
-      ${(q.steps || []).length ? `<button class="btn-ghost mono" style="font-size:12px;" id="showStepsBtn">${showSteps ? 'Hide steps' : 'Show steps'}</button>` : ''}
+      ${((q.steps || (q.stepChecks||[]).map(sc=>({title:sc.label})) ) || []).length ? `<button class="btn-ghost mono" style="font-size:12px;" id="showStepsBtn">${showSteps ? 'Hide steps' : 'Show steps'}</button>` : ''}
     </div>
     ${a.lastOk === true ? `<div class="note-ok">✅ <b>Correct.</b> ${esc(q.explanation || '')}</div>` : ''}
     ${a.lastOk === false ? `<p class="note-line">❌ Not quite - attempt ${a.attempts || 0}. Try again or open the steps.</p>` : ''}
@@ -321,7 +321,7 @@ export function calcHtml(q){
   }
   const showSteps = !!a.loggedWrong;
   const locked = a.soloCorrect || a.helpedDone;
-  const stepsDone = (q.steps || []).length;
+  const stepsDone = ((q.steps || (q.stepChecks||[]).map(sc=>({title:sc.label})) ) || []).length;
   const stepsOk = (a.steps || []).filter(s => s.correct).length;
   const canLog = a.loggedWrong && !a.helpedDone && (stepsDone === 0 || stepsOk === stepsDone);
   const statusPill = a.soloCorrect ? `<span class="pill green">Solo: ${q.marks}/${q.marks}</span>`
@@ -392,7 +392,7 @@ export function wireCalc(q){
 export function wireStepChecks(q, a){
   const tol = q.tolerancePercent ?? 2.5;
   document.querySelectorAll('[data-check-step]').forEach(b => b.onclick = () => {
-    const i = +b.dataset.checkStep; const s = q.steps[i];
+    const i = +b.dataset.checkStep; const s = (q.steps || (q.stepChecks||[]).map(sc=>({title:sc.label})) )[i];
     const inp = document.querySelector(`[data-step="${i}"]`);
     const v = parseFloat(inp.value);
     a.steps = a.steps || []; a.steps[i] = a.steps[i] || {};
