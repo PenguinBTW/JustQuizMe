@@ -44,3 +44,17 @@ test('drilldownHtml: per-question rows when recorded, honest legacy label when n
   const legacy = drilldownHtml(mk({ topics: ['Logic'] }));
   assert.match(legacy, /summary-only record/);
 });
+
+test('compareAttempts does not compare synthesized mocks that share a uuid but differ in content', async () => {
+  const { compareAttempts } = await import('../public/shared/js/attemptDrilldown.js');
+  const mk = (ids, date, score) => ({
+    quizUuid: 'mixed', quizFile: null, date, score, total: 10,
+    perQuestion: ids.map(id => ({ id, topic: 'T', marks: 5, score: id === 'a' ? score : 0 })),
+  });
+  // same uuid, different questions → not retakes
+  const mixed = [mk(['a', 'b'], '2024-01-01', 5), mk(['c', 'd'], '2024-01-02', 8)];
+  assert.equal(compareAttempts(mixed, 'mixed', '2024-01-02'), null);
+  // same uuid, same questions → comparable retakes
+  const same = [mk(['a', 'b'], '2024-01-01', 5), mk(['a', 'b'], '2024-01-02', 8)];
+  assert.ok(compareAttempts(same, 'mixed', '2024-01-02'));
+});
