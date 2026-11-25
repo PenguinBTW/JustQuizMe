@@ -262,7 +262,7 @@ export async function renderSummaryReport() {
         questions: S.quiz.questions || []
       });
       mk('finishPrintPaperBtn', '⎙ Print paper').onclick = () => openPrintWindow(paperPrintDoc(spec()));
-      mk('finishPrintSchemeBtn', '⎙ Mark scheme').onclick = () => openPrintWindow(markSchemePrintDoc(spec()));
+      mk('finishPrintSchemeBtn', '⎙ Mark scheme').onclick = () => openPrintWindow(markSchemePrintDoc({ ...spec(), exactCalculations: true }));
     }
   } catch {}
 }
