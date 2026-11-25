@@ -237,7 +237,7 @@ async function renderFlagsStrip() {
     const recent = all.slice().sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 5);
     strip.innerHTML = `<strong>⚑ ${all.length} flagged question issue${all.length === 1 ? '' : 's'}</strong> ` +
       recent.map(f =>
-        `<div style="margin-top:6px; opacity:0.85;"><span class="mono" style="font-size:11px;">[${escHtml(f.portal)}] ${escHtml(f.questionId)}</span> — ${escHtml(f.issue).slice(0, 140)}</div>`
+        `<div style="margin-top:6px; opacity:0.85;"><span class="mono" style="font-size:11px;">[${escHtml(f.portal)}] ${escHtml(f.questionId)}</span> — ${escHtml(String(f.issue == null ? '' : f.issue).slice(0, 140))}</div>`
       ).join('');
     hostEl.parentNode.insertBefore(strip, hostEl.nextSibling);
   } catch {}
