@@ -111,7 +111,7 @@ export function msPanel(q, a, disabled){
       <div><strong>[${m.marks ?? 1}]</strong> ${t}</div>
     </div>`;
   }).join('');
-  const ticked = (a.ticks || []).filter(Boolean).length;
+  const ticked = (a.ticks || []).reduce((sum, t, i) => sum + (t ? (+((q.markScheme || [])[i] || {}).marks || 1) : 0), 0);
   return `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
       <span class="mono" style="font-size:12px; font-weight:600;">COMPARE WITH OFFICIAL MARK SCHEME</span>
       <span class="pill green">${Math.min(ticked, q.marks)} / ${q.marks} marks</span>
@@ -214,7 +214,7 @@ export function wireWritten(q){
   if (explore){ wireNav(); return; } // free navigation, never locks
   const lock = () => {
     const a = S.answers[k] ||= { ticks: [] };
-    if (!a.locked){ const n = (a.ticks || []).filter(Boolean).length; a.locked = true; a.score = Math.min(n, q.marks); }
+    if (!a.locked){ const n = (a.ticks || []).reduce((sum, t, i) => sum + (t ? (+((q.markScheme || [])[i] || {}).marks || 1) : 0), 0); a.locked = true; a.score = Math.min(n, q.marks); }
   };
   wireNav(lock);
 }
@@ -266,7 +266,7 @@ export function wireSelfMarked(q){
   if (explore){ wireNav(); return; } // free navigation, never locks
   const lock = () => {
     const a = S.answers[k] ||= { ticks: [] };
-    if (!a.locked){ const n = (a.ticks || []).filter(Boolean).length; a.locked = true; a.score = Math.min(n, q.marks); }
+    if (!a.locked){ const n = (a.ticks || []).reduce((sum, t, i) => sum + (t ? (+((q.markScheme || [])[i] || {}).marks || 1) : 0), 0); a.locked = true; a.score = Math.min(n, q.marks); }
   };
   wireNav(lock);
 }
