@@ -148,8 +148,11 @@ export function rightLabel(q){
   if (q.type === 'written') return `${q.section} · self-checked`;
   if (q.type === 'self-marked'){
     if (a?.locked) return `${q.section} · self-marked ${a.score}/${q.marks}`;
-    const n = (a?.ticks || []).filter(Boolean).length;
-    return a?.revealed ? `${q.section} · ${n}/${q.marks} ticked` : `${q.section} · reveal the answer`;
+    // weight ticked points by their declared marks — counting raw ticks
+    // disagrees with the weighted mark scheme whenever a point is worth
+    // more than one mark (a 3-mark tick would read "1/4 ticked")
+    const earned = (a?.ticks || []).reduce((sum, t, i) => sum + (t ? (parseInt((q.markScheme || [])[i]?.marks) || 1) : 0), 0);
+    return a?.revealed ? `${q.section} · ${earned}/${q.marks} ticked` : `${q.section} · reveal the answer`;
   }
   if (a?.soloCorrect) return `Solo ✓ +${q.marks}`;
   if (a?.helped) return `Helped · +0`;
