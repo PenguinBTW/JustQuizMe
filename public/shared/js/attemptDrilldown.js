@@ -115,7 +115,10 @@ export function drilldownHtml(e) {
 function contentKeyOf(e) {
   const pq = Array.isArray(e.perQuestion) ? e.perQuestion : null;
   if (!pq || !pq.length) return null;
-  return pq.map(q => q && (q.id || q.key || q.prompt || '')).join('|');
+  // sorted: a shuffled retake of the same paper is still the same paper;
+  // file-qualified key preferred — two mixed papers drawing the same bare
+  // ids from different bank files must not share a fingerprint
+  return pq.map(q => q && (q.key || q.id || q.prompt || '')).sort().join('|');
 }
 
 // compareAttempts(entries, quizUuid) — same paper taken more than once:
