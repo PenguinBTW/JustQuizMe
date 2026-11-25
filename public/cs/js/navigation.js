@@ -120,6 +120,7 @@ export async function resumeSave() {
     quizLike,
     meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true },
     resume: sv,
+    seriesRun: !!sv.series,
     retrySpec: sv.spec || { kind: 'mixed' }
   });
 }

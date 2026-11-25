@@ -113,5 +113,6 @@ export function resumeVirtual(sv){
   const quizLike = { uuid: sv.quizUuid, version: sv.quizVersion ?? 1, title: sv.title || 'Saved quiz', timeLimitMinutes: sv.timeLimitMinutes || null,
     untimed: !!sv.untimed, exam: !!sv.exam, questions: sv.questions || [] };
   if (sv.series) S.series = sv.series;
-  beginRun({ mode: 'quiz', quizLike, meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true }, resume: sv, retrySpec: sv.spec || { kind: 'mixed' } });
+  beginRun({ mode: 'quiz', quizLike, meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true }, resume: sv,
+    seriesRun: !!sv.series, retrySpec: sv.spec || { kind: 'mixed' } });
 }
