@@ -18,6 +18,7 @@ function validateQuestion(q) {
   if (!q.topic || typeof q.topic !== 'string') errs.push('topic: required string');
   if (q.type === 'multiple-choice') {
     if (!Array.isArray(q.options) || q.options.length < 2) errs.push('options: need at least 2');
+    else if (q.options.some(o => !String(typeof o === 'object' && o !== null ? o.text || '' : o ?? '').trim())) errs.push('options: entries must be non-empty');
     if (!(Number.isInteger(q.correctIndex) && q.options && q.correctIndex >= 0 && q.correctIndex < q.options.length))
       errs.push('correctIndex: must index into options');
   }
@@ -47,6 +48,21 @@ function safeFileName(name) {
   return base || 'untitled';
 }
 
+// author-entered metadata is rendered into portal pages — strip markup so a
+// crafted topic/title can't carry script into learners' browsers
+function stripTags(v) {
+  return typeof v === 'string' ? v.replace(/<[^>]*>/g, '') : v;
+}
+
+function sanitizeBankMeta(bank) {
+  const out = { ...bank, title: stripTags(bank.title) };
+  out.questions = (bank.questions || []).map(q => q && typeof q === 'object'
+    ? { ...q, topic: stripTags(q.topic), subtopic: stripTags(q.subtopic) }
+    : q);
+  if (Array.isArray(bank.topics)) out.topics = bank.topics.map(stripTags);
+  return out;
+}
+
 // saveAuthoredBank(normalDir, bank, fileName) → { file } or throws with .errors
 function saveAuthoredBank(normalDir, bank, fileName) {
   const errs = validateBank(bank);
@@ -59,9 +75,37 @@ function saveAuthoredBank(normalDir, bank, fileName) {
   const full = path.join(normalDir, fname);
   fs.mkdirSync(normalDir, { recursive: true });
 
+  bank = sanitizeBankMeta(bank);
   let final = bank;
   if (fs.existsSync(full)) {
-    // edit-existing: validate the merged result as a whole, back up first
+    // title collisions must not silently replace someone else's bank: the
+    // incoming uuid must match the file's, otherwise this is a different bank
+    // that happens to share a title-derived filename
+    try {
+      const existing = JSON.parse(fs.readFileSync(full, 'utf8'));
+      if (existing && existing.uuid && bank.uuid && existing.uuid !== bank.uuid) {
+        const e = new Error(`file '${fname}' already exists as a different bank — use edit-existing or a distinct title`);
+        e.errors = [e.message];
+        throw e;
+      }
+      // merge by question id: concurrent authors editing different questions
+      // of the same bank don't erase each other's work
+      const merged = { ...existing, ...bank };
+      const byId = new Map();
+      for (const q of existing.questions || []) if (q && q.id) byId.set(q.id, q);
+      for (const q of bank.questions || []) if (q && q.id) byId.set(q.id, q);
+      merged.questions = [...byId.values()];
+      const mErrs = validateBank(merged);
+      if (mErrs.length) {
+        const e = new Error('merged bank invalid');
+        e.errors = mErrs;
+        throw e;
+      }
+      final = merged;
+    } catch (err) {
+      if (err.errors) throw err;
+      // unreadable existing file — fall through to replace-with-backup
+    }
     const backup = full + '.bak-' + Date.now();
     fs.copyFileSync(full, backup);
   }

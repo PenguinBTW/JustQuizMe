@@ -118,6 +118,12 @@ function createCsRouter(quizService, saveService) {
   // author studio: validated atomic bank writes
   const { saveAuthoredBank, upsertQuestion, safeFileName } = require('../services/author-service');
   router.post('/author/save', (req, res) => {
+    // authoring writes are loopback-only: the platform is a local single-user
+    // tool, and bank writes must never be drivable from another machine
+    const ip = req.ip || req.socket?.remoteAddress || '';
+    if (!['127.0.0.1', '::1', '::ffff:127.0.0.1', 'localhost'].some(l => ip.includes(l))) {
+      return res.status(403).json({ error: 'authoring is local-only' });
+    }
     try {
       const b = req.body || {};
       const bank = b.bank;

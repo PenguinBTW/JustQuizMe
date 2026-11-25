@@ -15,6 +15,7 @@ export function validateQuestion(q) {
 
   if (q.type === 'multiple-choice') {
     if (!Array.isArray(q.options) || q.options.length < 2) errs.push('options: need at least 2');
+    else if (q.options.some(o => !String(typeof o === 'object' && o !== null ? o.text || '' : o ?? '').trim())) errs.push('options: entries must be non-empty');
     if (!(Number.isInteger(q.correctIndex) && q.options && q.correctIndex >= 0 && q.correctIndex < q.options.length))
       errs.push('correctIndex: must index into options');
   }
@@ -22,7 +23,7 @@ export function validateQuestion(q) {
     if (q.markScheme != null) {
       if (!Array.isArray(q.markScheme)) errs.push('markScheme: must be an array');
       else q.markScheme.forEach((m, i) => {
-        if (!m || typeof m.text !== 'string') errs.push(`markScheme[${i}]: text required`);
+        if (!m || typeof m.text !== 'string' || !m.text.trim()) errs.push(`markScheme[${i}]: text required (non-empty)`);
         if (!(+m.marks > 0)) errs.push(`markScheme[${i}]: marks must be positive`);
       });
       const msTotal = (q.markScheme || []).reduce((s, m) => s + (+m.marks || 0), 0);
