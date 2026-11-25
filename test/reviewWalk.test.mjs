@@ -55,9 +55,13 @@ test('shared question ids across banks never borrow answers', () => {
   const qB = { id: 'q1', _key: 'bankB.json:q1', type: 'written', prompt: 'p', markScheme: [] };
   const answers = { 'bankA.json:q1': { text: 'student answer for A' } };
   const html = reviewWalkHtml([qA, qB], answers);
-  assert.match(html, /student answer for A/);
-  const items = html.split('rw-item');
-  assert.equal((html.match(/unattempted/g) || []).length, 1, 'exactly one question renders unattempted');
+  // per-position assertions: bank A's entry carries the answer, bank B's
+  // entry carries 'unattempted' — a swapped borrowing must fail this test
+  const items = html.split('<details class="rw-item"').slice(1);
+  assert.equal(items.length, 2, 'two review entries rendered');
+  assert.match(items[0], /student answer for A/, 'bank A entry shows its own answer');
+  assert.match(items[1], /unattempted/, 'bank B entry renders unattempted');
+  assert.ok(!items[1].includes('student answer for A'), 'bank B never borrows bank A answer');
 });
 
 test('ambiguous suffix matches render unattempted', () => {
