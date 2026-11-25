@@ -317,15 +317,6 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       try {
         readForm(host.querySelector('#af-formhost'), q);
         const qErrs = validateQuestion(q);
-        // stale-band invalidation at commit time only, scoped to the edited
-        // question, and BEFORE the fold-in deep copy — invalidating after the
-        // copy left the bank version carrying the band the form just dropped.
-        if (q && q.type === 'calculation' && q.answer != null
-            && q.tolerance && typeof q.tolerance === 'object'
-            && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)
-            && !(q.answer >= q.tolerance.min && q.answer <= q.tolerance.max)) {
-          delete q.tolerance;
-        }
         const banked = bank.questions.findIndex(x => x.id === q.id);
         if (banked >= 0) {
           const cur = JSON.stringify(bank.questions[banked]);
@@ -336,6 +327,16 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
             status.textContent = '✗ question "' + q.id + '" has unsaved edits that do not validate: ' + qErrs[0];
             status.style.color = '#e0735f';
             return;
+          }
+          // stale-band invalidation: AFTER validation passes (a rejected save
+          // must not strip the draft) but BEFORE the fold-in deep copy (the
+          // banked version must not keep a band the form just dropped).
+          // Scoped to the edited question only.
+          if (q && q.type === 'calculation' && q.answer != null
+              && q.tolerance && typeof q.tolerance === 'object'
+              && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)
+              && !(q.answer >= q.tolerance.min && q.answer <= q.tolerance.max)) {
+            delete q.tolerance;
           }
           if (dirty) bank.questions[banked] = JSON.parse(JSON.stringify(q));
         }
