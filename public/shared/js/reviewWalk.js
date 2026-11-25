@@ -67,10 +67,12 @@ export function reviewWalkHtml(questions, answers) {
   // question's entry by bare id first, then by any key ending in the id.
   const resolve = q => {
     if (!q) return {};
+    // the exact bank-qualified key first — runners stamp it as file:qid
+    if (q._key && byId[q._key]) return byId[q._key];
     if (byId[q.id]) return byId[q.id];
     const suffix = String(q.id);
     for (const k of Object.keys(byId)) {
-      if (k === suffix || k.endsWith('::' + suffix) || k.endsWith('|' + suffix) || k.endsWith('/' + suffix)) return byId[k];
+      if (k === suffix || k.endsWith('::' + suffix) || k.endsWith(':' + suffix) || k.endsWith('|' + suffix) || k.endsWith('/' + suffix)) return byId[k];
     }
     return {};
   };
