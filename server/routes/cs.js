@@ -175,8 +175,10 @@ function createCsRouter(quizService, saveService) {
     const fs = require('fs');
     const path = require('path');
     const fname = safeFileName(String(req.query.file || '').replace(/\.json$/i, '')) + '.json';
-    const full = path.join(quizService.normalDir, fname);
-    if (!fs.existsSync(full)) return res.status(404).json({ error: 'bank not found' });
+    // merged lookup: bundled repo banks are editable too — a save then writes
+    // the user's copy into their own normal dir, which shadows the bundled one
+    const full = quizService.findQuizFile ? quizService.findQuizFile('normal', fname) : path.join(quizService.normalDir, fname);
+    if (!full || !fs.existsSync(full)) return res.status(404).json({ error: 'bank not found' });
     try { res.json(JSON.parse(fs.readFileSync(full, 'utf8'))); }
     catch (e) { res.status(500).json({ error: 'bank file unreadable' }); }
   });
