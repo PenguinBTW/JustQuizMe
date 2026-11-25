@@ -1,5 +1,5 @@
 """Integration verification sweep v2 — real selectors, dialog capture."""
-import asyncio, json
+import asyncio, json, sys
 from playwright.async_api import async_playwright
 
 BASE = 'http://localhost:3000'
@@ -259,5 +259,8 @@ async def main():
     json.dump(results, open('/tmp/sweep-results.json', 'w'), indent=1)
     fails = sum(1 for f in results for c in results[f] if results[f][c]['status'] == 'FAIL')
     print(f'\nFAILURES: {fails}')
+    # a verification harness that exits zero on failure is worse than none —
+    # automation would read a broken chain as green
+    sys.exit(1 if fails else 0)
 
 asyncio.run(main())

@@ -23,7 +23,7 @@ def written(i, topic, sub, marks=4):
         "id": f"q{i}", "marks": marks, "type": "written", "topic": topic, "subtopic": sub,
         "prompt": f"Explain how {sub.lower()} applies in this scenario. [{marks} marks]",
         "guidance": "Use correct technical terminology.",
-        "markScheme": [{"point": f"States the core principle of {sub}", "marks": 1}, {"point": "Applies it to the scenario", "marks": marks - 1}]
+        "markScheme": [{"text": f"States the core principle of {sub}", "marks": 1}, {"text": "Applies it to the scenario", "marks": marks - 1}]
     }
 
 def calc(i, topic, sub):
