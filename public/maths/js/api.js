@@ -3,6 +3,7 @@ import { S } from './state.js';
 import { $, num } from './utils.js';
 import { ensurePastFull, buildCaches, topicData } from './taxonomy.js';
 import { renderRoom } from './navigation.js';
+import './bookmarkGlue.js';
 
 export async function api(p, opt) {
   const url = p.startsWith('/api') ? '/maths' + p : p;

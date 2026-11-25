@@ -1,8 +1,10 @@
 const express = require('express');
 const { checkMathEquivalence } = require('../services/cas-evaluator');
+const BookmarkService = require('../services/bookmark-service');
 
 function createMathsRouter(quizService, saveService) {
   const router = express.Router();
+  const bookmarkService = new BookmarkService(saveService.dataDir);
 
   router.get('/health', (req, res) => {
     res.json({ ok: true, subject: 'Mathematics', board: 'OCR H240' });
@@ -48,6 +50,24 @@ function createMathsRouter(quizService, saveService) {
   router.delete('/save', (req, res) => {
     saveService.clearSave();
     res.json({ ok: true });
+  });
+
+  router.get('/bookmarks', (req, res) => {
+    res.json(bookmarkService.list());
+  });
+
+  router.post('/bookmarks/toggle', (req, res) => {
+    const b = req.body || {};
+    if (!b.key || !b.qid || !b.file) {
+      return res.status(400).json({ error: 'key, qid, file required' });
+    }
+    res.json({ ok: true, ...bookmarkService.toggle(b) });
+  });
+
+  router.delete('/bookmarks', (req, res) => {
+    const key = String(req.query.key || '');
+    if (!key) return res.status(400).json({ error: 'key required' });
+    res.json({ ok: true, ...bookmarkService.remove(key) });
   });
 
   // Symbolic CAS evaluation endpoint

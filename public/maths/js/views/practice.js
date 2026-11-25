@@ -5,6 +5,28 @@ import { api, bestFor } from '../api.js';
 import { roomNav, wireRoomNav, renderRoom } from '../navigation.js';
 import { openExploreList } from './explore.js';
 import { beginFileQuiz } from '../runner/starters.js';
+import { listBookmarks, removeBookmark, launchBookmarkedRun } from '../bookmarkGlue.js';
+
+function bookmarkedSection(bookmarks) {
+  if (!bookmarks.length) return '';
+  const items = bookmarks.map(b => `
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:12px 0; border-top:1px solid var(--border);">
+      <button class="btn-ghost" data-bm-open="${esc(b.key)}" style="text-align:left; flex:1; padding:0;">
+        <div class="mono" style="font-size:12px; color:var(--accent); font-weight:600;">${esc(b.quizTitle || b.file)}</div>
+        <div style="font-size:13.5px; margin-top:4px;">${esc(b.snippet || b.qid)}</div>
+        ${b.topic ? `<span class="pill" style="margin-top:6px; display:inline-block;">${esc(b.topic)}</span>` : ''}
+      </button>
+      <button class="btn-ghost mono" data-bm-remove="${esc(b.key)}" title="Remove bookmark" style="font-size:13px;">✕</button>
+    </div>
+  `).join('');
+  return `
+    <div class="card" style="margin-bottom:18px;">
+      <h2 class="serif" style="font-size:24px; margin-bottom:4px;">Bookmarked</h2>
+      <p class="mono" style="font-size:12px; color:var(--ink-muted); margin-bottom:8px;">${bookmarks.length} starred question${bookmarks.length === 1 ? '' : 's'} · click to run</p>
+      ${items}
+    </div>
+  `;
+}
 
 export function renderPractice() {
   const cards = S.quizzes.normal.map(m => {
@@ -47,8 +69,24 @@ export function renderPractice() {
     `;
   }).join('') || '<div class="card"><p style="color:var(--ink-secondary);">No practice sets yet - add JSON to questions/normal/.</p></div>';
 
-  $('#stage').innerHTML = `${roomNav('practice')}${cards}`;
+  $('#stage').innerHTML = `${roomNav('practice')}<div id="bmSection"></div>${cards}`;
   wireRoomNav();
+  listBookmarks().then(bs => {
+    const el = document.getElementById('bmSection');
+    if (el) el.innerHTML = bookmarkedSection(bs);
+    document.querySelectorAll('[data-bm-open]').forEach(b => {
+      b.onclick = () => {
+        const bm = bs.find(x => x.key === b.dataset.bmOpen);
+        if (bm) launchBookmarkedRun(bm);
+      };
+    });
+    document.querySelectorAll('[data-bm-remove]').forEach(b => {
+      b.onclick = async () => {
+        await removeBookmark(b.dataset.bmRemove);
+        renderPractice();
+      };
+    });
+  });
   document.querySelectorAll('[data-practice-history]').forEach(b => {
     b.onclick = () => {
       S.room = 'history';
