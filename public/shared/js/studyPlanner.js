@@ -109,24 +109,6 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
     }
   }
 
-  // final-week revision pass: the days before the exam are for review /
-  // past-paper consolidation, weakest topics first — the ladder alone never
-  // reaches them. Budget-honest: only as many as the week's slots allow.
-  if (daysLeft >= 3) {
-    const weakestFirst = [...order].sort((a, b) => b.t.w - a.t.w);
-    let reviewDay = Math.max(0, daysLeft - 7);
-    outer: for (const { t } of weakestFirst) {
-      // don't review what was never studied this plan
-      const studied = placements.some(pl => pl.topic === t.topic);
-      if (!studied) continue;
-      let d = reviewDay;
-      while (d < daysLeft && days[d].sessions.length >= sessionsPerDay) d++;
-      if (d >= daysLeft) break outer;
-      days[d].sessions.push({ topic: t.topic, kind: 'review', minutes: minutesPerSession, round: 99 });
-      reviewDay = d + 1;  // round-robin forward through the final week
-    }
-  }
-
   // distribute into days respecting sessionsPerDay; overflow spills forward
   placements.sort((a, b) => a.dayIdx - b.dayIdx);
   let dropped = 0;
@@ -154,6 +136,26 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
       round: p.round,
     });
   }
+  // final-week revision pass: the days before the exam are for review /
+  // past-paper consolidation, weakest topics first — the ladder alone never
+  // reaches them. Budget-honest: only as many as the week's slots allow.
+  if (daysLeft >= 3) {
+    const weakestFirst = [...order].sort((a, b) => b.t.w - a.t.w);
+    let reviewDay = Math.max(0, daysLeft - 7);
+    outer: for (const { t } of weakestFirst) {
+      // don't review what was never studied this plan
+      // reviews book AFTER study sessions so they can never crowd a first
+      // study session out of the timetable; only topics actually placed count
+      const studied = days.some(dd => dd.sessions.some(ss => ss.topic === t.topic));
+      if (!studied) continue;
+      let d = reviewDay;
+      while (d < daysLeft && days[d].sessions.length >= sessionsPerDay) d++;
+      if (d >= daysLeft) break outer;
+      days[d].sessions.push({ topic: t.topic, kind: 'review', minutes: minutesPerSession, round: 99 });
+      reviewDay = d + 1;  // round-robin forward through the final week
+    }
+  }
+
   for (const d of days) d.sessions.sort((a, b) => a.round - b.round);
   return { days, examDate: dayKey(examDate), truncated: dropped > 0, dropped };
 }
