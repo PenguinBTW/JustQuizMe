@@ -122,6 +122,14 @@ export function readForm(root, q) {
     q.answer = raw === '' || raw == null ? undefined : +raw;
     const tol = val('#af-tolerance');
     if (tol !== '' && tol != null) q.tolerancePercent = +tol;
+    // the studio offers no {min,max} band editing — a loaded band that no
+    // longer brackets the (possibly edited) answer is stale state the grader
+    // would enforce against the author's own answer. Drop it honestly: the
+    // percentage tolerance takes over, which the author CAN see and edit.
+    if (q.answer != null && q.tolerance && typeof q.tolerance === 'object'
+        && !(q.answer >= q.tolerance.min && q.answer <= q.tolerance.max)) {
+      delete q.tolerance;
+    }
   }
   if (Array.isArray(q.markScheme)) {
     root.querySelectorAll('.af-ms-marks').forEach(el => {
