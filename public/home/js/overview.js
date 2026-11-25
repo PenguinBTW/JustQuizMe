@@ -3,6 +3,9 @@
 import { subjectSummary, attentionList, recentActivity } from '../../shared/js/overviewMath.js';
 import { accuracySeries, rollingAccuracy } from '../../shared/js/progressMath.js';
 import { sparkline } from '../../shared/js/sparklineSvg.js';
+import { launchpadTodayHtml } from '../../shared/js/studyPlannerUi.js';
+import { computeMastery } from '../../shared/js/mastery.js';
+import { dueReview } from '../../shared/js/dueReview.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -96,11 +99,34 @@ export async function renderOverview(container) {
         </div>`).join('')}
     </div>` : '';
 
+  // today's revision across subjects — mastery rows derive from per-question
+  // topic attribution already in the score entries (no bank access needed here)
+  const todayData = Object.entries(SUBJECTS).map(([key, cfg]) => {
+    let masteryRows = [];
+    try {
+      const rows = computeMastery(bySubject[key]) || [];
+      const due = dueReview(rows) || [];
+      const dueByTopic = {};
+      for (const d of due) if (d && d.topic) dueByTopic[d.topic] = d;
+      masteryRows = rows.filter(r => r && r.topic).map(r => {
+        const d = dueByTopic[r.topic];
+        return {
+          topic: r.topic,
+          mastery: r.mastery,
+          dueInDays: d ? (d.overdue ? 0 : Math.max(0, Math.round(d.daysDue || 0))) : null,
+        };
+      });
+    } catch { /* honest degradation — launchpad renders what it can */ }
+    return { subject: key, label: cfg.name, masteryRows, scoreEntries: bySubject[key], href: cfg.route };
+  });
+  const todayHtml = launchpadTodayHtml(todayData);
+
   container.innerHTML = `
     <div class="ov-head">
       <h2 class="serif">Your revision picture</h2>
       <span class="mono ov-head-hint">across all three subjects</span>
     </div>
+    ${todayHtml}
     <div class="ov-grid">${subjectCards}</div>
     <div class="ov-panels">${attentionHtml}${recentHtml}</div>`;
 }

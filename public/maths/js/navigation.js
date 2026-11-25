@@ -7,6 +7,7 @@ import { renderPractice } from './views/practice.js';
 import { renderProgress } from './views/progress.js';
 import { renderHistory } from './views/history.js';
 import { renderAuthor } from './views/author.js';
+import { renderPlanner } from './views/planner.js';
 import { renderExploreList } from './views/explore.js';
 import { beginRun } from './runner/assessment.js';
 import { beginFileQuiz } from './runner/starters.js';
@@ -32,6 +33,7 @@ export function roomNav(active) {
       <button class="room-tab ${active === 'history' ? 'active' : ''}" data-room="history">Telemetry History</button>
       <button class="room-tab ${active === 'progress' ? 'active' : ''}" data-room="progress">Progress</button>
         <button class="room-tab ${active === 'author' ? 'active' : ''}" data-room="author">Author</button>
+        <button class="room-tab ${active === 'planner' ? 'active' : ''}" data-room="planner">Planner</button>
     </div>
     <span class="mono" style="font-size:12px; color:var(--ink-muted);">${right}</span>
   </div>`;
@@ -53,6 +55,7 @@ export function renderRoom() {
   else if (S.room === 'history') renderHistory();
   else if (S.room === 'progress') renderProgress();
   else if (S.room === 'author') renderAuthor();
+  else if (S.room === 'planner') renderPlanner();
   else if (S.room === 'explore') renderExploreList();
   window.scrollTo(0, 0);
   if (window.renderMath) window.renderMath();
