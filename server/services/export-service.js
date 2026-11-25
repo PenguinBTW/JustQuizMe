@@ -7,8 +7,9 @@ const path = require('path');
 function csvCell(v) {
   let s = v == null ? '' : String(v);
   // neutralize spreadsheet formulas — a tutor opening the CSV must not
-  // evaluate attacker/student-authored text as a formula
-  if (/^[=+\-@]/.test(s)) s = `'${s}`;
+  // evaluate attacker/student-authored text as a formula; spreadsheet apps
+  // normalize leading whitespace and control chars before evaluating
+  if (/^[\s]*[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 function toCsv(rows) {
@@ -29,7 +30,7 @@ class ExportService {
     for (const s of this.scores()) {
       for (const q of s.perQuestion || []) {
         if (!q || typeof q !== 'object') continue;
-        rows.push([s.date, portal, s.quizTitle, s.quizFile, q.key || '', q.id, q.topic, q.subtopic || '', q.type, +q.score || 0, +q.marks || 0, q.attempted === false ? 'no' : 'yes', s.exam ? 'yes' : 'no']);
+        rows.push([s.date, portal, s.quizTitle || s.title || '', s.quizFile, q.key || '', q.id, q.topic, q.subtopic || '', q.type, +q.score || 0, +q.marks || 0, q.attempted === false ? 'no' : 'yes', s.exam ? 'yes' : 'no']);
       }
     }
     return toCsv(rows);
@@ -40,10 +41,12 @@ class ExportService {
     for (const s of this.scores()) {
       for (const q of s.perQuestion || []) {
         if (!q || typeof q !== 'object') continue;
-        if (q.attempted === false) continue;
         const key = q.topic || '(untagged)';
         const t = acc.get(key) || { attempts: 0, earned: 0, available: 0 };
-        t.attempts += 1;
+        // available marks count even when skipped — the runner's totals include
+        // them, so accuracy here agrees with what the student saw at finish;
+        // the attempt count itself only ticks when they actually answered
+        if (q.attempted !== false) t.attempts += 1;
         t.earned += +q.score || 0;
         t.available += +q.marks || 0;
         acc.set(key, t);

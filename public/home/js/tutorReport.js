@@ -31,16 +31,21 @@ export async function openTutorReport() {
         fetch(`/api/${portal}/export/topics.csv`).then(r => r.ok ? r.text() : ''),
         fetch(`/api/${portal}/export/attempts.csv`).then(r => r.ok ? r.text() : ''),
       ]);
+      const topicsFailed = !topicsText;
       const topics = parseCsv(topicsText).slice(1).filter(r => r.length > 2);
       const attempts = parseCsv(attemptsText).slice(1).filter(r => r.length > 5);
-      if (!topics.length && !attempts.length) continue;
+      if (!topics.length && !attempts.length && !topicsFailed) continue;
       const totalEarned = topics.reduce((a, r) => a + (+r[3] || 0), 0);
       const totalAvail = topics.reduce((a, r) => a + (+r[4] || 0), 0);
       const weakest = topics.filter(r => +r[4] >= 5).sort((a, b) => (+a[5] || 0) - (+b[5] || 0)).slice(0, 5);
       const esc = v => String(v == null ? '' : v).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+      const recent = attempts.slice(0, 5);
       sections.push(`
         <h2>${esc(names[portal] || portal)}</h2>
+        ${topicsFailed ? '<p class="sum" style="color:#a33;">⚠ Topic rollup failed to load — figures below may be incomplete.</p>' : ''}
         <p class="sum">${topics.length} topics attempted · ${totalEarned}/${totalAvail} marks${totalAvail ? ` · ${Math.round(totalEarned / totalAvail * 1000) / 10}% overall` : ''}</p>
+        ${recent.length ? `<h3>Recent activity</h3><table><tr><th>When</th><th>Quiz</th><th>Type</th></tr>${[...new Map(attempts.map(r => [r[0] + r[2], r])).values()].slice(0, 5).map(r =>
+          `<tr><td>${esc(String(r[0]).slice(0, 16).replace('T', ' '))}</td><td>${esc(r[2])}</td><td>${r[11] === 'yes' ? 'exam' : 'practice'}</td></tr>`).join('')}</table>` : ''}
         ${weakest.length ? `<h3>Weakest topics</h3><table><tr><th>Topic</th><th>Attempts</th><th>Marks</th><th>Accuracy</th></tr>${weakest.map(r =>
           `<tr><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}/${esc(r[4])}</td><td>${esc(r[5])}%</td></tr>`).join('')}</table>` : ''}
         <h3>All topics</h3><table><tr><th>Topic</th><th>Attempts</th><th>Marks</th><th>Accuracy</th></tr>${topics.map(r =>
