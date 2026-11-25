@@ -151,7 +151,11 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
       // material the student hasn't met yet. Eligibility is per candidate day.
       const practicedBefore = (dayIdx) =>
         days.slice(0, dayIdx).some(dd => dd.sessions.some(ss => ss.topic === t.topic));
-      let d = reviewDay;
+      // scan from the window start for every topic: the shared ratchet saved
+      // a day index per topic, so one topic qualifying late pushed the cursor
+      // past openings earlier topics could still have used. Fullness in the
+      // loop already spreads bookings across the week.
+      let d = Math.max(0, daysLeft - 7);
       // never book a second session for a topic already on that day — two
       // identical reviews would both be credited by a single quiz result
       while (d < daysLeft && (days[d].sessions.length >= sessionsPerDay
@@ -161,7 +165,6 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
       // they can still use the slots this topic already occupies
       if (d >= daysLeft) continue;
       days[d].sessions.push({ topic: t.topic, kind: 'review', minutes: minutesPerSession, round: 99 });
-      reviewDay = d + 1;  // round-robin forward through the final week
     }
   }
 
