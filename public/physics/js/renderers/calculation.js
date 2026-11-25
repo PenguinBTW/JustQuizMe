@@ -1,6 +1,11 @@
 // Physics Calculation Renderer & Tolerance Verification
 import { esc } from '../../../../shared/js/utils.js';
 
+export function calcOk(v, q) {
+  if (q && q.tolerance && typeof q.tolerance === 'object') return isFinite(v) && v >= q.tolerance.min && v <= q.tolerance.max;
+  return numOk(v, Number(q && (q.expectedNumber || q.answer)), (q && q.tolerancePercent) ?? 2.5);
+}
+
 export function numOk(v, target, tol = 2.5) {
   if (!isFinite(v) || !isFinite(target)) return false;
   if (target === 0) return Math.abs(v) < 1e-9;
@@ -21,7 +26,9 @@ export function renderCalculation(q, currentAnswer = '', isExam = false) {
         <span class="calc-unit-label">${esc(unit)}</span>
       </div>
       <div class="mono" style="font-size: 11.5px; color: var(--ink-secondary);">
-        Tolerance bound: ±2.5% of official AQA mark scheme solution
+        ${q.tolerance && typeof q.tolerance === 'object'
+          ? `Accepted range: ${q.tolerance.min} – ${q.tolerance.max}${unit ? ' ' + esc(unit) : ''}`
+          : 'Tolerance bound: ±2.5% of official AQA mark scheme solution'}
       </div>
     </div>
   `;
