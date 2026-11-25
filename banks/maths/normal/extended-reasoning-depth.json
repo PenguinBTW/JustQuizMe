@@ -158,7 +158,7 @@
    "indicativeContent": [
     "Standard assumptions: projectile is a particle, gravity constant, no air resistance, no wind, no spin effects",
     "Basketball is light with large cross-section \u2014 air resistance is significant relative to its weight, the most questionable assumption",
-    "Drag shortens range and lowers the optimum launch angle relative to the drag-free case \u2014 noting that 45\u00b0 is the drag-free optimum only for equal launch and landing heights, which a free throw (hoop above release point) does not satisfy anyway",
+    "Drag reduces range and maximum height and shifts the optimal launch angle away from the drag-free value \u2014 the direction and size of the shift depend on launch speed and the height difference between release and target, so in practice numerical simulation is needed rather than a fixed rule",
     "Constant g is excellent over a few metres; the particle assumption ignores spin but the Magnus effect is small for a gentle free throw",
     "Refinement cost: drag models destroy closed-form solutions, requiring numerical methods \u2014 accuracy bought with complexity"
    ]

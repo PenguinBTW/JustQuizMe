@@ -691,7 +691,7 @@ export function wireQuestionInteractions(q) {
         document.querySelector(`[data-level-idx="${lvlNum}"]`)?.focus();
       };
       el.onclick = activate;
-      el.onkeydown = (e) => { if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) { e.preventDefault(); activate(e); } };
+      el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) activate(e); } };
     });
     const slider = $('#levelMarkSlider');
     if (slider) {
@@ -713,7 +713,7 @@ export function wireQuestionInteractions(q) {
         document.querySelector(`[data-indicative-idx="${pIdx}"]`)?.focus();
       };
       el.onclick = toggle;
-      el.onkeydown = (e) => { if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) { e.preventDefault(); toggle(); } };
+      el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) toggle(); } };
     });
   }
 

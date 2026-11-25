@@ -76,3 +76,26 @@ test('ambiguous suffix matches render unattempted', () => {
   assert.match(html, /unattempted/);
   assert.ok(!html.includes('YOUR ANSWER'), 'no answer block rendered for ambiguous question');
 });
+
+test('extended-response with levels but no markScheme renders descriptors + indicative content', () => {
+  const q = {
+    id: 'er1', type: 'extended-response', marks: 9, prompt: 'Discuss.',
+    levels: [
+      { level: 3, title: 'Level 3 (High)', range: [7, 9], ao1: 'comprehensive', ao2: 'thorough', ao3: 'critical' },
+      { level: 1, title: 'Level 1 (Low)', range: [1, 3], ao1: 'basic', ao2: 'superficial', ao3: 'little' },
+    ],
+    indicativeContent: ['point alpha', 'point beta'],
+  };
+  const html = reviewWalkHtml([q], { er1: { text: 'my essay' } });
+  assert.match(html, /Level 3 \(High\)/);
+  assert.match(html, /7–9/);
+  assert.match(html, /INDICATIVE CONTENT/);
+  assert.match(html, /point alpha/);
+  assert.match(html, /comprehensive/);
+});
+
+test('extended-response without levels falls through to authored markScheme', () => {
+  const q = { id: 'er2', type: 'extended-response', marks: 5, prompt: 'Discuss.', markScheme: [{ text: 'marking point one', marks: 2 }] };
+  const html = reviewWalkHtml([q], { er2: { text: 'essay' } });
+  assert.match(html, /marking point one/);
+});
