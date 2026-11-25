@@ -99,9 +99,10 @@ function saveAuthoredBank(normalDir, bank, fileName) {
       for (const q of existing.questions || []) if (q && q.id) byId.set(q.id, q);
       for (const q of bank.questions || []) if (q && q.id) byId.set(q.id, q);
       merged.questions = [...byId.values()];
-      // topic lists must union — otherwise concurrent drafts adding questions
-      // under different topics leave a covered topic out of the catalogue
-      merged.topics = [...new Set([...(existing.topics || []), ...(bank.topics || []), ...merged.questions.map(q => q && q.topic).filter(Boolean)])];
+      // topics derive from the merged question set, never unioned: a topic
+      // whose last question was retagged must leave the catalogue — listing a
+      // covered topic with zero questions is false advertising
+      merged.topics = [...new Set(merged.questions.map(q => q && q.topic).filter(Boolean))];
       const mErrs = validateBank(merged);
       if (mErrs.length) {
         const e = new Error('merged bank invalid');
