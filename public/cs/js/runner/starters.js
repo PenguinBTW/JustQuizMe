@@ -57,24 +57,40 @@ export async function startMockSeries({ breakMinutes = 10 } = {}) {
   const papers = [];
   const sets = [];
   const usedKeys = new Set();
+  const keyOf = q => q._key || (q._srcFile ? q._srcFile + ':' + q.id : null) || q.id || q.uuid || q.prompt;
+  const normT = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const compOf = {};
+  try { (OCR_TOPIC_SPECS || []).forEach(sp => { compOf[normT(sp.topic)] = sp.component; }); } catch {}
+  // compute both component pools up front so shared questions are visible:
+  // a bank spanning both components copies its questions into every tagged
+  // topic — a question belongs on a paper only when its OWN topic maps to it
+  const poolsByComp = {};
   for (const comp of ['01', '02']) {
     const compTopics = data.filter(t => t.component === comp);
-    // a bank spanning both components copies its questions into every tagged
-    // topic — a question belongs on this paper only when its OWN topic maps
-    // to this component (untagged questions pass through: better included
-    // than silently dropped from a mock)
-    const compOf = {};
-    const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
-    try { (OCR_TOPIC_SPECS || []).forEach(sp => { compOf[norm(sp.topic)] = sp.component; }); } catch {}
     const rawPool = compTopics.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))))
-      .filter(q => !q.topic || !compOf[norm(q.topic)] || compOf[norm(q.topic)] === comp);
-    // multi-tagged questions appear once per topic — dedupe within the
-    // component, then exclude anything an earlier paper already claimed
-    // dedupe within the component pool; cross-paper exclusion uses what
-    // earlier papers actually SELECTED, not their whole pool — excluding by
-    // pool membership would starve later papers of questions never used
+      .filter(q => !q.topic || !compOf[normT(q.topic)] || compOf[normT(q.topic)] === comp);
+    const seen = new Set();
+    poolsByComp[comp] = rawPool.filter(q => { const k = keyOf(q); if (seen.has(k)) return false; seen.add(k); return true; });
+  }
+  // pool reservation: questions shared by both components must not be
+  // consumable wholesale by component 01 — reserve a minimum share for the
+  // later paper, because a series that cannot run comp02 fails its purpose
+  const keys01 = new Set((poolsByComp['01'] || []).map(keyOf));
+  const sharedKeys = [...new Set((poolsByComp['02'] || []).map(keyOf).filter(k => keys01.has(k)))];
+  const reserve = Math.min(3, Math.max(0, Math.floor(sharedKeys.length / 2)));
+  const reservedKeys = new Set(sharedKeys.slice(0, reserve));
+  for (const comp of ['01', '02']) {
+    const basePool = poolsByComp[comp] || [];
+    // cross-paper exclusion uses what earlier papers actually SELECTED, not
+    // their whole pool — and comp01 additionally stays out of the reserve
     const seen = new Set(usedKeys);
-    const pool = rawPool.filter(q => { const k = q._key || (q._srcFile ? q._srcFile + ':' + q.id : null) || q.id || q.uuid || q.prompt; if (seen.has(k)) return false; seen.add(k); return true; });
+    const pool = basePool.filter(q => {
+      const k = keyOf(q);
+      if (seen.has(k)) return false;
+      if (comp === '01' && reservedKeys.has(k) && basePool.length - reserve >= 4) return false;
+      seen.add(k);
+      return true;
+    });
     if (!pool.length) continue;
     const poolMarks = pool.reduce((x, q) => x + (+q.marks || 0), 0);
     const target = Math.max(10, Math.min(70, poolMarks));
