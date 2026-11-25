@@ -626,7 +626,7 @@ export function calcHtml(q) {
       </div>
       ${!S.quiz?.exam ? `<button class="btn" id="checkCalcBtn" ${isLocked ? 'disabled' : ''}>Check</button>` : ''}
     </div>
-    ${a.checked && !S.quiz?.exam ? `<div class="${a.correct ? 'note-ok' : 'note-bad'}">${a.correct ? '✅ Correct numerical value!' : '❌ Incorrect. Expected: ' + esc(q.answer)}</div>` : ''}
+    ${a.checked && !S.quiz?.exam ? `<div class="${a.correct ? 'note-ok' : 'note-bad'}">${a.correct ? '✅ Correct numerical value!' : '❌ Incorrect. Expected: ' + esc(q.expected || q.answer)}</div>` : ''}
   `;
 }
 
