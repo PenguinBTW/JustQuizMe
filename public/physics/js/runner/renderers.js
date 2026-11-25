@@ -81,7 +81,7 @@ export function depHtml(q){
   if (!q._deps?.length) return '';
   const items = q._deps.map(d => {
     if (d.missing) return `<p class="mono" style="font-size:12px; color:var(--ink-muted);">(${esc(d.id)} - not in this set)</p>`;
-    const inRun = (S.quiz?.questions || []).find(x => x.id === d.id);
+    const inRun = (d._srcKey && (S.quiz?.questions || []).find(x => x._key === d._srcKey)) || (S.quiz?.questions || []).find(x => x.id === d.id);
     const status = !inRun ? 'Needed for this question' : (S.answers[ak(inRun)]?.locked ? 'Already Answered' : 'Answer locked for now');
     const ans = depAnswerVisible(d) && d.answer ? `
       <div class="note-ok" style="margin-top:12px;"><b>${esc(d.answer.label)}:</b> ${d.answer.text ? chipify(d.answer.text) : ''}
