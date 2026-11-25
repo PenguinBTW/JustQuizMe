@@ -212,7 +212,11 @@ export async function retryRun() {
 // the full topic pool; component-tagged banks split by component when possible.
 export function startMockSeries({ breakMinutes = 10 } = {}) {
   const data = (typeof topicData === 'function' ? topicData() : (S._topicData || []));
-  const all = data.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
+  const allRaw = data.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
+  // multi-tagged questions repeat across topics — dedupe by id so one
+  // question can't land in both papers or score twice within one
+  const seen = new Set();
+  const all = allRaw.filter(q => { const k = q.id || q.uuid || JSON.stringify(q).length + q.prompt; if (seen.has(k)) return false; seen.add(k); return true; });
   if (all.length < 8) return alert('Not enough questions in the bank to assemble a mock series.');
   const pace = paceMinutesPerMark(S.mixed.pace);
   const papers = [];
@@ -244,6 +248,7 @@ export function beginSeriesPaper() {
   S.returnRoom = 'past';
   beginRun({
     mode: 'exam',
+    seriesRun: true,
     quizLike: {
       uuid: MIXED_UUID,
       version: 1,

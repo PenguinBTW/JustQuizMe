@@ -74,7 +74,11 @@ export function startMockSeries({ breakMinutes = 10 } = {}) {
   }
   if (papers.length < 2) {
     // honest assembly: if components aren't tagged, split the full pool in half
-    const all = data.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
+    const allRaw = data.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
+    // multi-tagged questions repeat across topics — dedupe by id so one
+    // question can't land in both papers or score twice within one
+    const seen = new Set();
+    const all = allRaw.filter(q => { const k = q.id || q.uuid || JSON.stringify(q).length + q.prompt; if (seen.has(k)) return false; seen.add(k); return true; });
     if (all.length < 8) return alert('Not enough questions in the bank to assemble a mock series.');
     const half = Math.floor(all.length / 2);
     const poolMarks = all.reduce((x, q) => x + (+q.marks || 0), 0);
@@ -104,6 +108,7 @@ export function beginSeriesPaper() {
   if (!paper || !set) return;
   beginRun({
     mode: 'exam',
+    seriesRun: true,
     quizLike: {
       uuid: MIXED_UUID,
       version: 1,
