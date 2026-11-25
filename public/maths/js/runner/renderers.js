@@ -630,6 +630,17 @@ export function calcHtml(q) {
   `;
 }
 
+export function mathCalcOk(val, q) {
+  // declared bands win — the bank's tolerance is the author's grading intent;
+  // fall back to the algebraic/numeric equality check otherwise
+  const v = Number(val);
+  if (q && q.tolerance && typeof q.tolerance === 'object'
+      && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)) {
+    return isFinite(v) && v >= q.tolerance.min && v <= q.tolerance.max;
+  }
+  return areMathEqual(val, q.expected || q.answer);
+}
+
 export function wireCalc(q) {
   const k = ak(q);
   const inp = $('#calcInput');
@@ -639,7 +650,7 @@ export function wireCalc(q) {
       a.text = inp.value;
       if (S.quiz?.exam) {
         a.locked = true;
-        a.correct = areMathEqual(inp.value, q.answer);
+        a.correct = mathCalcOk(inp.value, q);
         a.score = a.correct ? q.marks : 0;
       }
     };
@@ -649,7 +660,7 @@ export function wireCalc(q) {
   if (chk) {
     chk.onclick = () => {
       const val = $('#calcInput').value;
-      const correct = areMathEqual(val, q.answer);
+      const correct = mathCalcOk(val, q);
       S.answers[k] = { locked: true, text: val, correct, checked: true, score: correct ? q.marks : 0 };
       renderQ();
     };
