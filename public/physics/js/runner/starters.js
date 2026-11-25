@@ -6,6 +6,7 @@ import { ensurePastFull, buildCaches, topicData, topicDraft, topicAllQs, pickFor
 import { renderRoom } from '../navigation.js';
 import { beginRun } from './assessment.js';
 import { createSeries } from '../../../shared/js/mockSeries.js';
+import { pickCurrentSave } from '../../../shared/js/saveSelection.js';
 
 
 // Exam pace → minutes per mark. null = untimed (opt-out of time pressure).
@@ -185,7 +186,7 @@ export async function startMockSeries({ breakMinutes = 10 } = {}) {
   // when the server answers, it is authoritative — an empty slot means the
   // save was discarded (possibly in another tab) and the stale cached copy
   // must NOT resurrect it. The cache is a fallback only for network failure.
-  const curSave = remoteKnown ? freshSave : (freshSave || S.save);
+  const curSave = pickCurrentSave(freshSave, remoteKnown, S.save);
   const priorSeries = curSave && curSave.seriesContinuation ? (curSave.series || null) : null;
   const inherited = priorSeries && priorSeries.displacedSave ? priorSeries.displacedSave : null;
   if (curSave && !curSave.seriesContinuation) {
