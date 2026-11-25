@@ -5,7 +5,12 @@
  "subject": "cs",
  "specCode": "OCR H446",
  "topics": [
-  "Extended Response Practice"
+  "Legal, Moral & Cultural",
+  "Algorithms & Complexity",
+  "Software & Development",
+  "Data Types & Structures",
+  "Exchanging Data",
+  "Computational Thinking"
  ],
  "questions": [
   {
@@ -20,8 +25,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      3
+      7,
+      9
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -42,8 +47,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      7,
-      9
+      1,
+      3
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -72,8 +77,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      3
+      7,
+      9
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -94,8 +99,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      7,
-      9
+      1,
+      3
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -124,8 +129,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      4
+      9,
+      12
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -146,8 +151,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      9,
-      12
+      1,
+      4
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -177,8 +182,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      3
+      7,
+      9
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -199,8 +204,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      7,
-      9
+      1,
+      3
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -212,7 +217,7 @@
     "Update anomaly elimination \u2014 changing a tutor's room once instead of everywhere",
     "Insertion/deletion anomalies explained with school-specific examples",
     "Referential integrity through primary/foreign keys",
-    "Query flexibility via joins; reports impossible in flat file",
+    "Query flexibility via joins; reports impractical and error-prone in flat file",
     "Counterpoints honestly evaluated: complexity cost, join performance overhead, staff training",
     "Conclusion weighing scale of the school data against design effort"
    ]
@@ -229,8 +234,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      3
+      7,
+      9
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -251,8 +256,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      7,
-      9
+      1,
+      3
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -281,8 +286,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      3
+      7,
+      9
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -303,8 +308,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      7,
-      9
+      1,
+      3
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -314,7 +319,7 @@
    "indicativeContent": [
     "The problem is a travelling salesman variant \u2014 exact brute force is factorial and intractable at n=20",
     "Abstraction: road network as weighted graph, irrelevant detail (vehicle colour, road names) discarded",
-    "Heuristics trade optimality for tractability \u2014 nearest neighbour, or A* with straight-line distance heuristic",
+    "Heuristic tour-construction methods (nearest neighbour, 2-opt improvement) trade optimality for feasibility on large instances; point-to-point A* with an admissible heuristic remains optimal for individual legs but does not decide visiting order",
     "Decomposition into route representation, cost evaluation, improvement steps",
     "Evaluation: whether 'good enough' routes suffice commercially versus guaranteed-optimal cost",
     "Reasoned conclusion about acceptable approximation in practice"

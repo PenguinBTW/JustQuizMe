@@ -677,7 +677,7 @@ export function wireQuestionInteractions(q) {
     $('#revealLevelsBtn')?.addEventListener('click', () => {
       ans.revealed = true;
       ans.selectedLevel ||= 2;
-      ans.score = Math.min(+q.marks || 0, ans.score != null ? ans.score : (q.levels?.[1]?.range[1] || Math.round(q.marks * 0.6)));
+      ans.score = Math.min(+q.marks || 0, ans.score != null ? ans.score : (q.levels?.find(l=>l.level===2)?.range[0] || 1));
       renderQ();
     });
     document.querySelectorAll('[data-level-idx]').forEach(el => {
@@ -686,7 +686,7 @@ export function wireQuestionInteractions(q) {
         const lvlNum = +el.dataset.levelIdx;
         ans.selectedLevel = lvlNum;
         const matchedLvl = (q.levels || []).find(l => l.level === lvlNum);
-        if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[1]);
+        if (matchedLvl) ans.score = Math.min(+q.marks || 0, matchedLvl.range[0]);
         renderQ();
       };
     });

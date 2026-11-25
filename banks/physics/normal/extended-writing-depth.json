@@ -5,7 +5,9 @@
  "subject": "physics",
  "specCode": "AQA",
  "topics": [
-  "Extended Writing Practice"
+  "Nuclear physics",
+  "Fields",
+  "Materials"
  ],
  "questions": [
   {
@@ -20,8 +22,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      2
+      5,
+      6
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -42,8 +44,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      5,
-      6
+      1,
+      2
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -71,8 +73,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      2
+      5,
+      6
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -93,8 +95,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      5,
-      6
+      1,
+      2
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -122,8 +124,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      1,
-      2
+      5,
+      6
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -144,8 +146,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      5,
-      6
+      1,
+      2
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
