@@ -177,11 +177,24 @@ export function depAnswerData(src) {
 export function resolveDeps(questions, pool) {
   const byId = new Map();
   for (const q of pool) {
-    if (q?.id && !byId.has(q.id)) byId.set(q.id, q);
+    if (!q?.id) continue;
+    if (!byId.has(q.id)) byId.set(q.id, []);
+    byId.get(q.id).push(q);
   }
+  // ids collide across banks — a question's prerequisite is the one from its
+  // own source file; bare-id fallback only when no same-file candidate exists
+  const pickSrc = (id, dependent) => {
+    const cands = byId.get(id);
+    if (!cands) return null;
+    if (dependent && dependent._srcFile) {
+      const same = cands.find(c => c._srcFile === dependent._srcFile);
+      if (same) return same;
+    }
+    return cands[0];
+  };
   for (const q of questions) {
     q._deps = normalizeDeps(q.dependsOn).map(d => {
-      const src = byId.get(d.id);
+      const src = pickSrc(d.id, q);
       if (!src || src === q) return { id: d.id, missing: !src };
       return {
         id: src.id,
