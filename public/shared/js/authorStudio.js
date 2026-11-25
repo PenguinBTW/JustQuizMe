@@ -342,7 +342,7 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         && qq.tolerance && typeof qq.tolerance === 'object'
         && isFinite(qq.tolerance.min) && isFinite(qq.tolerance.max)
         && !(qq.answer >= qq.tolerance.min && qq.answer <= qq.tolerance.max);
-      if (staleBand(q)) {
+      if (staleBand(q) && bank.questions.some(x => x.id === q.id)) {
         delete q.tolerance;
         const bk = bank.questions.find(x => x.id === q.id);
         if (bk && staleBand(bk)) delete bk.tolerance;
