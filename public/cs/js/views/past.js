@@ -5,6 +5,7 @@ import { roomNav, wireRoomNav, resumeBannerHtml, wireResumeBanner, renderRoom } 
 import { openSynthModal, openTopicModal } from '../modals.js';
 import { openExploreList } from './explore.js';
 import { startSubQuiz } from '../runner/starters.js';
+import { parseTerms, matchQuiz, countLabel, emptyMessage } from '../../../shared/js/quizSearch.js';
 import { computeMastery, weakestTopics } from '../../../shared/js/mastery.js';
 import { dueReview } from '../../../shared/js/dueReview.js';
 import { masteryBadge, resolveScoreTopics, buildUuidIndex } from '../../../shared/js/masteryUi.js';
@@ -129,9 +130,21 @@ export function renderPast() {
       <span class="mono" style="font-size:12px; color:var(--ink-muted);">${OCR_TOPICS.length} OCR Sections</span>
     </div>
 
-    <div class="accordion-list">
+    <div class="quiz-search">
+
+
+      <input id="quizSearchInput" class="quiz-search-input" type="search" placeholder="Search quizzes by title or topic..." aria-label="Search quizzes" autocomplete="off">
+
+
+      <span class="mono quiz-search-count" id="quizSearchCount"></span>
+
+
+    </div>
+
+
+    <div class="accordion-list" id="quizPickerList">
       ${data.map((t, ti) => `
-        <div class="accordion-item ${S.openTopics.has(t.topic) ? 'open' : ''}" data-acc="${ti}">
+        <div class="accordion-item ${S.openTopics.has(t.topic) ? 'open' : ''}" data-acc="${ti}" data-qs-topic="${esc(t.topic)}">
           <div class="accordion-header-row">
             <div class="acc-trigger-left" data-acc-toggle="${ti}">
               <span class="acc-num">${t.unit || String(ti + 1).padStart(2, '0')}</span>
@@ -144,7 +157,7 @@ export function renderPast() {
           </div>
           <div class="accordion-body">
             ${t.subs.map((g, gi) => `
-              <div class="subtopic-row">
+              <div class="subtopic-row" data-qs="${esc(g.name)} ${esc(t.topic)}">
                 <span>${esc(g.name)}</span>
                 <div style="display:flex; align-items:center; gap:8px;">
                   <button class="btn-ghost mono" style="font-size:12px;" data-explore-sub="${esc(t.topic)}|${gi}">Explore</button>
@@ -165,6 +178,7 @@ export function renderPast() {
   `;
 
   wireRoomNav();
+  wireQuizSearch();
   wireResumeBanner();
   wirePastEvents();
 }
@@ -307,4 +321,58 @@ export function wirePastEvents() {
     S.room = 'history';
     renderRoom();
   });
+}
+
+// Live-filter the picker's quiz rows; an active filter opens accordions
+// so matched sub rows stay visible, and clearing restores a full render.
+export function wireQuizSearch() {
+  const input = $('#quizSearchInput');
+  if (!input) return;
+  const apply = () => {
+    const terms = parseTerms(input.value);
+    if (!terms.length) {
+      renderRoom();
+      const fresh = $('#quizSearchInput');
+      if (fresh) { fresh.value = ''; fresh.focus(); }
+      return;
+    }
+    document.querySelectorAll('#quizPickerList .accordion-item').forEach(item => {
+      const topicHit = matchQuiz(item.dataset.qsTopic || '', terms);
+      let anySub = false;
+      item.querySelectorAll('[data-qs]').forEach(r => {
+        const hit = topicHit || matchQuiz(r.dataset.qs, terms);
+        r.hidden = !hit;
+        anySub = anySub || hit;
+      });
+      item.hidden = !topicHit && !anySub;
+      item.classList.add('open');
+    });
+    // fullpapers rows live outside the accordion list — filter them directly,
+    // and expand the details so title-only matches are actually visible
+    document.querySelectorAll('.fullpapers [data-qs]').forEach(r => {
+      r.hidden = !matchQuiz(r.dataset.qs, terms);
+    });
+    document.querySelectorAll('details.fullpapers').forEach(d => { d.open = true; });
+    document.querySelectorAll('.fp-year').forEach(h => {
+      let el = h.nextElementSibling, show = false;
+      while (el && !el.classList.contains('fp-year')) {
+        if (el.dataset && el.dataset.qs !== undefined && !el.hidden) show = true;
+        el = el.nextElementSibling;
+      }
+      h.hidden = !show;
+    });
+    const rows = [...document.querySelectorAll('#quizPickerList [data-qs], .fullpapers [data-qs]')];
+    const shown = rows.filter(r => !r.hidden).length;
+    const countEl = $('#quizSearchCount');
+    if (countEl) countEl.textContent = countLabel(shown, rows.length);
+    const empty = $('#quizSearchEmpty');
+    if (empty) { empty.textContent = emptyMessage(terms); empty.hidden = shown > 0; }
+  };
+  input.oninput = apply;
+  input.onkeydown = e => { if (e.key === 'Escape') {
+    input.value = '';
+    renderRoom();
+    const fresh = $('#quizSearchInput');
+    if (fresh) { fresh.value = ''; fresh.focus(); }
+  } };
 }
