@@ -55,11 +55,21 @@ export function renderRoom() {
 
 export function resumeBannerHtml() {
   const sv = S.save;
-  if (!sv || !sv.quizUuid || S.saveDismissed) return '';
+  if (!sv || S.saveDismissed) return '';
+  // series checkpoints carry no quizUuid — they are between-papers saves —
+  // but the student must still be offered the way back into the series
+  if (!sv.quizUuid && !sv.seriesContinuation) return '';
   const n = (sv.questions || []).length;
-  let meta = n
-    ? `Q${(sv.questionIndex ?? 0) + 1} of ${n} · saved ${fmtSaved(sv.updatedAt)}`
-    : `Question ${(sv.questionIndex ?? 0) + 1} · saved ${fmtSaved(sv.updatedAt)}`;
+  let meta;
+  if (sv.seriesContinuation) {
+    const idx = ((sv.series && sv.series.index) ?? 0) + 1;
+    const tot = (sv.series && sv.series.papers && sv.series.papers.length) || '?';
+    meta = `between papers · next is paper ${idx} of ${tot} · saved ${fmtSaved(sv.updatedAt)}`;
+  } else {
+    meta = n
+      ? `Q${(sv.questionIndex ?? 0) + 1} of ${n} · saved ${fmtSaved(sv.updatedAt)}`
+      : `Question ${(sv.questionIndex ?? 0) + 1} · saved ${fmtSaved(sv.updatedAt)}`;
+  }
 
   return `
     <div class="resume-strip" id="resumeBanner">

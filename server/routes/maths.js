@@ -63,9 +63,16 @@ function createMathsRouter(quizService, saveService) {
   router.post('/author/save', (req, res) => {
     // authoring writes are loopback-only: the platform is a local single-user
     // tool, and bank writes must never be drivable from another machine
-    const ip = req.ip || req.socket?.remoteAddress || '';
-    if (!['127.0.0.1', '::1', '::ffff:127.0.0.1', 'localhost'].some(l => ip.includes(l))) {
+    const rawIp = String(req.ip || (req.socket && req.socket.remoteAddress) || '').replace(/^::ffff:/i, '');
+    const isLoopback = rawIp === '127.0.0.1' || rawIp === '::1' || rawIp === 'localhost';
+    if (!isLoopback) {
       return res.status(403).json({ error: 'authoring is local-only' });
+    }
+    // browsers send cross-origin POSTs to localhost even without CORS permission
+    // (no-cors writes execute blind) — any Origin that is not this machine is a drive-by.
+    const origin = req.headers.origin;
+    if (origin && !/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(origin)) {
+      return res.status(403).json({ error: 'cross-origin writes rejected' });
     }
     try {
       const b = req.body || {};

@@ -41,6 +41,23 @@ function entryTopics(e) {
 }
 
 // drilldownHtml(entry) — full reconstruction of one attempt.
+// time/breakdown label — scores.json is user-writable JSON, so coerce every
+// interpolated value to a finite number; a crafted string must never reach the HTML.
+function timeLabel(e) {
+  let base = 'time not recorded';
+  if (Number.isFinite(+e.seconds)) {
+    const sec = Math.max(0, Math.floor(+e.seconds));
+    base = `${Math.floor(sec / 60)}m ${sec % 60}s`;
+  } else if (Number.isFinite(+e.minutes)) {
+    base = `${Math.max(0, Math.floor(+e.minutes))}m`;
+  }
+  const c = e.breakdown && e.breakdown.coding;
+  if (c && Number.isFinite(+c.got) && Number.isFinite(+c.total)) {
+    base += ` · coding ${Math.floor(+c.got)}/${Math.floor(+c.total)}`;
+  }
+  return base;
+}
+
 export function drilldownHtml(e) {
   if (!e || typeof e !== 'object') return '';
   const eScore = Number.isFinite(+e.score) ? +e.score : 0;
@@ -50,7 +67,7 @@ export function drilldownHtml(e) {
     <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:baseline; margin-bottom:12px;">
       <strong style="font-size:16px;">${esc(e.quizTitle || 'Assessment')}</strong>
       <span class="pill ${e.exam ? 'red' : ''}">${e.exam ? 'Exam' : 'Quiz'}${e.flashcard || e.type === 'flashcards' ? ' · flashcards' : ''}</span>
-      <span class="mono" style="font-size:12px; color:var(--ink-muted);">${e.seconds != null ? `${Math.floor(e.seconds / 60)}m ${e.seconds % 60}s` : (e.minutes != null ? e.minutes + 'm' : 'time not recorded')}${e.breakdown?.coding ? ` · coding ${e.breakdown.coding.got}/${e.breakdown.coding.total}` : ''}</span>
+      <span class="mono" style="font-size:12px; color:var(--ink-muted);">${timeLabel(e)}</span>
       <span class="mono" style="font-size:14px; font-weight:700; color:var(--accent);">${eScore}/${eTotal} (${pct}%)</span>
     </div>`;
   const pq = Array.isArray(e.perQuestion) ? e.perQuestion.filter(q => q && typeof q === 'object') : [];
