@@ -5,8 +5,20 @@ class QuizService {
   constructor(subjectConfig) {
     this.config = subjectConfig;
     this.questionsDir = subjectConfig.questionsDir;
+    this.bundledDir = subjectConfig.bundledDir || null;
     this.normalDir = path.join(this.questionsDir, 'normal');
     this.pastDir = path.join(this.questionsDir, 'past-paper');
+    // dir pairs ordered low-to-high precedence: bundled repo banks are merged
+    // underneath the external library so fresh clones have content without
+    // ever hiding banks or past papers the user already has
+    this.scanRoots = [];
+    if (this.bundledDir) {
+      this.scanRoots.push({
+        normal: path.join(this.bundledDir, 'normal'),
+        past: path.join(this.bundledDir, 'past-paper')
+      });
+    }
+    this.scanRoots.push({ normal: this.normalDir, past: this.pastDir });
 
     for (const d of [this.questionsDir, this.normalDir, this.pastDir]) {
       if (!fs.existsSync(d)) {
@@ -36,35 +48,44 @@ class QuizService {
   }
 
   listQuizzes() {
-    const out = { normal: [], 'past-paper': [] };
-    for (const [dir, cat] of [[this.normalDir, 'normal'], [this.pastDir, 'past-paper']]) {
-      if (!fs.existsSync(dir)) continue;
-      for (const file of fs.readdirSync(dir)) {
-        if (!file.toLowerCase().endsWith('.json')) continue;
-        try {
-          const fullPath = path.join(dir, file);
-          const raw = fs.readFileSync(fullPath, 'utf8');
-          const quiz = JSON.parse(raw);
-          if (!quiz.uuid || !Array.isArray(quiz.questions)) continue;
-          if (!quiz.category) quiz.category = cat;
-          out[cat].push(this.summarizeQuiz(quiz, cat, file));
-        } catch {
-          // skip invalid json
+    const merged = { normal: new Map(), 'past-paper': new Map() };
+    for (const roots of this.scanRoots) {
+      for (const [dir, cat] of [[roots.normal, 'normal'], [roots.past, 'past-paper']]) {
+        if (!fs.existsSync(dir)) continue;
+        for (const file of fs.readdirSync(dir)) {
+          if (!file.toLowerCase().endsWith('.json')) continue;
+          try {
+            const fullPath = path.join(dir, file);
+            const raw = fs.readFileSync(fullPath, 'utf8');
+            const quiz = JSON.parse(raw);
+            if (!quiz.uuid || !Array.isArray(quiz.questions)) continue;
+            if (!quiz.category) quiz.category = cat;
+            merged[cat].set(file, this.summarizeQuiz(quiz, cat, file));
+          } catch {
+            // skip invalid json
+          }
         }
       }
     }
+    const out = {
+      normal: [...merged.normal.values()],
+      'past-paper': [...merged['past-paper'].values()]
+    };
     out.normal.sort((a, b) => a.title.localeCompare(b.title));
     out['past-paper'].sort((a, b) => a.title.localeCompare(b.title));
     return out;
   }
 
   findQuizFile(category, file) {
-    const base = category === 'past-paper' ? this.pastDir : this.normalDir;
     const cleanName = path.basename(file || '');
     if (!cleanName.toLowerCase().endsWith('.json')) return null;
-    const full = path.join(base, cleanName);
-    if (!fs.existsSync(full)) return null;
-    return full;
+    const key = category === 'past-paper' ? 'past' : 'normal';
+    // high precedence first: external library shadows bundled repo banks
+    for (const roots of [...this.scanRoots].reverse()) {
+      const full = path.join(roots[key], cleanName);
+      if (fs.existsSync(full)) return full;
+    }
+    return null;
   }
 
   getQuiz(category, file) {

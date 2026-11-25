@@ -3,20 +3,15 @@ const path = require('path');
 const ROOT_DIR = path.resolve(__dirname, '..');
 const REVISION_DIR = path.resolve(ROOT_DIR, '..');
 
-// Questions live in the sibling revision folders when present; otherwise the
-// server falls back to the banks/ directory tracked inside this repo, so a
-// fresh clone has usable content out of the box.
+// Questions live in the sibling revision folders when present. The repo also
+// tracks a bundled banks/<subject> library; the quiz service merges it UNDER
+// the external directory (external wins on filename conflicts), so a fresh
+// clone has usable content out of the box without hiding anything a user
+// already has — including past papers in an otherwise sparse external dir.
 const fs = require('fs');
-function resolveQuestionsDir(externalDir, key) {
-  try {
-    const normalDir = path.join(externalDir, 'normal');
-    if (fs.existsSync(normalDir) && fs.readdirSync(normalDir).some(f => f.endsWith('.json'))) {
-      return externalDir;
-    }
-  } catch {}
+function bundledQuestionsDir(key) {
   const bundled = path.join(ROOT_DIR, 'banks', key);
-  if (fs.existsSync(bundled)) return bundled;
-  return externalDir;
+  return fs.existsSync(bundled) ? bundled : null;
 }
 
 module.exports = {
@@ -34,7 +29,8 @@ module.exports = {
       accent: '#0A8F64',
       accentHover: '#0FB86E',
       timeMultiplier: 1.07, // ~1.07 min/mark
-      questionsDir: resolveQuestionsDir(path.join(REVISION_DIR, 'Computer Science', 'questions'), 'cs'),
+      questionsDir: path.join(REVISION_DIR, 'Computer Science', 'questions'),
+      bundledDir: bundledQuestionsDir('cs'),
       dataDir: path.join(ROOT_DIR, 'data', 'cs')
     },
     maths: {
@@ -45,7 +41,8 @@ module.exports = {
       accent: '#156DFF',
       accentHover: '#0D5AE5',
       timeMultiplier: 1.2, // ~1.2 min/mark
-      questionsDir: resolveQuestionsDir(path.join(REVISION_DIR, 'Maths', 'questions'), 'maths'),
+      questionsDir: path.join(REVISION_DIR, 'Maths', 'questions'),
+      bundledDir: bundledQuestionsDir('maths'),
       dataDir: path.join(ROOT_DIR, 'data', 'maths')
     },
     physics: {
@@ -56,7 +53,8 @@ module.exports = {
       accent: '#E7622B',
       accentHover: '#FF7844',
       timeMultiplier: 1.07, // ~1.07 min/mark
-      questionsDir: resolveQuestionsDir(path.join(REVISION_DIR, 'Physics', 'Quiz system', 'questions'), 'physics'),
+      questionsDir: path.join(REVISION_DIR, 'Physics', 'Quiz system', 'questions'),
+      bundledDir: bundledQuestionsDir('physics'),
       dataDir: path.join(ROOT_DIR, 'data', 'physics')
     }
   }
