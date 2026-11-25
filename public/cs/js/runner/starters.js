@@ -78,7 +78,13 @@ export async function startMockSeries({ breakMinutes = 10 } = {}) {
   // later paper, because a series that cannot run comp02 fails its purpose
   const keys01 = new Set((poolsByComp['01'] || []).map(keyOf));
   const sharedKeys = [...new Set((poolsByComp['02'] || []).map(keyOf).filter(k => keys01.has(k)))];
-  const reserve = Math.min(3, Math.max(0, Math.floor(sharedKeys.length / 2)));
+  // reserve only what comp02 actually needs: when its exclusive (non-shared)
+  // pool already reaches a viable paper, withholding shared questions would
+  // just weaken comp01 while the reserve appears on neither paper
+  const exclusive02 = (poolsByComp['02'] || []).filter(q => !keys01.has(keyOf(q)));
+  const excl02Marks = exclusive02.reduce((x, q) => x + (+q.marks || 0), 0);
+  const comp02NeedsShared = exclusive02.length < 6 || excl02Marks < 20;
+  const reserve = comp02NeedsShared ? Math.min(3, Math.max(0, Math.floor(sharedKeys.length / 2))) : 0;
   const reservedKeys = new Set(sharedKeys.slice(0, reserve));
   for (const comp of ['01', '02']) {
     const basePool = poolsByComp[comp] || [];
