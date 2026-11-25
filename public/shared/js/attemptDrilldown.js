@@ -156,9 +156,10 @@ export function compareAttempts(entries, quizUuid, anchorDate) {
     const pq = Array.isArray(e.perQuestion) ? e.perQuestion : [];
     for (const q of pq) {
       if (!q || !q.topic || !q.marks) continue;
-      const cur = m.get(q.topic) || { got: 0, avail: 0 };
+      const cur = m.get(q.topic) || { got: 0, avail: 0, keys: new Set() };
       cur.got += Math.min(q.marks, Math.max(0, +q.score || 0));
       cur.avail += q.marks;
+      cur.keys.add(q.key || q.id || '');
       m.set(q.topic, cur);
     }
     return m;
@@ -167,8 +168,13 @@ export function compareAttempts(entries, quizUuid, anchorDate) {
   const topics = [...new Set([...a.keys(), ...b.keys()])];
   const deltas = topics.map(t => {
     const pa = a.get(t), pb = b.get(t);
-    const pPct = pa && pa.avail ? pa.got / pa.avail : null;
-    const lPct = pb && pb.avail ? pb.got / pb.avail : null;
+    // a topic delta is only honest when both attempts tag the SAME questions
+    // under it — after a re-tagging the label covers different content, and
+    // comparing percentages would invent a gain or regression out of thin air
+    const sameQuestions = pa && pb && pa.keys.size === pb.keys.size
+      && [...pa.keys].every(k => pb.keys.has(k));
+    const pPct = sameQuestions && pa.avail ? pa.got / pa.avail : null;
+    const lPct = sameQuestions && pb.avail ? pb.got / pb.avail : null;
     return { topic: t, prev: pPct, last: lPct, delta: pPct != null && lPct != null ? lPct - pPct : null };
   }).filter(d => d.delta != null);
   return {
