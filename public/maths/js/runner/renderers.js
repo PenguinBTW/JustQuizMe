@@ -639,10 +639,14 @@ export function mathCalcOk(val, q) {
       && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)) {
     let v = Number(raw);
     if (!isFinite(v)) {
-      // fractions/expressions: evaluate numerically, then band-test the value
+      // fractions/expressions: evaluate numerically, then band-test the value —
+      // but only input shaped like arithmetic; commas/comparisons/letters make
+      // the JS evaluator produce garbage (e.g. "1,450" -> 450, "2<3" -> 1)
+      if (!/^[\d\s+\-*/().^%]+$/.test(raw)) return false;
       v = evalMathExprClient(cleanMathStr(raw), {});
     }
-    return isFinite(v) && !isNaN(v) && v >= q.tolerance.min && v <= q.tolerance.max;
+    const eps = 1e-9 * Math.max(1, Math.abs(q.tolerance.min), Math.abs(q.tolerance.max));
+    return isFinite(v) && !isNaN(v) && v >= q.tolerance.min - eps && v <= q.tolerance.max + eps;
   }
   return areMathEqual(raw, q.expected || q.answer);
 }
