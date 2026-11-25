@@ -180,8 +180,12 @@ export async function startMockSeries({ breakMinutes = 10 } = {}) {
   // auto-saved progress, and capturing stale answers here would restore them
   // over newer work when the series ends
   let freshSave = S.save;
-  try { const remote = await api('/api/save'); freshSave = remote || null; } catch {}
-  const curSave = freshSave || S.save;
+  let remoteKnown = false;
+  try { const remote = await api('/api/save'); freshSave = remote || null; remoteKnown = true; } catch {}
+  // when the server answers, it is authoritative — an empty slot means the
+  // save was discarded (possibly in another tab) and the stale cached copy
+  // must NOT resurrect it. The cache is a fallback only for network failure.
+  const curSave = remoteKnown ? freshSave : (freshSave || S.save);
   const priorSeries = curSave && curSave.seriesContinuation ? (curSave.series || null) : null;
   const inherited = priorSeries && priorSeries.displacedSave ? priorSeries.displacedSave : null;
   if (curSave && !curSave.seriesContinuation) {
