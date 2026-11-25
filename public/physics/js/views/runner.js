@@ -1,7 +1,7 @@
 // Physics Assessment Runner
 import { esc, fmtDur } from '../../../../shared/js/utils.js';
 import { renderDiagram } from '../renderers/diagram.js';
-import { renderCalculation, wireCalculation, numOk } from '../renderers/calculation.js';
+import { renderCalculation, wireCalculation, calcOk } from '../renderers/calculation.js';
 import { renderMcq, wireMcq } from '../../cs/js/renderers/mcq.js';
 import { renderWritten, wireWritten } from '../../cs/js/renderers/written.js';
 
@@ -128,9 +128,8 @@ export function calculatePhysicsScore(S) {
       const exp = Number(q.answer !== undefined ? q.answer : q.correctIndex);
       if (ans.mcq === exp) score += marks;
     } else if (type === 'calc') {
-      const target = Number(q.expectedNumber || q.answer);
       const userVal = Number(ans.val);
-      if (numOk(userVal, target, 2.5)) score += marks;
+      if (calcOk(userVal, q)) score += marks;
     } else {
       score += ans.selfAward ?? (ans.text ? marks : 0);
     }
