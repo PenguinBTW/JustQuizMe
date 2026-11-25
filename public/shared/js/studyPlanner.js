@@ -149,7 +149,10 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
       const studied = days.some(dd => dd.sessions.some(ss => ss.topic === t.topic));
       if (!studied) continue;
       let d = reviewDay;
-      while (d < daysLeft && days[d].sessions.length >= sessionsPerDay) d++;
+      // never book a second session for a topic already on that day — two
+      // identical reviews would both be credited by a single quiz result
+      while (d < daysLeft && (days[d].sessions.length >= sessionsPerDay
+          || days[d].sessions.some(ss => ss.topic === t.topic))) d++;
       if (d >= daysLeft) break outer;
       days[d].sessions.push({ topic: t.topic, kind: 'review', minutes: minutesPerSession, round: 99 });
       reviewDay = d + 1;  // round-robin forward through the final week
