@@ -5,13 +5,7 @@
  "subject": "maths",
  "specCode": "OCR H240",
  "topics": [
-  {
-   "name": "Extended Reasoning Practice",
-   "subtopics": [
-    "Extended mathematical argument",
-    "Interpreting significance"
-   ]
-  }
+  "Extended Reasoning Practice"
  ],
  "questions": [
   {
@@ -26,8 +20,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      3,
-      6
+      1,
+      2
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -37,8 +31,8 @@
      "level": 2,
      "title": "Level 2 (Medium Mark Band)",
      "range": [
-      1,
-      2
+      3,
+      4
      ],
      "ao1": "Sound knowledge of concepts with mostly correct terminology.",
      "ao2": "Application to the context is present but uneven or partially developed.",
@@ -48,8 +42,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      1,
-      1
+      5,
+      6
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -77,8 +71,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      3,
-      6
+      1,
+      2
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -88,8 +82,8 @@
      "level": 2,
      "title": "Level 2 (Medium Mark Band)",
      "range": [
-      1,
-      2
+      3,
+      4
      ],
      "ao1": "Sound knowledge of concepts with mostly correct terminology.",
      "ao2": "Application to the context is present but uneven or partially developed.",
@@ -99,8 +93,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      1,
-      1
+      5,
+      6
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",

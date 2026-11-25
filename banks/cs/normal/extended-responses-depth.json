@@ -5,17 +5,7 @@
  "subject": "cs",
  "specCode": "OCR H446",
  "topics": [
-  {
-   "name": "Extended Response Practice",
-   "subtopics": [
-    "Data protection & privacy",
-    "Database design choices",
-    "Evaluating algorithm choices",
-    "Network security",
-    "Problem-solving approaches",
-    "Testing & evaluation"
-   ]
-  }
+  "Extended Response Practice"
  ],
  "questions": [
   {
@@ -30,8 +20,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      6,
-      9
+      1,
+      3
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -41,8 +31,8 @@
      "level": 2,
      "title": "Level 2 (Medium Mark Band)",
      "range": [
-      3,
-      5
+      4,
+      6
      ],
      "ao1": "Sound knowledge of concepts with mostly correct terminology.",
      "ao2": "Application to the context is present but uneven or partially developed.",
@@ -52,8 +42,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      1,
-      2
+      7,
+      9
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -82,8 +72,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      6,
-      9
+      1,
+      3
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -93,8 +83,8 @@
      "level": 2,
      "title": "Level 2 (Medium Mark Band)",
      "range": [
-      3,
-      5
+      4,
+      6
      ],
      "ao1": "Sound knowledge of concepts with mostly correct terminology.",
      "ao2": "Application to the context is present but uneven or partially developed.",
@@ -104,8 +94,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      1,
-      2
+      7,
+      9
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -134,8 +124,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      9,
-      12
+      1,
+      4
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -145,7 +135,7 @@
      "level": 2,
      "title": "Level 2 (Medium Mark Band)",
      "range": [
-      6,
+      5,
       8
      ],
      "ao1": "Sound knowledge of concepts with mostly correct terminology.",
@@ -156,8 +146,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      1,
-      5
+      9,
+      12
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -187,8 +177,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      6,
-      9
+      1,
+      3
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -198,8 +188,8 @@
      "level": 2,
      "title": "Level 2 (Medium Mark Band)",
      "range": [
-      3,
-      5
+      4,
+      6
      ],
      "ao1": "Sound knowledge of concepts with mostly correct terminology.",
      "ao2": "Application to the context is present but uneven or partially developed.",
@@ -209,8 +199,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      1,
-      2
+      7,
+      9
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -239,8 +229,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      6,
-      9
+      1,
+      3
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -250,8 +240,8 @@
      "level": 2,
      "title": "Level 2 (Medium Mark Band)",
      "range": [
-      3,
-      5
+      4,
+      6
      ],
      "ao1": "Sound knowledge of concepts with mostly correct terminology.",
      "ao2": "Application to the context is present but uneven or partially developed.",
@@ -261,8 +251,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      1,
-      2
+      7,
+      9
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
@@ -291,8 +281,8 @@
      "level": 3,
      "title": "Level 3 (High Mark Band)",
      "range": [
-      6,
-      9
+      1,
+      3
      ],
      "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
      "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
@@ -302,8 +292,8 @@
      "level": 2,
      "title": "Level 2 (Medium Mark Band)",
      "range": [
-      3,
-      5
+      4,
+      6
      ],
      "ao1": "Sound knowledge of concepts with mostly correct terminology.",
      "ao2": "Application to the context is present but uneven or partially developed.",
@@ -313,8 +303,8 @@
      "level": 1,
      "title": "Level 1 (Low Mark Band)",
      "range": [
-      1,
-      2
+      7,
+      9
      ],
      "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
      "ao2": "Superficial or generic application; little reference to the actual scenario.",
