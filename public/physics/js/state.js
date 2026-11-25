@@ -50,5 +50,7 @@ import { beginRun } from './runner/assessment.js';
 import { ak } from './utils.js';
 import { registerRetryMissed } from '../../shared/js/mountRetryMissed.js';
 import { registerShareResult } from '../../shared/js/mountShare.js';
+import { registerFlagButton } from '../../shared/js/flagGlue.js';
 if (typeof document !== 'undefined') registerRetryMissed({ S, beginRun, keyOf: ak });
 if (typeof document !== 'undefined') registerShareResult({ S, portal: 'physics', keyOf: ak });
+if (typeof document !== 'undefined') { registerFlagButton({ S, portal: 'physics', apiBase: '' }); }
