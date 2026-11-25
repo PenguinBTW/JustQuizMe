@@ -633,12 +633,17 @@ export function calcHtml(q) {
 export function mathCalcOk(val, q) {
   // declared bands win — the bank's tolerance is the author's grading intent;
   // fall back to the algebraic/numeric equality check otherwise
-  const v = Number(val);
+  const raw = String(val == null ? '' : val).trim();
+  if (!raw) return false; // blank answers never earn marks, even when 0 is in band
   if (q && q.tolerance && typeof q.tolerance === 'object'
       && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)) {
-    return isFinite(v) && v >= q.tolerance.min && v <= q.tolerance.max;
+    const v = Number(raw);
+    if (isFinite(v)) return v >= q.tolerance.min && v <= q.tolerance.max;
+    // fractions/expressions: evaluate algebraically first, then band-test the value
+    if (areMathEqual(raw, q.answer)) return true;
+    return false;
   }
-  return areMathEqual(val, q.expected || q.answer);
+  return areMathEqual(raw, q.answer);
 }
 
 export function wireCalc(q) {
