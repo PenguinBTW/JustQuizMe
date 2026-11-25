@@ -4,6 +4,7 @@ import { $, esc, fmtDur, ak } from '../utils.js';
 import { api, loadHome } from '../api.js';
 import { evaluateTraceTable, evaluateTruthTable, evaluateCalculation } from './evaluators.js';
 import { reviewWalkHtml } from '../../../shared/js/reviewWalk.js';
+import { paperPrintDoc, markSchemePrintDoc, openPrintWindow } from '../../../shared/js/printPaper.js';
 
 export async function finishQuiz(auto) {
   if (S._finishing) return;
@@ -241,4 +242,28 @@ export async function renderSummaryReport() {
     `;
 
   $('#finishReturnBtn')?.addEventListener('click', () => loadHome());
+
+  // print the exact paper just taken — student copy + teacher mark scheme
+  try {
+    const anchor = $('#finishReturnBtn');
+    if (anchor && !$('#finishPrintPaperBtn')) {
+      const mk = (id, label) => {
+        const b = document.createElement('button');
+        b.className = 'btn btn-ghost';
+        b.id = id;
+        b.textContent = label;
+        b.style.cssText = 'padding:10px 16px; font-size:12.5px; margin-left:8px;';
+        anchor.parentElement.appendChild(b);
+        return b;
+      };
+      const spec = () => ({
+        title: S.quiz.title || 'Paper',
+        portal: 'A-Level Computer Science · OCR',
+        timeMinutes: S.quiz.timeLimitMinutes || null,
+        questions: S.quiz.questions || []
+      });
+      mk('finishPrintPaperBtn', '⎙ Print paper').onclick = () => openPrintWindow(paperPrintDoc(spec()));
+      mk('finishPrintSchemeBtn', '⎙ Mark scheme').onclick = () => openPrintWindow(markSchemePrintDoc(spec()));
+    }
+  } catch {}
 }

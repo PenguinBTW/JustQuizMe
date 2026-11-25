@@ -4,6 +4,43 @@ import { $, esc } from './utils.js';
 import { mixedPool, pickForMode } from './taxonomy.js';
 import { startMixedRun, paceMinutesPerMark } from './runner/starters.js';
 import { beginRun } from './runner/assessment.js';
+import { paperPrintDoc, markSchemePrintDoc, openPrintWindow } from '../../shared/js/printPaper.js';
+
+// print export — paper + mark scheme from the SAME pick (cached so the
+// teacher copy always matches the student paper it was printed with)
+let _printPick = null;
+function wireSynthPrint(portalLabel) {
+  const host = $('#synthStartExamBtn') && $('#synthStartExamBtn').parentElement;
+  if (!host || $('#synthPrintPaperBtn')) return;
+  const mk = (id, label, title) => {
+    const b = document.createElement('button');
+    b.className = 'btn btn-ghost';
+    b.id = id;
+    b.textContent = label;
+    b.title = title;
+    b.style.fontSize = '11.5px';
+    host.appendChild(b);
+    return b;
+  };
+  const buildPick = () => {
+    const pool = mixedPool();
+    if (!pool.length) { alert('No questions in the selected topics.'); return null; }
+    const { set, tot } = pickForMode(pool, S.mixed.mode, S.mixed.m);
+    if (!set.length) { alert('No paper can be built from the current selection.'); return null; }
+    const pace = paceMinutesPerMark(S.mixed.pace);
+    const timeMinutes = pace == null ? null : Math.max(5, Math.round(tot * pace));
+    return { set, tot, timeMinutes, title: `Synthesized Paper · ${tot} marks` };
+  };
+  mk('synthPrintPaperBtn', '⎙ Print paper', 'Print-ready student paper (opens print dialog)').onclick = () => {
+    const p = buildPick(); if (!p) return;
+    _printPick = p;
+    openPrintWindow(paperPrintDoc({ title: p.title, portal: portalLabel, timeMinutes: p.timeMinutes, questions: p.set }));
+  };
+  mk('synthPrintSchemeBtn', '⎙ Mark scheme', 'Teacher copy with marking criteria + common errors — matches the last printed paper').onclick = () => {
+    if (!_printPick) { const p = buildPick(); if (!p) return; _printPick = p; }
+    openPrintWindow(markSchemePrintDoc({ title: _printPick.title, portal: portalLabel, timeMinutes: _printPick.timeMinutes, questions: _printPick.set }));
+  };
+}
 
 export function openSynthModal() {
   const data = (S._topicData || []).filter(t => S.mixed.topics.has(t.topic));
@@ -93,6 +130,7 @@ export function openSynthModal() {
 
   $('#synthStartExamBtn').onclick = () => {
     $('#synthModal').classList.remove('open');
+  wireSynthPrint('A-Level Computer Science · OCR');
     startMixedRun(true);
   };
 }
