@@ -62,14 +62,17 @@ export async function startMockSeries({ breakMinutes = 10 } = {}) {
     const rawPool = compTopics.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
     // multi-tagged questions appear once per topic — dedupe within the
     // component, then exclude anything an earlier paper already claimed
+    // dedupe within the component pool; cross-paper exclusion uses what
+    // earlier papers actually SELECTED, not their whole pool — excluding by
+    // pool membership would starve later papers of questions never used
     const seen = new Set(usedKeys);
     const pool = rawPool.filter(q => { const k = q._key || (q._srcFile ? q._srcFile + ':' + q.id : null) || q.id || q.uuid || q.prompt; if (seen.has(k)) return false; seen.add(k); return true; });
-    pool.forEach(q => usedKeys.add(q._key || (q._srcFile ? q._srcFile + ':' + q.id : null) || q.id || q.uuid || q.prompt));
     if (!pool.length) continue;
     const poolMarks = pool.reduce((x, q) => x + (+q.marks || 0), 0);
     const target = Math.max(10, Math.min(70, poolMarks));
     const { set, tot } = pickForMode(pool, 'standard', target);
     if (!set.length) continue;
+    set.forEach(q => usedKeys.add(q._key || (q._srcFile ? q._srcFile + ':' + q.id : null) || q.id || q.uuid || q.prompt));
     const pace = paceMinutesPerMark(S.mixed.pace);
     papers.push({
       key: `comp${comp}`,
