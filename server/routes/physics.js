@@ -77,7 +77,7 @@ function createPhysicsRouter(quizService, saveService) {
     if (origin) {
       // cross-origin writes are drive-bys regardless of which host they name
       let originHost = null;
-      try { originHost = new URL(origin).hostname.toLowerCase(); } catch {}
+      try { originHost = new URL(origin).hostname.toLowerCase().replace(/^\[|\]$/g, ''); } catch {}
       if (!originHost || !allowedHosts.has(originHost)) {
         return res.status(403).json({ error: 'cross-origin writes rejected' });
       }
