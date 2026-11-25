@@ -44,16 +44,23 @@ function entryTopics(e) {
 // time/breakdown label — scores.json is user-writable JSON, so coerce every
 // interpolated value to a finite number; a crafted string must never reach the HTML.
 function timeLabel(e) {
+  // +null coerces to 0 — a missing value is not zero seconds, it is unknown.
+  // presence must be established before the numeric coercion means anything.
   let base = 'time not recorded';
-  if (Number.isFinite(+e.seconds)) {
+  if (e.seconds != null && Number.isFinite(+e.seconds)) {
     const sec = Math.max(0, Math.floor(+e.seconds));
     base = `${Math.floor(sec / 60)}m ${sec % 60}s`;
-  } else if (Number.isFinite(+e.minutes)) {
+  } else if (e.minutes != null && Number.isFinite(+e.minutes)) {
     base = `${Math.max(0, Math.floor(+e.minutes))}m`;
   }
   const c = e.breakdown && e.breakdown.coding;
-  if (c && Number.isFinite(+c.got) && Number.isFinite(+c.total)) {
-    base += ` · coding ${Math.floor(+c.got)}/${Math.floor(+c.total)}`;
+  if (c && c.got != null && c.total != null && Number.isFinite(+c.got) && Number.isFinite(+c.total)) {
+    // fractional marks are real — rounding them away misreports the result
+    const fmt = (v) => {
+      const n = +v;
+      return Number.isInteger(n) ? String(n) : String(Math.round(n * 10) / 10);
+    };
+    base += ` · coding ${fmt(c.got)}/${fmt(c.total)}`;
   }
   return base;
 }
