@@ -58,11 +58,12 @@ export function validateBank(bank) {
   if (!bank.uuid) errs.push('uuid required');
   if (!bank.title) errs.push('title required');
   if (!Array.isArray(bank.questions) || !bank.questions.length) errs.push('questions: at least one required');
-  (bank.questions || []).forEach((q, i) => {
+  const qs = Array.isArray(bank.questions) ? bank.questions : [];
+  qs.forEach((q, i) => {
     for (const e of validateQuestion(q)) errs.push(`q${i + 1}: ${e}`);
   });
   const ids = new Set();
-  (bank.questions || []).forEach(q => {
+  qs.forEach(q => {
     if (q && q.id) { if (ids.has(q.id)) errs.push(`duplicate question id: ${q.id}`); ids.add(q.id); }
   });
   return errs;

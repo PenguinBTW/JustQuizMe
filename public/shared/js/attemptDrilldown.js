@@ -47,7 +47,7 @@ export function drilldownHtml(e) {
     <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:baseline; margin-bottom:12px;">
       <strong style="font-size:16px;">${esc(e.quizTitle || 'Assessment')}</strong>
       <span class="pill ${e.exam ? 'red' : ''}">${e.exam ? 'Exam' : 'Quiz'}${e.flashcard || e.type === 'flashcards' ? ' · flashcards' : ''}</span>
-      <span class="mono" style="font-size:12px; color:var(--ink-muted);">${e.minutes != null ? `${e.minutes}m ${(e.seconds || 0) % 60}s` : 'time not recorded'}${e.breakdown?.coding ? ` · coding ${e.breakdown.coding.got}/${e.breakdown.coding.total}` : ''}</span>
+      <span class="mono" style="font-size:12px; color:var(--ink-muted);">${e.seconds != null ? `${Math.floor(e.seconds / 60)}m ${e.seconds % 60}s` : (e.minutes != null ? e.minutes + 'm' : 'time not recorded')}${e.breakdown?.coding ? ` · coding ${e.breakdown.coding.got}/${e.breakdown.coding.total}` : ''}</span>
       <span class="mono" style="font-size:14px; font-weight:700; color:var(--accent);">${eScore}/${eTotal} (${pct}%)</span>
     </div>`;
   const pq = Array.isArray(e.perQuestion) ? e.perQuestion.filter(q => q && typeof q === 'object') : [];

@@ -167,9 +167,13 @@ export function renderHistory() {
 
 // drill-down wiring: filters + expandable per-attempt reconstruction
 function currentEntries() {
-  return (typeof S !== 'undefined' && S.historySrc === 'past')
+  const base = (typeof S !== 'undefined' && S.historySrc === 'past')
     ? (typeof pastEntries === 'function' ? pastEntries() : [])
     : (typeof practiceEntries === 'function' ? practiceEntries() : []);
+  // flashcard sessions are their own mode — include them regardless of tab
+  const fc = (Array.isArray(S.scores) ? S.scores : []).filter(x => x && (x.flashcard || x.type === 'flashcards'));
+  const seen = new Set(base.map(x => x && x.date + '|' + x.quizUuid));
+  return base.concat(fc.filter(x => !seen.has(x.date + '|' + x.quizUuid)));
 }
 
 function wireDrilldown() {
@@ -184,13 +188,14 @@ function wireDrilldown() {
     const host = document.getElementById('histList');
     if (!host) return;
     host.innerHTML = filtered.map((a, i) => `
-      <div class="history-entry" data-attempt="${i}" style="cursor:pointer;">
+      <div class="history-entry" data-attempt="${i}" style="cursor:pointer;" tabindex="0" role="button" aria-expanded="false">
         <div style="flex:1;">
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
             <strong style="font-size:15px;">${esc(a.quizTitle || 'Assessment')}</strong>
             ${a.exam ? '<span class="pill red">Exam</span>' : '<span class="pill">Quiz</span>'}
           </div>
           <div class="mono" style="font-size:12px; color:var(--ink-muted);">${fmtDate(a.date)}${a.minutes != null ? ' · ' + a.minutes + 'm' : ''}${a.breakdown?.coding ? ' · coding ' + a.breakdown.coding.got + '/' + a.breakdown.coding.total : ''}</div>
+          ${a.quizFile ? `<button class="btn-ghost mono" style="font-size:11px; margin-top:4px;" data-retry-entry="${a.quizUuid}|${a.quizFile}" onclick="event.stopPropagation()">↻ retry</button>` : ''}
           <div class="attempt-detail" style="margin-top:10px;"></div>
         </div>
         <div class="mono" style="font-size:18px; font-weight:700; color:var(--accent); white-space:nowrap;">
@@ -198,6 +203,9 @@ function wireDrilldown() {
         </div>
       </div>`).join('') || '<p class="mono" style="color:var(--ink-muted); padding:20px 0;">No attempts match these filters.</p>';
     host.querySelectorAll('[data-attempt]').forEach(el => {
+      el.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); el.click(); }
+      });
       el.addEventListener('click', () => {
         const detail = el.querySelector('.attempt-detail');
         if (!detail) return;
