@@ -81,8 +81,12 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
   // place sessions day-by-day: first occurrence urgency-ordered in the first
   // days, repetitions spread by the spacing ladder working within daysLeft
   const days = [];
+  // local calendar stepping: new Date('YYYY-MM-DD') is UTC midnight, so
+  // epoch+24h arithmetic drifts a day for users west of UTC. Construct each
+  // day from local date fields instead — month overflow rolls correctly.
+  const baseDay = parseDay(startDate);
   for (let d = 0; d < daysLeft; d++) {
-    const date = new Date(new Date(dayKey(startDate)).getTime() + d * 86400000);
+    const date = new Date(baseDay.getFullYear(), baseDay.getMonth(), baseDay.getDate() + d);
     days.push({ date: dayKey(date), sessions: [] });
   }
 
@@ -125,14 +129,19 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
 
   // distribute into days respecting sessionsPerDay; overflow spills forward
   placements.sort((a, b) => a.dayIdx - b.dayIdx);
+  let dropped = 0;
   for (const p of placements) {
     let d = p.dayIdx;
     while (d < daysLeft && days[d].sessions.length >= sessionsPerDay) d++;
     if (d >= daysLeft) {
       d = p.dayIdx;
       while (d >= 0 && days[d].sessions.length >= sessionsPerDay) d--;
-      if (d < 0) d = daysLeft - 1;
     }
+    // honestly over capacity: skip the repetition entirely rather than
+    // crowding many sessions onto the final day — a plan that pretends
+    // everything fits teaches nothing. Dropped count is reported so the
+    // UI can label the plan as partial.
+    if (d < 0 || days[d].sessions.length >= sessionsPerDay) { dropped++; continue; }
     // kind: flashcards every 3rd occurrence of a topic, deep quiz otherwise;
     // final week before exam → review sessions
     const dayNum = d;
@@ -146,7 +155,7 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
     });
   }
   for (const d of days) d.sessions.sort((a, b) => a.round - b.round);
-  return { days, examDate: dayKey(examDate), truncated: false };
+  return { days, examDate: dayKey(examDate), truncated: dropped > 0, dropped };
 }
 
 // completion: a session ticks off when a matching score entry exists that day
