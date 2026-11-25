@@ -121,7 +121,11 @@ function contentKeyOf(e) {
     // topic+marks in the fingerprint: score writers save bare ids, so two
   // synthesized papers drawing the same id from different banks must not
   // collapse — their topic/marks context almost always differs
-  return pq.map(q => q && ((q.key || q.id || q.prompt || '') + '#' + (q.marks ?? ''))).sort().join('|');
+  return pq.map(q => q && (((q.key || q.id || q.prompt || '') + '#' + (q.marks ?? '')
+      // legacy entries saved bare ids — topic is their only cross-bank
+      // disambiguator, so it stays in THEIR fingerprint; file-qualified keys
+      // are immune to re-tagging and don't need it
+      + (q.key ? '' : '#' + (q.topic || ''))))).sort().join('|');
 }
 
 // compareAttempts(entries, quizUuid) — same paper taken more than once:
