@@ -28,16 +28,11 @@ async def sweep_portal(pw, portal):
         await page.goto(BASE + P, wait_until='domcontentloaded')
         await page.wait_for_timeout(2200)
         # open synth modal if there's an opener; otherwise it may be inline
-        opener = await page.query_selector('button:has-text("Custom Paper"), button:has-text("Synthesise"), button:has-text("Synthesize"), #openSynthBtn')
-        if opener:
-            await opener.click()
-            await page.wait_for_timeout(600)
         cont = await page.query_selector('#synthContinueBtn')
         if cont:
             await cont.click()
-            await page.wait_for_timeout(600)
-        # start button inside modal
-        start = await page.query_selector('#synthModal button:has-text("Start"), #synthStartBtn, button:has-text("Begin paper")')
+            await page.wait_for_timeout(700)
+        start = await page.query_selector('button:has-text("Start Quiz"), #synthModal button:has-text("Start"), #synthStartBtn, button:has-text("Begin paper")')
         if start:
             await start.click()
             await page.wait_for_timeout(1500)
@@ -55,8 +50,8 @@ async def sweep_portal(pw, portal):
                 if ta:
                     await ta.fill('seed answer')
                     answered = True
-                nxt = await page.query_selector('button:has-text("Next"), #nextBtn')
-                fin = await page.query_selector('button:has-text("Finish"), #finishBtn, button:has-text("Submit")')
+                nxt = await page.query_selector('#nextBtn, button:has-text("Next"), button:has-text("Continue →")')
+                fin = await page.query_selector('#finishBtn, button:has-text("Finish"), button:has-text("Submit")')
                 if fin and await fin.is_visible():
                     await fin.click()
                     await page.wait_for_timeout(500)
@@ -98,7 +93,7 @@ async def sweep_portal(pw, portal):
         if started:
             broke = False
             for _ in range(40):
-                fin = await page.query_selector('button:has-text("Finish"), #finishBtn, button:has-text("Submit")')
+                fin = await page.query_selector('#finishBtn, button:has-text("Finish"), button:has-text("Submit")')
                 if fin and await fin.is_visible():
                     await fin.click()
                     await page.wait_for_timeout(600)
@@ -108,7 +103,7 @@ async def sweep_portal(pw, portal):
                     html = await page.inner_html('body')
                     broke = 'break' in html.lower() or 'seriesContinueBtn' in html or 'paper 2' in html.lower()
                     break
-                nxt = await page.query_selector('button:has-text("Next"), #nextBtn')
+                nxt = await page.query_selector('#nextBtn, button:has-text("Next"), button:has-text("Continue →")')
                 if nxt and await nxt.is_visible():
                     await nxt.click()
                     await page.wait_for_timeout(300)
@@ -187,9 +182,13 @@ async def sweep_portal(pw, portal):
         await page.goto(BASE + P, wait_until='domcontentloaded')
         await page.wait_for_timeout(2000)
         printed = False
-        async with page.context.expect_page(timeout=4000) as pop:
-            pb = await page.query_selector('button:has-text("Print paper"), #printPaperBtn, #finishPrintPaperBtn')
-            if pb:
+        cont = await page.query_selector('#synthContinueBtn')
+        if cont:
+            await cont.click()
+            await page.wait_for_timeout(700)
+        pb = await page.query_selector('#synthPrintPaperBtn, button:has-text("Print paper")')
+        if pb:
+            async with page.context.expect_page(timeout=6000) as pop:
                 await pb.click()
         try:
             popup = await pop.value
@@ -198,7 +197,7 @@ async def sweep_portal(pw, portal):
             printed = len(content) > 200
         except Exception:
             printed = False
-        rec('print-rendering', portal, printed or pb is None, f'btn={bool(pb)} printed={printed}' if pb else 'no print entry found on this screen')
+        rec('print-rendering', portal, printed, f'btn={bool(pb)} printed={printed}')
     except Exception as e:
         rec('print-rendering', portal, False, f'ex:{str(e)[:90]}')
 
