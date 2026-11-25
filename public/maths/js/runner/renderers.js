@@ -635,6 +635,9 @@ export function mathCalcOk(val, q) {
   // fall back to the algebraic/numeric equality check otherwise
   const raw = String(val == null ? '' : val).trim();
   if (!raw) return false; // blank answers never earn marks, even when 0 is in band
+  if (q && q.tolerance && typeof q.tolerance === 'object') {
+    q = { ...q, tolerance: { min: Number(q.tolerance.min), max: Number(q.tolerance.max) } };
+  }
   if (q && q.tolerance && typeof q.tolerance === 'object'
       && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)) {
     let v = Number(raw.replace(/\s+/g, ''));
