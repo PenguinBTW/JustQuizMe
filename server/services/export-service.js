@@ -5,7 +5,10 @@ const path = require('path');
 // tutor can pivot — one row per question attempt, and one row per topic
 // rollup. Same JSON-convention reads as the other services; no writes.
 function csvCell(v) {
-  const s = v == null ? '' : String(v);
+  let s = v == null ? '' : String(v);
+  // neutralize spreadsheet formulas — a tutor opening the CSV must not
+  // evaluate attacker/student-authored text as a formula
+  if (/^[=+\-@]/.test(s)) s = `'${s}`;
   return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 function toCsv(rows) {
@@ -21,10 +24,12 @@ class ExportService {
   }
   // one row per question attempt, newest first
   attemptsCsv(portal) {
-    const rows = [['date', 'portal', 'quizTitle', 'quizFile', 'questionId', 'topic', 'subtopic', 'type', 'score', 'marks', 'exam']];
-    for (const s of this.scores().slice().reverse()) {
+    // scores.json is stored newest-first — preserve that order
+    const rows = [['date', 'portal', 'quizTitle', 'quizFile', 'questionKey', 'questionId', 'topic', 'subtopic', 'type', 'score', 'marks', 'attempted', 'exam']];
+    for (const s of this.scores()) {
       for (const q of s.perQuestion || []) {
-        rows.push([s.date, portal, s.quizTitle, s.quizFile, q.id, q.topic, q.subtopic || '', q.type, q.score, q.marks, s.exam ? 'yes' : 'no']);
+        if (!q || typeof q !== 'object') continue;
+        rows.push([s.date, portal, s.quizTitle, s.quizFile, q.key || '', q.id, q.topic, q.subtopic || '', q.type, +q.score || 0, +q.marks || 0, q.attempted === false ? 'no' : 'yes', s.exam ? 'yes' : 'no']);
       }
     }
     return toCsv(rows);
@@ -34,6 +39,8 @@ class ExportService {
     const acc = new Map();
     for (const s of this.scores()) {
       for (const q of s.perQuestion || []) {
+        if (!q || typeof q !== 'object') continue;
+        if (q.attempted === false) continue;
         const key = q.topic || '(untagged)';
         const t = acc.get(key) || { attempts: 0, earned: 0, available: 0 };
         t.attempts += 1;
