@@ -1,0 +1,120 @@
+{
+ "uuid": "ma-er-5b2b762",
+ "version": 1,
+ "title": "Extended Reasoning \u2014 proof & interpretation",
+ "subject": "maths",
+ "specCode": "OCR H240",
+ "topics": [
+  {
+   "name": "Extended Reasoning Practice",
+   "subtopics": [
+    "Extended mathematical argument",
+    "Interpreting significance"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "er1",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Proof & Reasoning",
+   "subtopic": "Extended mathematical argument",
+   "prompt": "Prove or disprove: the sum of any three consecutive integers is divisible by 3. Your response should present a complete mathematical argument and evaluate whether the claim generalises to any n consecutive integers.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      3,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      1
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Algebraic representation n + (n+1) + (n+2) = 3n + 3 = 3(n+1) \u2014 constructive proof",
+    "Recognition that the factorised form proves divisibility for all integers n",
+    "Generalisation: sum of k consecutive integers is kn + k(k-1)/2",
+    "Divisibility by k holds when k is odd; fails for even k \u2014 counterexample needed",
+    "A counterexample for even case e.g. 1+2=3 not divisible by 2",
+    "Logical structure: claim, proof, generalisation hypothesis, verdict with justification"
+   ]
+  },
+  {
+   "id": "er2",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Statistical Reasoning",
+   "subtopic": "Interpreting significance",
+   "prompt": "A school trials a new revision technique. Mean test scores rise from 64% to 67% with a sample of 30 students. A hypothesis test gives p = 0.04. Evaluate what the school can and cannot conclude, and whether they should adopt the technique.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      3,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      1
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Correct interpretation of p=0.04: probability of such data (or more extreme) if no real effect",
+    "p does NOT measure the probability the technique works",
+    "Statistical significance vs practical significance \u2014 3% may not justify cost/disruption",
+    "Sample size and variance considerations; possible confounders (motivation, selection)",
+    "Multiple-comparison and replication concerns honestly raised",
+    "Reasoned recommendation distinguishing evidence strength from decision factors"
+   ]
+  }
+ ]
+}

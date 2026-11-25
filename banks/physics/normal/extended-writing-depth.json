@@ -1,0 +1,172 @@
+{
+ "uuid": "ph-er-5b2b762",
+ "version": 1,
+ "title": "Extended Writing \u2014 6-mark discursive",
+ "subject": "physics",
+ "specCode": "AQA",
+ "topics": [
+  {
+   "name": "Extended Writing Practice",
+   "subtopics": [
+    "Gravitational and electric field comparison",
+    "Material selection physics",
+    "Radioactive decay applications"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "er1",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Nuclear & Particle Physics",
+   "subtopic": "Radioactive decay applications",
+   "prompt": "A hospital is choosing between technetium-99m (half-life 6 hours, gamma emitter) and iodine-131 (half-life 8 days, beta and gamma emitter) for thyroid imaging. Evaluate the physics factors that should inform this choice.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      3,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      1
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Half-life: short enough to limit patient dose, long enough to complete imaging",
+    "Radiation type: gamma escapes the body for detection; beta is absorbed internally increasing dose",
+    "Ionisation density \u2014 beta more damaging per absorption",
+    "Energy of emitted gamma must suit the camera detection efficiency",
+    "Excretion/biological half-life interacts with physical half-life",
+    "Balanced conclusion justifying technetium-99m's dominance in diagnostic imaging"
+   ]
+  },
+  {
+   "id": "er2",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Fields & Further Mechanics",
+   "subtopic": "Gravitational and electric field comparison",
+   "prompt": "Compare and contrast gravitational and electric fields, using their similarities and differences to explain why electrostatic forces dominate at atomic scales while gravity dominates at planetary scales.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      3,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      1
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Both inverse-square, radial fields with potential proportional to 1/r",
+    "Gravity is always attractive; electric force attracts or repels by charge sign",
+    "Coupling constants differ by ~40 orders of magnitude for proton-scale interactions",
+    "Matter is electrically neutral at large scales \u2014 charge cancellation leaves gravity dominant",
+    "Shielding: gravity cannot be shielded; electric fields can be",
+    "Structured conclusion connecting field properties to the scale-dependent dominance"
+   ]
+  },
+  {
+   "id": "er3",
+   "type": "extended-response",
+   "marks": 6,
+   "topic": "Mechanics & Materials",
+   "subtopic": "Material selection physics",
+   "prompt": "An engineer must choose a material for the cable of a crane lifting loads in a shipyard. Evaluate the mechanical properties the material must have and how stress-strain behaviour informs the choice.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      3,
+      6
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      1
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "High tensile strength to support rated loads with safety factor",
+    "High Young modulus \u2014 small elastic extension keeps positioning precise",
+    "Elastic behaviour must extend well beyond working load: no plastic deformation in service",
+    "Toughness against shock loading; fatigue resistance over repeated cycles",
+    "Ductility as a safety feature \u2014 visible stretching before failure rather than brittle snap",
+    "Corrosion considerations in the marine environment honestly weighed"
+   ]
+  }
+ ]
+}

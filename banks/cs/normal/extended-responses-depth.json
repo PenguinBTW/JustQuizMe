@@ -1,0 +1,334 @@
+{
+ "uuid": "cs-er-5b2b762",
+ "version": 1,
+ "title": "Extended Responses \u2014 discursive depth",
+ "subject": "cs",
+ "specCode": "OCR H446",
+ "topics": [
+  {
+   "name": "Extended Response Practice",
+   "subtopics": [
+    "Data protection & privacy",
+    "Database design choices",
+    "Evaluating algorithm choices",
+    "Network security",
+    "Problem-solving approaches",
+    "Testing & evaluation"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "er1",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Legal, Ethical & Environmental",
+   "subtopic": "Data protection & privacy",
+   "prompt": "A hospital trust plans to migrate patient records to a third-party cloud provider based overseas. Discuss the legal and ethical issues the trust must consider before proceeding.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      6,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      5
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Data Protection Act 2018 / UK GDPR principles: lawfulness, purpose limitation, data minimisation",
+    "Rights of data subjects (access, erasure) and how outsourcing affects them",
+    "International transfer rules \u2014 adequacy, safeguards, or explicit consent required for overseas processing",
+    "Security obligations: encryption in transit/at rest, breach notification within 72 hours",
+    "Ethical duties beyond law: patient trust, re-identification risk from pseudonymised data",
+    "Accountability: the trust remains data controller even when processing is outsourced",
+    "Balanced conclusion weighing clinical/operational benefits against privacy risk"
+   ]
+  },
+  {
+   "id": "er2",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Algorithms & Complexity",
+   "subtopic": "Evaluating algorithm choices",
+   "prompt": "A logistics company processes delivery routes on datasets that are nearly sorted, with occasional new insertions. Evaluate whether insertion sort, merge sort, or quicksort is the best choice for their routing system, justifying your recommendation.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      6,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      5
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Insertion sort is O(n) on nearly-sorted input \u2014 adaptive behaviour suits this exact data profile",
+    "Merge sort guarantees O(n log n) regardless of input but costs O(n) extra memory",
+    "Quicksort averages O(n log n) but degrades to O(n\u00b2) on sorted/nearly-sorted data with naive pivot choice",
+    "Insertion sort's low overhead and in-place operation suit small-to-medium route lists",
+    "For large datasets the quadratic worst case of insertion sort may dominate \u2014 dataset size matters",
+    "Stability may matter if equal-priority deliveries must keep original ordering",
+    "Justified recommendation tied to the scenario's stated characteristics"
+   ]
+  },
+  {
+   "id": "er3",
+   "type": "extended-response",
+   "marks": 12,
+   "topic": "Systems Architecture & Software Development",
+   "subtopic": "Testing & evaluation",
+   "prompt": "A team is about to release a payroll system used by 4,000 employees. Discuss the testing strategies the team should employ before release, and evaluate how they should prioritise their limited remaining testing time.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      9,
+      12
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      6,
+      8
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      5
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Unit testing of individual calculation modules (tax bands, pension deductions) with boundary values",
+    "Integration testing across module boundaries \u2014 payroll depends on HR records and banking output formats",
+    "Black-box vs white-box approaches and when each is appropriate",
+    "Alpha testing in-house, then beta/UAT with a pilot group of real payroll staff",
+    "Boundary/extreme test data: zero hours, maximum overtime, negative corrections, leap years",
+    "Regression testing after each fix to ensure earlier functionality survives",
+    "Prioritisation reasoning: financial correctness and legal compliance rank above cosmetic issues",
+    "Evaluation of residual risk \u2014 what it means to ship with known untested paths"
+   ]
+  },
+  {
+   "id": "er4",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Data Types, Structures & Exchanging Data",
+   "subtopic": "Database design choices",
+   "prompt": "A school currently stores all student data in one large flat-file table. Evaluate the benefits of normalising this data into a relational database design.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      6,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      5
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Data redundancy reduction \u2014 repeated student/contact details stored once",
+    "Update anomaly elimination \u2014 changing a tutor's room once instead of everywhere",
+    "Insertion/deletion anomalies explained with school-specific examples",
+    "Referential integrity through primary/foreign keys",
+    "Query flexibility via joins; reports impossible in flat file",
+    "Counterpoints honestly evaluated: complexity cost, join performance overhead, staff training",
+    "Conclusion weighing scale of the school data against design effort"
+   ]
+  },
+  {
+   "id": "er5",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Exchanging Data & Networks",
+   "subtopic": "Network security",
+   "prompt": "A small business runs a wireless network for staff and guests. Discuss the security threats this network faces and evaluate the measures the business should implement.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      6,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      5
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "Unauthorised access \u2014 weak/shared passwords, rogue devices, evil twin hotspots",
+    "Interception of unencrypted traffic \u2014 need for WPA2/WPA3 and TLS end-to-end",
+    "Guest network segmentation/VLAN isolation from business systems",
+    "MAC filtering limitations \u2014 trivially spoofed, not a real control",
+    "Firewall and intrusion detection roles",
+    "Physical and social-engineering vectors \u2014 honest evaluation that technical controls are partial",
+    "Proportionality: cost/complexity of measures weighed against the business's actual risk"
+   ]
+  },
+  {
+   "id": "er6",
+   "type": "extended-response",
+   "marks": 9,
+   "topic": "Computational Thinking",
+   "subtopic": "Problem-solving approaches",
+   "prompt": "A programmer must build a system that finds the shortest path for a delivery van visiting twenty addresses. Evaluate the use of abstraction and heuristic approaches in making this problem tractable.",
+   "levels": [
+    {
+     "level": 3,
+     "title": "Level 3 (High Mark Band)",
+     "range": [
+      6,
+      9
+     ],
+     "ao1": "Comprehensive, accurate technical knowledge using correct terminology throughout.",
+     "ao2": "Thorough application to the scenario with coherent, logical progression of ideas.",
+     "ao3": "Critical, balanced evaluation; arguments substantiated and a reasoned conclusion drawn."
+    },
+    {
+     "level": 2,
+     "title": "Level 2 (Medium Mark Band)",
+     "range": [
+      3,
+      5
+     ],
+     "ao1": "Sound knowledge of concepts with mostly correct terminology.",
+     "ao2": "Application to the context is present but uneven or partially developed.",
+     "ao3": "Some evaluation; arguments one-sided or conclusions asserted rather than reasoned."
+    },
+    {
+     "level": 1,
+     "title": "Level 1 (Low Mark Band)",
+     "range": [
+      1,
+      2
+     ],
+     "ao1": "Basic knowledge; isolated facts or terminology with occasional inaccuracy.",
+     "ao2": "Superficial or generic application; little reference to the actual scenario.",
+     "ao3": "Little or no evaluation; opinion without justification."
+    }
+   ],
+   "indicativeContent": [
+    "The problem is a travelling salesman variant \u2014 exact brute force is factorial and intractable at n=20",
+    "Abstraction: road network as weighted graph, irrelevant detail (vehicle colour, road names) discarded",
+    "Heuristics trade optimality for tractability \u2014 nearest neighbour, or A* with straight-line distance heuristic",
+    "Decomposition into route representation, cost evaluation, improvement steps",
+    "Evaluation: whether 'good enough' routes suffice commercially versus guaranteed-optimal cost",
+    "Reasoned conclusion about acceptable approximation in practice"
+   ]
+  }
+ ]
+}
