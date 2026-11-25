@@ -1118,3 +1118,23 @@ details.fullpapers summary:hover { color: var(--accent); }
 .mastery-weak { background: rgba(255, 90, 90, 0.14); color: #e05555; border: 1px solid rgba(255, 90, 90, 0.3); }
 .mastery-ok { background: rgba(90, 200, 120, 0.12); color: #3d9e63; border: 1px solid rgba(90, 200, 120, 0.25); }
 .mastery-new { background: rgba(120, 120, 140, 0.1); color: var(--ink-muted); border: 1px solid rgba(120, 120, 140, 0.2); }
+
+/* mobile + accessibility pass — small-viewport layout and touch targets */
+@media (max-width: 480px) {
+  /* tab rows must never push the page wider than the viewport: scroll internally */
+  .room-tabs {
+    overflow-x: auto;
+    max-width: 100%;
+    gap: 18px;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .room-tabs::-webkit-scrollbar { display: none; }
+  .room-tab { font-size: 18px; white-space: nowrap; flex: 0 0 auto; }
+  /* WCAG 2.2 target size minimum — primary actions were 19px tall */
+  button, .btn, [role="button"] { min-height: 24px; }
+  /* pre blocks (worked examples, code) wrap instead of overflowing */
+  pre { white-space: pre-wrap; word-break: break-word; max-width: 100%; }
+  /* quiz chrome rows wrap rather than clip */
+  .q-eyebrow, .eyebrow-row { flex-wrap: wrap; }
+}

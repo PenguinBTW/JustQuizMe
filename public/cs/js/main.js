@@ -7,6 +7,8 @@ import './stats.js';
 import './exportCsv.js';
 import './streak.js';
 import { startMixedRun } from './runner/starters.js';
+import { wireModalA11y } from '../../shared/js/modalA11y.js';
+wireModalA11y();
 
 export function initTheme() {
   const t = localStorage.getItem('cs-quizme-theme') || 'dark';

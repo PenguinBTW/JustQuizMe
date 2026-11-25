@@ -1302,3 +1302,12 @@ body {
 .ov-empty { text-align: center; padding: 40px 20px; color: var(--ink-secondary, #a8adba); }
 .ov-empty h2 { font-size: 26px; margin-bottom: 10px; color: var(--ink, #e8eaf0); }
 @media (max-width: 900px) { .ov-grid, .ov-panels { grid-template-columns: 1fr; } .overview-section { padding: 0 20px 30px; } }
+
+/* mobile + accessibility pass — small-viewport layout and touch targets */
+@media (max-width: 480px) {
+  .synth-tabs, .subject-tabs, .tabs { flex-wrap: wrap; }
+  .synth-tab-btn { flex: 1 1 auto; min-width: 0; }
+  pre { white-space: pre-wrap; word-break: break-word; max-width: 100%; }
+  button, .btn, [role="button"] { min-height: 24px; }
+  .card, .panel { overflow-wrap: break-word; }
+}

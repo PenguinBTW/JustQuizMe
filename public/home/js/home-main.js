@@ -1,6 +1,8 @@
 // Master Homepage Controller & Universal Synthesizer
 import { initTheme, toggleTheme } from '../../shared/js/theme.js';
 import { num } from '../../shared/js/utils.js';
+import { wireModalA11y } from '../../shared/js/modalA11y.js';
+wireModalA11y();
 import { initHeroWave } from './demos/wave-canvas.js';
 import { initAsciiEngine } from './demos/ascii-engine.js';
 import { initMathCanvas } from './demos/math-canvas.js';

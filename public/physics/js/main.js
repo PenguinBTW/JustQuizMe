@@ -8,6 +8,8 @@ import { startMixedSel } from './runner/starters.js';
 import './stats.js';
 import './exportCsv.js';
 import './streak.js';
+import { wireModalA11y } from '../../shared/js/modalA11y.js';
+wireModalA11y();
 
 // ---------- theme (dark default) ----------
 export function initTheme(){

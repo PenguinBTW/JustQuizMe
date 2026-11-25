@@ -246,6 +246,39 @@ async def main():
         rec('launchpad-today', 'launchpad', "Today's revision" in html, 'widget present' if "Today's revision" in html else 'absent')
         await b.close()
 
+    # mobile-viewport column — 390px overflow/touch/label checks per portal,
+    # so the matrix is reproducible end-to-end from one script
+    async with async_playwright() as pw:
+        for portal in PORTALS + ['launchpad']:
+            b = await pw.chromium.launch(args=['--no-sandbox'])
+            page = await b.new_page(viewport={'width': 390, 'height': 844})
+            path = '/' if portal == 'launchpad' else f'/{portal}/'
+            try:
+                await page.goto(BASE + path, wait_until='domcontentloaded')
+                await page.wait_for_timeout(2200)
+                ov = await page.evaluate('document.documentElement.scrollWidth - document.documentElement.clientWidth')
+                rec('mobile-no-h-overflow', portal, ov <= 1, f'overflow={ov}px@390w')
+                small = await page.evaluate('''() => {
+                  let n = 0;
+                  document.querySelectorAll('button, a, [role=button]').forEach(el => {
+                    const r = el.getBoundingClientRect();
+                    if (r.width > 0 && r.height > 0 && r.height < 24) n++;
+                  });
+                  return n;
+                }''')
+                rec('mobile-touch-targets', portal, small == 0, f'under-24px={small}')
+                unl = await page.evaluate('''() => {
+                  let n = 0;
+                  document.querySelectorAll('button').forEach(el => {
+                    if (!(el.textContent || '').trim() && !el.getAttribute('aria-label') && !el.getAttribute('title')) n++;
+                  });
+                  return n;
+                }''')
+                rec('mobile-buttons-labeled', portal, unl == 0, f'unlabeled={unl}')
+            except Exception as e:
+                rec('mobile-no-h-overflow', portal, False, f'err={str(e)[:80]}')
+            await b.close()
+
     cols = PORTALS + ['launchpad']
     print('\n## Coverage matrix\n')
     print('| flow | ' + ' | '.join(cols) + ' |')
