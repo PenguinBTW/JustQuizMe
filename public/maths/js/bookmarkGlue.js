@@ -108,7 +108,9 @@ function injectStar() {
 }
 
 // The runner re-renders .q-chrome per question; observe and re-inject.
-const observer = new MutationObserver(() => {
-  if (document.querySelector('.q-chrome')) injectStar();
-});
-observer.observe(document.documentElement, { childList: true, subtree: true });
+if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
+  const observer = new MutationObserver(() => {
+    if (document.querySelector('.q-chrome')) injectStar();
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+}

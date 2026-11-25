@@ -56,5 +56,5 @@ import { beginRun } from './runner/assessment.js';
 import { ak } from './utils.js';
 import { registerRetryMissed } from '../../shared/js/mountRetryMissed.js';
 import { registerShareResult } from '../../shared/js/mountShare.js';
-registerRetryMissed({ S, beginRun, keyOf: ak });
-registerShareResult({ S, portal: 'maths', keyOf: ak });
+if (typeof document !== 'undefined') registerRetryMissed({ S, beginRun, keyOf: ak });
+if (typeof document !== 'undefined') registerShareResult({ S, portal: 'maths', keyOf: ak });
