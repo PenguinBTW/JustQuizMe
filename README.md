@@ -129,3 +129,13 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
 ## 📄 License
 
 This software platform and its custom question engines are released under the [Polyform Non-Commercial](LICENSE). Standard practice sets authored for this platform are freely available for non-commercial educational use. Past examination materials remain the intellectual property of their respective examination boards (OCR and AQA).
+
+## Authoring studio security
+
+The question-authoring studio writes bank files to disk, so its save endpoint is loopback-only **and** validates the request `Host` header against a strict allowlist (`localhost`, `127.0.0.1`, `::1`) — a defense against DNS-rebinding drive-by writes. If you serve the portal over a custom local hostname alias, opt in explicitly:
+
+```bash
+JQM_AUTHOR_HOSTS="myalias.local,otherhost" node server/index.js
+```
+
+This is deliberately never enabled implicitly.
