@@ -65,15 +65,28 @@ export function reviewWalkHtml(questions, answers) {
     : (answers || {});
   // runners key answers by bank-qualified keys ("file::qid") — resolve each
   // question's entry by bare id first, then by any key ending in the id.
+  const filePrefix = k => {
+    const m = /^(.+?)(?:::|:(?!:)|\||\/)/.exec(k);
+    return m ? m[1] : null;
+  };
   const resolve = q => {
     if (!q) return {};
     // the exact bank-qualified key first — runners stamp it as file:qid
     if (q._key && byId[q._key]) return byId[q._key];
     if (byId[q.id]) return byId[q.id];
+    // suffix fallback: two different banks can carry the same bare question
+    // id, so an unmatched suffix key may belong to ANOTHER bank's question.
+    // borrowing it would fabricate an answer for a question the student
+    // never reached — only accept a suffix match when it is unambiguous:
+    // exactly one candidate, and (when the question carries its own bank
+    // key) one that shares the same file prefix.
     const suffix = String(q.id);
-    for (const k of Object.keys(byId)) {
-      if (k === suffix || k.endsWith('::' + suffix) || k.endsWith(':' + suffix) || k.endsWith('|' + suffix) || k.endsWith('/' + suffix)) return byId[k];
-    }
+    const wantPrefix = q._key ? filePrefix(q._key) : null;
+    const candidates = Object.keys(byId).filter(k =>
+      k === suffix || k.endsWith('::' + suffix) || k.endsWith(':' + suffix) || k.endsWith('|' + suffix) || k.endsWith('/' + suffix));
+    const sameBank = wantPrefix ? candidates.filter(k => filePrefix(k) === wantPrefix) : candidates;
+    if (sameBank.length === 1) return byId[sameBank[0]];
+    if (!wantPrefix && candidates.length === 1) return byId[candidates[0]];
     return {};
   };
   return (questions || []).map((q, i) => {
