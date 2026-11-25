@@ -1,5 +1,5 @@
 // Computer Science Quiz Run Starters
-import { S, MIXED_UUID } from '../state.js';
+import { S, MIXED_UUID, OCR_TOPIC_SPECS } from '../state.js';
 import { api } from '../api.js';
 import { orderTypeShuffled } from '../utils.js';
 import { mixedPool, pickForMode } from '../taxonomy.js';
@@ -59,7 +59,14 @@ export async function startMockSeries({ breakMinutes = 10 } = {}) {
   const usedKeys = new Set();
   for (const comp of ['01', '02']) {
     const compTopics = data.filter(t => t.component === comp);
-    const rawPool = compTopics.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
+    // a bank spanning both components copies its questions into every tagged
+    // topic — a question belongs on this paper only when its OWN topic maps
+    // to this component (untagged questions pass through: better included
+    // than silently dropped from a mock)
+    const compOf = {};
+    try { (OCR_TOPIC_SPECS || []).forEach(sp => { compOf[sp.topic] = sp.component; }); } catch {}
+    const rawPool = compTopics.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))))
+      .filter(q => !q.topic || !compOf[q.topic] || compOf[q.topic] === comp);
     // multi-tagged questions appear once per topic — dedupe within the
     // component, then exclude anything an earlier paper already claimed
     // dedupe within the component pool; cross-paper exclusion uses what
