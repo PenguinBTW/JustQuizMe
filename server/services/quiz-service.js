@@ -88,7 +88,10 @@ class QuizService {
       // fall through to the next root rather than serving 'Quiz not found'
       try {
         const quiz = JSON.parse(fs.readFileSync(full, 'utf8'));
-        if (quiz && Array.isArray(quiz.questions)) return full;
+        // consistent with listQuizzes: a bank the catalogue would skip (no uuid)
+        // must not load through Practice/Author either — otherwise the
+        // catalogue advertises the bundled bank while the runner opens the override
+        if (quiz && quiz.uuid && Array.isArray(quiz.questions)) return full;
       } catch {}
     }
     return null;
