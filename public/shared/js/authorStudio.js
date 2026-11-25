@@ -328,22 +328,25 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
             status.style.color = '#e0735f';
             return;
           }
-          // stale-band invalidation: AFTER validation passes (a rejected save
-          // must not strip the draft) but BEFORE the fold-in deep copy (the
-          // banked version must not keep a band the form just dropped).
-          // Scoped to the edited question only.
-          if (q && q.type === 'calculation' && q.answer != null
-              && q.tolerance && typeof q.tolerance === 'object'
-              && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)
-              && !(q.answer >= q.tolerance.min && q.answer <= q.tolerance.max)) {
-            delete q.tolerance;
-          }
           if (dirty) bank.questions[banked] = JSON.parse(JSON.stringify(q));
         }
         bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
       } catch {}
       const errs = validateBank(bank);
       if (errs.length) { status.textContent = '✗ ' + errs[0]; status.style.color = '#e0735f'; return; }
+      // stale-band invalidation, applied only once the save is definitely
+      // proceeding: earlier mutation meant a rejected save stripped the
+      // draft's band, while skipping the draft meant the band resurrected on
+      // the next save. Both copies are cleaned together here.
+      const staleBand = (qq) => qq && qq.type === 'calculation' && qq.answer != null
+        && qq.tolerance && typeof qq.tolerance === 'object'
+        && isFinite(qq.tolerance.min) && isFinite(qq.tolerance.max)
+        && !(qq.answer >= qq.tolerance.min && qq.answer <= qq.tolerance.max);
+      if (staleBand(q)) {
+        delete q.tolerance;
+        const bk = bank.questions.find(x => x.id === q.id);
+        if (bk && staleBand(bk)) delete bk.tolerance;
+      }
       try {
         const r = await fetch(`${apiBase}/api/${portal}/author/save`, {
           method: 'POST',
