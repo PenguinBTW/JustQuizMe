@@ -47,4 +47,6 @@ export const S = {
 import { beginRun } from './runner/assessment.js';
 import { ak } from './utils.js';
 import { registerRetryMissed } from '../../shared/js/mountRetryMissed.js';
+import { registerShareResult } from '../../shared/js/mountShare.js';
 registerRetryMissed({ S, beginRun, keyOf: ak });
+registerShareResult({ S, portal: 'cs', keyOf: ak });
