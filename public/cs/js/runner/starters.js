@@ -64,9 +64,10 @@ export async function startMockSeries({ breakMinutes = 10 } = {}) {
     // to this component (untagged questions pass through: better included
     // than silently dropped from a mock)
     const compOf = {};
-    try { (OCR_TOPIC_SPECS || []).forEach(sp => { compOf[sp.topic] = sp.component; }); } catch {}
+    const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    try { (OCR_TOPIC_SPECS || []).forEach(sp => { compOf[norm(sp.topic)] = sp.component; }); } catch {}
     const rawPool = compTopics.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))))
-      .filter(q => !q.topic || !compOf[q.topic] || compOf[q.topic] === comp);
+      .filter(q => !q.topic || !compOf[norm(q.topic)] || compOf[norm(q.topic)] === comp);
     // multi-tagged questions appear once per topic — dedupe within the
     // component, then exclude anything an earlier paper already claimed
     // dedupe within the component pool; cross-paper exclusion uses what
