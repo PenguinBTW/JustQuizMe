@@ -25,8 +25,8 @@ export async function finishQuiz(auto = false) {
   } catch { /* capture best-effort */ }
   // a suspended-then-woken tab must not record time past the deadline
   if (S.quiz && S.quiz.exam && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
-  // the paper is done — the resume banner must not revive it
-  S.save = null;
+  // the resume banner is corrected by the ownership check below — a
+  // preserved save belonging to another quiz must survive finishing this one
 
   for (const q of S.quiz.questions) {
     const k = ak(q);
@@ -92,7 +92,8 @@ export async function finishQuiz(auto = false) {
     try {
       const cur = await api('/api/save');
       const mine = cur && (cur.quizUuid === S.quiz.uuid || cur.uuid === S.quiz.uuid) && (!cur.quizFile || cur.quizFile === S.quizMeta?.file);
-      if (mine) await api('/api/save', { method: 'DELETE' });
+      if (mine) { await api('/api/save', { method: 'DELETE' }); S.save = null; }
+      else S.save = cur || S.save;
     } catch {}
     S.scores = await api('/api/scores').catch(() => []);
   } catch {}
