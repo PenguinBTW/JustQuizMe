@@ -173,32 +173,33 @@ export async function finishQuiz(auto = false) {
   };
   $('#backResBtn').onclick = () => {
     S.room = 'past';
-
-  // print parity — the exact paper just taken, student copy + teacher scheme
-  try {
-    const anchor = $('#backResBtn');
-    if (anchor && !$('#finishPrintPaperBtn')) {
-      const mk = (id, lbl) => {
-        const b = document.createElement('button');
-        b.className = 'btn btn-ghost';
-        b.id = id;
-        b.textContent = lbl;
-        b.style.cssText = 'padding:10px 14px; font-size:12.5px; margin-left:8px;';
-        anchor.parentElement.appendChild(b);
-        return b;
-      };
-      const spec = () => ({
-        title: S.quiz.title || 'Paper',
-        portal: 'A-Level Mathematics · OCR',
-        timeMinutes: S.quiz.timeLimitMinutes || null,
-        questions: S.quiz.questions || []
-      });
-      mk('finishPrintPaperBtn', '⎙ Print paper').onclick = () => openPrintWindow(paperPrintDoc(spec()));
-      mk('finishPrintSchemeBtn', '⎙ Mark scheme').onclick = () => openPrintWindow(markSchemePrintDoc(spec()));
-    }
-  } catch {}
     renderRoom();
   };
+
+// print parity — the exact paper just taken, student copy + teacher scheme
+try {
+  const anchor = $('#backResBtn');
+  if (anchor && !$('#finishPrintPaperBtn')) {
+    const mk = (id, lbl) => {
+      const b = document.createElement('button');
+      b.className = 'btn btn-ghost';
+      b.id = id;
+      b.textContent = lbl;
+      b.style.cssText = 'padding:10px 14px; font-size:12.5px; margin-left:8px;';
+      anchor.parentElement.appendChild(b);
+      return b;
+    };
+    const spec = () => ({
+      title: S.quiz.title || 'Paper',
+      portal: 'A-Level Mathematics · OCR',
+      timeMinutes: S.quiz.timeLimitMinutes || null,
+      questions: S.quiz.questions || []
+    });
+    mk('finishPrintPaperBtn', '⎙ Print paper').onclick = () => openPrintWindow(paperPrintDoc(spec()));
+    mk('finishPrintSchemeBtn', '⎙ Mark scheme').onclick = () => openPrintWindow(markSchemePrintDoc(spec()));
+  }
+} catch {}
+
 }
 
 
@@ -230,11 +231,13 @@ async function renderSeriesStage(entry) {
     nextTitle: next.title,
     expired: !!S.timeExpired,
   });
-  let remaining = Math.max(0, Math.round((S.series.breakMinutes || 10) * 60));
+  const totalSecs = Math.max(0, Math.round((S.series.breakMinutes || 10) * 60));
+  const deadline = Date.now() + totalSecs * 1000;
+  let remaining = totalSecs;
   const clock = $('#seriesBreakClock');
   const contBtn = $('#seriesContinueBtn');
   const tick = setInterval(() => {
-    remaining -= 1;
+    remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
     if (clock) clock.textContent = fmtClock(remaining);
     if (remaining <= 0) {
       clearInterval(tick);
@@ -255,8 +258,10 @@ async function renderSeriesStage(entry) {
 async function renderSeriesFinal() {
   $('#stage').innerHTML = seriesFinishHtml(S.series, { portal: 'A-Level Mathematics · OCR' });
   S.series = null;
-  try { await api('/api/save', { method: 'DELETE' }); } catch {}
-  S.save = null;
+  try {
+    const cur = await api('/api/save');
+    if (cur && cur.seriesContinuation) { await api('/api/save', { method: 'DELETE' }); S.save = null; }
+  } catch {}
   const done = $('#seriesDoneBtn');
   if (done) done.onclick = () => { S.room = 'past'; renderRoom(); };
 }
@@ -271,10 +276,15 @@ export async function resumeSeriesContinuation(sv) {
     <div class="card" style="text-align:center; padding:36px 30px; max-width:640px; margin:0 auto;">
       <div class="mono" style="font-size:11px; color:var(--ink-muted); letter-spacing:.08em; text-transform:uppercase;">Mock series · resuming</div>
       <h2 class="serif" style="font-size:24px; margin:10px 0 6px;">Ready for paper ${S.series.index + 1} of ${S.series.papers.length}</h2>
-      <div style="font-size:13.5px; opacity:.85;">Next: <strong>${esc(next.title)}</strong>${next.timeLimitMinutes ? ` · ${next.timeLimitMinutes} minutes` : ''}</div>
+      <div style="font-size:13.5px; opacity:.85;">Next: <strong>${esc(next.title)}</strong>${Number.isFinite(+next.timeLimitMinutes) ? ` · ${Math.round(+next.timeLimitMinutes)} minutes` : ''}</div>
       <div class="mono" style="font-size:11.5px; color:var(--ink-muted); margin-top:6px;">break time elapsed while away counts as the break</div>
       <button class="btn btn-primary" id="seriesResumeNextBtn" style="margin-top:16px;">Begin next paper</button>
     </div>`;
   const b = $('#seriesResumeNextBtn');
-  if (b) b.onclick = () => { recordBreak(S.series, { skipped: false, minutes: S.series.breakMinutes }); beginSeriesPaper(); };
+  if (b) b.onclick = () => { {
+      const savedAt = Date.parse(sv.savedAt || sv.updatedAt || '');
+      const elapsedMin = Number.isFinite(savedAt) ? Math.max(0, (Date.now() - savedAt) / 60000) : 0;
+      recordBreak(S.series, { skipped: false, minutes: Math.round(Math.min(S.series.breakMinutes || 10, elapsedMin)) });
+    }
+    beginSeriesPaper(); };
 }

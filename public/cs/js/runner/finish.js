@@ -317,11 +317,16 @@ async function renderSeriesStage(scoreEntry) {
 
   // enforced break: continue unlocks when the countdown ends; skipping is
   // always possible but honestly recorded on the series
-  let remaining = Math.max(0, Math.round((S.series.breakMinutes || 10) * 60));
+  // wall-clock deadline, not tick-counting: a sleeping device must not
+  // stretch the break — when the student returns, elapsed real time is what
+  // countably passed
+  const totalSecs = Math.max(0, Math.round((S.series.breakMinutes || 10) * 60));
+  const deadline = Date.now() + totalSecs * 1000;
+  let remaining = totalSecs;
   const clock = $('#seriesBreakClock');
   const contBtn = $('#seriesContinueBtn');
   const tick = setInterval(() => {
-    remaining -= 1;
+    remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
     if (clock) clock.textContent = fmtClock(remaining);
     if (remaining <= 0) {
       clearInterval(tick);
@@ -342,8 +347,12 @@ async function renderSeriesStage(scoreEntry) {
 async function renderSeriesFinal() {
   $('#stage').innerHTML = seriesFinishHtml(S.series, { portal: 'A-Level Computer Science · OCR' });
   S.series = null;
-  try { await api('/api/save', { method: 'DELETE' }); } catch {}
-  S.save = null;
+  // ownership-checked: finishing a series deletes only its own continuation
+  // save — an unrelated in-progress quiz's save is not ours to destroy
+  try {
+    const cur = await api('/api/save');
+    if (cur && cur.seriesContinuation) { await api('/api/save', { method: 'DELETE' }); S.save = null; }
+  } catch {}
   const done = $('#seriesDoneBtn');
   if (done) done.onclick = () => loadHome();
 }
@@ -359,10 +368,18 @@ export async function resumeSeriesContinuation(sv) {
     <div class="card" style="text-align:center; padding:36px 30px; max-width:640px; margin:0 auto;">
       <div class="mono" style="font-size:11px; color:var(--ink-muted); letter-spacing:.08em; text-transform:uppercase;">Mock series · resuming</div>
       <h2 class="serif" style="font-size:24px; margin:10px 0 6px;">Ready for paper ${S.series.index + 1} of ${S.series.papers.length}</h2>
-      <div style="font-size:13.5px; opacity:.85;">Next: <strong>${esc(next.title)}</strong>${next.timeLimitMinutes ? ` · ${next.timeLimitMinutes} minutes` : ''}</div>
+      <div style="font-size:13.5px; opacity:.85;">Next: <strong>${esc(next.title)}</strong>${Number.isFinite(+next.timeLimitMinutes) ? ` · ${Math.round(+next.timeLimitMinutes)} minutes` : ''}</div>
       <div class="mono" style="font-size:11.5px; color:var(--ink-muted); margin-top:6px;">break time elapsed while away counts as the break</div>
       <button class="btn btn-primary" id="seriesResumeNextBtn" style="margin-top:16px;">Begin next paper</button>
     </div>`;
   const b = $('#seriesResumeNextBtn');
-  if (b) b.onclick = () => { recordBreak(S.series, { skipped: false, minutes: S.series.breakMinutes }); beginSeriesPaper(); };
+  if (b) b.onclick = () => {
+    // honest credit: time away counts as break — but only the time that
+    // actually passed since the checkpoint was written, never the full
+    // allowance for an instant reload
+    const savedAt = Date.parse(sv.savedAt || sv.updatedAt || '');
+    const elapsedMin = Number.isFinite(savedAt) ? Math.max(0, (Date.now() - savedAt) / 60000) : 0;
+    recordBreak(S.series, { skipped: false, minutes: Math.round(Math.min(S.series.breakMinutes || 10, elapsedMin)) });
+    beginSeriesPaper();
+  };
 }
