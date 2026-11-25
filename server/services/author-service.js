@@ -54,7 +54,7 @@ function stripTags(v) {
   // escape rather than strip: legitimate text like List<int> keeps its meaning
   // (rendered as inert entities downstream), while markup can never execute
   return typeof v === 'string'
-    ? v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    ? v.replace(/&(?!(?:amp|lt|gt|quot|#\d+|#x[0-9a-fA-F]+);)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     : v;
 }
 
