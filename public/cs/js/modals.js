@@ -31,13 +31,23 @@ function wireSynthPrint(portalLabel) {
     const timeMinutes = pace == null ? null : Math.max(5, Math.round(tot * pace));
     return { set, tot, timeMinutes, title: `Synthesized Paper · ${tot} marks` };
   };
+  const settingsSig = () => JSON.stringify([[...S.mixed.topics].sort(), [...S.mixed.subs].sort(), S.mixed.m, S.mixed.mode, S.mixed.pace]);
   mk('synthPrintPaperBtn', '⎙ Print paper', 'Print-ready student paper (opens print dialog)').onclick = () => {
-    const p = buildPick(); if (!p) return;
-    _printPick = p;
-    openPrintWindow(paperPrintDoc({ title: p.title, portal: portalLabel, timeMinutes: p.timeMinutes, questions: p.set }));
+    // reuse the cached pick when settings haven't changed — paper and scheme
+    // always match, and re-printing the paper never silently re-rolls it
+    if (!_printPick || _printPick.sig !== settingsSig()) {
+      const p = buildPick(); if (!p) return;
+      p.sig = settingsSig();
+      _printPick = p;
+    }
+    openPrintWindow(paperPrintDoc({ title: _printPick.title, portal: portalLabel, timeMinutes: _printPick.timeMinutes, questions: _printPick.set }));
   };
   mk('synthPrintSchemeBtn', '⎙ Mark scheme', 'Teacher copy with marking criteria + common errors — matches the last printed paper').onclick = () => {
-    if (!_printPick) { const p = buildPick(); if (!p) return; _printPick = p; }
+    if (!_printPick || _printPick.sig !== settingsSig()) {
+      const p = buildPick(); if (!p) return;
+      p.sig = settingsSig();
+      _printPick = p;
+    }
     openPrintWindow(markSchemePrintDoc({ title: _printPick.title, portal: portalLabel, timeMinutes: _printPick.timeMinutes, questions: _printPick.set }));
   };
 }
@@ -81,6 +91,7 @@ export function openSynthModal() {
     : `Start Exam · ${Math.max(5, Math.round($('#synthModalSlider').value * pace))}m ⏱`;
 
   $('#synthModal').classList.add('open');
+  wireSynthPrint('A-Level Computer Science · OCR');
 
   $('#synthClose').onclick = () => $('#synthModal').classList.remove('open');
   $('#synthToggleAllBtn').onclick = () => {
@@ -130,7 +141,6 @@ export function openSynthModal() {
 
   $('#synthStartExamBtn').onclick = () => {
     $('#synthModal').classList.remove('open');
-  wireSynthPrint('A-Level Computer Science · OCR');
     startMixedRun(true);
   };
 }
