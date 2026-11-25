@@ -146,13 +146,17 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
       // don't review what was never studied this plan
       // reviews book AFTER study sessions so they can never crowd a first
       // study session out of the timetable; only topics actually placed count
-      const studied = days.some(dd => dd.sessions.some(ss => ss.topic === t.topic));
-      if (!studied) continue;
+      // a review only makes sense AFTER the topic's first practice — counting
+      // practice on any day (including later ones) can book revision for
+      // material the student hasn't met yet. Eligibility is per candidate day.
+      const practicedBefore = (dayIdx) =>
+        days.slice(0, dayIdx).some(dd => dd.sessions.some(ss => ss.topic === t.topic));
       let d = reviewDay;
       // never book a second session for a topic already on that day — two
       // identical reviews would both be credited by a single quiz result
       while (d < daysLeft && (days[d].sessions.length >= sessionsPerDay
-          || days[d].sessions.some(ss => ss.topic === t.topic))) d++;
+          || days[d].sessions.some(ss => ss.topic === t.topic)
+          || !practicedBefore(d))) d++;
       // a topic blocked only by its own dedupe must not starve the others:
       // they can still use the slots this topic already occupies
       if (d >= daysLeft) continue;
