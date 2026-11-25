@@ -200,6 +200,7 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
             <input id="af-banktitle" value="${esc(bank.title)}" placeholder="bank title…" style="padding:6px 10px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px; width:200px;" />
             <input id="af-loadfile" placeholder="edit existing file…" style="padding:6px 10px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px; width:160px;" />
             <button class="btn-ghost mono" id="af-load" style="font-size:11.5px;">load</button>
+            <button class="btn-ghost mono" id="af-import" style="font-size:11.5px;" title="Paste bank or question-array JSON to merge into this bank">import JSON</button>
             <span class="mono" style="font-size:11px; color:var(--ink-muted);">${bank.questions.length} question${bank.questions.length === 1 ? '' : 's'} in bank</span>
           </div>
           <div id="af-formhost">${questionFormHtml(q, errs, portal)}</div>
@@ -302,6 +303,75 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       render();
     });
     host.querySelector('#af-newq')?.addEventListener('click', () => { q = blankQuestion(q.type); render(); });
+    // import JSON: accept a whole bank object or a bare question array;
+    // validate every question, merge the valid ones, report per-item failures
+    host.querySelector('#af-import')?.addEventListener('click', () => {
+      const status = host.querySelector('#af-status');
+      const raw = window.prompt('Paste bank JSON ({title, questions:[…]}) or a bare question array:');
+      if (!raw || !raw.trim()) return;
+      let parsed;
+      try { parsed = JSON.parse(raw); } catch (e) {
+        if (status) status.textContent = `import failed: not valid JSON (${String(e.message || e).slice(0, 80)})`;
+        return;
+      }
+      const questions = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.questions) ? parsed.questions : null);
+      if (!questions) {
+        if (status) status.textContent = 'import failed: JSON is neither a question array nor a bank object with questions[]';
+        return;
+      }
+      if (!Array.isArray(parsed) && typeof parsed.title === 'string' && parsed.title.trim() && bank.questions.length === 0) {
+        bank.title = parsed.title.trim();
+      }
+      // keep the source bank's image folder so relative diagram paths still resolve —
+      // but only once at least one of its questions actually merges, or an empty
+      // import would silently redirect this bank's own relative images
+      if (!Array.isArray(parsed) && typeof parsed.imageFolder === 'string' && parsed.imageFolder && !bank.imageFolder) {
+        bank._pendingImageFolder = parsed.imageFolder;
+      }
+      let added = 0, dupes = 0;
+      const failures = [];
+      const ids = new Set(bank.questions.map(x => x.id));
+      questions.forEach((item, i) => {
+        let errs;
+        try { errs = validateQuestion(item); } catch (e) { errs = [`validation error: ${String(e && e.message || e).slice(0, 60)}`]; }
+        if (errs.length) { failures.push(`#${i + 1}: ${errs[0]}`); return; }
+        if (item.id && ids.has(item.id)) { dupes++; return; }
+        if (!item.id) item.id = `q${Date.now().toString(36)}${i}`;
+        // external converters often emit numeric strings — coerce before merge so
+        // the studio's numeric validation and the server's lenient one agree.
+        // Calculation items only: coercing display strings like "0" elsewhere would
+        // turn them falsy for truthiness-based consumers (e.g. self-marked solutions)
+        if (item.type === 'calculation') {
+          if (typeof item.answer === 'string' && item.answer.trim() !== '' && isFinite(+item.answer)) item.answer = +item.answer;
+          if (typeof item.tolerancePercent === 'string' && item.tolerancePercent.trim() !== '' && isFinite(+item.tolerancePercent)) item.tolerancePercent = +item.tolerancePercent;
+        }
+        ids.add(item.id);
+        bank.questions.push(JSON.parse(JSON.stringify(item)));
+        added++;
+      });
+      if (added > 0 && bank._pendingImageFolder) {
+        bank.imageFolder = bank._pendingImageFolder;
+      }
+      delete bank._pendingImageFolder;
+      // dependsOn references to skipped/duplicate ids would resolve against the wrong
+      // question in the destination bank — prune unresolvable references, preserving
+      // the original entry shape (plain id strings vs {id, …} objects) for valid ones
+      const validIds = new Set(bank.questions.map(x => x.id));
+      let pruned = 0;
+      bank.questions.forEach(bq => {
+        if (Array.isArray(bq.dependsOn)) {
+          const kept = bq.dependsOn.filter(d => validIds.has(typeof d === 'object' && d !== null ? d.id : d));
+          pruned += bq.dependsOn.length - kept.length;
+          if (!kept.length) delete bq.dependsOn; else bq.dependsOn = kept;
+        }
+      });
+      persistDraft();
+      render();
+      const status2 = host.querySelector('#af-status');
+      if (status2) status2.textContent =
+        `import: ${added} added${dupes ? `, ${dupes} duplicate id${dupes === 1 ? '' : 's'} skipped` : ''}` +
+        (failures.length ? ` — ${failures.length} invalid: ${failures.slice(0, 3).join(' · ')}${failures.length > 3 ? ` (+${failures.length - 3} more)` : ''}` : '');
+    });
     host.querySelectorAll('[data-editq]').forEach(el => el.addEventListener('click', () => {
       q = JSON.parse(JSON.stringify(bank.questions[+el.dataset.editq]));
       render();

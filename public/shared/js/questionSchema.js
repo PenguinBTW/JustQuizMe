@@ -1,7 +1,7 @@
 // Question schema validation — shared client/server logic, schema v1 per
 // docs/QUESTION_SCHEMA.md. Pure functions, no deps, honest errors list.
 
-const TYPES = ['multiple-choice', 'written', 'calculation', 'self-marked', 'extended-response', 'code-requirement', 'lmc', 'trace-table', 'truth-table'];
+const TYPES = ['multiple-choice', 'written', 'calculation', 'self-marked', 'extended-response', 'code-requirement', 'lmc', 'trace-table', 'truth-table', 'symbolic-exact'];
 
 // validateQuestion(q) → string[] of problems ([] = valid). Never throws.
 export function validateQuestion(q) {
@@ -18,6 +18,13 @@ export function validateQuestion(q) {
     else if (q.options.some(o => !String(typeof o === 'object' && o !== null ? o.text || '' : o ?? '').trim())) errs.push('options: entries must be non-empty');
     if (!(Number.isInteger(q.correctIndex) && q.options && q.correctIndex >= 0 && q.correctIndex < q.options.length))
       errs.push('correctIndex: must index into options');
+  }
+    if (q.type === 'calculation') {
+    if (q.answer != null && typeof q.answer !== 'number') errs.push('answer: must be a number');
+    if (q.tolerancePercent != null && typeof q.tolerancePercent !== 'number') errs.push('tolerancePercent: must be a number');
+  }
+  if (q.type === 'trace-table' && (!Array.isArray(q.expectedRows) || !q.expectedRows.length)) {
+    errs.push('expectedRows: trace-table questions require at least one expected row — without one the grader can award no marks');
   }
   if (q.type === 'written' || q.type === 'extended-response' || q.type === 'self-marked') {
     if (q.markScheme != null) {
