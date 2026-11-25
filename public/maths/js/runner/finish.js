@@ -6,6 +6,9 @@ import { renderRoom } from '../navigation.js';
 import { renderQ } from './assessment.js';
 import { retryRun } from './starters.js';
 import { reviewWalkHtml } from '../../../shared/js/reviewWalk.js';
+import { recordPaperResult, recordBreak, seriesProgress, breakScreenHtml, seriesFinishHtml, fmtClock } from '../../../shared/js/mockSeries.js';
+import { beginSeriesPaper } from './starters.js';
+import { paperPrintDoc, markSchemePrintDoc, openPrintWindow } from '../../../shared/js/printPaper.js';
 
 export async function finishQuiz(auto = false) {
   if (S._finishing) return;
@@ -80,6 +83,10 @@ export async function finishQuiz(auto = false) {
     perQuestion,
     date: new Date().toISOString()
   };
+  if (S.series) {
+    entry.seriesId = S.series.id;
+    entry.seriesIndex = S.series.index;
+  }
 
   try {
     await api('/api/scores', {
@@ -97,6 +104,9 @@ export async function finishQuiz(auto = false) {
     } catch {}
     S.scores = await api('/api/scores').catch(() => []);
   } catch {}
+
+  // mock-series interception — series papers route to intermission/final
+  if (S.series) return renderSeriesStage(entry);
 
   S.room = 'results';
   const pctScore = maxMarks ? Math.round((totalScore / maxMarks) * 100) : 0;
@@ -163,6 +173,108 @@ export async function finishQuiz(auto = false) {
   };
   $('#backResBtn').onclick = () => {
     S.room = 'past';
+
+  // print parity — the exact paper just taken, student copy + teacher scheme
+  try {
+    const anchor = $('#backResBtn');
+    if (anchor && !$('#finishPrintPaperBtn')) {
+      const mk = (id, lbl) => {
+        const b = document.createElement('button');
+        b.className = 'btn btn-ghost';
+        b.id = id;
+        b.textContent = lbl;
+        b.style.cssText = 'padding:10px 14px; font-size:12.5px; margin-left:8px;';
+        anchor.parentElement.appendChild(b);
+        return b;
+      };
+      const spec = () => ({
+        title: S.quiz.title || 'Paper',
+        portal: 'A-Level Mathematics · OCR',
+        timeMinutes: S.quiz.timeLimitMinutes || null,
+        questions: S.quiz.questions || []
+      });
+      mk('finishPrintPaperBtn', '⎙ Print paper').onclick = () => openPrintWindow(paperPrintDoc(spec()));
+      mk('finishPrintSchemeBtn', '⎙ Mark scheme').onclick = () => openPrintWindow(markSchemePrintDoc(spec()));
+    }
+  } catch {}
     renderRoom();
   };
+}
+
+
+// ---- mock series staging + print parity ----------------------------------
+
+async function writeSeriesSave() {
+  try {
+    const body = {
+      seriesContinuation: true,
+      series: S.series,
+      title: `Mock series · paper ${S.series.index + 1} of ${S.series.papers.length}`,
+      savedAt: new Date().toISOString(),
+    };
+    await api('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    S.save = { ...body, updatedAt: body.savedAt };
+  } catch {}
+}
+
+async function renderSeriesStage(entry) {
+  recordPaperResult(S.series, { ...entry });
+  await writeSeriesSave();
+  const prog = seriesProgress(S.series);
+  if (prog.complete) return renderSeriesFinal();
+  const next = S.series.papers[S.series.index];
+  $('#stage').innerHTML = breakScreenHtml(S.series, {
+    paperTitle: entry.quizTitle,
+    score: entry.score,
+    total: entry.total,
+    nextTitle: next.title,
+    expired: !!S.timeExpired,
+  });
+  let remaining = Math.max(0, Math.round((S.series.breakMinutes || 10) * 60));
+  const clock = $('#seriesBreakClock');
+  const contBtn = $('#seriesContinueBtn');
+  const tick = setInterval(() => {
+    remaining -= 1;
+    if (clock) clock.textContent = fmtClock(remaining);
+    if (remaining <= 0) {
+      clearInterval(tick);
+      if (contBtn) contBtn.disabled = false;
+      if (clock) clock.textContent = '0m 0s';
+    }
+  }, 1000);
+  const advance = (skipped) => {
+    clearInterval(tick);
+    recordBreak(S.series, { skipped, minutes: Math.round(((S.series.breakMinutes || 10) * 60 - Math.max(0, remaining)) / 60) });
+    beginSeriesPaper();
+  };
+  if (contBtn) contBtn.onclick = () => advance(false);
+  const skip = $('#seriesSkipBreakBtn');
+  if (skip) skip.onclick = () => advance(true);
+}
+
+async function renderSeriesFinal() {
+  $('#stage').innerHTML = seriesFinishHtml(S.series, { portal: 'A-Level Mathematics · OCR' });
+  S.series = null;
+  try { await api('/api/save', { method: 'DELETE' }); } catch {}
+  S.save = null;
+  const done = $('#seriesDoneBtn');
+  if (done) done.onclick = () => { S.room = 'past'; renderRoom(); };
+}
+
+export async function resumeSeriesContinuation(sv) {
+  S.series = sv.series;
+  if (!S.series || !S.series.papers) { S.room = 'past'; return renderRoom(); }
+  const prog = seriesProgress(S.series);
+  if (prog.complete) return renderSeriesFinal();
+  const next = S.series.papers[S.series.index];
+  $('#stage').innerHTML = `
+    <div class="card" style="text-align:center; padding:36px 30px; max-width:640px; margin:0 auto;">
+      <div class="mono" style="font-size:11px; color:var(--ink-muted); letter-spacing:.08em; text-transform:uppercase;">Mock series · resuming</div>
+      <h2 class="serif" style="font-size:24px; margin:10px 0 6px;">Ready for paper ${S.series.index + 1} of ${S.series.papers.length}</h2>
+      <div style="font-size:13.5px; opacity:.85;">Next: <strong>${esc(next.title)}</strong>${next.timeLimitMinutes ? ` · ${next.timeLimitMinutes} minutes` : ''}</div>
+      <div class="mono" style="font-size:11.5px; color:var(--ink-muted); margin-top:6px;">break time elapsed while away counts as the break</div>
+      <button class="btn btn-primary" id="seriesResumeNextBtn" style="margin-top:16px;">Begin next paper</button>
+    </div>`;
+  const b = $('#seriesResumeNextBtn');
+  if (b) b.onclick = () => { recordBreak(S.series, { skipped: false, minutes: S.series.breakMinutes }); beginSeriesPaper(); };
 }
