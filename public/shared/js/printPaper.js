@@ -131,6 +131,25 @@ function blankTableHtml(q) {
   return '';
 }
 
+// teacher-scheme solutions for table types: trace rows + truth-table outputs,
+// mirroring exactly what the student paper leaves blank
+function tableSolutionHtml(q) {
+  if (q.type === 'trace-table' && Array.isArray(q.columns) && Array.isArray(q.expectedRows) && q.expectedRows.length) {
+    const rows = q.expectedRows.map(r => `<tr>${(Array.isArray(r) ? r : [r]).map(c => `<td>${esc(c == null ? '' : c)}</td>`).join('')}</tr>`).join('');
+    return `<table class="pq-table"><tr>${q.columns.map(c => `<th>${esc(typeof c === 'object' ? c.label || c.name : c)}</th>`).join('')}</tr>${rows}</table>`;
+  }
+  if (q.type === 'truth-table' && Array.isArray(q.inputs) && Array.isArray(q.outputs) && Array.isArray(q.rows)) {
+    const cols = [...q.inputs, ...q.outputs];
+    const rows = q.rows.map(r => {
+      const ins = Array.isArray(r && r.inputs) ? r.inputs : [];
+      const exp = Array.isArray(r && r.expected) ? r.expected : (r && r.expected != null && !Array.isArray(r.expected) ? [r.expected] : []);
+      return `<tr>${cols.map((c, ci) => `<td>${esc(ci < q.inputs.length ? (ins[ci] != null ? ins[ci] : '') : (exp[ci - q.inputs.length] != null ? exp[ci - q.inputs.length] : ''))}</td>`).join('')}</tr>`;
+    }).join('');
+    if (rows) return `<table class="pq-table"><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr>${rows}</table>`;
+  }
+  return '';
+}
+
 export function questionBlockHtml(q, n, { scheme = false, exactCalculations = false } = {}) {
   const marks = +q.marks || 0;
   let body = '';
@@ -151,7 +170,7 @@ export function questionBlockHtml(q, n, { scheme = false, exactCalculations = fa
     const rubric = Array.isArray(q.rubric) && q.rubric.length
       ? `<ul class="pq-scheme">${q.rubric.map(r => `<li>${esc(typeof r === 'object' ? r.text || r.criterion : r)}</li>`).join('')}</ul>`
       : '';
-    body = ms + rubric + mistakes;
+    body = ms + tableSolutionHtml(q) + rubric + mistakes;
   } else {
     const tbl = blankTableHtml(q);
     if (tbl) body += tbl;
