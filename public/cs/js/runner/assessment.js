@@ -180,6 +180,7 @@ export async function saveProgress() {
     exam: S.runMode === 'exam',
     questions: S.quiz.questions
   };
+  if (S.series) body.series = S.series;
   try {
     await api('/api/save', {
       method: 'POST',

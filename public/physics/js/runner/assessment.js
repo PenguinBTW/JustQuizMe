@@ -86,6 +86,7 @@ export async function saveProgress(){
     questions: S.quizMeta.virtual ? S.quiz.questions : null,
     spec: S.retrySpec,
   };
+  if (S.series) body.series = S.series;
   try {
     await api('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     S.save = { ...body, updatedAt: new Date().toISOString() };

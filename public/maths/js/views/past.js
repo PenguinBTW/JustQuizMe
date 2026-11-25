@@ -72,6 +72,7 @@ export function renderPast() {
       <div class="synthesizer-footer">
         <button class="btn-ghost mono" style="font-size:12px;" id="toggleMajorBtn">${allSel ? 'Deselect all topics' : 'Select all topics'}</button>
         <button class="btn-ghost mono" style="font-size:12px;" id="reviewWeakestBtn" title="Select your weakest topics and open the synthesizer">⚡ Review weakest</button>
+            <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="mockSeriesBtn" title="Sit two papers back-to-back as a timed mock series">🎬 Mock series</button>
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="smartCardsBtn" title="Flashcard session across all topics — weak-topic cards first">🂡 Smart cards</button>
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="dueReviewBtn" title="Topics whose decayed mastery is due for review"></button>
         <button class="btn btn-primary" id="synthContinueBtn" ${S.mixed.topics.size ? '' : 'disabled'}>Continue →</button>
@@ -150,6 +151,10 @@ export function renderPast() {
   document.querySelectorAll('[data-synth-topic]').forEach(c => c.onclick = () => toggleSynthTopic(+c.dataset.synthTopic));
   $('#toggleMajorBtn').onclick = toggleAllMajorTopics;
   $('#synthContinueBtn').onclick = () => { if (S.mixed.topics.size) openSynthModal(); };
+  $('#mockSeriesBtn')?.addEventListener('click', async () => {
+    const { startMockSeries } = await import('../runner/starters.js');
+    startMockSeries({ breakMinutes: 10 });
+  });
 
   $('#reviewWeakestBtn').onclick = () => {
     const rows = computeMastery(S.scores, (s) => resolveScoreTopics(s, buildUuidIndex(S.quizzes)));

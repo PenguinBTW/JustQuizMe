@@ -88,6 +88,7 @@ export function renderPast() {
           <div class="comp-quick-selects">
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="toggleMajorBtn">${allSel ? 'Deselect all' : 'Select all'}</button>
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="reviewWeakestBtn" title="Select your weakest topics and open the synthesizer">⚡ Review weakest</button>
+            <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="mockSeriesBtn" title="Sit Comp 01 + Comp 02 back-to-back as a timed mock series">🎬 Mock series</button>
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="smartCardsBtn" title="Flashcard session across all topics — weak-topic cards first">🂡 Smart cards</button>
             <button class="btn-ghost mono" style="font-size:11.5px; padding:2px 8px;" id="dueReviewBtn" title="Topics whose decayed mastery is due for review"></button>
           </div>
@@ -251,6 +252,11 @@ export function wirePastEvents() {
   });
 
   $('#synthContinueBtn')?.addEventListener('click', () => openSynthModal());
+
+  $('#mockSeriesBtn')?.addEventListener('click', async () => {
+    const { startMockSeries } = await import('../runner/starters.js');
+    startMockSeries({ breakMinutes: 10 });
+  });
 
   $('#reviewWeakestBtn')?.addEventListener('click', () => {
     const rows = computeMastery(S.scores, (s) => resolveScoreTopics(s, buildUuidIndex(S.quizzes)));

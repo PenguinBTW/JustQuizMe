@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { ensurePastFull, buildCaches, topicData, topicDraft, topicAllQs, pickForMode, mixedPool } from '../taxonomy.js';
 import { renderRoom } from '../navigation.js';
 import { beginRun } from './assessment.js';
+import { createSeries } from '../../../shared/js/mockSeries.js';
 
 
 // Exam pace → minutes per mark. null = untimed (opt-out of time pressure).
@@ -205,4 +206,53 @@ export async function retryRun() {
     return renderRoom();
   }
   return beginFileQuiz(r.category, r.file, r.shuffle);
+}
+
+// Mock exam series — two papers back-to-back under fatigue. Papers build from
+// the full topic pool; component-tagged banks split by component when possible.
+export function startMockSeries({ breakMinutes = 10 } = {}) {
+  const data = (typeof topicData === 'function' ? topicData() : (S._topicData || []));
+  const all = data.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
+  if (all.length < 8) return alert('Not enough questions in the bank to assemble a mock series.');
+  const pace = paceMinutesPerMark(S.mixed.pace);
+  const papers = [];
+  const sets = [];
+  const half = Math.ceil(all.length / 2);
+  for (const [i, label] of [[0, 'Paper 1'], [1, 'Paper 2']]) {
+    const slice = i === 0 ? all.slice(0, half) : all.slice(half);
+    const poolMarks = slice.reduce((x, q) => x + (+q.marks || 0), 0);
+    const target = Math.max(10, Math.min(60, poolMarks));
+    const { set, tot } = pickForMode(slice, 'standard', target);
+    if (!set.length) continue;
+    papers.push({ key: `paper${i + 1}`, title: `Mock · ${label} (${tot} marks)`, totalMarks: tot, timeLimitMinutes: pace == null ? null : Math.max(5, Math.round(tot * pace)) });
+    sets.push(set);
+  }
+  if (papers.length < 2) return alert('Could not assemble two papers.');
+  const series = createSeries(papers, { breakMinutes });
+  series._sets = sets;
+  S.series = series;
+  beginSeriesPaper();
+}
+
+export function beginSeriesPaper() {
+  const series = S.series;
+  if (!series) return;
+  const i = series.index;
+  const paper = series.papers[i];
+  const set = series._sets[i];
+  if (!paper || !set) return;
+  S.returnRoom = 'past';
+  beginRun({
+    mode: 'exam',
+    quizLike: {
+      uuid: MIXED_UUID,
+      version: 1,
+      title: paper.title,
+      timeLimitMinutes: paper.timeLimitMinutes,
+      untimed: paper.timeLimitMinutes == null,
+      exam: true,
+      questions: set,
+    },
+    meta: { category: 'past-paper', file: 'series', virtual: true },
+  });
 }

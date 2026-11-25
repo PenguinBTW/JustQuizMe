@@ -98,6 +98,10 @@ function adjustResumeElapsed(sv) {
 export async function resumeSave(){
   const sv = adjustResumeElapsed(S.save);
   if (!sv) return;
+  if (sv.seriesContinuation) {
+    const { resumeSeriesContinuation } = await import('./runner/finish.js');
+    return resumeSeriesContinuation(sv);
+  }
   if (sv.kind === 'virtual') return resumeVirtual(sv);
   await beginFileQuiz(sv.category, sv.quizFile, sv.category === 'past-paper', sv);
 }
@@ -105,5 +109,6 @@ export async function resumeSave(){
 export function resumeVirtual(sv){
   const quizLike = { uuid: sv.quizUuid, version: sv.quizVersion ?? 1, title: sv.title || 'Saved quiz', timeLimitMinutes: sv.timeLimitMinutes || null,
     untimed: !!sv.untimed, exam: !!sv.exam, questions: sv.questions || [] };
+  if (sv.series) S.series = sv.series;
   beginRun({ mode: 'quiz', quizLike, meta: { category: sv.category || 'past-paper', file: sv.quizFile || 'mixed', virtual: true }, resume: sv, retrySpec: sv.spec || { kind: 'mixed' } });
 }

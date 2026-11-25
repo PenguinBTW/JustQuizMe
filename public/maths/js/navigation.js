@@ -117,6 +117,10 @@ function adjustResumeElapsed(sv) {
 export async function resumeSave() {
   const sv = adjustResumeElapsed(S.save);
   if (!sv) return;
+  if (sv.seriesContinuation) {
+    const { resumeSeriesContinuation } = await import('./runner/finish.js');
+    return resumeSeriesContinuation(sv);
+  }
   if (sv.kind === 'virtual') return resumeVirtual(sv);
   await beginFileQuiz(sv.category, sv.quizFile, sv.category === 'past-paper', sv);
 }
@@ -131,6 +135,7 @@ export function resumeVirtual(sv) {
     exam: !!sv.exam,
     questions: sv.questions || []
   };
+  if (sv.series) S.series = sv.series;
   beginRun({
     mode: 'quiz',
     quizLike,

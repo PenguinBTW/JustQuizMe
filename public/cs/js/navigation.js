@@ -98,6 +98,11 @@ function adjustResumeElapsed(sv) {
 export async function resumeSave() {
   const sv = adjustResumeElapsed(S.save);
   if (!sv) return;
+  // series continuation saves resume at the between-papers screen
+  if (sv.seriesContinuation) {
+    const { resumeSeriesContinuation } = await import('./runner/finish.js');
+    return resumeSeriesContinuation(sv);
+  }
   const quizLike = {
     uuid: sv.quizUuid,
     version: sv.quizVersion ?? 1,
@@ -106,6 +111,7 @@ export async function resumeSave() {
     untimed: !!sv.untimed,
     questions: sv.questions || []
   };
+  if (sv.series) S.series = sv.series;
   beginRun({
     mode: sv.exam ? 'exam' : 'quiz',
     quizLike,
