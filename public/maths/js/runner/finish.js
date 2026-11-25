@@ -86,7 +86,13 @@ export async function finishQuiz(auto = false) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(entry)
     });
-    await api('/api/save', { method: 'DELETE' });
+    // only clear the save if it belongs to this run — finishing quiz A must
+    // not destroy an in-progress save of quiz B
+    try {
+      const cur = await api('/api/save');
+      const mine = cur && (cur.quizUuid === S.quiz.uuid || cur.uuid === S.quiz.uuid) && (!cur.quizFile || cur.quizFile === S.quizMeta?.file);
+      if (mine) await api('/api/save', { method: 'DELETE' });
+    } catch {}
     S.scores = await api('/api/scores').catch(() => []);
   } catch {}
 

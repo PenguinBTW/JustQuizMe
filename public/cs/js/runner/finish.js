@@ -91,7 +91,11 @@ export async function finishQuiz(auto) {
   });
 
   // Clear save file
-  try { await api('/api/save', { method: 'DELETE' }); } catch {}
+  try {
+    const cur = await api('/api/save');
+    const mine = cur && (cur.quizUuid === S.quiz.uuid || cur.uuid === S.quiz.uuid) && (!cur.quizFile || cur.quizFile === (S.quizMeta && S.quizMeta.file));
+    if (mine) await api('/api/save', { method: 'DELETE' });
+  } catch {}
   S.save = null;
 
   renderSummaryReport();
