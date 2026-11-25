@@ -646,7 +646,8 @@ export function mathCalcOk(val, q) {
       if (!/^[\d\s+\-*/().^%]+$/.test(stripped)) return false;
       v = evalMathExprClient(cleanMathStr(raw), {});
     }
-    const eps = 1e-9 * Math.max(1, Math.abs(q.tolerance.min), Math.abs(q.tolerance.max));
+    const width = q.tolerance.max - q.tolerance.min;
+    const eps = Math.min(1e-9 * Math.max(1, Math.abs(q.tolerance.min), Math.abs(q.tolerance.max)), width * 0.01);
     return isFinite(v) && !isNaN(v) && v >= q.tolerance.min - eps && v <= q.tolerance.max + eps;
   }
   return areMathEqual(raw, q.expected || q.answer);
