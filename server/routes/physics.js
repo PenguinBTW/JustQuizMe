@@ -62,14 +62,23 @@ function createPhysicsRouter(quizService, saveService) {
     }
     // browsers send cross-origin POSTs to localhost even without CORS permission
     // (no-cors writes execute blind) — any Origin that is not this machine is a drive-by.
+    // DNS-rebinding defense: the Host header itself must be loopback. A
+    // same-origin check alone cannot distinguish a hosts-file alias from an
+    // attacker-controlled domain rebound to 127.0.0.1 — so by default only
+    // loopback hosts may write. Users who genuinely serve the portal over a
+    // local alias opt in explicitly via JQM_AUTHOR_HOSTS="alias1,alias2".
+    const hostName = String(req.headers.host || '').replace(/:\d+$/, '').replace(/^\[|\]$/g, '').toLowerCase();
+    const extraHosts = String(process.env.JQM_AUTHOR_HOSTS || '').split(',').map(h => h.trim().toLowerCase()).filter(Boolean);
+    const allowedHosts = new Set(['localhost', '127.0.0.1', '::1', ...extraHosts]);
+    if (!allowedHosts.has(hostName)) {
+      return res.status(403).json({ error: 'authoring writes require a loopback host (set JQM_AUTHOR_HOSTS for aliases)' });
+    }
     const origin = req.headers.origin;
     if (origin) {
-      // same-origin writes are always fine (even over hosts-file aliases);
       // cross-origin writes are drive-bys regardless of which host they name
       let originHost = null;
-      try { originHost = new URL(origin).host; } catch {}
-      const localNamed = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(origin);
-      if (!localNamed && originHost !== String(req.headers.host || '')) {
+      try { originHost = new URL(origin).hostname.toLowerCase(); } catch {}
+      if (!originHost || !allowedHosts.has(originHost)) {
         return res.status(403).json({ error: 'cross-origin writes rejected' });
       }
     }
