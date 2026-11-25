@@ -373,7 +373,8 @@ export function wireStepChecks(q, a){
     const v = parseFloat(inp.value);
     a.steps = a.steps || []; a.steps[i] = a.steps[i] || {};
     a.steps[i].value = inp.value;
-    if (numOk(v, s.answer, s.tolerancePercent ?? tol)){ a.steps[i].correct = true; }
+    if (s.answer == null) { a.steps[i].correct = true; // descriptive checkpoint — self-certified like mark-scheme ticks
+    } else if (numOk(v, s.answer, s.tolerancePercent ?? tol)){ a.steps[i].correct = true; }
     else { a.steps[i].failed = true; }
     renderQ();
   });
