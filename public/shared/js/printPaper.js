@@ -58,6 +58,14 @@ function supplementHtml(q) {
   }
   if (q.formula) out += `<div class="pq-context">$${esc(q.formula)}$</div>`;
   if (q.diagram) out += `<pre class="pq-pre">${esc(q.diagram)}</pre>`;
+  const imgs = [];
+  if (q.image) imgs.push(q.image);
+  if (Array.isArray(q.images)) imgs.push(...q.images);
+  for (const im of imgs) {
+    const src = typeof im === 'object' ? im.src || im.url : im;
+    const cap = typeof im === 'object' ? im.caption || im.alt : '';
+    if (src) out += `<div class="pq-fig"><img src="${esc(src)}" style="max-width:100%; max-height:70mm;" alt="${esc(cap)}">${cap ? `<div style="font-size:9pt; color:#444; font-style:italic;">${esc(cap)}</div>` : ''}</div>`;
+  }
   return out;
 }
 
@@ -93,7 +101,7 @@ export function questionBlockHtml(q, n, { scheme = false } = {}) {
       : q.type === 'multiple-choice'
         ? `<div class="pq-ansline">Correct answer: <strong>${'ABCDEF'[q.correctIndex] || '?'}</strong></div>`
         : q.answer != null
-          ? `<div class="pq-ansline">Answer: <strong>${esc(q.answer)}</strong>${q.tolerance != null ? ` (${fmtTolerance(q.tolerance)})` : ''}</div>`
+          ? `<div class="pq-ansline">Answer: <strong>${esc(q.answer)}</strong>${q.tolerance != null ? ` (${fmtTolerance(q.tolerance)})` : q.tolerancePercent != null ? ` (±${esc(q.tolerancePercent)}%)` : ''}</div>`
           : '';
     const mistakes = Array.isArray(q.mistakes) && q.mistakes.length
       ? `<div class="pq-mistakes"><div class="pq-mtitle">Common errors</div><ul>${q.mistakes.map(m => `<li><em>${esc(m.misconception || m.error || '')}</em>${m.correction ? ` — ${esc(m.correction)}` : ''}</li>`).join('')}</ul></div>`
@@ -170,8 +178,9 @@ ${bodyHtml}
     try { renderMathInElement(document.body, { delimiters: [
       { left: '$$', right: '$$', display: true },
       { left: '\\[', right: '\\]', display: true },
-      { left: '\\(', right: '\\)', display: false },
       { left: '$', right: '$', display: false }
+      // note: \\(...\\) deliberately excluded — prose parentheses like (x + 1)
+      // would be eaten as math and printed without their brackets
     ] }); } catch (e) {}
     setTimeout(() => { try { window.print(); } catch (e) {} }, 350);
   });
