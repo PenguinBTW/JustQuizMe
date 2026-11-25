@@ -1,0 +1,147 @@
+{
+  "uuid": "c9a7d3e8-4b0d-4e2a-9f7c-8d1e3f4a5b6c",
+  "version": 1,
+  "title": "Core Calculus — Depth Practice",
+  "subject": "maths",
+  "specCode": "H240/01",
+  "topics": ["Differentiation", "Integration", "Trigonometry"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Differentiation",
+      "subtopic": "Product rule",
+      "prompt": "Differentiate $y = x^2 e^{3x}$.",
+      "options": [
+        "$2x e^{3x} + 3x^2 e^{3x}$",
+        "$2x \\times 3e^{3x}$",
+        "$x^2 e^{3x} + 2x e^{3x}$",
+        "$6x^2 e^{3x}$"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — product rule: $u'v + uv' = 2x e^{3x} + x^2 \\cdot 3e^{3x}$.",
+      "feedbackWrong": "Product rule: differentiate each factor in turn while keeping the other, then add — the second term needs the chain factor 3 from $e^{3x}$.",
+      "mistakes": [
+        {"optionIndex": 1, "misconception": "Differentiates each factor and multiplies the results — the classic product rule error.", "correction": "$(uv)' \\neq u'v'$ — you cannot just multiply the derivatives. Each term keeps one factor undifferentiated."},
+        {"optionIndex": 2, "misconception": "Applies the structure but drops the chain-rule factor 3.", "correction": "The derivative of $e^{3x}$ is $3e^{3x}$ — the inner derivative 3 must appear in the second term."}
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Differentiation",
+      "subtopic": "Tangents",
+      "prompt": "The curve $y = x^3 - 2x^2 + 1$ passes through the point where $x = 2$. Enter the gradient of the tangent at that point.",
+      "answer": 4,
+      "tolerance": {"min": 3.9, "max": 4.1},
+      "stepChecks": [
+        {"label": "$\\frac{dy}{dx} = 3x^2 - 4x$", "marks": 1},
+        {"label": "Substitute $x = 2$: $3(4) - 4(2)$", "marks": 1},
+        {"label": "gradient $= 12 - 8 = 4$", "marks": 1}
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Integration",
+      "subtopic": "Definite integrals",
+      "prompt": "Evaluate $\\int_1^2 (3x^2 + 2x)\\,dx$. Enter the exact value as a decimal.",
+      "answer": 10,
+      "tolerance": {"min": 9.9, "max": 10.1},
+      "stepChecks": [
+        {"label": "Integrate: $[x^3 + x^2]_1^2$", "marks": 1},
+        {"label": "Upper: $8 + 4 = 12$; lower: $1 + 1 = 2$", "marks": 1},
+        {"label": "$12 - 2 = 10$", "marks": 1}
+      ],
+      "mistakes": [
+        {"pattern": "12", "misconception": "Evaluates only the upper limit.", "correction": "A definite integral subtracts the lower-limit value: $F(2) - F(1)$, not just $F(2)$."}
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Integration",
+      "subtopic": "Reverse chain rule",
+      "prompt": "What is $\\int 2x(x^2 + 1)^5\\,dx$?",
+      "options": [
+        "$\\frac{(x^2+1)^6}{6} + c$",
+        "$\\frac{2x(x^2+1)^6}{6} + c$",
+        "$\\frac{x^2(x^2+1)^6}{12} + c$",
+        "$(x^2+1)^6 + c$"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — the integrand is exactly the derivative of $\\frac{(x^2+1)^6}{6}$ since $\\frac{d}{dx}(x^2+1)^6 = 6(x^2+1)^5 \\cdot 2x$.",
+      "feedbackWrong": "Reverse chain rule: $2x$ is the derivative of the inner function $x^2+1$, so integrate as $(\\text{inside})^6/6$.",
+      "mistakes": [
+        {"optionIndex": 3, "misconception": "Forgets the chain-rule divisor.", "correction": "Differentiating $(x^2+1)^6$ gives an extra factor of 6 — dividing by 6 cancels it."}
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Trigonometry",
+      "subtopic": "Equations",
+      "prompt": "Solve $2\\sin\\theta - 1 = 0$ for $0° \\le \\theta < 360°$, showing full working.",
+      "guidance": "Find the principal value, then use the sine graph's symmetry for the second solution.",
+      "markScheme": [
+        {"marks": 1, "text": "Rearranges: $\\sin\\theta = \\frac{1}{2}$.", "highlights": ["sin", "1/2"]},
+        {"marks": 1, "text": "Principal solution $\\theta = 30°$.", "highlights": ["30"]},
+        {"marks": 1, "text": "Second solution $\\theta = 180° - 30° = 150°$ using sine symmetry.", "highlights": ["150"]},
+        {"marks": 1, "text": "Both solutions stated within range with no extras.", "highlights": ["both"]}
+      ],
+      "mistakes": [
+        {"pattern": "30", "misconception": "Gives only the principal value.", "correction": "Sine is positive in both the first and second quadrants — the supplement $180° - \\theta$ is always a second solution in range."}
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 5,
+      "topic": "Differentiation",
+      "subtopic": "Optimization",
+      "prompt": "A farmer has 100 m of fencing to make a rectangular pen against an existing wall (the wall forms one side, so fencing covers three sides). Show that the maximum area is $1250$ m², clearly justifying that it is a maximum.",
+      "markScheme": [
+        {"marks": 1, "text": "Sets up: width $x$, length $100 - 2x$, area $A = x(100 - 2x) = 100x - 2x^2$.", "highlights": ["100 - 2x", "area"]},
+        {"marks": 1, "text": "Differentiates: $\\frac{dA}{dx} = 100 - 4x$.", "highlights": ["100 - 4x"]},
+        {"marks": 1, "text": "Stationary point at $x = 25$ giving length 50.", "highlights": ["25"]},
+        {"marks": 1, "text": "Area $= 25 \\times 50 = 1250$ m².", "highlights": ["1250"]},
+        {"marks": 1, "text": "Justifies maximum: $\\frac{d^2A}{dx^2} = -4 < 0$, so the stationary point is a maximum.", "highlights": ["-4", "maximum"]}
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Trigonometry",
+      "subtopic": "Radians",
+      "prompt": "What is $\\frac{5\\pi}{6}$ radians in degrees?",
+      "options": ["$120°$", "$150°$", "$135°$", "$210°$"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — $\\pi$ radians is $180°$, so $\\frac{5\\pi}{6} = \\frac{5 \\times 180°}{6} = 150°$.",
+      "feedbackWrong": "Convert with the identity $\\pi \\text{ rad} = 180°$: multiply the fraction of $\\pi$ by 180.",
+      "mistakes": [
+        {"optionIndex": 0, "misconception": "Uses 144° per pi or miscalculates the fraction.", "correction": "$\\frac{5}{6}$ of 180 is 150 — check the arithmetic: $180/6 = 30$, then $5 \\times 30$."}
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Integration",
+      "subtopic": "Areas under curves",
+      "prompt": "Find the area enclosed between $y = 4 - x^2$ and the x-axis. Enter the exact value as a decimal to 1 decimal place.",
+      "answer": 10.7,
+      "tolerance": {"min": 10.5, "max": 10.9},
+      "stepChecks": [
+        {"label": "Curve crosses axis at $x = \\pm 2$", "marks": 1},
+        {"label": "$\\int_{-2}^{2}(4 - x^2)\\,dx = \\left[4x - \\frac{x^3}{3}\\right]_{-2}^{2}$", "marks": 1},
+        {"label": "$(8 - \\frac{8}{3}) - (-8 + \\frac{8}{3}) = \\frac{32}{3} \\approx 10.7$", "marks": 1}
+      ]
+    }
+  ]
+}
