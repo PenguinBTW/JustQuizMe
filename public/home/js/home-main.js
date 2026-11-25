@@ -8,6 +8,7 @@ import { initAsciiEngine } from './demos/ascii-engine.js';
 import { initMathCanvas } from './demos/math-canvas.js';
 import { initPhysicsChamber } from './demos/physics-chamber.js';
 import { renderOverview } from './overview.js';
+import { openTutorReport } from './tutorReport.js';
 
 const SUBJECT_CONFIG = {
   maths: {
@@ -251,8 +252,10 @@ renderFlagsStrip();
   const strip = document.createElement('div');
   strip.className = 'export-strip';
   strip.style.cssText = 'margin:10px 0; padding:10px 14px; border:1px solid var(--border); border-radius:8px; font-size:12.5px;';
-  strip.innerHTML = '<strong>Export progress (CSV)</strong> ' + ['cs', 'maths', 'physics'].map(portal =>
+  strip.innerHTML = '<strong>Export progress</strong> <button id="tutorReportBtn" class="btn-ghost mono" style="font-size:11.5px; padding:6px 10px; margin-left:6px; min-height:24px; box-sizing:border-box;">Tutor report</button> <span class="mono" style="font-size:11px; opacity:0.7;">CSV:</span> ' + ['cs', 'maths', 'physics'].map(portal =>
     `<span style="margin-left:10px;">${portal}: <a href="/api/${portal}/export/attempts.csv" download style="display:inline-block; padding:6px 4px; min-height:24px; box-sizing:border-box;">attempts</a> · <a href="/api/${portal}/export/topics.csv" download style="display:inline-block; padding:6px 4px; min-height:24px; box-sizing:border-box;">topics</a></span>`
   ).join('');
   hostEl.parentNode.insertBefore(strip, hostEl);
+  const trBtn = strip.querySelector('#tutorReportBtn');
+  if (trBtn) trBtn.onclick = () => openTutorReport();
 })();
