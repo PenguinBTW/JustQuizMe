@@ -4,15 +4,17 @@ import { api } from './api.js';
 import { normT, stampPool, shuffle, orderTypeShuffled } from './utils.js';
 
 export async function ensurePastFull(){
-  for (const m of S.quizzes['past-paper']){
-    if (!S.pastFull[m.file]){
-      try { S.pastFull[m.file] = await api(`/api/quiz?category=past-paper&file=${encodeURIComponent(m.file)}`); }
-      catch { /* skip unreadable */ }
+  for (const cat of ['past-paper', 'normal']) {
+    for (const m of (S.quizzes[cat] || [])) {
+      if (!S.pastFull[m.file]) {
+        try { S.pastFull[m.file] = await api(`/api/quiz?category=${cat}&file=${encodeURIComponent(m.file)}`); }
+        catch { /* skip unreadable */ }
+      }
     }
   }
   // Cross-file dependency pool (keyed uniquely; refreshed whenever files load).
   const all = {};
-  for (const m of S.quizzes['past-paper']){
+  for (const m of [...(S.quizzes['past-paper'] || []), ...(S.quizzes['normal'] || [])]) {
     const quiz = S.pastFull[m.file];
     if (!quiz) continue;
     for (const q of stampPool(quiz, m.file)) all[q._key] = q;
@@ -24,7 +26,7 @@ export function topicData(){
   return AQA_TOPICS.map(topic => {
     const subs = new Map();
     let quizCount = 0;
-    for (const m of S.quizzes['past-paper']){
+    for (const m of [...(S.quizzes['past-paper'] || []), ...(S.quizzes['normal'] || [])]) {
       const quiz = S.pastFull[m.file];
       if (!quiz) continue;
       if (!(quiz.topics || []).some(t => normT(t) === normT(topic))) continue;

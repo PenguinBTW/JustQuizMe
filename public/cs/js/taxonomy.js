@@ -30,7 +30,7 @@ export function topicData() {
     const topic = spec.topic;
     const subs = new Map();
     let quizCount = 0;
-    const allFiles = S.quizzes['past-paper'] || [];
+    const allFiles = [...(S.quizzes['past-paper'] || []), ...(S.quizzes['normal'] || [])];
 
     for (const m of allFiles) {
       const quiz = S.pastFull[m.file];
