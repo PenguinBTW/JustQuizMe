@@ -1,10 +1,13 @@
 {
   "uuid": "e5c3f9a4-0d6f-4a8c-9b3e-4f7a9c0e1f2a",
   "version": 1,
-  "title": "Programming Techniques & Computational Thinking — Depth Practice",
+  "title": "Programming Techniques & Computational Thinking \u2014 Depth Practice",
   "subject": "cs",
   "specCode": "H446/01",
-  "topics": ["Programming Techniques", "Computational Thinking"],
+  "topics": [
+    "Programming Techniques",
+    "Computational Thinking"
+  ],
   "questions": [
     {
       "id": "mcq1",
@@ -20,10 +23,14 @@
         "At least two recursive calls"
       ],
       "correctIndex": 1,
-      "feedbackCorrect": "Correct — a base case (terminating condition) that the recursive calls progress towards is essential.",
+      "feedbackCorrect": "Correct \u2014 a base case (terminating condition) that the recursive calls progress towards is essential.",
       "feedbackWrong": "Recursion terminates only if there is a base case the calls eventually reach; otherwise the stack grows until it overflows.",
       "mistakes": [
-        {"optionIndex": 2, "misconception": "Believes tracking depth prevents infinite recursion.", "correction": "Depth tracking does nothing unless it is used to stop the recursion — the stopping condition itself is the base case."}
+        {
+          "optionIndex": 2,
+          "misconception": "Believes tracking depth prevents infinite recursion.",
+          "correction": "Depth tracking does nothing unless it is used to stop the recursion \u2014 the stopping condition itself is the base case."
+        }
       ]
     },
     {
@@ -32,15 +39,26 @@
       "marks": 4,
       "topic": "Computational Thinking",
       "subtopic": "Trace tables",
-      "prompt": "Trace this algorithm and complete the table for inputs x and output:\n```\nx ← 12\noutput ← 0\nwhile x > 0\n  output ← output + x\n  x ← x − 5\nendwhile\n```",
-      "columns": ["x", "output"],
-      "expectedRows": [
-        ["12", "0"],
-        ["7", "12"],
-        ["2", "19"],
-        ["-3", "21"]
+      "prompt": "Trace this algorithm and complete the table for inputs x and output:\n```\nx \u2190 12\noutput \u2190 0\nwhile x > 0\n  output \u2190 output + x\n  x \u2190 x \u2212 5\nendwhile\n```",
+      "columns": [
+        "x",
+        "output"
       ],
-      "guidance": "Record the values AFTER each loop iteration completes."
+      "expectedRows": [
+        [
+          "7",
+          "12"
+        ],
+        [
+          "2",
+          "19"
+        ],
+        [
+          "-3",
+          "21"
+        ]
+      ],
+      "guidance": "One row per loop iteration, recording the values AFTER that iteration completes."
     },
     {
       "id": "mcq2",
@@ -48,13 +66,22 @@
       "marks": 1,
       "topic": "Programming Techniques",
       "subtopic": "Data types",
-      "prompt": "Which data type is most appropriate for storing a person's exact bank balance?",
-      "options": ["Integer", "Real/float", "String", "Boolean"],
+      "prompt": "Which data type is most appropriate for storing a person's measured height in metres?",
+      "options": [
+        "Integer",
+        "Real/float",
+        "String",
+        "Boolean"
+      ],
       "correctIndex": 1,
-      "feedbackCorrect": "Correct — balances have fractional parts (pence/cents) so a real type is needed. (In practice decimal fixed-point types are preferred to avoid binary rounding.)",
-      "feedbackWrong": "A balance like £102.47 has a fractional part — integers can't hold it, strings can't be used in arithmetic, and booleans hold only true/false.",
+      "feedbackCorrect": "Correct \u2014 height is a continuous measurement with fractional parts, so a real type is appropriate.",
+      "feedbackWrong": "A measurement like 1.74 m has a fractional part \u2014 integers truncate it, strings can't be used in arithmetic, booleans hold only true/false.",
       "mistakes": [
-        {"optionIndex": 0, "misconception": "Chooses integer because money is 'countable'.", "correction": "Countable in whole pounds only — pence are fractional, and integer division of money loses the remainder."}
+        {
+          "optionIndex": 0,
+          "misconception": "Chooses integer thinking of height as countable.",
+          "correction": "Height in metres is continuous \u2014 integer storage would truncate 1.74 m to 1, destroying the measurement."
+        }
       ]
     },
     {
@@ -66,10 +93,38 @@
       "prompt": "Define abstraction in computational thinking, and give one example of how abstraction is used when designing a program to simulate traffic flow through a junction.",
       "guidance": "Think about what details a traffic simulation deliberately leaves out.",
       "markScheme": [
-        {"marks": 1, "text": "Abstraction is removing/hiding unnecessary detail while keeping the features relevant to the problem.", "highlights": ["removing", "detail"]},
-        {"marks": 1, "text": "It allows a complex real-world system to be modelled or solved computationally.", "highlights": ["modelled", "complex"]},
-        {"marks": 1, "text": "Example identifies a relevant feature kept — e.g. number of vehicles, light timings, queue lengths.", "highlights": ["vehicles", "timings"]},
-        {"marks": 1, "text": "Example identifies a detail omitted — e.g. vehicle colour, driver behaviour, weather — as irrelevant to flow rates.", "highlights": ["omitted", "irrelevant"]}
+        {
+          "marks": 1,
+          "text": "Abstraction is removing/hiding unnecessary detail while keeping the features relevant to the problem.",
+          "highlights": [
+            "removing",
+            "detail"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "It allows a complex real-world system to be modelled or solved computationally.",
+          "highlights": [
+            "modelled",
+            "complex"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Example identifies a relevant feature kept \u2014 e.g. number of vehicles, light timings, queue lengths.",
+          "highlights": [
+            "vehicles",
+            "timings"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Example identifies a detail omitted \u2014 e.g. vehicle colour, driver behaviour, weather \u2014 as irrelevant to flow rates.",
+          "highlights": [
+            "omitted",
+            "irrelevant"
+          ]
+        }
       ]
     },
     {
@@ -81,15 +136,19 @@
       "prompt": "What is the effect of declaring a variable inside a function rather than outside all functions?",
       "options": [
         "It becomes global and visible everywhere",
-        "It is local — accessible only within that function",
+        "It is local \u2014 accessible only within that function",
         "It executes faster",
         "It cannot be reassigned"
       ],
       "correctIndex": 1,
-      "feedbackCorrect": "Correct — variables declared inside a function are local to it, preventing unintended side effects elsewhere.",
-      "feedbackWrong": "Declaring inside a function creates a local variable, scoped to that function only — this is what protects the rest of the program from side effects.",
+      "feedbackCorrect": "Correct \u2014 variables declared inside a function are local to it, preventing unintended side effects elsewhere.",
+      "feedbackWrong": "Declaring inside a function creates a local variable, scoped to that function only \u2014 this is what protects the rest of the program from side effects.",
       "mistakes": [
-        {"optionIndex": 0, "misconception": "Reverses the meaning of local and global scope.", "correction": "It is the reverse: variables declared OUTSIDE functions are global; inside, they are local."}
+        {
+          "optionIndex": 0,
+          "misconception": "Reverses the meaning of local and global scope.",
+          "correction": "It is the reverse: variables declared OUTSIDE functions are global; inside, they are local."
+        }
       ]
     },
     {
@@ -100,11 +159,45 @@
       "subtopic": "Decomposition",
       "prompt": "A school wants a program that records student quiz scores, calculates averages per class, and produces a end-of-term report. Explain how decomposition would be applied to designing this system, naming at least three sub-problems.",
       "markScheme": [
-        {"marks": 1, "text": "Decomposition means breaking a complex problem into smaller, manageable sub-problems.", "highlights": ["breaking", "smaller"]},
-        {"marks": 1, "text": "Sub-problem: input and validation of individual scores.", "highlights": ["input", "validation"]},
-        {"marks": 1, "text": "Sub-problem: storing/retrieving scores in a suitable data structure or file.", "highlights": ["storing", "structure"]},
-        {"marks": 1, "text": "Sub-problem: computing class averages from the stored data.", "highlights": ["averages"]},
-        {"marks": 1, "text": "Sub-problem: formatting and outputting the report; notes each sub-problem can be solved/tested independently.", "highlights": ["report", "independently"]}
+        {
+          "marks": 1,
+          "text": "Decomposition means breaking a complex problem into smaller, manageable sub-problems.",
+          "highlights": [
+            "breaking",
+            "smaller"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Sub-problem: input and validation of individual scores.",
+          "highlights": [
+            "input",
+            "validation"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Sub-problem: storing/retrieving scores in a suitable data structure or file.",
+          "highlights": [
+            "storing",
+            "structure"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Sub-problem: computing class averages from the stored data.",
+          "highlights": [
+            "averages"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Sub-problem: formatting and outputting the report; notes each sub-problem can be solved/tested independently.",
+          "highlights": [
+            "report",
+            "independently"
+          ]
+        }
       ]
     },
     {
@@ -113,12 +206,24 @@
       "marks": 3,
       "topic": "Programming Techniques",
       "subtopic": "Iteration",
-      "prompt": "Complete the trace table for this algorithm:\n```\ntotal ← 0\nfor i ← 1 to 3\n  total ← total + i × 2\nnext i\n```",
-      "columns": ["i", "total"],
+      "prompt": "Complete the trace table for this algorithm:\n```\ntotal \u2190 0\nfor i \u2190 1 to 3\n  total \u2190 total + i \u00d7 2\nnext i\n```",
+      "columns": [
+        "i",
+        "total"
+      ],
       "expectedRows": [
-        ["1", "2"],
-        ["2", "6"],
-        ["3", "12"]
+        [
+          "1",
+          "2"
+        ],
+        [
+          "2",
+          "6"
+        ],
+        [
+          "3",
+          "12"
+        ]
       ],
       "guidance": "One row per loop iteration, values at the end of that iteration."
     },
@@ -136,10 +241,14 @@
         "age 16, consent false"
       ],
       "correctIndex": 2,
-      "feedbackCorrect": "Correct — age 17 fails the first clause but passes both parts of the second: consent AND age ≥ 13.",
-      "feedbackWrong": "OR requires one side true. The second side needs BOTH consent AND age ≥ 13 — check each option against both clauses.",
+      "feedbackCorrect": "Correct \u2014 age 17 fails the first clause but passes both parts of the second: consent AND age \u2265 13.",
+      "feedbackWrong": "OR requires one side true. The second side needs BOTH consent AND age \u2265 13 \u2014 check each option against both clauses.",
       "mistakes": [
-        {"optionIndex": 1, "misconception": "Ignores the consent requirement in the second clause.", "correction": "AND requires both parts — age 15 with no consent makes the second clause false, and 15 < 18 makes the first false."}
+        {
+          "optionIndex": 1,
+          "misconception": "Ignores the consent requirement in the second clause.",
+          "correction": "AND requires both parts \u2014 age 15 with no consent makes the second clause false, and 15 < 18 makes the first false."
+        }
       ]
     }
   ]

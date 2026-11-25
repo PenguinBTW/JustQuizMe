@@ -73,10 +73,10 @@
       "topic": "Sequences & Series",
       "subtopic": "Arithmetic series",
       "prompt": "The sum of the first 20 terms of an arithmetic series is 1040, and the first term is 5. Enter the common difference.",
-      "answer": 4.95,
+      "answer": 4.947,
       "tolerance": {
-        "min": 4.7,
-        "max": 5.2
+        "min": 4.9,
+        "max": 5.0
       },
       "stepChecks": [
         {
