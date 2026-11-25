@@ -138,8 +138,8 @@ export function renderQuestionSpecifics(q) {
                   ${isSelected ? `
                     <div style="display:flex; align-items:center; gap:14px; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border);">
                       <span class="mono" style="font-size:12px; font-weight:600;">Allocate Marks:</span>
-                      <input type="range" id="levelMarkSlider" min="${lvl.range[0]}" max="${lvl.range[1]}" value="${ans.score ?? lvl.range[1]}" style="flex:1;" />
-                      <span class="mono" id="sliderValDisplay" style="font-size:14px; font-weight:700; color:var(--accent); min-width:32px;">${ans.score ?? lvl.range[1]}m</span>
+                      <input type="range" id="levelMarkSlider" min="${lvl.range[0]}" max="${lvl.range[1]}" value="${ans.score ?? lvl.range[0]}" style="flex:1;" />
+                      <span class="mono" id="sliderValDisplay" style="font-size:14px; font-weight:700; color:var(--accent); min-width:32px;">${ans.score ?? lvl.range[0]}m</span>
                     </div>
                   ` : ''}
                 </div>
