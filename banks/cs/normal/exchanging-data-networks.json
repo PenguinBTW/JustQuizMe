@@ -1,0 +1,214 @@
+{
+  "uuid": "c53dd001-0001-4000-8000-000000000001",
+  "version": 1,
+  "title": "Networks, Protocols & Encryption",
+  "subject": "cs",
+  "specCode": "H446/01",
+  "topics": ["Exchanging Data", "Legal, Moral & Cultural"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Exchanging Data",
+      "subtopic": "Protocols",
+      "prompt": "Which protocol is used to transfer web pages from a server to a browser?",
+      "options": ["FTP", "HTTP", "SMTP", "POP3"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — HTTP (or its secure form HTTPS) transfers hypertext web pages.",
+      "feedbackWrong": "HTTP is the web protocol. FTP transfers files, SMTP sends email, POP3 retrieves email.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Confuses file transfer with web page transfer.",
+          "correction": "FTP is for bulk file transfer between systems; browsers use HTTP(S) to fetch pages and their resources."
+        },
+        {
+          "optionIndex": 2,
+          "misconception": "Mixes up email protocols with web protocols.",
+          "correction": "SMTP pushes mail between servers — it never delivers web content."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Exchanging Data",
+      "subtopic": "TCP/IP",
+      "prompt": "In the TCP/IP model, which layer is responsible for routing packets across networks?",
+      "options": ["Application layer", "Transport layer", "Internet layer", "Link layer"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — the Internet layer (IP) handles logical addressing and routing.",
+      "feedbackWrong": "Routing by IP address happens at the Internet layer. Transport handles end-to-end segments; Link handles the physical hop.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Confuses TCP's end-to-end delivery with IP's routing.",
+          "correction": "TCP (transport) gives reliable ordered delivery between endpoints; ROUTING decisions are IP's job at the internet layer."
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Exchanging Data",
+      "subtopic": "Circuit vs packet switching",
+      "prompt": "Compare circuit switching and packet switching, giving one advantage of each.",
+      "guidance": "Think about how the path is used during communication.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Circuit switching establishes a dedicated path for the whole conversation; packet switching splits data into packets routed independently.",
+          "highlights": ["dedicated path", "independently"]
+        },
+        {
+          "marks": 1,
+          "text": "Packets may take different routes and are reassembled at the destination using sequence numbers.",
+          "highlights": ["different routes", "reassembled"]
+        },
+        {
+          "marks": 1,
+          "text": "Circuit switching advantage: guaranteed bandwidth / consistent latency once established — suits real-time voice.",
+          "highlights": ["guaranteed", "consistent"]
+        },
+        {
+          "marks": 1,
+          "text": "Packet switching advantage: efficient shared use of links / fault tolerance — packets reroute around failures.",
+          "highlights": ["efficient", "fault tolerance"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "packet switching is always faster",
+          "misconception": "Assumes packet switching is uniformly superior in speed.",
+          "correction": "Packet switching shares bandwidth efficiently but individual packets can be delayed or lost; circuit switching guarantees constant rate once set up."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Exchanging Data",
+      "subtopic": "Transmission time",
+      "prompt": "A file of 50 megabytes is transmitted over a connection of 20 megabits per second. Calculate the transfer time in seconds (assume 1 megabyte = 8 megabits).",
+      "answer": 20,
+      "tolerance": { "min": 19.9, "max": 20.1 },
+      "stepChecks": [
+        { "label": "Convert: 50 MB × 8 = 400 megabits", "marks": 1 },
+        { "label": "time = bits ÷ rate = 400 ÷ 20", "marks": 1 },
+        { "label": "= 20 seconds", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Exchanging Data",
+      "subtopic": "Encryption",
+      "prompt": "What is the key difference between symmetric and asymmetric encryption?",
+      "options": [
+        "Symmetric uses one shared key; asymmetric uses a public-private key pair",
+        "Symmetric is always stronger than asymmetric",
+        "Asymmetric encryption cannot be used on the internet",
+        "Symmetric encryption requires no keys at all"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — symmetric: same key encrypts and decrypts; asymmetric: public key encrypts, private key decrypts.",
+      "feedbackWrong": "Symmetric encryption uses ONE shared key both ways. Asymmetric uses a mathematically linked pair — public to encrypt, private to decrypt.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Equates simplicity with strength.",
+          "correction": "Strength depends on key length and algorithm, not the symmetric/asymmetric distinction — asymmetric's advantage is key distribution, not raw strength."
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 3,
+      "topic": "Legal, Moral & Cultural",
+      "subtopic": "Network security threats",
+      "prompt": "Describe how a man-in-the-middle attack works on an unencrypted network connection, and name one countermeasure.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Attacker positions themselves between the two communicating parties, intercepting traffic.",
+          "highlights": ["between", "intercepting"]
+        },
+        {
+          "marks": 1,
+          "text": "They can read, alter or relay messages while both parties believe they communicate directly.",
+          "highlights": ["read", "alter", "believe"]
+        },
+        {
+          "marks": 1,
+          "text": "Countermeasure: encryption with authentication — TLS/HTTPS with certificates verifies the endpoint identity.",
+          "highlights": ["TLS", "certificates"]
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Exchanging Data",
+      "subtopic": "Network topologies",
+      "prompt": "A school chooses a star topology for its LAN. Describe the structure and give one advantage and one disadvantage.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Every device connects individually to a central switch/hub — no direct device-to-device links.",
+          "highlights": ["central", "switch"]
+        },
+        {
+          "marks": 1,
+          "text": "Advantage: failure of one cable/device doesn't affect the rest; easy to add devices; central management.",
+          "highlights": ["failure", "doesn't affect"]
+        },
+        {
+          "marks": 1,
+          "text": "Disadvantage: the central switch is a single point of failure; more cable required than a bus.",
+          "highlights": ["single point of failure", "more cable"]
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Exchanging Data",
+      "subtopic": "IP addressing",
+      "prompt": "A network has the subnet mask 255.255.255.0. How many host addresses does this allow per subnet (including network and broadcast addresses)?",
+      "answer": 256,
+      "tolerance": { "min": 255, "max": 257 },
+      "stepChecks": [
+        { "label": "Mask leaves 8 bits for hosts: 2^8", "marks": 1 },
+        { "label": "= 256 addresses (254 usable after network/broadcast)", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w4",
+      "type": "written",
+      "marks": 2,
+      "topic": "Exchanging Data",
+      "subtopic": "Client-server vs peer-to-peer",
+      "prompt": "State two differences between client-server and peer-to-peer networks.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Client-server has dedicated central servers providing services; peer-to-peer shares resources directly between equal peers.",
+          "highlights": ["dedicated", "equal peers"]
+        },
+        {
+          "marks": 1,
+          "text": "Client-server centralises security/backups but costs more and has a server single point of failure; P2P is cheap and resilient but harder to secure and manage.",
+          "highlights": ["centralises", "single point"]
+        }
+      ]
+    }
+  ]
+}

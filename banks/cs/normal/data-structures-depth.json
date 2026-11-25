@@ -1,0 +1,208 @@
+{
+  "uuid": "c53dd002-0002-4000-8000-000000000002",
+  "version": 1,
+  "title": "Data Structures in Depth — Stacks, Queues, Trees & Hashing",
+  "subject": "cs",
+  "specCode": "H446/01",
+  "topics": ["Data Types & Structures"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Data Types & Structures",
+      "subtopic": "Stacks",
+      "prompt": "A stack is best described as:",
+      "options": [
+        "First in, first out",
+        "Last in, first out",
+        "Random access",
+        "Sorted insertion"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — a stack is LIFO: the last item pushed is the first popped.",
+      "feedbackWrong": "Stacks are LIFO — push and pop happen at the same end, so the most recent item leaves first.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Confuses stacks with queues.",
+          "correction": "FIFO is a QUEUE — items leave at the opposite end they arrive. A stack only has one working end."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Data Types & Structures",
+      "subtopic": "Queues",
+      "prompt": "Which application most naturally uses a circular queue?",
+      "options": [
+        "Undo history in a text editor",
+        "Print jobs waiting for a printer with a fixed-size buffer",
+        "Function call tracking in recursion",
+        "Backtracking through a maze"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — print buffers reuse fixed memory circularly; jobs are FIFO.",
+      "feedbackWrong": "Print job buffers are FIFO with fixed memory — a circular queue reuses freed slots. Undo, recursion and backtracking are all stack-shaped.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Sees 'history' as a queue.",
+          "correction": "Undo must reverse the MOST RECENT action first — that's LIFO, a stack."
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Data Types & Structures",
+      "subtopic": "Trees",
+      "prompt": "Describe the difference between pre-order, in-order and post-order traversal of a binary tree, and state which one outputs a binary SEARCH tree's values in ascending order.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Pre-order visits root, then left subtree, then right; post-order visits left, right, root last.",
+          "highlights": ["root", "left", "right"]
+        },
+        {
+          "marks": 1,
+          "text": "In-order visits left subtree, then root, then right subtree.",
+          "highlights": ["in-order", "left", "root"]
+        },
+        {
+          "marks": 1,
+          "text": "IN-ORDER traversal of a binary search tree yields ascending order — left subtree values are smaller, right larger.",
+          "highlights": ["in-order", "ascending"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "pre-order gives sorted output",
+          "misconception": "Believes root-first traversal produces sorted output.",
+          "correction": "The root is visited before either subtree in pre-order, so values appear in insertion-shaped order, not sorted order."
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Data Types & Structures",
+      "subtopic": "Hashing",
+      "prompt": "Explain how a hash table stores key-value pairs, what a collision is, and one method of resolving collisions.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "A hash function maps the key to an index/address in the table where the value is stored.",
+          "highlights": ["hash function", "index"]
+        },
+        {
+          "marks": 1,
+          "text": "Collision: two different keys hash to the SAME index.",
+          "highlights": ["collision", "same"]
+        },
+        {
+          "marks": 1,
+          "text": "Resolution by chaining — each slot holds a linked list of colliding entries.",
+          "highlights": ["chaining", "linked list"]
+        },
+        {
+          "marks": 1,
+          "text": "Or open addressing — probe subsequent slots (linear/quadratic) until a free one is found. Either method credited.",
+          "highlights": ["open addressing", "probe"]
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Data Types & Structures",
+      "subtopic": "Array indexing",
+      "prompt": "A 2D array A is stored with dimensions 10 rows × 8 columns of 4-byte values, starting at base address 1000, in row-major order. Calculate the byte address of element A[3][5] (zero-indexed).",
+      "answer": 1116,
+      "tolerance": { "min": 1115, "max": 1117 },
+      "stepChecks": [
+        { "label": "Offset = (row × cols + col) × size = (3 × 8 + 5) × 4", "marks": 1 },
+        { "label": "= 29 × 4 = 116; address = 1000 + 116 = 1116", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Data Types & Structures",
+      "subtopic": "Linked lists",
+      "prompt": "Compared with an array, a linked list's main advantage is:",
+      "options": [
+        "Faster random access by index",
+        "Efficient insertion and deletion without shifting elements",
+        "Less memory per element",
+        "Cache-friendly contiguous storage"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — pointer rewiring inserts/removes in O(1) given the position, no shifting.",
+      "feedbackWrong": "Linked lists insert/delete by rewiring pointers — no element shifting. Arrays win on random access, memory density and cache use.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Assumes all list-like structures support fast indexing.",
+          "correction": "Linked lists require traversal from the head — index access is O(n), arrays are O(1)."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Data Types & Structures",
+      "subtopic": "Graphs",
+      "prompt": "Give two ways of representing a graph in memory and one advantage of each.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Adjacency matrix — 2D array marking edges; advantage: O(1) edge lookup, simple for dense graphs.",
+          "highlights": ["matrix", "O(1)"]
+        },
+        {
+          "marks": 1,
+          "text": "Adjacency list — each vertex lists its neighbours; advantage: memory proportional to edges, efficient for sparse graphs.",
+          "highlights": ["adjacency list", "sparse"]
+        },
+        {
+          "marks": 1,
+          "text": "Matrix wastes memory on sparse graphs while lists make edge-existence checks slower — a trade-off.",
+          "highlights": ["trade-off"]
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "type": "written",
+      "marks": 3,
+      "topic": "Data Types & Structures",
+      "subtopic": "Records and abstract types",
+      "prompt": "Explain the difference between a static data structure (e.g. array) and a dynamic one (e.g. linked list) in terms of memory allocation.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Static structures allocate a FIXED block of memory at creation/compile time.",
+          "highlights": ["fixed", "compile"]
+        },
+        {
+          "marks": 1,
+          "text": "Dynamic structures allocate memory node-by-node at runtime as elements are added, and free it on removal.",
+          "highlights": ["runtime", "added"]
+        },
+        {
+          "marks": 1,
+          "text": "Consequence: arrays can't grow beyond their allocation but have no per-element overhead; linked structures grow freely but pay pointer memory and allocation cost.",
+          "highlights": ["can't grow", "pointer"]
+        }
+      ]
+    }
+  ]
+}

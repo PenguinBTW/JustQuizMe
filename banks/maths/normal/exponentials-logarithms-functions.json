@@ -1,0 +1,193 @@
+{
+  "uuid": "a41bb005-0005-4000-8000-000000000005",
+  "version": 1,
+  "title": "Exponentials, Logarithms & Functions",
+  "subject": "maths",
+  "specCode": "H240/01",
+  "topics": ["Algebra, Polynomials & Proof", "Functions & Graphs"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Algebra, Polynomials & Proof",
+      "subtopic": "Logarithm laws",
+      "prompt": "Which expression equals $\\log_a\\left(\\frac{x^2}{y}\\right)$?",
+      "options": [
+        "$2\\log_a x - \\log_a y$",
+        "$\\frac{2\\log_a x}{\\log_a y}$",
+        "$2\\log_a x \\times \\log_a y$",
+        "$(\\log_a x)^2 - \\log_a y$"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — division becomes subtraction, powers become multipliers.",
+      "feedbackWrong": "Log of a quotient subtracts: $\\log x^2 - \\log y = 2\\log x - \\log y$.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Applies the power rule to the whole expression instead of the numerator.",
+          "correction": "The power 2 belongs to x only: separate the fraction first, THEN apply power rules."
+        },
+        {
+          "optionIndex": 1,
+          "misconception": "Treats log of a quotient as a quotient of logs.",
+          "correction": "$\\log(x/y)$ is the DIFFERENCE of logs, never their ratio — a very different thing."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Algebra, Polynomials & Proof",
+      "subtopic": "Exponential equations",
+      "prompt": "Solve $5^x = 17$, giving x to 3 significant figures.",
+      "answer": 1.76,
+      "tolerance": { "min": 1.75, "max": 1.77 },
+      "stepChecks": [
+        { "label": "Take logs both sides: $x \\ln 5 = \\ln 17$", "marks": 1 },
+        { "label": "$x = \\ln 17 / \\ln 5$", "marks": 1 },
+        { "label": "$x \\approx 1.76$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Functions & Graphs",
+      "subtopic": "Exponential modelling",
+      "prompt": "A population of bacteria grows according to $N = 500e^{0.4t}$ where t is in hours. Explain the meaning of each constant, and calculate the time for the population to reach 10000, showing the logarithm step.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "500 is the INITIAL population (value at t = 0, since e⁰ = 1).",
+          "highlights": ["initial", "t = 0"]
+        },
+        {
+          "marks": 1,
+          "text": "0.4 is the continuous growth rate per hour — 40% continuous growth.",
+          "highlights": ["growth rate", "0.4"]
+        },
+        {
+          "marks": 1,
+          "text": "Set $10000 = 500e^{0.4t}$, so $e^{0.4t} = 20$ and $0.4t = \\ln 20$.",
+          "highlights": ["ln 20"]
+        },
+        {
+          "marks": 1,
+          "text": "$t = \\ln 20 / 0.4 \\approx 7.49$ hours.",
+          "highlights": ["7.49"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "500 × 0.4",
+          "misconception": "Treats the growth as simple multiplication of rate and initial value.",
+          "correction": "Growth compounds continuously — the model is exponential in t, so inverting it requires logarithms."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Functions & Graphs",
+      "subtopic": "Inverse functions",
+      "prompt": "The inverse of $f(x) = e^x$ is:",
+      "options": ["$\\ln x$", "$e^{-x}$", "$\\frac{1}{e^x}$", "$x^e$"],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — ln undoes exponentiation: $\\ln(e^x) = x$.",
+      "feedbackWrong": "The inverse function of $e^x$ is the natural logarithm — they undo each other.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Confuses the inverse function with the reciprocal.",
+          "correction": "$f^{-1}$ undoes f — it is NOT 1/f. The reciprocal of $e^x$ is $e^{-x}$, a different object entirely."
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Functions & Graphs",
+      "subtopic": "Composite functions",
+      "prompt": "Given $f(x) = 2x + 1$ and $g(x) = x^2$, calculate $fg(3)$.",
+      "answer": 19,
+      "tolerance": { "min": 18.9, "max": 19.1 },
+      "stepChecks": [
+        { "label": "Inner first: $g(3) = 9$", "marks": 1 },
+        { "label": "$f(9) = 2(9) + 1 = 19$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 3,
+      "topic": "Functions & Graphs",
+      "subtopic": "Domain and range",
+      "prompt": "Explain why $f(x) = x^2$ with domain all real numbers does not have an inverse function, and how the domain can be restricted so that it does.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "A function must be one-to-one for an inverse to exist — inverse must map each output to exactly one input.",
+          "highlights": ["one-to-one"]
+        },
+        {
+          "marks": 1,
+          "text": "$x^2$ is many-to-one: both $x$ and $-x$ give the same output, so an inverse would be ambiguous.",
+          "highlights": ["many-to-one", "ambiguous"]
+        },
+        {
+          "marks": 1,
+          "text": "Restricting the domain to $x \\ge 0$ (or $x \\le 0$) makes it one-to-one, and the inverse becomes $\\sqrt{x}$.",
+          "highlights": ["x ≥ 0", "sqrt"]
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Functions & Graphs",
+      "subtopic": "Modulus function",
+      "prompt": "How many solutions does $|2x - 3| = 5$ have?",
+      "options": ["0", "1", "2", "4"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — 2x − 3 = ±5 gives x = 4 or x = −1.",
+      "feedbackWrong": "Modulus equations split into two cases: 2x − 3 = 5 and 2x − 3 = −5, giving x = 4 and x = −1.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Solves only the positive case.",
+          "correction": "The modulus equation |A| = k (k>0) always has TWO branches: A = k and A = −k."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Algebra, Polynomials & Proof",
+      "subtopic": "Exponential decay",
+      "prompt": "The value of a car is modelled by $V = 20000e^{-0.15t}$ after t years. Describe the long-term behaviour and calculate the value after 5 years.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Substitute: $V = 20000e^{-0.75}$.",
+          "highlights": ["e^{-0.75}"]
+        },
+        {
+          "marks": 1,
+          "text": "$V \\approx 20000 \\times 0.4724 \\approx £9447$.",
+          "highlights": ["9447"]
+        },
+        {
+          "marks": 1,
+          "text": "As $t \\to \\infty$, $V \\to 0$ — exponential decay approaches zero but never reaches it; the model becomes unrealistic for very old cars.",
+          "highlights": ["approaches zero", "never reaches"]
+        }
+      ]
+    }
+  ]
+}

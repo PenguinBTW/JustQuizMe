@@ -1,0 +1,199 @@
+{
+  "uuid": "b52cc005-0005-4000-8000-000000000005",
+  "version": 1,
+  "title": "Practical Skills & Experimental Analysis",
+  "subject": "physics",
+  "specCode": "7408",
+  "topics": ["Practical Knowledge", "Materials"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Practical Knowledge",
+      "subtopic": "Errors",
+      "prompt": "A stopwatch consistently reads 0.2 s too high because of a fault. This is an example of:",
+      "options": [
+        "Random error",
+        "Systematic error",
+        "Human reaction time",
+        "Parallax error"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — a consistent offset in every reading is a systematic error.",
+      "feedbackWrong": "Systematic errors shift every reading the same way — consistency is the tell. Random errors scatter readings about the true value.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Treats all measurement error as random.",
+          "correction": "Random errors vary reading-to-reading; a CONSTANT offset is systematic and cannot be reduced by repeating and averaging."
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Practical Knowledge",
+      "subtopic": "Uncertainties",
+      "prompt": "A length is measured as 45.0 cm ± 0.5 cm and a width as 20.0 cm ± 0.5 cm. Calculate the area and explain how to combine the uncertainties.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Area = 45.0 × 20.0 = 900 cm².",
+          "highlights": ["900"]
+        },
+        {
+          "marks": 1,
+          "text": "When multiplying, PERCENTAGE uncertainties add: 0.5/45 ≈ 1.1% and 0.5/20 = 2.5% give ≈ 3.6%.",
+          "highlights": ["percentage", "add"]
+        },
+        {
+          "marks": 1,
+          "text": "Absolute uncertainty ≈ 3.6% of 900 ≈ ±32 cm² — report as 900 ± 32 cm².",
+          "highlights": ["±32"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "add the absolute uncertainties",
+          "misconception": "Adds absolute uncertainties (±1 cm²) when multiplying quantities.",
+          "correction": "Absolute uncertainties add only for addition/subtraction. Multiplication and division add PERCENTAGE uncertainties."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Practical Knowledge",
+      "subtopic": "Percentage uncertainty",
+      "prompt": "A current of 2.5 A is measured with an uncertainty of ±0.1 A. Calculate the percentage uncertainty, in percent.",
+      "answer": 4,
+      "tolerance": { "min": 3.9, "max": 4.1 },
+      "stepChecks": [
+        { "label": "Percentage uncertainty = (0.1/2.5) × 100", "marks": 1 },
+        { "label": "= 4%", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Practical Knowledge",
+      "subtopic": "Graphs",
+      "prompt": "When plotting a graph to test the relationship y = mx + c, the gradient of the straight line gives:",
+      "options": [
+        "The value of m",
+        "The value of c",
+        "The uncertainty in y",
+        "The value of x at y = 0"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — gradient is m; the y-intercept is c.",
+      "feedbackWrong": "In y = mx + c form, the gradient of the line IS m, and the y-intercept is c.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Swaps gradient and intercept roles.",
+          "correction": "Gradient measures the rate (m); the intercept is where the line crosses the y-axis (c)."
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Materials",
+      "subtopic": "Required practical — Young modulus",
+      "prompt": "Describe an experiment to measure the Young modulus of a wire: the measurements you would take, the graph you would plot, and how the Young modulus is obtained.",
+      "guidance": "Think about what stress and strain each require.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Measure the wire's diameter with a micrometer (several positions, averaged) for cross-sectional area, and the original length.",
+          "highlights": ["micrometer", "diameter", "length"]
+        },
+        {
+          "marks": 1,
+          "text": "Add known masses/forces and measure the extension each time — repeat and average.",
+          "highlights": ["forces", "extension"]
+        },
+        {
+          "marks": 1,
+          "text": "Plot stress (force/area) against strain (extension/original length) — or force vs extension as an alternative valid approach.",
+          "highlights": ["stress", "strain"]
+        },
+        {
+          "marks": 1,
+          "text": "Young modulus = gradient of the linear stress-strain region (or gradient × length/area for the force-extension version).",
+          "highlights": ["gradient"]
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Practical Knowledge",
+      "subtopic": "Reliability and validity",
+      "prompt": "Explain the difference between repeatability, reproducibility and resolution in experimental measurements.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Repeatability: same method, same observer, same equipment — how close repeated readings are.",
+          "highlights": ["repeatability", "same"]
+        },
+        {
+          "marks": 1,
+          "text": "Reproducibility: DIFFERENT observers/equipment still obtain close results.",
+          "highlights": ["reproducibility", "different"]
+        },
+        {
+          "marks": 1,
+          "text": "Resolution: the smallest change in the quantity the instrument can detect — set by the scale or digit step.",
+          "highlights": ["resolution", "smallest"]
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Materials",
+      "subtopic": "Resistivity",
+      "prompt": "A wire of length 2.0 m and cross-sectional area 0.50 mm² has resistance 0.072 Ω. Calculate the resistivity in units of 10⁻⁸ Ω·m (enter the mantissa, e.g. 1.8 for 1.8×10⁻⁸).",
+      "answer": 1.8,
+      "tolerance": { "min": 1.75, "max": 1.85 },
+      "stepChecks": [
+        { "label": "$\\rho = RA/L$; convert area: 0.50 mm² = 0.50 × 10⁻⁶ m²", "marks": 1 },
+        { "label": "$\\rho = 0.072 \\times 0.50 \\times 10^{-6} / 2.0$", "marks": 1 },
+        { "label": "$= 1.8 \\times 10^{-8}$ Ω·m", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Practical Knowledge",
+      "subtopic": "Significant figures",
+      "prompt": "A calculated value is 3.2471 V and the uncertainty is ±0.1 V. How should the result be reported?",
+      "options": [
+        "3.2 ± 0.1 V",
+        "3.2471 ± 0.1 V",
+        "3.247 ± 0.100 V",
+        "3 ± 0.1 V"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — the value should be quoted to the same precision as the uncertainty.",
+      "feedbackWrong": "Report the value to the same decimal precision as the uncertainty: ±0.1 V means one decimal place, so 3.2 ± 0.1 V.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Keeps all calculator digits for 'accuracy'.",
+          "correction": "Extra digits are false precision — they claim certainty the measurement doesn't have."
+        }
+      ]
+    }
+  ]
+}

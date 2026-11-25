@@ -1,0 +1,215 @@
+{
+  "uuid": "b52cc004-0004-4000-8000-000000000004",
+  "version": 1,
+  "title": "Astrophysics & Further Mechanics — SHM, Orbits & Cosmology",
+  "subject": "physics",
+  "specCode": "7408/2",
+  "topics": ["Astrophysics", "Further mechanics"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Further mechanics",
+      "subtopic": "Simple harmonic motion",
+      "prompt": "In simple harmonic motion, the acceleration is:",
+      "options": [
+        "Proportional to displacement and directed towards equilibrium",
+        "Constant and directed along the motion",
+        "Proportional to velocity",
+        "Maximum at the equilibrium position"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — a = −ω²x: proportional to displacement, opposite sign (towards equilibrium).",
+      "feedbackWrong": "SHM's defining equation: a = −ω²x — acceleration proportional to displacement and directed back towards equilibrium.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Places maximum acceleration where speed is maximum.",
+          "correction": "Acceleration is maximum at the EXTREMES (largest displacement) — and zero at equilibrium where speed peaks."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Further mechanics",
+      "subtopic": "SHM period",
+      "prompt": "A mass on a spring oscillates in SHM with angular frequency ω = 4.0 rad/s. Calculate the period of oscillation in seconds.",
+      "answer": 1.57,
+      "tolerance": { "min": 1.54, "max": 1.6 },
+      "unit": "s",
+      "stepChecks": [
+        { "label": "$T = \\frac{2\\pi}{\\omega}$", "marks": 1 },
+        { "label": "$T = \\frac{2\\pi}{4.0}$", "marks": 1 },
+        { "label": "$T \\approx 1.57$ s", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Further mechanics",
+      "subtopic": "SHM energy",
+      "prompt": "Describe how kinetic energy and potential energy vary during one full oscillation of a simple pendulum, and what happens to the total energy (neglecting damping).",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "KE maximum at the equilibrium (lowest) point where speed is greatest; zero at the extremes.",
+          "highlights": ["equilibrium", "maximum", "zero at the extremes"]
+        },
+        {
+          "marks": 1,
+          "text": "PE maximum at the extremes (greatest height/displacement); minimum at equilibrium.",
+          "highlights": ["PE maximum", "extremes"]
+        },
+        {
+          "marks": 1,
+          "text": "Total energy stays CONSTANT — energy continuously converts between kinetic and potential forms.",
+          "highlights": ["constant", "converts"]
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Astrophysics",
+      "subtopic": "Doppler effect",
+      "prompt": "Light from a distant galaxy is shifted towards longer wavelengths (redshift). This indicates the galaxy is:",
+      "options": [
+        "Moving away from us",
+        "Moving towards us",
+        "Stationary relative to us",
+        "Very hot"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — recession stretches wavelengths: redshift means moving away.",
+      "feedbackWrong": "Redshift = stretching of wavelength = the source recedes. Approach would compress wavelengths (blueshift).",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Associates red with approach because red feels 'warmer/closer'.",
+          "correction": "Redshift means LONGER wavelength — the waves stretch as the source recedes. Blueshift is approach."
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Astrophysics",
+      "subtopic": "Hubble's law",
+      "prompt": "A galaxy recedes at 1400 km/s. Using H₀ = 70 km/s/Mpc, estimate its distance in Mpc.",
+      "answer": 20,
+      "tolerance": { "min": 19.5, "max": 20.5 },
+      "unit": "Mpc",
+      "stepChecks": [
+        { "label": "Hubble's law: $v = H_0 d$", "marks": 1 },
+        { "label": "$d = v/H_0 = 1400/70$", "marks": 1 },
+        { "label": "$= 20$ Mpc", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Astrophysics",
+      "subtopic": "Star life cycle",
+      "prompt": "Outline the life cycle of a star similar in mass to the Sun, from nebula to final state.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "A nebula collapses under gravity, heating until hydrogen fusion ignites — a main-sequence star.",
+          "highlights": ["nebula", "fusion", "main-sequence"]
+        },
+        {
+          "marks": 1,
+          "text": "When hydrogen in the core is exhausted, the star expands into a red giant, fusing helium in the core.",
+          "highlights": ["red giant", "helium"]
+        },
+        {
+          "marks": 1,
+          "text": "Outer layers are ejected as a planetary nebula.",
+          "highlights": ["planetary nebula", "ejected"]
+        },
+        {
+          "marks": 1,
+          "text": "The remaining core becomes a white dwarf, cooling gradually — no further fusion since mass is too low to fuse heavier elements.",
+          "highlights": ["white dwarf", "cooling"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "explodes as a supernova",
+          "misconception": "Ends all stellar life cycles in supernova.",
+          "correction": "Sun-mass stars are far too small — supernovae require stars of roughly 8+ solar masses. Small stars fade as white dwarfs."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Astrophysics",
+      "subtopic": "Big Bang evidence",
+      "prompt": "State two pieces of evidence supporting the Big Bang model of the universe.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Cosmic microwave background radiation — the redshifted afterglow of the hot early universe, uniform in all directions.",
+          "highlights": ["microwave background"]
+        },
+        {
+          "marks": 1,
+          "text": "Hubble's redshift-distance relationship: galaxies recede faster the further they are — consistent with expansion from an initial state.",
+          "highlights": ["redshift", "expansion"]
+        },
+        {
+          "marks": 1,
+          "text": "Also creditable: observed abundance of light elements (hydrogen/helium ratio) matches Big Bang nucleosynthesis predictions.",
+          "highlights": ["abundance", "helium"]
+        }
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Further mechanics",
+      "subtopic": "Kepler's third law",
+      "prompt": "A satellite orbits with a period of 2 hours at radius r. If the radius is increased to 4r, the period becomes 2 × 4^1.5 hours — enter this value in hours.",
+      "answer": 16,
+      "tolerance": { "min": 15.8, "max": 16.2 },
+      "stepChecks": [
+        { "label": "Kepler: $T^2 \\propto r^3$, so T scales by $4^{1.5}$", "marks": 1 },
+        { "label": "$T = 2 \\times 8 = 16$ hours", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Astrophysics",
+      "subtopic": "Parallax",
+      "prompt": "Stellar parallax measures distance to nearby stars using:",
+      "options": [
+        "The apparent shift of a star against distant background as Earth orbits the Sun",
+        "The brightness of the star compared to the Sun",
+        "The star's colour and temperature",
+        "The time light takes to arrive"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — the star appears to shift against distant background over Earth's orbit; the angle gives distance (1 parsec = 1 arcsec parallax).",
+      "feedbackWrong": "Parallax is geometric: Earth's orbital baseline creates an apparent shift; smaller shift = further star. Defines the parsec.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Confuses parallax with the inverse-square brightness method.",
+          "correction": "Brightness methods need a known luminosity (standard candle); parallax is purely geometric triangulation."
+        }
+      ]
+    }
+  ]
+}

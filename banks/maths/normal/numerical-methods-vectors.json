@@ -1,0 +1,283 @@
+{
+  "uuid": "a41bb004-0004-4000-8000-000000000004",
+  "version": 1,
+  "title": "Numerical Methods & Vectors",
+  "subject": "maths",
+  "specCode": "H240/01",
+  "topics": [
+    "Numerical Methods",
+    "Coordinate Geometry & Vectors"
+  ],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Numerical Methods",
+      "subtopic": "Change of sign",
+      "prompt": "For a continuous function, f(1.2) = -0.4 and f(1.3) = 0.7. What does this tell us?",
+      "options": [
+        "There is a root in the interval (1.2, 1.3)",
+        "The root is exactly halfway between 1.2 and 1.3",
+        "f has no root in this interval",
+        "f must be linear on this interval"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct \u2014 a sign change for a continuous function implies a root in the interval (intermediate value theorem).",
+      "feedbackWrong": "Continuity + sign change forces the curve to cross zero somewhere inside the interval \u2014 it says nothing about where exactly.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Assumes the root sits at the midpoint of a sign-change interval.",
+          "correction": "The sign change proves existence only \u2014 the root can lie anywhere inside the interval."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Numerical Methods",
+      "subtopic": "Iteration",
+      "prompt": "Use the iteration $x_{n+1} = \\sqrt{x_n + 6}$ with $x_0 = 1$, iterating to convergence. Enter the value the sequence converges to, to 2 decimal places.",
+      "answer": 3,
+      "tolerance": {
+        "min": 2.98,
+        "max": 3.02
+      },
+      "stepChecks": [
+        {
+          "label": "Iterate: $x_1 = \\sqrt{7} \\approx 2.646$, $x_2 \\approx 2.940$\u2026",
+          "marks": 1
+        },
+        {
+          "label": "Converges to the fixed point satisfying $x = \\sqrt{x + 6}$",
+          "marks": 1
+        },
+        {
+          "label": "$x^2 - x - 6 = 0 \\Rightarrow x = 3$",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Numerical Methods",
+      "subtopic": "Newton-Raphson",
+      "prompt": "Write down the Newton-Raphson iteration formula for solving f(x) = 0, and explain geometrically what each step does.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "$x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$.",
+          "highlights": [
+            "x_{n+1}",
+            "f(x_n)/f'(x_n)"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Each step draws the TANGENT to the curve at the current estimate.",
+          "highlights": [
+            "tangent"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "The next estimate is where that tangent crosses the x-axis \u2014 linear approximation of the curve near the root.",
+          "highlights": [
+            "crosses the x-axis"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "converges for every starting value",
+          "misconception": "Assumes Newton-Raphson always converges regardless of start point.",
+          "correction": "If the tangent is near-horizontal or the start is near a stationary point, iterations can diverge or jump to a different root."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Numerical Methods",
+      "subtopic": "Trapezium rule",
+      "prompt": "The trapezium rule applied to a curve that is concave upwards (smiling) over the interval gives an estimate of the integral that is:",
+      "options": [
+        "An overestimate",
+        "An underestimate",
+        "Exactly correct",
+        "Unrelated to the curve shape"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct \u2014 trapezia chords lie ABOVE a concave-up curve, so area is overestimated.",
+      "feedbackWrong": "For a concave-upward (convex) curve, each chord sits above the arc \u2014 trapezia enclose extra area, giving an overestimate.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Assumes approximation always falls short of the true area.",
+          "correction": "Direction of error depends on concavity: concave-up overestimates, concave-down underestimates."
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Numerical Methods",
+      "subtopic": "Trapezium rule",
+      "prompt": "Use the trapezium rule with 2 strips to estimate $\\int_0^2 x^2\\,dx$.",
+      "answer": 3,
+      "tolerance": {
+        "min": 2.9,
+        "max": 3.1
+      },
+      "stepChecks": [
+        {
+          "label": "Ordinates at x = 0, 1, 2: values 0, 1, 4; strip width h = 1",
+          "marks": 1
+        },
+        {
+          "label": "$\\frac{h}{2}[y_0 + 2y_1 + y_2] = \\frac{1}{2}[0 + 2(1) + 4]$",
+          "marks": 1
+        },
+        {
+          "label": "$= \\frac{1}{2} \\times 6 = 3$ \u2014 an overestimate of the true $8/3$, consistent with $x^2$ being concave-up",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Vector magnitude",
+      "prompt": "Find the magnitude of the vector $3\\mathbf{i} + 4\\mathbf{j}$.",
+      "options": [
+        "5",
+        "7",
+        "25",
+        "12"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct \u2014 $\\sqrt{3^2 + 4^2} = \\sqrt{25} = 5$.",
+      "feedbackWrong": "Magnitude uses Pythagoras: $\\sqrt{9 + 16} = 5$.",
+      "mistakes": [
+        {
+          "optionIndex": 2,
+          "misconception": "Forgets the square root, reporting the squared magnitude.",
+          "correction": "25 is the magnitude SQUARED \u2014 take the root: 5."
+        },
+        {
+          "optionIndex": 1,
+          "misconception": "Adds the components instead of applying Pythagoras.",
+          "correction": "Components are perpendicular \u2014 combine them with $\\sqrt{a^2+b^2}$, not addition."
+        }
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Dot product",
+      "prompt": "Vectors $\\mathbf{a} = 2\\mathbf{i} + 3\\mathbf{j}$ and $\\mathbf{b} = 4\\mathbf{i} - \\mathbf{j}$. Calculate the dot product $\\mathbf{a} \\cdot \\mathbf{b}$.",
+      "answer": 5,
+      "tolerance": {
+        "min": 4.9,
+        "max": 5.1
+      },
+      "stepChecks": [
+        {
+          "label": "$\\mathbf{a} \\cdot \\mathbf{b} = a_1b_1 + a_2b_2$",
+          "marks": 1
+        },
+        {
+          "label": "$= (2)(4) + (3)(-1)$",
+          "marks": 1
+        },
+        {
+          "label": "$= 8 - 3 = 5$",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 3,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Perpendicularity",
+      "prompt": "Explain how the scalar (dot) product can be used to test whether two vectors are perpendicular, and why the test works.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Compute the dot product \u2014 if it equals ZERO the vectors are perpendicular.",
+          "highlights": [
+            "zero",
+            "perpendicular"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Because $\\mathbf{a} \\cdot \\mathbf{b} = |\\mathbf{a}||\\mathbf{b}|\\cos\\theta$.",
+          "highlights": [
+            "cos"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "At $\\theta = 90\u00b0$, $\\cos\\theta = 0$, so the product vanishes for non-zero vectors \u2014 and conversely.",
+          "highlights": [
+            "90",
+            "cos \u03b8 = 0"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 4,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Vector geometry",
+      "prompt": "Points A, B have position vectors $\\mathbf{a} = 2\\mathbf{i} + \\mathbf{j}$, $\\mathbf{b} = 6\\mathbf{i} + 5\\mathbf{j}$. Show how to find the position vector of the midpoint M of AB, and the vector $\\overrightarrow{AB}$.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "$\\overrightarrow{AB} = \\mathbf{b} - \\mathbf{a} = 4\\mathbf{i} + 4\\mathbf{j}$ \u2014 displacement from A to B is final minus initial.",
+          "highlights": [
+            "b \u2212 a",
+            "4i + 4j"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Midpoint: $\\mathbf{m} = \\frac{1}{2}(\\mathbf{a} + \\mathbf{b})$.",
+          "highlights": [
+            "midpoint",
+            "(a + b)/2"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "$\\mathbf{m} = \\frac{1}{2}(8\\mathbf{i} + 6\\mathbf{j}) = 4\\mathbf{i} + 3\\mathbf{j}$.",
+          "highlights": [
+            "4i + 3j"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Verification: M lies halfway along AB \u2014 could also be written $\\mathbf{a} + \\frac{1}{2}\\overrightarrow{AB}$.",
+          "highlights": [
+            "halfway"
+          ]
+        }
+      ]
+    }
+  ]
+}
