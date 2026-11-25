@@ -93,7 +93,10 @@ export function wireResumeBanner() {
         // displaced — the paused session is restored to the slot, never
         // silently destroyed with the checkpoint
         const cur = await api('/api/save');
-        const displaced = cur && cur.seriesContinuation && cur.series && cur.series.displacedSave;
+        // mid-paper series saves carry displacedSave too — the between-papers
+        // checkpoint isn't the only shape. The paused quiz must survive
+        // discarding EITHER kind of series save.
+        const displaced = cur && cur.series && cur.series.displacedSave;
         if (displaced && displaced.quizUuid) {
           await api('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(displaced) });
           S.save = displaced;
