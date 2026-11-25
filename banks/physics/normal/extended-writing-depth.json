@@ -327,7 +327,7 @@
    "marks": 6,
    "topic": "Thermal physics",
    "subtopic": "First Law Applications",
-   "prompt": "A gas in a cylinder is compressed rapidly by a piston and then left to return to thermal equilibrium with its surroundings. Using the first law of thermodynamics, explain the energy transfers at each stage, and discuss why the rapidity of the compression matters.",
+   "prompt": "A gas in a cylinder is compressed rapidly by a piston, which is then locked in place while the gas returns to thermal equilibrium with its surroundings. Using the first law of thermodynamics, explain the energy transfers at each stage, and discuss why the rapidity of the compression matters.",
    "levels": [
     {
      "level": 3,
@@ -367,7 +367,7 @@
     "First law: \u0394U = Q + W \u2014 work done ON the gas is positive W, heat transferred TO the gas is positive Q",
     "Rapid compression: too fast for significant heat flow, approximately adiabatic \u2014 work input raises internal energy, so temperature rises",
     "For an ideal gas internal energy depends only on temperature \u2014 the temperature rise measures the work transferred",
-    "After the stroke the hotter gas is out of equilibrium: heat flows out to the surroundings until temperatures equalize, with no further volume change so no further work",
+    "With the piston locked after the stroke, cooling occurs at constant volume \u2014 no further work is done, so the internal energy falls purely by heat transfer to the surroundings until temperatures equalize",
     "Slow (quasi-static) compression instead would approximate isothermal conditions \u2014 heat escapes during the stroke and far less temperature rise occurs",
     "Practical relevance: diesel engines exploit near-adiabatic compression heating to ignite fuel; bicycle pumps warming is the same effect",
     "Overall energy conserved: the work input ultimately leaves as heat to the surroundings"

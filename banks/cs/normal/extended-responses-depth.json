@@ -540,7 +540,7 @@
    "id": "er11",
    "type": "extended-response",
    "marks": 9,
-   "topic": "Data Types & Structures",
+   "topic": "Exchanging Data",
    "subtopic": "Compression Trade-offs",
    "prompt": "A streaming service must choose compression approaches for its music and video catalogues. Evaluate the trade-offs between lossless and lossy compression for different media types and use cases, and recommend an approach for the service with justification.",
    "levels": [
@@ -581,7 +581,7 @@
    "indicativeContent": [
     "Lossless preserves every bit \u2014 essential for archival masters and editing pipelines where generation loss compounds",
     "Lossy exploits perceptual models: psychoacoustics discards masked frequencies in audio; visual codecs exploit spatial/temporal redundancy",
-    "Compression ratios: lossy achieves orders of magnitude smaller files \u2014 critical at streaming scale and mobile bandwidth",
+    "Compression ratios: against uncompressed media, lossy achieves one to two orders of magnitude smaller files (e.g. CD-quality audio ~10:1, video often 50:1+) \u2014 critical at streaming scale and mobile bandwidth",
     "Perceptual transparency: at sufficient bitrates most listeners cannot distinguish lossy from the source in controlled tests",
     "Use-case differentiation: distribution favours lossy; production/archive demands lossless; download purchases may justify lossless tiers",
     "Bitrate ladders: adaptive streaming serves multiple lossy encodings matched to connection quality in real time",
