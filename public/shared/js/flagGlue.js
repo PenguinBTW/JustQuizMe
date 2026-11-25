@@ -7,6 +7,10 @@ export function registerFlagButton({ S, portal, apiBase }) {
   const inject = () => {
     const cluster = document.querySelector('.q-chrome .chrome-cluster') || document.querySelector('.q-chrome');
     if (!cluster || cluster.querySelector('.qflag-btn')) return;
+    // the runner chrome can linger in the DOM after returning to a list view —
+    // only inject while the runner is the active room, or a report filed from
+    // the list would attach itself to the last-viewed question
+    if (S.room !== 'runner') return;
     const q = S.quiz && S.quiz.questions && S.quiz.questions[S.idx];
     if (!q) return;
     attachFlagButton(cluster, {

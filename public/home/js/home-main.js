@@ -233,9 +233,11 @@ async function renderFlagsStrip() {
     const strip = document.createElement('div');
     strip.className = 'flags-strip';
     strip.style.cssText = 'margin:10px 0; padding:10px 14px; border:1px solid var(--border); border-radius:8px; font-size:12.5px;';
+    const escHtml = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const recent = all.slice().sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 5);
     strip.innerHTML = `<strong>⚑ ${all.length} flagged question issue${all.length === 1 ? '' : 's'}</strong> ` +
-      all.slice(-5).reverse().map(f =>
-        `<div style="margin-top:6px; opacity:0.85;"><span class="mono" style="font-size:11px;">[${f.portal}] ${f.questionId}</span> — ${String(f.issue).replace(/</g, '&lt;').slice(0, 140)}</div>`
+      recent.map(f =>
+        `<div style="margin-top:6px; opacity:0.85;"><span class="mono" style="font-size:11px;">[${escHtml(f.portal)}] ${escHtml(f.questionId)}</span> — ${escHtml(f.issue).slice(0, 140)}</div>`
       ).join('');
     hostEl.parentNode.insertBefore(strip, hostEl.nextSibling);
   } catch {}

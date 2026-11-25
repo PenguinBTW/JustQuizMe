@@ -19,7 +19,11 @@ class FlagService {
     };
     flags.push(entry);
     fs.mkdirSync(path.dirname(this.file), { recursive: true });
-    fs.writeFileSync(this.file, JSON.stringify(flags, null, 1));
+    // atomic write: a crash mid-write must not truncate the file and destroy
+    // earlier reports — write to a sibling temp file and rename over the target
+    const tmp = `${this.file}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(flags, null, 1));
+    fs.renameSync(tmp, this.file);
     return entry;
   }
 }
