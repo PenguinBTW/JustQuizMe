@@ -109,7 +109,7 @@ export function renderPast() {
           </div>
           <div class="accordion-body">
             ${t.subs.map((g, gi) => `
-              <div class="subtopic-row">
+              <div class="subtopic-row" data-qs="${esc(g.name)} ${esc(t.topic)}">
                 <span>${esc(g.name)} <span class="mono" style="font-size:11px; color:var(--ink-muted);">(${g.questions.length}Q · ${g.questions.reduce((a, q) => a + (+q.marks || 0), 0)}m)</span></span>
                 <div style="display:flex; align-items:center; gap:8px;">
                   <button class="btn-ghost mono" style="font-size:12px;" data-explore-sub="${esc(t.topic)}|${gi}">Explore</button>
@@ -283,7 +283,12 @@ export function wireQuizSearch() {
   if (!input) return;
   const apply = () => {
     const terms = parseTerms(input.value);
-    if (!terms.length) { rerenderKeepScroll(); return; }
+    if (!terms.length) {
+      rerenderKeepScroll();
+      const fresh = $('#quizSearchInput');
+      if (fresh) { fresh.value = ''; fresh.focus(); }
+      return;
+    }
     document.querySelectorAll('#quizPickerList .accordion-item').forEach(item => {
       const topicHit = matchQuiz(item.dataset.qsTopic || '', terms);
       let anySub = false;
@@ -295,6 +300,12 @@ export function wireQuizSearch() {
       item.hidden = !topicHit && !anySub;
       item.classList.add('open');
     });
+    // fullpapers rows live outside the accordion list — filter them directly,
+    // and expand the details so title-only matches are actually visible
+    document.querySelectorAll('.fullpapers [data-qs]').forEach(r => {
+      r.hidden = !matchQuiz(r.dataset.qs, terms);
+    });
+    document.querySelectorAll('details.fullpapers').forEach(d => { d.open = true; });
     document.querySelectorAll('.fp-year').forEach(h => {
       let el = h.nextElementSibling, show = false;
       while (el && !el.classList.contains('fp-year')) {
@@ -311,5 +322,10 @@ export function wireQuizSearch() {
     if (empty) { empty.textContent = emptyMessage(terms); empty.hidden = shown > 0; }
   };
   input.oninput = apply;
-  input.onkeydown = e => { if (e.key === 'Escape') { input.value = ''; rerenderKeepScroll(); } };
+  input.onkeydown = e => { if (e.key === 'Escape') {
+    input.value = '';
+    rerenderKeepScroll();
+    const fresh = $('#quizSearchInput');
+    if (fresh) { fresh.value = ''; fresh.focus(); }
+  } };
 }
