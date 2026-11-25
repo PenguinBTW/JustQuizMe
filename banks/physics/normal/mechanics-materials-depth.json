@@ -1,131 +1,238 @@
 {
-  "uuid": "d0b8e4f9-5c1e-4f3b-8a6d-9e2f4a5b6c7d",
-  "version": 1,
-  "title": "Further Mechanics & Materials — Depth Practice",
-  "subject": "physics",
-  "specCode": "7408/2",
-  "topics": ["Further mechanics", "Materials"],
-  "questions": [
+ "uuid": "d0b8e4f9-5c1e-4f3b-8a6d-9e2f4a5b6c7d",
+ "version": 1,
+ "title": "Further Mechanics & Materials \u2014 Depth Practice",
+ "subject": "physics",
+ "specCode": "7408/2",
+ "topics": [
+  "Further mechanics",
+  "Materials"
+ ],
+ "questions": [
+  {
+   "id": "mcq1",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Further mechanics",
+   "subtopic": "Circular motion",
+   "prompt": "A particle moves in a circle at constant speed. Which quantity is constant?",
+   "options": [
+    "Velocity",
+    "Acceleration",
+    "Kinetic energy",
+    "Momentum"
+   ],
+   "correctIndex": 2,
+   "feedbackCorrect": "Correct \u2014 speed is constant so kinetic energy $\\frac{1}{2}mv^2$ is constant. Velocity, momentum and acceleration all continuously change direction.",
+   "feedbackWrong": "Speed is constant but direction is not \u2014 velocity, momentum and acceleration are vectors that all change. Only scalar kinetic energy stays fixed.",
+   "mistakes": [
     {
-      "id": "mcq1",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Further mechanics",
-      "subtopic": "Circular motion",
-      "prompt": "A particle moves in a circle at constant speed. Which quantity is constant?",
-      "options": ["Velocity", "Acceleration", "Kinetic energy", "Momentum"],
-      "correctIndex": 2,
-      "feedbackCorrect": "Correct — speed is constant so kinetic energy $\\frac{1}{2}mv^2$ is constant. Velocity, momentum and acceleration all continuously change direction.",
-      "feedbackWrong": "Speed is constant but direction is not — velocity, momentum and acceleration are vectors that all change. Only scalar kinetic energy stays fixed.",
-      "mistakes": [
-        {"optionIndex": 0, "misconception": "Confuses constant speed with constant velocity.", "correction": "Velocity is a vector — circular motion continuously changes direction even when speed is fixed, so velocity is never constant."}
-      ]
-    },
-    {
-      "id": "calc1",
-      "type": "calculation",
-      "marks": 3,
-      "topic": "Further mechanics",
-      "subtopic": "Circular motion",
-      "prompt": "A 0.20 kg mass on a string moves in a horizontal circle of radius 0.50 m at 2.0 revolutions per second. Enter the centripetal force in newtons, to 2 significant figures.",
-      "answer": 16,
-      "tolerance": {"min": 15, "max": 17},
-      "stepChecks": [
-        {"label": "$v = 2\\pi r f = 2\\pi \\times 0.50 \\times 2.0 = 6.28$ m/s", "marks": 1},
-        {"label": "$F = \\frac{mv^2}{r} = \\frac{0.20 \\times 6.28^2}{0.50}$", "marks": 1},
-        {"label": "$F \\approx 16$ N", "marks": 1}
-      ]
-    },
-    {
-      "id": "mcq2",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Further mechanics",
-      "subtopic": "Simple harmonic motion",
-      "prompt": "In simple harmonic motion, the acceleration is proportional to:",
-      "options": [
-        "Displacement, and directed towards equilibrium",
-        "Displacement, and directed away from equilibrium",
-        "Velocity, and directed towards equilibrium",
-        "The square of the amplitude"
-      ],
-      "correctIndex": 0,
-      "feedbackCorrect": "Correct — the defining condition: $a = -\\omega^2 x$, proportional to displacement and opposite in direction.",
-      "feedbackWrong": "SHM is defined by $a = -\\omega^2 x$ — acceleration proportional to displacement but directed back towards equilibrium (the minus sign).",
-      "mistakes": [
-        {"optionIndex": 1, "misconception": "Forgets the restoring direction.", "correction": "The minus sign is the physics: acceleration always pulls the oscillator back towards equilibrium — that's what makes it oscillate rather than run away."}
-      ]
-    },
-    {
-      "id": "calc2",
-      "type": "calculation",
-      "marks": 3,
-      "topic": "Materials",
-      "subtopic": "Young modulus",
-      "prompt": "A steel wire of length 2.0 m and cross-sectional area $1.0 \\times 10^{-6}$ m² extends by 1.0 mm under a load of 100 N. Enter the Young modulus of the wire in units of $10^{11}$ Pa — i.e. enter X where E = X × 10¹¹ Pa.",
-      "answer": 2.0,
-      "tolerance": {"min": 1.9, "max": 2.1},
-      "stepChecks": [
-        {"label": "Stress $= F/A = 100 / 10^{-6} = 10^8$ Pa", "marks": 1},
-        {"label": "Strain $= \\Delta L / L = 0.001 / 2.0 = 5 \\times 10^{-4}$", "marks": 1},
-        {"label": "$E = 10^8 / 5 \\times 10^{-4} = 2 \\times 10^{11}$ Pa", "marks": 1}
-      ]
-    },
-    {
-      "id": "w1",
-      "type": "written",
-      "marks": 4,
-      "topic": "Materials",
-      "subtopic": "Stress-strain",
-      "prompt": "Describe what the gradient and the area under a force-extension graph each represent for a stretched wire (within the elastic region), and state the physical meaning of the point where elastic behaviour ends.",
-      "markScheme": [
-        {"marks": 1, "text": "Gradient represents stiffness k (force per unit extension) — or for stress-strain, the Young modulus.", "highlights": ["stiffness", "gradient"]},
-        {"marks": 1, "text": "Area under the graph is the elastic potential energy stored / work done stretching the wire.", "highlights": ["energy", "work done"]},
-        {"marks": 1, "text": "Justification: work = force × distance, matching the integral of F dx.", "highlights": ["force", "distance"]},
-        {"marks": 1, "text": "The limit of proportionality / elastic limit: beyond it the wire no longer obeys Hooke's law or no longer returns to its original length.", "highlights": ["limit", "Hooke"]}
-      ]
-    },
-    {
-      "id": "mcq3",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Further mechanics",
-      "subtopic": "Momentum",
-      "prompt": "A 2 kg ball moving at 6 m/s collides head-on with a stationary 2 kg ball. If they stick together, what is their combined speed?",
-      "options": ["6 m/s", "3 m/s", "2 m/s", "12 m/s"],
-      "correctIndex": 1,
-      "feedbackCorrect": "Correct — momentum conservation: $2 \\times 6 = 4v$, so $v = 3$ m/s.",
-      "feedbackWrong": "Momentum before = momentum after: $12 = (2+2)v$, giving 3 m/s.",
-      "mistakes": [
-        {"optionIndex": 0, "misconception": "Assumes speed is conserved rather than momentum.", "correction": "Kinetic energy and speed are not conserved in inelastic collisions — only momentum is. The mass doubles, so speed halves."}
-      ]
-    },
-    {
-      "id": "w2",
-      "type": "written",
-      "marks": 3,
-      "topic": "Materials",
-      "subtopic": "Material properties",
-      "prompt": "Explain the difference between brittle and ductile behaviour in materials, naming one material of each type and one consequence for their uses.",
-      "markScheme": [
-        {"marks": 1, "text": "Brittle materials fracture with little or no plastic deformation; ductile materials deform plastically before breaking.", "highlights": ["fracture", "plastic"]},
-        {"marks": 1, "text": "Correct examples: brittle — glass/cast iron/ceramic; ductile — copper/mild steel/aluminium.", "highlights": ["glass", "copper"]},
-        {"marks": 1, "text": "Consequence: ductile materials suit drawing into wires or absorbing impact energy; brittle materials suit compression-only applications where sudden failure is acceptable.", "highlights": ["wires", "compression"]}
-      ]
-    },
-    {
-      "id": "calc3",
-      "type": "calculation",
-      "marks": 2,
-      "topic": "Further mechanics",
-      "subtopic": "SHM",
-      "prompt": "A mass on a spring oscillates with period 0.50 s. Enter its angular frequency ω in rad/s, to 2 significant figures.",
-      "answer": 13,
-      "tolerance": {"min": 12.4, "max": 13.2},
-      "stepChecks": [
-        {"label": "$\\omega = 2\\pi/T = 2\\pi/0.50$", "marks": 1},
-        {"label": "$\\omega \\approx 12.6$ rad/s ≈ 13 (2 s.f.)", "marks": 1}
-      ]
+     "optionIndex": 0,
+     "misconception": "Confuses constant speed with constant velocity.",
+     "correction": "Velocity is a vector \u2014 circular motion continuously changes direction even when speed is fixed, so velocity is never constant."
     }
-  ]
+   ]
+  },
+  {
+   "id": "calc1",
+   "type": "calculation",
+   "marks": 3,
+   "topic": "Further mechanics",
+   "subtopic": "Circular motion",
+   "prompt": "A 0.20 kg mass on a string moves in a horizontal circle of radius 0.50 m at 2.0 revolutions per second. Enter the centripetal force in newtons, to 2 significant figures.",
+   "answer": 16,
+   "tolerance": {
+    "min": 15,
+    "max": 17
+   },
+   "stepChecks": [
+    {
+     "label": "$v = 2\\pi r f = 2\\pi \\times 0.50 \\times 2.0 = 6.28$ m/s",
+     "marks": 1
+    },
+    {
+     "label": "$F = \\frac{mv^2}{r} = \\frac{0.20 \\times 6.28^2}{0.50}$",
+     "marks": 1
+    },
+    {
+     "label": "$F \\approx 16$ N",
+     "marks": 1
+    }
+   ]
+  },
+  {
+   "id": "mcq2",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Further mechanics",
+   "subtopic": "Simple harmonic motion",
+   "prompt": "In simple harmonic motion, the acceleration is proportional to:",
+   "options": [
+    "Displacement, and directed towards equilibrium",
+    "Displacement, and directed away from equilibrium",
+    "Velocity, and directed towards equilibrium",
+    "The square of the amplitude"
+   ],
+   "correctIndex": 0,
+   "feedbackCorrect": "Correct \u2014 the defining condition: $a = -\\omega^2 x$, proportional to displacement and opposite in direction.",
+   "feedbackWrong": "SHM is defined by $a = -\\omega^2 x$ \u2014 acceleration proportional to displacement but directed back towards equilibrium (the minus sign).",
+   "mistakes": [
+    {
+     "optionIndex": 1,
+     "misconception": "Forgets the restoring direction.",
+     "correction": "The minus sign is the physics: acceleration always pulls the oscillator back towards equilibrium \u2014 that's what makes it oscillate rather than run away."
+    }
+   ]
+  },
+  {
+   "id": "calc2",
+   "type": "calculation",
+   "marks": 3,
+   "topic": "Materials",
+   "subtopic": "Young modulus",
+   "prompt": "A steel wire of length 2.0 m and cross-sectional area $1.0 \\times 10^{-6}$ m\u00b2 extends by 1.0 mm under a load of 100 N. Enter the Young modulus of the wire in units of $10^{11}$ Pa \u2014 i.e. enter X where E = X \u00d7 10\u00b9\u00b9 Pa.",
+   "answer": 2.0,
+   "tolerance": {
+    "min": 1.9,
+    "max": 2.1
+   },
+   "stepChecks": [
+    {
+     "label": "Stress $= F/A = 100 / 10^{-6} = 10^8$ Pa",
+     "marks": 1
+    },
+    {
+     "label": "Strain $= \\Delta L / L = 0.001 / 2.0 = 5 \\times 10^{-4}$",
+     "marks": 1
+    },
+    {
+     "label": "$E = 10^8 / 5 \\times 10^{-4} = 2 \\times 10^{11}$ Pa",
+     "marks": 1
+    }
+   ]
+  },
+  {
+   "id": "w1",
+   "type": "written",
+   "marks": 4,
+   "topic": "Materials",
+   "subtopic": "Stress-strain",
+   "prompt": "Describe what the gradient and the area under a force-extension graph each represent for a stretched wire (within the elastic region), and state the physical meaning of the point where elastic behaviour ends.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "Gradient represents stiffness k (force per unit extension) \u2014 or for stress-strain, the Young modulus.",
+     "highlights": [
+      "stiffness",
+      "gradient"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Area under the graph is the elastic potential energy stored / work done stretching the wire.",
+     "highlights": [
+      "energy",
+      "work done"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Justification: work = force \u00d7 distance, matching the integral of F dx.",
+     "highlights": [
+      "force",
+      "distance"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "The limit of proportionality / elastic limit: beyond it the wire no longer obeys Hooke's law or no longer returns to its original length.",
+     "highlights": [
+      "limit",
+      "Hooke"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mcq3",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Further mechanics",
+   "subtopic": "Momentum",
+   "prompt": "A 2 kg ball moving at 6 m/s collides head-on with a stationary 2 kg ball. If they stick together, what is their combined speed?",
+   "options": [
+    "6 m/s",
+    "3 m/s",
+    "2 m/s",
+    "12 m/s"
+   ],
+   "correctIndex": 1,
+   "feedbackCorrect": "Correct \u2014 momentum conservation: $2 \\times 6 = 4v$, so $v = 3$ m/s.",
+   "feedbackWrong": "Momentum before = momentum after: $12 = (2+2)v$, giving 3 m/s.",
+   "mistakes": [
+    {
+     "optionIndex": 0,
+     "misconception": "Assumes speed is conserved rather than momentum.",
+     "correction": "Kinetic energy and speed are not conserved in inelastic collisions \u2014 only momentum is. The mass doubles, so speed halves."
+    }
+   ]
+  },
+  {
+   "id": "w2",
+   "type": "written",
+   "marks": 3,
+   "topic": "Materials",
+   "subtopic": "Material properties",
+   "prompt": "Explain the difference between brittle and ductile behaviour in materials, naming one material of each type and one consequence for their uses.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "Brittle materials fracture with little or no plastic deformation; ductile materials deform plastically before breaking.",
+     "highlights": [
+      "fracture",
+      "plastic"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Correct examples: brittle \u2014 glass/cast iron/ceramic; ductile \u2014 copper/mild steel/aluminium.",
+     "highlights": [
+      "glass",
+      "copper"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Consequence: ductile materials suit drawing into wires or absorbing impact energy; brittle materials suit compression-only applications where sudden failure is acceptable.",
+     "highlights": [
+      "wires",
+      "compression"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "calc3",
+   "type": "calculation",
+   "marks": 2,
+   "topic": "Further mechanics",
+   "subtopic": "SHM",
+   "prompt": "A mass on a spring oscillates with period 0.50 s. Enter its angular frequency \u03c9 in rad/s, to 2 significant figures.",
+   "answer": 13,
+   "tolerance": {
+    "min": 12.4,
+    "max": 13.2
+   },
+   "stepChecks": [
+    {
+     "label": "$\\omega = 2\\pi/T = 2\\pi/0.50$",
+     "marks": 1
+    },
+    {
+     "label": "$\\omega \\approx 12.6$ rad/s \u2248 13 (2 s.f.)",
+     "marks": 1
+    }
+   ]
+  }
+ ]
 }

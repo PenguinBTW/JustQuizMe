@@ -1,139 +1,260 @@
 {
-  "uuid": "b8f6c2d7-3a9c-4d1f-8e6b-7c0d2f3a4b5c",
-  "version": 1,
-  "title": "Legal, Moral & Software Development — Depth Practice",
-  "subject": "cs",
-  "specCode": "H446/01",
-  "topics": ["Legal, Moral & Cultural", "Software & Development"],
-  "questions": [
+ "uuid": "b8f6c2d7-3a9c-4d1f-8e6b-7c0d2f3a4b5c",
+ "version": 1,
+ "title": "Legal, Moral & Software Development \u2014 Depth Practice",
+ "subject": "cs",
+ "specCode": "H446/01",
+ "topics": [
+  "Legal, Moral & Cultural",
+  "Software & Development"
+ ],
+ "questions": [
+  {
+   "id": "mcq1",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "Data protection",
+   "prompt": "Under the UK Data Protection Act 2018 (incorporating GDPR), which is a valid legal basis for processing personal data?",
+   "options": [
+    "The data was easy to collect",
+    "The data subject gave informed consent",
+    "The organisation really wants the data",
+    "The data is stored securely"
+   ],
+   "correctIndex": 1,
+   "feedbackCorrect": "Correct \u2014 informed consent of the data subject is one of the lawful bases for processing.",
+   "feedbackWrong": "Lawful bases include consent, contract, legal obligation, vital interests, public task and legitimate interests. Convenience, desire and storage method are not legal bases.",
+   "mistakes": [
     {
-      "id": "mcq1",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Legal, Moral & Cultural",
-      "subtopic": "Data protection",
-      "prompt": "Under the UK Data Protection Act 2018 (incorporating GDPR), which is a valid legal basis for processing personal data?",
-      "options": [
-        "The data was easy to collect",
-        "The data subject gave informed consent",
-        "The organisation really wants the data",
-        "The data is stored securely"
-      ],
-      "correctIndex": 1,
-      "feedbackCorrect": "Correct — informed consent of the data subject is one of the lawful bases for processing.",
-      "feedbackWrong": "Lawful bases include consent, contract, legal obligation, vital interests, public task and legitimate interests. Convenience, desire and storage method are not legal bases.",
-      "mistakes": [
-        {"optionIndex": 3, "misconception": "Confuses a processing requirement (security) with a legal basis.", "correction": "Secure storage is an obligation under the Act's principles, not a justification for processing in the first place."}
-      ]
-    },
-    {
-      "id": "mcq2",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Legal, Moral & Cultural",
-      "subtopic": "Computer Misuse Act",
-      "prompt": "Under the Computer Misuse Act 1990, which act is itself an offence even if nothing is copied, deleted or damaged?",
-      "options": [
-        "Using a computer in a public library",
-        "Unauthorised access to computer material",
-        "Writing antivirus software",
-        "Owning penetration testing tools"
-      ],
-      "correctIndex": 1,
-      "feedbackCorrect": "Correct — Section 1 makes unauthorised access itself an offence, regardless of what happens afterwards.",
-      "feedbackWrong": "The Act criminalises unauthorised access per se (Section 1), access with intent to commit further offences (Section 2), and unauthorised modification (Section 3). No damage is needed for Section 1.",
-      "mistakes": [
-        {"optionIndex": 3, "misconception": "Believes possessing security tools is inherently criminal.", "correction": "The offences turn on UNAUTHORISED access or intent — owning tools is not itself an offence under the Act."}
-      ]
-    },
-    {
-      "id": "w1",
-      "type": "written",
-      "marks": 4,
-      "topic": "Legal, Moral & Cultural",
-      "subtopic": "Ethics",
-      "prompt": "A company develops facial recognition for use in public spaces. Discuss TWO ethical or moral concerns this raises and one legal consideration the company must address in the UK.",
-      "markScheme": [
-        {"marks": 1, "text": "Concern: mass surveillance / erosion of privacy in public life.", "highlights": ["surveillance", "privacy"]},
-        {"marks": 1, "text": "Concern: algorithmic bias — recognition accuracy differing across demographic groups, leading to unfair treatment.", "highlights": ["bias", "accuracy"]},
-        {"marks": 1, "text": "Alternatively or additionally: consent — people cannot meaningfully opt out of being scanned in public; function creep beyond the stated purpose.", "highlights": ["consent", "opt out"]},
-        {"marks": 1, "text": "Legal: compliance with the Data Protection Act 2018 / GDPR — facial templates are biometric personal data requiring a lawful basis and impact assessment.", "highlights": ["Data Protection", "biometric"]}
-      ]
-    },
-    {
-      "id": "mcq3",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Software & Development",
-      "subtopic": "Development lifecycles",
-      "prompt": "Which development methodology delivers working software in short repeated cycles with continuous customer feedback?",
-      "options": ["Waterfall", "Agile", "Big bang", "V-model"],
-      "correctIndex": 1,
-      "feedbackCorrect": "Correct — agile methods iterate in short cycles (sprints) with frequent delivery and feedback.",
-      "feedbackWrong": "Agile is the iterative, feedback-driven approach. Waterfall completes each phase once in sequence; the V-model pairs testing with specification stages.",
-      "mistakes": [
-        {"optionIndex": 0, "misconception": "Confuses structured phases with iteration.", "correction": "Waterfall has phases but no repetition — each stage completes fully before the next begins, with no cyclic delivery."}
-      ]
-    },
-    {
-      "id": "w2",
-      "type": "written",
-      "marks": 4,
-      "topic": "Software & Development",
-      "subtopic": "Testing",
-      "prompt": "Explain the difference between black-box and white-box testing, and give one situation where each is the more appropriate choice.",
-      "markScheme": [
-        {"marks": 1, "text": "Black-box tests behaviour against the specification without knowledge of the internal code structure.", "highlights": ["specification", "without"]},
-        {"marks": 1, "text": "White-box designs tests using knowledge of the code's internal logic and paths.", "highlights": ["internal", "paths"]},
-        {"marks": 1, "text": "Black-box appropriate e.g. acceptance testing by users, or testing a third-party module whose code is unavailable.", "highlights": ["acceptance", "unavailable"]},
-        {"marks": 1, "text": "White-box appropriate e.g. ensuring every branch of a safety-critical algorithm is exercised.", "highlights": ["branch", "exercised"]}
-      ]
-    },
-    {
-      "id": "mcq4",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Software & Development",
-      "subtopic": "Test data",
-      "prompt": "A program must accept ages from 18 to 65 inclusive. Which set of test values best applies boundary (edge) analysis?",
-      "options": [
-        "18 and 65 only",
-        "17, 18, 65 and 66",
-        "20, 40 and 60",
-        "0, 18, 65 and 100"
-      ],
-      "correctIndex": 1,
-      "feedbackCorrect": "Correct — testing just inside and just outside each boundary (17/18 and 65/66) catches off-by-one errors.",
-      "feedbackWrong": "Boundary analysis probes both sides of each edge: the largest invalid and smallest valid values. Middle values don't exercise the comparisons that most often go wrong.",
-      "mistakes": [
-        {"optionIndex": 0, "misconception": "Tests only valid boundary values.", "correction": "Valid-only tests can't distinguish >= from > — a wrong comparison could pass. You need invalid neighbours too."}
-      ]
-    },
-    {
-      "id": "w3",
-      "type": "written",
-      "marks": 3,
-      "topic": "Software & Development",
-      "subtopic": "IDEs and tools",
-      "prompt": "Describe three features of an Integrated Development Environment (IDE) that help a programmer write and debug code.",
-      "markScheme": [
-        {"marks": 1, "text": "Feature + benefit: syntax highlighting / auto-completion — reduces errors and speeds up writing code.", "highlights": ["syntax highlighting"]},
-        {"marks": 1, "text": "Feature + benefit: debugger with breakpoints and step-through execution — lets the programmer inspect state as code runs.", "highlights": ["breakpoints", "step"]},
-        {"marks": 1, "text": "Feature + benefit: integrated compiler/interpreter with error diagnostics — immediate feedback on errors with line references (or version control integration / refactoring tools).", "highlights": ["error", "feedback"]}
-      ]
-    },
-    {
-      "id": "w4",
-      "type": "written",
-      "marks": 3,
-      "topic": "Legal, Moral & Cultural",
-      "subtopic": "Intellectual property",
-      "prompt": "Explain the difference between open-source and proprietary software licences, giving one advantage of each to the organisation distributing the software.",
-      "markScheme": [
-        {"marks": 1, "text": "Open source: source code is published and may be modified/redistributed under the licence terms; proprietary: source is closed and use is restricted by the licence.", "highlights": ["source code", "restricted"]},
-        {"marks": 1, "text": "Open-source advantage: community contributions improve the code / wider adoption builds reputation or a support market.", "highlights": ["community", "adoption"]},
-        {"marks": 1, "text": "Proprietary advantage: direct revenue from licence sales / protection of competitive advantage in the code.", "highlights": ["revenue", "competitive"]}
-      ]
+     "optionIndex": 3,
+     "misconception": "Confuses a processing requirement (security) with a legal basis.",
+     "correction": "Secure storage is an obligation under the Act's principles, not a justification for processing in the first place."
     }
-  ]
+   ]
+  },
+  {
+   "id": "mcq2",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "Computer Misuse Act",
+   "prompt": "Under the Computer Misuse Act 1990, which act is itself an offence even if nothing is copied, deleted or damaged?",
+   "options": [
+    "Using a computer in a public library",
+    "Unauthorised access to computer material",
+    "Writing antivirus software",
+    "Owning penetration testing tools"
+   ],
+   "correctIndex": 1,
+   "feedbackCorrect": "Correct \u2014 Section 1 makes unauthorised access itself an offence, regardless of what happens afterwards.",
+   "feedbackWrong": "The Act criminalises unauthorised access per se (Section 1), access with intent to commit further offences (Section 2), and unauthorised modification (Section 3). No damage is needed for Section 1.",
+   "mistakes": [
+    {
+     "optionIndex": 3,
+     "misconception": "Believes possessing security tools is inherently criminal.",
+     "correction": "The offences turn on UNAUTHORISED access or intent \u2014 owning tools is not itself an offence under the Act."
+    }
+   ]
+  },
+  {
+   "id": "w1",
+   "type": "written",
+   "marks": 4,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "Ethics",
+   "prompt": "A company develops facial recognition for use in public spaces. Discuss TWO ethical or moral concerns this raises and one legal consideration the company must address in the UK.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "Concern: mass surveillance / erosion of privacy in public life.",
+     "highlights": [
+      "surveillance",
+      "privacy"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Concern: algorithmic bias \u2014 recognition accuracy differing across demographic groups, leading to unfair treatment.",
+     "highlights": [
+      "bias",
+      "accuracy"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Alternatively or additionally: consent \u2014 people cannot meaningfully opt out of being scanned in public; function creep beyond the stated purpose.",
+     "highlights": [
+      "consent",
+      "opt out"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Legal: compliance with the Data Protection Act 2018 / GDPR \u2014 facial templates are biometric personal data requiring a lawful basis and impact assessment.",
+     "highlights": [
+      "Data Protection",
+      "biometric"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mcq3",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Software & Development",
+   "subtopic": "Development lifecycles",
+   "prompt": "Which development methodology delivers working software in short repeated cycles with continuous customer feedback?",
+   "options": [
+    "Waterfall",
+    "Agile",
+    "Big bang",
+    "V-model"
+   ],
+   "correctIndex": 1,
+   "feedbackCorrect": "Correct \u2014 agile methods iterate in short cycles (sprints) with frequent delivery and feedback.",
+   "feedbackWrong": "Agile is the iterative, feedback-driven approach. Waterfall completes each phase once in sequence; the V-model pairs testing with specification stages.",
+   "mistakes": [
+    {
+     "optionIndex": 0,
+     "misconception": "Confuses structured phases with iteration.",
+     "correction": "Waterfall has phases but no repetition \u2014 each stage completes fully before the next begins, with no cyclic delivery."
+    }
+   ]
+  },
+  {
+   "id": "w2",
+   "type": "written",
+   "marks": 4,
+   "topic": "Software & Development",
+   "subtopic": "Testing",
+   "prompt": "Explain the difference between black-box and white-box testing, and give one situation where each is the more appropriate choice.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "Black-box tests behaviour against the specification without knowledge of the internal code structure.",
+     "highlights": [
+      "specification",
+      "without"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "White-box designs tests using knowledge of the code's internal logic and paths.",
+     "highlights": [
+      "internal",
+      "paths"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Black-box appropriate e.g. acceptance testing by users, or testing a third-party module whose code is unavailable.",
+     "highlights": [
+      "acceptance",
+      "unavailable"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "White-box appropriate e.g. ensuring every branch of a safety-critical algorithm is exercised.",
+     "highlights": [
+      "branch",
+      "exercised"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mcq4",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Software & Development",
+   "subtopic": "Test data",
+   "prompt": "A program must accept ages from 18 to 65 inclusive. Which set of test values best applies boundary (edge) analysis?",
+   "options": [
+    "18 and 65 only",
+    "17, 18, 65 and 66",
+    "20, 40 and 60",
+    "0, 18, 65 and 100"
+   ],
+   "correctIndex": 1,
+   "feedbackCorrect": "Correct \u2014 testing just inside and just outside each boundary (17/18 and 65/66) catches off-by-one errors.",
+   "feedbackWrong": "Boundary analysis probes both sides of each edge: the largest invalid and smallest valid values. Middle values don't exercise the comparisons that most often go wrong.",
+   "mistakes": [
+    {
+     "optionIndex": 0,
+     "misconception": "Tests only valid boundary values.",
+     "correction": "Valid-only tests can't catch a boundary that's too loose \u2014 a comparison wrongly accepting 17 or 66 would still pass. You need invalid neighbours too."
+    }
+   ]
+  },
+  {
+   "id": "w3",
+   "type": "written",
+   "marks": 3,
+   "topic": "Software & Development",
+   "subtopic": "IDEs and tools",
+   "prompt": "Describe three features of an Integrated Development Environment (IDE) that help a programmer write and debug code.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "Feature + benefit: syntax highlighting / auto-completion \u2014 reduces errors and speeds up writing code.",
+     "highlights": [
+      "syntax highlighting"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Feature + benefit: debugger with breakpoints and step-through execution \u2014 lets the programmer inspect state as code runs.",
+     "highlights": [
+      "breakpoints",
+      "step"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Feature + benefit: integrated compiler/interpreter with error diagnostics \u2014 immediate feedback on errors with line references (or version control integration / refactoring tools).",
+     "highlights": [
+      "error",
+      "feedback"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "w4",
+   "type": "written",
+   "marks": 3,
+   "topic": "Legal, Moral & Cultural",
+   "subtopic": "Intellectual property",
+   "prompt": "Explain the difference between open-source and proprietary software licences, giving one advantage of each to the organisation distributing the software.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "Open source: source code is published and may be modified/redistributed under the licence terms; proprietary: source is closed and use is restricted by the licence.",
+     "highlights": [
+      "source code",
+      "restricted"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Open-source advantage: community contributions improve the code / wider adoption builds reputation or a support market.",
+     "highlights": [
+      "community",
+      "adoption"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Proprietary advantage: direct revenue from licence sales / protection of competitive advantage in the code.",
+     "highlights": [
+      "revenue",
+      "competitive"
+     ]
+    }
+   ]
+  }
+ ]
 }

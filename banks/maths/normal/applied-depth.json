@@ -44,13 +44,13 @@
    "prompt": "A one-tailed test at the 5% significance level rejects the null hypothesis. Which statement is definitely correct?",
    "options": [
     "The null hypothesis is false",
-    "The p-value is less than 0.05",
+    "The p-value does not exceed 0.05",
     "The alternative hypothesis is true",
     "A two-tailed test would also reject H0"
    ],
    "correctIndex": 1,
-   "feedbackCorrect": "Correct \u2014 rejection at the 5% level means the p-value fell below 0.05 by definition.",
-   "feedbackWrong": "Tests never prove anything \u2014 they weigh evidence. Rejection means the result was unlikely (p < 0.05) if H0 were true; the other statements overclaim or don't follow.",
+   "feedbackCorrect": "Correct \u2014 rejection at the 5% level means the p-value fell within the critical threshold (at or below 0.05).",
+   "feedbackWrong": "Tests never prove anything \u2014 they weigh evidence. Rejection means the result was unlikely enough (p at or below 0.05) under H0; the other statements overclaim or don't follow.",
    "mistakes": [
     {
      "optionIndex": 0,
