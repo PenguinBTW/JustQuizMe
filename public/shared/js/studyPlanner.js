@@ -153,7 +153,9 @@ export function generatePlan({ examDate, topics, startDate = new Date(), session
       // identical reviews would both be credited by a single quiz result
       while (d < daysLeft && (days[d].sessions.length >= sessionsPerDay
           || days[d].sessions.some(ss => ss.topic === t.topic))) d++;
-      if (d >= daysLeft) break outer;
+      // a topic blocked only by its own dedupe must not starve the others:
+      // they can still use the slots this topic already occupies
+      if (d >= daysLeft) continue;
       days[d].sessions.push({ topic: t.topic, kind: 'review', minutes: minutesPerSession, round: 99 });
       reviewDay = d + 1;  // round-robin forward through the final week
     }
