@@ -117,6 +117,20 @@ export function renderPromptHtml(rawText, ans) {
 
 export function evaluateTraceTable(q, ans) {
   if (!q.expectedRows || !ans.rows) return 0;
+  // a table the student never touched is a skip, not an attempt: starter
+  // rows exist in the answer store from first render (they scaffold the
+  // layout), so silence must not score. Untouched = rows identical to the
+  // bank's initialRows, or the explicit never-edited state.
+  if (!ans.rowsTouched && q.initialRows) {
+    const init = JSON.stringify(q.initialRows);
+    if (JSON.stringify(ans.rows) === init) {
+      ans.score = 0;
+      ans.evaluated = true;
+      ans.cellStatus = {};
+      ans.matchMessage = 'not attempted';
+      return 0;
+    }
+  }
   const userRows = ans.rows || [];
   const expectedRows = q.expectedRows || [];
   let totalExpectedCells = 0;

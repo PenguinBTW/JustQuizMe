@@ -4,7 +4,7 @@ import { $, esc, fmtDur, ak } from '../utils.js';
 import { api } from '../api.js';
 import { renderRoom } from '../navigation.js';
 import { retryRun } from './starters.js';
-import { numOk } from './renderers.js';
+import { bandOk } from './renderers.js';
 import { reviewWalkHtml } from '../../../shared/js/reviewWalk.js';
 import { recordPaperResult, recordBreak, seriesProgress, breakScreenHtml, seriesFinishHtml, fmtClock } from '../../../shared/js/mockSeries.js';
 import { beginSeriesPaper } from './starters.js';
@@ -52,7 +52,7 @@ export async function finishQuiz(auto = false){
         // never-checked capture (e.g. expiry mid-typing): grade it now — a correct
         // typed answer must not earn zero for want of a click
         const v = parseFloat(a?.finalValue);
-        const correct = a?.finalValue != null && numOk(v, q.answer, q.tolerancePercent ?? 2.5);
+        const correct = a?.finalValue != null && bandOk(v, q);
         S.answers[k] = { ...(a || {}), locked: true, loggedWrong: !correct && (a?.attempts || 0) > 0, score: correct ? q.marks : 0 };
       }
     }
