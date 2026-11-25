@@ -645,7 +645,7 @@ export function mathCalcOk(val, q) {
       // fractions/expressions: evaluate numerically, then band-test the value —
       // but only input shaped like arithmetic; commas/comparisons/letters make
       // the JS evaluator produce garbage (e.g. "1,450" -> 450, "2<3" -> 1)
-      const stripped = raw.replace(/\b(sqrt|sin|cos|tan|asin|acos|atan|ln|log|exp|abs|pi|e)\b/gi, '');
+      const stripped = raw.replace(/(sqrt|sin|cos|tan|ln)\(|\bpi\b/gi, '');
       if (!/^[\d\s+\-*/().^%]+$/.test(stripped)) return false;
       v = evalMathExprClient(cleanMathStr(raw), {});
     }
