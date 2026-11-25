@@ -18,6 +18,9 @@ export function beginRun(o){
   S.quiz = { ...o.quizLike, questions: qs };
   S.quizMeta = o.meta;
   S.runMode = o.mode;
+  // a standalone run abandons any in-flight series — otherwise its
+  // break screen would hijack this quiz's results
+  if (!o.seriesRun) S.series = null;
   // Attach dependency stems (idempotent - safe on resume where _deps persist).
   try { resolveDeps(S.quiz.questions, [...S.quiz.questions, ...Object.values(S._pastAll || {})]); } catch { /* deps optional */ }
   S.retrySpec = o.retrySpec || null;
@@ -28,7 +31,7 @@ export function beginRun(o){
   clearInterval(S.timerId);
   S.room = 'runner';
   renderQ();
-  if (o.mode === 'quiz') startTimer();
+  if (o.mode === 'quiz' || (S.quiz && S.quiz.exam)) startTimer();
 }
 
 export function startTimer(){

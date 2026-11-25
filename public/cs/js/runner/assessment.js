@@ -13,6 +13,9 @@ export function beginRun(o) {
   S.quiz = { ...o.quizLike };
   S.quizMeta = o.meta;
   S.runMode = o.mode;
+  // a standalone run abandons any in-flight series — otherwise its
+  // break screen would hijack this quiz's results
+  if (!o.seriesRun) S.series = null;
   if (o.mode === 'exam') {
     S.quiz.exam = true;
     if (!o.quizLike.untimed && !S.quiz.timeLimitMinutes) {

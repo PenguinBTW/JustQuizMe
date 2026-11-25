@@ -21,6 +21,9 @@ export function beginRun(o) {
   S.quiz = { ...o.quizLike, questions: qs };
   S.quizMeta = o.meta;
   S.runMode = o.mode;
+  // a standalone run abandons any in-flight series — otherwise its
+  // break screen would hijack this quiz's results
+  if (!o.seriesRun) S.series = null;
   S.retrySpec = o.retrySpec || null;
   S.idx = o.resume?.questionIndex ?? o.startIdx ?? 0;
   S.answers = o.resume?.answers ?? {};
@@ -30,7 +33,7 @@ export function beginRun(o) {
   clearInterval(S.timerId);
   S.room = 'runner';
   renderQ();
-  if (o.mode === 'quiz') startTimer();
+  if (o.mode === 'quiz' || (S.quiz && S.quiz.exam)) startTimer();
 }
 
 export function startTimer() {
