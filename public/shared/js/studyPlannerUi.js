@@ -46,7 +46,7 @@ export function plannerHtml({ plan, progress, examDate, subject, topicMastery })
         projection from current mastery — regenerates as you practice, not a contract
         ${progress.total ? ` · ${progress.done}/${progress.total} sessions done` : ''}
       </p>
-      ${plan.truncated ? `<p class="mono" style="font-size:11px; color:var(--amber,#c90); margin-bottom:10px;">⚠ timetable over capacity — ${plan.dropped} planned session${plan.dropped === 1 ? '' : 's'} don't fit before the exam; consider more days or fewer topics</p>` : ''}
+      ${plan.truncated && (plan.dropped ?? 0) > 0 ? `<p class="mono" style="font-size:11px; color:var(--amber,#c90); margin-bottom:10px;">⚠ timetable over capacity — ${plan.dropped ?? 0} planned session${(plan.dropped ?? 0) === 1 ? '' : 's'} don't fit before the exam; consider more days or fewer topics</p>` : ''}
       ${examDate ? rows || '<p class="mono" style="font-size:12px; color:var(--ink-muted);">No sessions fit before the exam date — is it too soon?</p>'
         : '<p class="mono" style="font-size:12.5px; color:var(--ink-muted);">Set your exam date above and a backwards revision schedule appears here — weakest topics first, spaced repetition interleaved.</p>'}
     </div>`;
