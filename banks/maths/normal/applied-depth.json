@@ -1,0 +1,146 @@
+{
+  "uuid": "f6d4a0b5-1e7a-4b9d-8c4f-5a8b0d1f2a3b",
+  "version": 1,
+  "title": "Applied Maths — Statistics & Mechanics Depth",
+  "subject": "maths",
+  "specCode": "H240/01",
+  "topics": ["Statistical Sampling & Data", "Probability & Hypothesis Testing", "Kinematics & Projectiles", "Forces, Moments & Equilibrium"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Statistical Sampling & Data",
+      "subtopic": "Sampling methods",
+      "prompt": "A researcher selects every 20th name from an alphabetical list of a school's students, starting from a random position. What type of sampling is this?",
+      "options": ["Simple random sampling", "Stratified sampling", "Systematic sampling", "Quota sampling"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — selecting every kth member after a random start is systematic sampling.",
+      "feedbackWrong": "A fixed interval through an ordered list with a random start is the definition of systematic sampling. Stratified would split into groups first; simple random gives every subset equal probability.",
+      "mistakes": [
+        {"optionIndex": 0, "misconception": "Sees 'random start' and assumes the whole method is simple random.", "correction": "In simple random sampling every possible sample is equally likely — here samples containing adjacent names are impossible, so it cannot be simple random."}
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Probability & Hypothesis Testing",
+      "subtopic": "Hypothesis tests",
+      "prompt": "A one-tailed test at the 5% significance level rejects the null hypothesis. Which statement is definitely correct?",
+      "options": [
+        "The null hypothesis is false",
+        "The p-value is less than 0.05",
+        "The alternative hypothesis is true",
+        "A two-tailed test would also reject H0"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — rejection at the 5% level means the p-value fell below 0.05 by definition.",
+      "feedbackWrong": "Tests never prove anything — they weigh evidence. Rejection means the result was unlikely (p < 0.05) if H0 were true; the other statements overclaim or don't follow.",
+      "mistakes": [
+        {"optionIndex": 0, "misconception": "Treats rejecting H0 as proof it is false.", "correction": "A 5% test wrongly rejects a true null hypothesis 5% of the time — significance is about evidence strength, not certainty."},
+        {"optionIndex": 3, "misconception": "Assumes one-tailed rejection implies two-tailed rejection.", "correction": "A two-tailed test at 5% puts only 2.5% in each tail — the same result may fail the stricter threshold."}
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Kinematics & Projectiles",
+      "subtopic": "Vertical motion",
+      "prompt": "A ball is thrown vertically upwards at 12 m/s from ground level. Enter the maximum height reached in metres, to 2 significant figures. (Use g = 9.8 m/s².)",
+      "answer": 7.3,
+      "tolerance": {"min": 7.1, "max": 7.6},
+      "stepChecks": [
+        {"label": "$v^2 = u^2 + 2as$ with $v = 0$: $0 = 144 - 2(9.8)s$", "marks": 1},
+        {"label": "$s = 144 / 19.6$", "marks": 1},
+        {"label": "$s \\approx 7.3$ m", "marks": 1}
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Kinematics & Projectiles",
+      "subtopic": "Projectile motion",
+      "prompt": "A projectile is launched horizontally from a cliff. Explain why the horizontal and vertical components of its motion can be analysed independently, and state the acceleration in each direction (neglecting air resistance).",
+      "markScheme": [
+        {"marks": 1, "text": "The only force is gravity, which acts vertically — there is no horizontal force.", "highlights": ["only force", "gravity"]},
+        {"marks": 1, "text": "Horizontal velocity therefore stays constant (no horizontal acceleration).", "highlights": ["constant", "horizontal"]},
+        {"marks": 1, "text": "Vertical acceleration is g = 9.8 m/s² downwards, independent of horizontal motion.", "highlights": ["9.8", "downwards"]},
+        {"marks": 1, "text": "Because the directions are perpendicular, neither component affects the other — they share only time.", "highlights": ["perpendicular", "time"]}
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Forces, Moments & Equilibrium",
+      "subtopic": "Moments",
+      "prompt": "A uniform beam of length 4 m is balanced at its centre. A 30 N weight hangs 1.5 m from the left end. Enter the weight in newtons that must hang at the right end to keep the beam level.",
+      "answer": 15,
+      "tolerance": {"min": 14.5, "max": 15.5},
+      "stepChecks": [
+        {"label": "Pivot at centre: the 30 N weight is 0.5 m left of pivot", "marks": 1},
+        {"label": "Moments balance: $30 \\times 0.5 = W \\times 2$", "marks": 1},
+        {"label": "$W = 15$ N", "marks": 1}
+      ],
+      "mistakes": [
+        {"pattern": "60", "misconception": "Measures distances from the ends rather than the pivot.", "correction": "Moments are taken about the pivot — measure each force's perpendicular distance from the balance point, not from the beam's end."}
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Statistical Sampling & Data",
+      "subtopic": "Measures of spread",
+      "prompt": "A dataset has mean 50 and standard deviation 4. Two new values, 46 and 54, are added. Without calculating, explain what happens to the mean and the standard deviation, justifying each answer.",
+      "guidance": "Think about where the new values sit relative to the mean and how spread is measured.",
+      "markScheme": [
+        {"marks": 1, "text": "Mean unchanged at 50 — the additions are symmetric about it.", "highlights": ["unchanged", "symmetric"]},
+        {"marks": 1, "text": "Justification: 46 and 54 deviate by −4 and +4, summing to zero net change.", "highlights": ["−4", "+4"]},
+        {"marks": 1, "text": "Standard deviation decreases.", "highlights": ["decreases"]},
+        {"marks": 1, "text": "Justification: the new values sit exactly one standard deviation from the mean, closer than typical spread — or the added squared deviations dilute the average when divided by a larger n.", "highlights": ["closer", "dilute"]}
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Forces, Moments & Equilibrium",
+      "subtopic": "Equilibrium",
+      "prompt": "A particle rests in equilibrium under three coplanar forces. Which statement must be true?",
+      "options": [
+        "The forces must all be equal in magnitude",
+        "The vector sum of the forces is zero",
+        "One force must act vertically upwards",
+        "The forces must act at 120° to each other"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — equilibrium means zero resultant force; the force vectors form a closed triangle.",
+      "feedbackWrong": "Equilibrium requires only that the resultant is zero — the vectors close into a triangle. Magnitudes and angles are free to vary.",
+      "mistakes": [
+        {"optionIndex": 3, "misconception": "Overgeneralises the symmetric three-equal-forces case.", "correction": "120° angles apply only when all three magnitudes are equal — equilibrium itself imposes no such restriction."}
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Probability & Hypothesis Testing",
+      "subtopic": "Binomial distribution",
+      "prompt": "A fair coin is tossed 5 times. Enter the probability of getting exactly 3 heads as a decimal, to 2 significant figures.",
+      "answer": 0.31,
+      "tolerance": {"min": 0.30, "max": 0.32},
+      "stepChecks": [
+        {"label": "$P(X=3) = \\binom{5}{3}(0.5)^3(0.5)^2$", "marks": 1},
+        {"label": "$= 10 \\times 0.125 \\times 0.25$", "marks": 1},
+        {"label": "$= 0.3125 \\approx 0.31$", "marks": 1}
+      ],
+      "mistakes": [
+        {"pattern": "0.03", "misconception": "Computes one arrangement only, forgetting the binomial coefficient.", "correction": "Exactly 3 heads can occur in $\\binom{5}{3} = 10$ different orders — multiply the single-arrangement probability by 10."}
+      ]
+    }
+  ]
+}

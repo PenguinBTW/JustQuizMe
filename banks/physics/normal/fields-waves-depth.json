@@ -1,0 +1,133 @@
+{
+  "uuid": "a7e5b1c6-2f8b-4c0e-9d5a-6b9c1e2f3a4b",
+  "version": 1,
+  "title": "Fields, Waves & Electricity — Depth Practice",
+  "subject": "physics",
+  "specCode": "7408/2",
+  "topics": ["Fields", "Waves", "Electricity", "Nuclear physics"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Fields",
+      "subtopic": "Gravitational fields",
+      "prompt": "At what distance from the centre of a planet is the gravitational field strength one quarter of its value at the surface (radius R)?",
+      "options": ["$\\frac{R}{2}$", "$2R$", "$4R$", "$\\sqrt{2}R$"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — inverse square: quarter strength means double distance, and distance is measured from the centre, so 2R.",
+      "feedbackWrong": "Field strength follows an inverse-square law from the CENTRE: $g \\propto 1/r^2$. Quarter strength needs $r = 2R$.",
+      "mistakes": [
+        {"optionIndex": 2, "misconception": "Applies inverse-square reasoning to the wrong base or squares the ratio twice.", "correction": "For g to fall to 1/4, $r^2$ must grow by 4, so r doubles — quadrupling the distance would give 1/16 strength."},
+        {"optionIndex": 0, "misconception": "Inverts the relationship, treating field strength as proportional to distance.", "correction": "Field strength DECREASES with distance — moving closer (R/2) would increase it fourfold, not decrease it."}
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Fields",
+      "subtopic": "Electric fields",
+      "prompt": "Two parallel plates are separated by 4.0 cm with a potential difference of 1200 V across them. Enter the electric field strength between the plates in V/m.",
+      "answer": 30000,
+      "tolerance": {"min": 29000, "max": 31000},
+      "stepChecks": [
+        {"label": "$E = V/d$ for a uniform field", "marks": 1},
+        {"label": "$E = 1200 / 0.04$", "marks": 1},
+        {"label": "$E = 30000$ V/m", "marks": 1}
+      ],
+      "mistakes": [
+        {"pattern": "300", "misconception": "Uses the distance in centimetres without converting to metres.", "correction": "The field is in volts per METRE — convert 4.0 cm to 0.04 m before dividing."}
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Waves",
+      "subtopic": "Stationary waves",
+      "prompt": "A stationary wave on a stretched string has nodes 25 cm apart. What is the wavelength of the travelling waves forming it?",
+      "options": ["12.5 cm", "25 cm", "50 cm", "100 cm"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — adjacent nodes are half a wavelength apart, so λ = 50 cm.",
+      "feedbackWrong": "The distance between adjacent nodes of a stationary wave is λ/2. Double the node spacing for the wavelength.",
+      "mistakes": [
+        {"optionIndex": 1, "misconception": "Equates node spacing directly with wavelength.", "correction": "Node-to-node is only half a cycle of the pattern — a full wavelength spans two node spacings."}
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Waves",
+      "subtopic": "Interference",
+      "prompt": "In a double-slit experiment with monochromatic light, describe what happens to the interference fringes when (a) the slit separation is increased and (b) the screen is moved further away. Justify each using the fringe spacing equation.",
+      "markScheme": [
+        {"marks": 1, "text": "States or uses $w = \\lambda D / s$ (fringe spacing proportional to wavelength and screen distance, inversely proportional to slit separation).", "highlights": ["w = λD/s"]},
+        {"marks": 1, "text": "(a) Fringes move closer together — spacing decreases.", "highlights": ["closer", "decreases"]},
+        {"marks": 1, "text": "Justification: w is inversely proportional to slit separation s.", "highlights": ["inversely proportional"]},
+        {"marks": 1, "text": "(b) Fringes spread further apart — w is directly proportional to D.", "highlights": ["further apart", "proportional to D"]}
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Electricity",
+      "subtopic": "Circuits",
+      "prompt": "A 6.0 V battery of negligible internal resistance is connected across a series combination of a 4.0 Ω and an 8.0 Ω resistor. Enter the power dissipated in the 8.0 Ω resistor in watts, to 2 significant figures.",
+      "answer": 2.0,
+      "tolerance": {"min": 1.9, "max": 2.1},
+      "stepChecks": [
+        {"label": "Current $I = 6.0 / (4.0 + 8.0) = 0.5$ A", "marks": 1},
+        {"label": "$P = I^2 R$ for the 8 Ω resistor", "marks": 1},
+        {"label": "$P = 0.25 \\times 8.0 = 2.0$ W", "marks": 1}
+      ],
+      "mistakes": [
+        {"pattern": "4.5", "misconception": "Uses the full battery voltage across the 8 Ω resistor as if it were alone.", "correction": "The resistors share the voltage in series — find the common current first, then apply $P = I^2R$ to the one resistor."}
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Electricity",
+      "subtopic": "Resistivity",
+      "prompt": "A wire is replaced by another of the same material, twice as long and with half the cross-sectional area. Its resistance changes by what factor?",
+      "options": ["Unchanged", "×2", "×4", "×8"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — $R = \\rho L/A$: doubling L doubles R, halving A doubles it again — ×4 total.",
+      "feedbackWrong": "Resistance is proportional to length and inversely proportional to area. Both changes increase resistance: ×2 from length and ×2 from area, ×4 overall.",
+      "mistakes": [
+        {"optionIndex": 1, "misconception": "Accounts for only one of the two changes.", "correction": "Both changes act in the same direction — track length AND area in $R = \\rho L / A$."}
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 3,
+      "topic": "Nuclear physics",
+      "subtopic": "Half-life",
+      "prompt": "A radioactive sample's activity falls from 800 Bq to 100 Bq in 12 days. Show that its half-life is 4 days and calculate the activity after a further 8 days.",
+      "markScheme": [
+        {"marks": 1, "text": "800 → 400 → 200 → 100 is three halvings in 12 days, so half-life = 4 days.", "highlights": ["three", "4 days"]},
+        {"marks": 1, "text": "Further 8 days is two more half-lives.", "highlights": ["two", "half-lives"]},
+        {"marks": 1, "text": "Activity $100 → 50 → 25$ Bq.", "highlights": ["25"]}
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Waves",
+      "subtopic": "Wave speed",
+      "prompt": "A wave of frequency 50 Hz has wavelength 0.80 m. Enter its speed in m/s.",
+      "answer": 40,
+      "tolerance": {"min": 39.5, "max": 40.5},
+      "stepChecks": [
+        {"label": "$v = f\\lambda = 50 \\times 0.80$", "marks": 1},
+        {"label": "$v = 40$ m/s", "marks": 1}
+      ]
+    }
+  ]
+}
