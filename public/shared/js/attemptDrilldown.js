@@ -118,7 +118,10 @@ function contentKeyOf(e) {
   // sorted: a shuffled retake of the same paper is still the same paper;
   // file-qualified key preferred — two mixed papers drawing the same bare
   // ids from different bank files must not share a fingerprint
-  return pq.map(q => q && (q.key || q.id || q.prompt || '')).sort().join('|');
+    // topic+marks in the fingerprint: score writers save bare ids, so two
+  // synthesized papers drawing the same id from different banks must not
+  // collapse — their topic/marks context almost always differs
+  return pq.map(q => q && ((q.key || q.id || q.prompt || '') + '#' + (q.topic || '') + '#' + (q.marks ?? ''))).sort().join('|');
 }
 
 // compareAttempts(entries, quizUuid) — same paper taken more than once:
