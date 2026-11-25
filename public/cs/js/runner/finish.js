@@ -351,7 +351,17 @@ async function renderSeriesFinal() {
   // save — an unrelated in-progress quiz's save is not ours to destroy
   try {
     const cur = await api('/api/save');
-    if (cur && cur.seriesContinuation) { await api('/api/save', { method: 'DELETE' }); S.save = null; }
+    if (cur && cur.seriesContinuation) {
+      const displaced = (cur.series && cur.series.displacedSave) || null;
+      if (displaced && displaced.quizUuid) {
+        // hand the slot back to the in-progress quiz the series displaced
+        await api('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(displaced) });
+        S.save = displaced;
+      } else {
+        await api('/api/save', { method: 'DELETE' });
+        S.save = null;
+      }
+    }
   } catch {}
   const done = $('#seriesDoneBtn');
   if (done) done.onclick = () => loadHome();

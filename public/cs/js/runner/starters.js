@@ -93,7 +93,15 @@ export function startMockSeries({ breakMinutes = 10 } = {}) {
     }
   }
   if (papers.length < 2) return alert('Could not assemble two component papers.');
+  // a series checkpoint shares the single save slot with ordinary quizzes —
+  // preserve any in-progress save inside the series so it can be restored
+  // when the series completes; warn before displacing it.
+  if (S.save && !S.save.seriesContinuation) {
+    const t = (S.save && S.save.title) || 'untitled session';
+    if (!confirm('Starting this mock series will pause your saved session "' + t + '" — it is restored automatically when the series finishes. Continue?')) return;
+  }
   const series = createSeries(papers, { breakMinutes });
+  series.displacedSave = (S.save && !S.save.seriesContinuation) ? JSON.parse(JSON.stringify(S.save)) : null;
   series._sets = sets; // in-memory question sets; serialized into saves
   S.series = series;
   beginSeriesPaper();
