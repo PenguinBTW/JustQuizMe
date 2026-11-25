@@ -36,9 +36,10 @@ test('partly-filled trace table keeps row positions (blank rows preserved)', () 
   const h = reviewWalkHtml([q], { t1: { rows } });
   const m = h.match(/YOUR ANSWER<\/span><div[^>]*>([\s\S]*?)<\/div>/);
   const body = m ? m[1] : '';
-  // first row must be present as a blank line before the filled row — positions align with grading
-  assert.ok(body.startsWith('\n') || body.includes(' | \n') || body.indexOf('x | 5 | y') > 0, 'blank first row preserved before filled second row');
-  assert.ok(body.includes('x | 5 | y'), 'filled row content present');
+  // exact positional check: line 0 is the blank first row, line 1 the filled second
+  const lines = body.split('\n');
+  assert.strictEqual(lines[0], ' |  | ', 'blank first row preserved verbatim at position 0');
+  assert.strictEqual(lines[1], 'x | 5 | y', 'filled row at its original position 1');
 });
 
 test('fully cleared trace table renders as unattempted', () => {
