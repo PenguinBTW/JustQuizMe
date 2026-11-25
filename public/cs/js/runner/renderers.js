@@ -111,9 +111,11 @@ export function renderQuestionSpecifics(q) {
       <textarea class="essay-pad" id="essayText" placeholder="Write your extended technical response here (include detailed concepts, laws/standards, algorithmic implications, and balanced evaluation)..." style="min-height:220px;" ${isLocked ? 'readonly' : ''}>${esc(ans.text || '')}</textarea>
 
       ${!ans.revealed ? `
-        <div style="margin-top:16px;">
+        ${(S.quiz && S.quiz.exam)
+          ? `<div class="mono" style="margin-top:16px; font-size:12px; color:var(--ink-muted);">Exam mode — the mark scheme stays hidden until you finish; you'll mark this afterwards against the official descriptors.</div>`
+          : `<div style="margin-top:16px;">
           <button class="btn btn-primary" id="revealLevelsBtn">Compare with Levels of Response Rubric &amp; Indicative Content ↓</button>
-        </div>
+        </div>`}
       ` : `
         <div style="margin-top:28px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">

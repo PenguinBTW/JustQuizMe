@@ -27,17 +27,6 @@ export function quizScore(){
 
 export async function finishQuiz(auto = false){
   if (S._finishing) return;
-  // essays written blind during exams must be self-marked against the level
-  // descriptors BEFORE scoring — interpose the marking stage once per finish
-  if (!S._essaysMarked && unmarkedEssays((S.quiz && S.quiz.questions) || [], S.answers, ak).length) {
-    S._finishing = true;
-    clearInterval(S.timerId);
-    renderEssayMarkingStage({
-      questions: S.quiz.questions, answers: S.answers, ak,
-      onDone: () => { S._finishing = false; S._essaysMarked = true; finishQuiz(auto); }
-    });
-    return;
-  }
   S._finishing = true;
   if (auto === true) S.timeExpired = true;
   clearInterval(S.timerId);
@@ -51,6 +40,17 @@ export async function finishQuiz(auto = false){
       S.answers[k] = { ...(S.answers[k] || {}), finalValue: inp.value };
     }
   } catch { /* capture best-effort */ }
+  // essays written blind during exams must be self-marked against the level
+  // descriptors BEFORE scoring — interpose the marking stage once per finish
+  if (unmarkedEssays((S.quiz && S.quiz.questions) || [], S.answers, ak).length) {
+    S._finishing = true;
+    clearInterval(S.timerId);
+    renderEssayMarkingStage({
+      questions: S.quiz.questions, answers: S.answers, ak,
+      onDone: () => { S._finishing = false; finishQuiz(auto); }
+    });
+    return;
+  }
   // a suspended-then-woken tab must not record time past the deadline
   if (S.quiz && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   for (const q of S.quiz.questions){

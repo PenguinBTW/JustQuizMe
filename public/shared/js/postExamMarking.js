@@ -37,7 +37,18 @@ export function renderEssayMarkingStage({ questions, answers, ak, onDone, mountI
         <div class="mono" style="font-size:11px; color:var(--ink-muted); margin-bottom:4px;">YOUR ANSWER (${words} words) — written blind during the exam</div>
         <div style="white-space:pre-wrap; font-size:14px; line-height:1.6; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:20px; max-height:220px; overflow:auto; background:var(--bg-secondary, rgba(0,0,0,.03));">${esc(ans.text || '')}</div>
 
-        <div class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase; margin-bottom:10px;">COMPARE AGAINST THE LEVEL DESCRIPTORS — select the band your answer best matches, then refine within it</div>
+        ${levels.length ? `
+        <div class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase; margin-bottom:10px;">COMPARE AGAINST THE LEVEL DESCRIPTORS — select the band your answer best matches, then refine within it</div>` : `
+        <div class="mono" style="font-size:11px; color:var(--ink-muted); text-transform:uppercase; margin-bottom:10px;">MARK AGAINST THE SCHEME — tick every point your answer honestly achieves</div>`}
+        ${!levels.length && (q.markScheme || []).length ? `
+        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+          ${q.markScheme.map((m, mi) => `
+            <label class="ms-item pem-tick-row" style="cursor:pointer;">
+              <input type="checkbox" class="pem-tick" data-pem-tick="${mi}">
+              <span><strong>[${esc(m.marks ?? 1)}m]</strong> ${esc(typeof m === 'object' ? m.text : m)}</span>
+            </label>
+          `).join('')}
+        </div>` : ''}
         <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
           ${levels.map(lvl => `
             <div class="level-card pem-card" data-pem-level="${lvl.level}" tabindex="0" role="button" style="cursor:pointer;">
@@ -56,6 +67,11 @@ export function renderEssayMarkingStage({ questions, answers, ak, onDone, mountI
               </div>
             </div>
           `).join('')}
+        </div>
+
+        <div class="pem-card pem-zero" data-pem-level="0" tabindex="0" role="button" style="cursor:pointer; margin-bottom:16px; border:1px dashed var(--border); border-radius:8px; padding:10px 14px;">
+          <strong style="font-size:13.5px;">No creditable response — 0 marks</strong>
+          <div style="font-size:12px; color:var(--ink-secondary); margin-top:3px;">Choose this if the answer is blank, off-topic, or achieves nothing the scheme rewards. Honest zeros are how marking really works.</div>
         </div>
 
         ${(q.indicativeContent || []).length ? `
@@ -90,20 +106,51 @@ export function renderEssayMarkingStage({ questions, answers, ak, onDone, mountI
       const activate = () => {
         document.querySelectorAll('.pem-card').forEach(c => {
           c.classList.remove('selected');
-          c.querySelector('.pem-slider-row').style.display = 'none';
+          const r = c.querySelector('.pem-slider-row');
+          if (r) r.style.display = 'none';
         });
         card.classList.add('selected');
         const lvl = +card.dataset.pemLevel;
         chosen = lvl;
         const row = card.querySelector('.pem-slider-row');
-        row.style.display = 'flex';
-        const slider = row.querySelector('.pem-slider');
-        slider.oninput = update;
-        update();
+        if (lvl === 0) {
+          ans.score = 0;
+          ans.selectedLevel = 0;
+          ans.revealed = true;
+          status.textContent = 'Recorded as zero — no creditable content';
+          confirmBtn.disabled = false;
+          return;
+        }
+        if (row) {
+          row.style.display = 'flex';
+          const slider = row.querySelector('.pem-slider');
+          slider.oninput = update;
+          update();
+        }
       };
       card.onclick = activate;
       card.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) activate(); } };
     });
+
+    // point-tick fallback (author-studio essays): score = sum of ticked points, capped
+    const ticks = document.querySelectorAll('.pem-tick');
+    if (ticks.length) {
+      const retally = () => {
+        let sum = 0;
+        ticks.forEach(t => {
+          if (t.checked) {
+            const m = (q.markScheme || [])[+t.dataset.pemTick];
+            sum += +(m && typeof m === 'object' ? m.marks : 1) || 1;
+          }
+        });
+        ans.score = Math.min(sum, +q.marks || sum);
+        ans.revealed = true;
+        status.textContent = `${ans.score} / ${q.marks} marks from ticked points`;
+        confirmBtn.disabled = false;
+      };
+      ticks.forEach(t => { t.onchange = retally; });
+      // zero-card also valid in fallback mode
+    }
 
     confirmBtn.onclick = () => { idx++; renderOne(); };
   };
