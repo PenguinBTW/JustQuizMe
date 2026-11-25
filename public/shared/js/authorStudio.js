@@ -127,7 +127,12 @@ export function readForm(root, q) {
     root.querySelectorAll('.af-ms-marks').forEach(el => {
       if (!q.markScheme[+el.dataset.i]) return;
       let v = +el.value || 1;
-      if (root.dataset && root.dataset.oneMarkPerPoint === '1') v = 1;
+      if (root.dataset && root.dataset.oneMarkPerPoint === '1') {
+        // the form offers no per-point mark input in this portal — preserve
+        // whatever the question already carries rather than crushing loaded
+        // multi-mark points to 1 (which then read as phantom unsaved edits)
+        v = (q.markScheme[+el.dataset.i] && Number.isFinite(+q.markScheme[+el.dataset.i].marks)) ? +q.markScheme[+el.dataset.i].marks : 1;
+      }
       q.markScheme[+el.dataset.i].marks = v;
     });
     root.querySelectorAll('.af-ms-text').forEach(el => { if (q.markScheme[+el.dataset.i]) q.markScheme[+el.dataset.i].text = el.value; });
@@ -150,13 +155,19 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
   // restore the working draft — leaving the Author tab must not discard work
   try {
     const draft = JSON.parse(localStorage.getItem(draftKey) || 'null');
-    if (draft && draft.bank && Array.isArray(draft.bank.questions) && draft.bank.questions.length) {
+    if (draft && draft.bank && Array.isArray(draft.bank.questions)) {
       bank = draft.bank;
       editFile = draft.editFile || null;
-      // the half-finished question in the form is work too — restore it
-      if (draft.q && typeof draft.q === 'object' && draft.q.type) q = draft.q;
+      // the half-finished question in the form is work too — restore it,
+      // unless it is already in the bank unchanged (reopening it would make
+      // the next Add replace the entry instead of appending new work)
+      if (draft.q && typeof draft.q === 'object' && draft.q.type) {
+        const banked = bank.questions.find(x => x.id === draft.q.id);
+        if (!banked || JSON.stringify(banked) !== JSON.stringify(draft.q)) q = draft.q;
+      }
     }
   } catch {}
+  let persistTimer = null;
   const persistDraft = () => {
     try {
       // capture the live form state before stashing — leaving the tab must not
@@ -166,6 +177,13 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       localStorage.setItem(draftKey, JSON.stringify({ bank, editFile, q }));
     } catch {}
   };
+
+  // form edits persist continuously (lightly debounced) — a half-written first
+  // question must survive a tab switch even before anything reaches the bank
+  host.addEventListener('input', () => {
+    clearTimeout(persistTimer);
+    persistTimer = setTimeout(persistDraft, 400);
+  });
 
   const render = () => {
     const errs = validateQuestion(q);
