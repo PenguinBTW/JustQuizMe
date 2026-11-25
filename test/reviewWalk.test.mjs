@@ -29,3 +29,20 @@ test('missing answers render unattempted without crashing', () => {
   const html = reviewWalkHtml([q], {});
   assert.match(html, /unattempted/);
 });
+
+test('partly-filled trace table keeps row positions (blank rows preserved)', () => {
+  const q = { id: 't1', type: 'trace-table', prompt: 'trace', markScheme: [{ text: 'rows', marks: 2 }] };
+  const rows = [['', '', ''], ['x', '5', 'y']];
+  const h = reviewWalkHtml([q], { t1: { rows } });
+  const m = h.match(/YOUR ANSWER<\/span><div[^>]*>([\s\S]*?)<\/div>/);
+  const body = m ? m[1] : '';
+  // first row must be present as a blank line before the filled row — positions align with grading
+  assert.ok(body.startsWith('\n') || body.includes(' | \n') || body.indexOf('x | 5 | y') > 0, 'blank first row preserved before filled second row');
+  assert.ok(body.includes('x | 5 | y'), 'filled row content present');
+});
+
+test('fully cleared trace table renders as unattempted', () => {
+  const q = { id: 't2', type: 'trace-table', prompt: 'trace', markScheme: [] };
+  const h = reviewWalkHtml([q], { t2: { rows: [['', '', '']] } });
+  assert.ok(h.includes('unattempted'), 'cleared table is unattempted');
+});
