@@ -337,8 +337,11 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         // the author's own answer. Dropped honestly here; the editable
         // percentage tolerance takes over.
         for (const qq of bank.questions) {
+          // only genuine min/max bands invalidate this way — percent/absolute
+          // forms stay valid regardless of the answer and must never be dropped
           if (qq && qq.type === 'calculation' && qq.answer != null
               && qq.tolerance && typeof qq.tolerance === 'object'
+              && isFinite(qq.tolerance.min) && isFinite(qq.tolerance.max)
               && !(qq.answer >= qq.tolerance.min && qq.answer <= qq.tolerance.max)) {
             delete qq.tolerance;
           }
