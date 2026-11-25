@@ -2,14 +2,24 @@
 // Pure date/ordering logic, zero deps. The plan is a PROJECTION from current
 // mastery, not a contract — it is regenerated, never edited.
 
+// parseDay: date-only strings ('YYYY-MM-DD') are LOCAL calendar dates, not UTC
+// instants — new Date('2026-06-15') parses as UTC midnight, which west of UTC
+// is the previous local evening, shifting every plan a day early.
+export function parseDay(d) {
+  if (d instanceof Date) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const m = typeof d === 'string' && /^(\d{4})-(\d{2})-(\d{2})/.exec(d);
+  if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+  const dt = new Date(d);
+  return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+}
+
 export function dayKey(d) {
-  const dt = d instanceof Date ? d : new Date(d);
+  const dt = parseDay(d);
   return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
 }
 
 export function daysBetween(a, b) {
-  const da = new Date(dayKey(a)), db = new Date(dayKey(b));
-  return Math.round((db - da) / 86400000);
+  return Math.round((parseDay(dayKey(b)) - parseDay(dayKey(a))) / 86400000);
 }
 
 // weight per topic: weaker mastery → more sessions. Never zero — even strong
