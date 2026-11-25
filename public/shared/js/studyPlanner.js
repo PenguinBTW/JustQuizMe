@@ -7,7 +7,10 @@
 // is the previous local evening, shifting every plan a day early.
 export function parseDay(d) {
   if (d instanceof Date) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  const m = typeof d === 'string' && /^(\d{4})-(\d{2})-(\d{2})/.exec(d);
+  // exact date-only strings are calendar dates; anything longer (an ISO
+  // timestamp) must convert through Date so the LOCAL day is what counts —
+  // a score written at 23:30 UTC belongs to the day the student experienced
+  const m = typeof d === 'string' && /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
   if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
   const dt = new Date(d);
   return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
