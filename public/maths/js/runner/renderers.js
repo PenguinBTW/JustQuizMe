@@ -242,7 +242,7 @@ export function wireProof(q) {
       a.proofText = txt.value;
       if (S.quiz?.exam) {
         a.locked = true;
-        a.score = Math.min((a.checks || []).reduce((sum, t, i) => sum + (t ? (parseInt((q.rubric || [])[i]?.mark) || 1) : 0), 0), q.marks);
+        a.score = Math.min((a.checks || []).reduce((sum, t, i) => sum + (t ? (parseFloat((q.rubric || [])[i]?.mark) || 1) : 0), 0), q.marks);
       }
     };
   }
@@ -254,7 +254,7 @@ export function wireProof(q) {
       a.checks[+c.dataset.proofCheck] = c.checked;
       if (S.quiz?.exam) {
         a.locked = true;
-        a.score = Math.min(a.checks.reduce((sum, t, i) => sum + (t ? (parseInt((q.rubric || [])[i]?.mark) || 1) : 0), 0), q.marks);
+        a.score = Math.min(a.checks.reduce((sum, t, i) => sum + (t ? (parseFloat((q.rubric || [])[i]?.mark) || 1) : 0), 0), q.marks);
       }
       renderQ();
     };
@@ -265,7 +265,7 @@ export function wireProof(q) {
     lockBtn.onclick = () => {
       const a = (S.answers[k] ||= { checks: [] });
       a.locked = true;
-      a.score = Math.min((a.checks || []).reduce((sum, t, i) => sum + (t ? (parseInt((q.rubric || [])[i]?.mark) || 1) : 0), 0), q.marks);
+      a.score = Math.min((a.checks || []).reduce((sum, t, i) => sum + (t ? (parseFloat((q.rubric || [])[i]?.mark) || 1) : 0), 0), q.marks);
       renderQ();
     };
   }
