@@ -40,8 +40,8 @@ export async function finishQuiz(auto = false){
   if (S.quiz && S.quiz.timeLimitMinutes) S.elapsed = Math.min(S.elapsed, Math.round(S.quiz.timeLimitMinutes * 60));
   for (const q of S.quiz.questions){
     const k = ak(q), a = S.answers[k];
-    if (q.type === 'written' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, score: Math.min(n, q.marks) }; }
-    else if (q.type === 'self-marked' && !(a?.locked)){ const n = ((a?.ticks) || []).filter(Boolean).length; S.answers[k] = { ...(a || {}), locked: true, revealed: true, score: Math.min(n, q.marks) }; }
+    if (q.type === 'written' && !(a?.locked)){ const n = ((a?.ticks) || []).reduce((sum, t, i) => sum + (t ? (+((q.markScheme || [])[i] || {}).marks || 1) : 0), 0); S.answers[k] = { ...(a || {}), locked: true, score: Math.min(n, q.marks) }; }
+    else if (q.type === 'self-marked' && !(a?.locked)){ const n = ((a?.ticks) || []).reduce((sum, t, i) => sum + (t ? (+((q.markScheme || [])[i] || {}).marks || 1) : 0), 0); S.answers[k] = { ...(a || {}), locked: true, revealed: true, score: Math.min(n, q.marks) }; }
     else if (q.type === 'multiple-choice' && !(a?.locked)){ S.answers[k] = { locked: true, picked: null, correct: false, score: 0 }; }
     else if (q.type === 'calculation' && !(a?.locked)){
       if (a?.helpedDone){ S.answers[k].score = 0; }
