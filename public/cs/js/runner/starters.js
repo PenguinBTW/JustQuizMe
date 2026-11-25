@@ -1,5 +1,6 @@
 // Computer Science Quiz Run Starters
 import { S, MIXED_UUID } from '../state.js';
+import { api } from '../api.js';
 import { orderTypeShuffled } from '../utils.js';
 import { mixedPool, pickForMode } from '../taxonomy.js';
 import { beginRun } from './assessment.js';
@@ -51,13 +52,19 @@ export function startSubQuiz(topic, sub) {
 // paper per component (Comp 01 / Comp 02) from that component's full topic
 // pool, then runs them in sequence as exams. Series state lives in S.series
 // and is threaded through the save blob for reload-safety.
-export function startMockSeries({ breakMinutes = 10 } = {}) {
+export async function startMockSeries({ breakMinutes = 10 } = {}) {
   const data = S._topicData || [];
   const papers = [];
   const sets = [];
+  const usedKeys = new Set();
   for (const comp of ['01', '02']) {
     const compTopics = data.filter(t => t.component === comp);
-    const pool = compTopics.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
+    const rawPool = compTopics.flatMap(t => (t.subs || []).flatMap(g => (g.questions || []).map(q => ({ ...q, _topic: q.topic || t.topic, _sub: g.name }))));
+    // multi-tagged questions appear once per topic — dedupe within the
+    // component, then exclude anything an earlier paper already claimed
+    const seen = new Set(usedKeys);
+    const pool = rawPool.filter(q => { const k = q._key || (q._srcFile ? q._srcFile + ':' + q.id : null) || q.id || q.uuid || q.prompt; if (seen.has(k)) return false; seen.add(k); return true; });
+    pool.forEach(q => usedKeys.add(q._key || (q._srcFile ? q._srcFile + ':' + q.id : null) || q.id || q.uuid || q.prompt));
     if (!pool.length) continue;
     const poolMarks = pool.reduce((x, q) => x + (+q.marks || 0), 0);
     const target = Math.max(10, Math.min(70, poolMarks));
@@ -96,19 +103,25 @@ export function startMockSeries({ breakMinutes = 10 } = {}) {
   // a series checkpoint shares the single save slot with ordinary quizzes —
   // preserve any in-progress save inside the series so it can be restored
   // when the series completes; warn before displacing it.
-  const priorSeries = S.save && S.save.seriesContinuation ? (S.save.series || null) : null;
+  // the server is the source of truth for saves — S.save can lag behind
+  // auto-saved progress, and capturing stale answers here would restore them
+  // over newer work when the series ends
+  let freshSave = S.save;
+  try { const remote = await api('/api/save'); freshSave = remote || null; } catch {}
+  const curSave = freshSave || S.save;
+  const priorSeries = curSave && curSave.seriesContinuation ? (curSave.series || null) : null;
   const inherited = priorSeries && priorSeries.displacedSave ? priorSeries.displacedSave : null;
-  if (S.save && !S.save.seriesContinuation) {
-    const t = (S.save && S.save.title) || 'untitled session';
+  if (curSave && !curSave.seriesContinuation) {
+    const t = (curSave && curSave.title) || 'untitled session';
     // a displaced TIMED exam's deadline honestly keeps running while the series
     // is sat — the student must know before they trade their remaining time
-    const clockNote = (S.save.exam && S.save.timeLimitMinutes) ? ' Its exam clock keeps running while you sit the series.' : '';
+    const clockNote = (curSave.exam && curSave.timeLimitMinutes) ? ' Its exam clock keeps running while you sit the series.' : '';
     if (!confirm('Starting this mock series will pause your saved session "' + t + '" — it is restored automatically when the series finishes.' + clockNote + ' Continue?')) return;
   }
   const series = createSeries(papers, { breakMinutes });
   // a replacement series inherits the displaced quiz from the checkpoint it
   // replaces — otherwise the paused session is lost without warning
-  series.displacedSave = (S.save && !S.save.seriesContinuation) ? JSON.parse(JSON.stringify(S.save)) : (inherited ? JSON.parse(JSON.stringify(inherited)) : null);
+  series.displacedSave = (curSave && !curSave.seriesContinuation) ? JSON.parse(JSON.stringify(curSave)) : (inherited ? JSON.parse(JSON.stringify(inherited)) : null);
   series._sets = sets; // in-memory question sets; serialized into saves
   S.series = series;
   beginSeriesPaper();
