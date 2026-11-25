@@ -284,9 +284,11 @@ export function stepBlocks(q, a, enabled){
         <div class="mono" style="font-size:11.5px; color:${st.correct ? 'var(--green)' : 'var(--ink-secondary)'};">${st.correct ? '✓ ' : ''}Step ${i + 1} · ${esc(s.title)}</div>
         <div class="step-equation">Use <code>${esc(s.equation || '')}</code>${s.hint ? ` - ${esc(s.hint)}` : ''}${s.unit ? ` (${esc(s.unit)})` : ''}</div>
         ${st.failed && s.equationReveal ? `<div class="equation-reveal">💡 ${esc(s.equationReveal)}</div>` : ''}
-        ${st.correct ? '' : `<div class="step-input-row"><input data-step="${i}" placeholder="…" value="${esc(st.value ?? '')}" ${on ? '' : 'disabled'}/> <span class="mono" style="font-size:12px; color:var(--ink-muted);">${esc(s.unit || '')}</span></div>`}
+        ${st.correct || s.answer == null ? '' : `<div class="step-input-row"><input data-step="${i}" placeholder="…" value="${esc(st.value ?? '')}" ${on ? '' : 'disabled'}/> <span class="mono" style="font-size:12px; color:var(--ink-muted);">${esc(s.unit || '')}</span></div>`}
       </div>
-      ${st.correct ? `<span class="pill green">Verified</span>` : `<button class="btn" data-check-step="${i}" ${on ? '' : 'disabled'}>Check</button>`}
+      ${st.correct
+        ? (s.answer == null ? `<span class="pill green">Done</span>` : `<span class="pill green">Verified</span>`)
+        : `<button class="btn" data-check-step="${i}" ${on ? '' : 'disabled'}>${s.answer == null ? 'Mark done' : 'Check'}</button>`}
     </div>`;
   }).join('');
 }
