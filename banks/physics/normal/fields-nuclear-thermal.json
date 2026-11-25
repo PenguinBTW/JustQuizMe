@@ -1,0 +1,217 @@
+{
+  "uuid": "b52cc003-0003-4000-8000-000000000003",
+  "version": 1,
+  "title": "Fields, Nuclear & Thermal Physics",
+  "subject": "physics",
+  "specCode": "7408/2",
+  "topics": ["Fields", "Nuclear physics", "Thermal physics", "Further mechanics"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Fields",
+      "subtopic": "Gravitational fields",
+      "prompt": "How does the gravitational field strength at distance r from a point mass vary with r?",
+      "options": ["Proportional to r", "Proportional to 1/r", "Proportional to 1/r²", "Constant"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — inverse-square law: g = GM/r².",
+      "feedbackWrong": "Gravity follows an inverse-square law: g = GM/r² — doubling r quarters the field strength.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Confuses field strength with potential, which falls as 1/r.",
+          "correction": "Gravitational POTENTIAL varies as 1/r; field STRENGTH is its gradient and falls as 1/r²."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Fields",
+      "subtopic": "Electric fields",
+      "prompt": "Calculate the force in newtons on a charge of 2.0 μC placed in a uniform electric field of strength 5000 N/C. Give your answer in standard form ×10⁻² N (enter the mantissa×100, i.e. the value in units of 10⁻² N).",
+      "answer": 1.0,
+      "tolerance": { "min": 0.95, "max": 1.05 },
+      "unit": "×10⁻² N",
+      "stepChecks": [
+        { "label": "$F = EQ$", "marks": 1 },
+        { "label": "$F = 5000 \\times 2.0 \\times 10^{-6}$", "marks": 1 },
+        { "label": "$F = 1.0 \\times 10^{-2}$ N", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Nuclear physics",
+      "subtopic": "Radioactive decay",
+      "prompt": "In alpha decay, the nucleus emits a particle consisting of:",
+      "options": [
+        "2 protons and 2 neutrons",
+        "An electron from the nucleus",
+        "A single proton",
+        "Pure electromagnetic energy"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — an alpha particle is a helium nucleus: 2 protons + 2 neutrons.",
+      "feedbackWrong": "Alpha decay emits a helium nucleus — 2 protons and 2 neutrons. Beta minus decay emits an electron; gamma emits electromagnetic energy.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Confuses alpha with beta-minus decay.",
+          "correction": "Beta-minus is the electron emission (neutron → proton + electron); alpha is the heavy helium-nucleus emission."
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Nuclear physics",
+      "subtopic": "Half-life",
+      "prompt": "A radioactive isotope has a half-life of 5 days. Starting with 800 g, what mass remains undecayed after 15 days, in grams?",
+      "answer": 100,
+      "tolerance": { "min": 99, "max": 101 },
+      "unit": "g",
+      "stepChecks": [
+        { "label": "15 days = 3 half-lives", "marks": 1 },
+        { "label": "$800 \\times (\\frac{1}{2})^3$", "marks": 1 },
+        { "label": "$= 100$ g", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Nuclear physics",
+      "subtopic": "Fission and fusion",
+      "prompt": "Explain why both nuclear fission and nuclear fusion can release energy, using the concept of binding energy per nucleon.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Binding energy per nucleon peaks near iron-56 — nuclei near iron are the most tightly bound.",
+          "highlights": ["iron", "peak", "most tightly bound"]
+        },
+        {
+          "marks": 1,
+          "text": "Fission splits a heavy nucleus into lighter fragments that are closer to the peak — products are MORE tightly bound.",
+          "highlights": ["fission", "closer to the peak"]
+        },
+        {
+          "marks": 1,
+          "text": "Fusion joins light nuclei into a heavier product also closer to the peak — again more tightly bound.",
+          "highlights": ["fusion", "light nuclei"]
+        },
+        {
+          "marks": 1,
+          "text": "In both cases the increase in binding energy means mass is converted to energy via $E = mc^2$ and released.",
+          "highlights": ["mass", "E = mc²", "released"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "breaking bonds releases energy",
+          "misconception": "Applies chemical-bond intuition: claims breaking the nucleus apart directly releases energy.",
+          "correction": "Splitting a nucleus COSTS energy; the release comes because the products are more tightly bound overall — the binding energy budget is what matters."
+        }
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Thermal physics",
+      "subtopic": "Specific heat capacity",
+      "prompt": "Calculate the energy in kJ needed to raise the temperature of 2 kg of water by 15°C. Specific heat capacity of water = 4200 J/(kg·°C).",
+      "answer": 126,
+      "tolerance": { "min": 125, "max": 127 },
+      "unit": "kJ",
+      "stepChecks": [
+        { "label": "$E = mc\\Delta\\theta$", "marks": 1 },
+        { "label": "$E = 2 \\times 4200 \\times 15 = 126000$ J", "marks": 1 },
+        { "label": "$= 126$ kJ", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 3,
+      "topic": "Thermal physics",
+      "subtopic": "Ideal gases",
+      "prompt": "State the assumptions of the kinetic theory model of an ideal gas — give any three.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Molecules are point masses — their own volume is negligible compared with the gas volume.",
+          "highlights": ["negligible volume", "point"]
+        },
+        {
+          "marks": 1,
+          "text": "No intermolecular forces act except during collisions.",
+          "highlights": ["no intermolecular forces"]
+        },
+        {
+          "marks": 1,
+          "text": "Collisions (with each other and the walls) are perfectly elastic — no kinetic energy is lost.",
+          "highlights": ["perfectly elastic"]
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Further mechanics",
+      "subtopic": "Circular motion",
+      "prompt": "A satellite orbits Earth in a circular orbit at constant speed. Which statement is correct?",
+      "options": [
+        "Its velocity is constant because its speed is constant",
+        "It is not accelerating because speed is constant",
+        "It accelerates towards the centre of the Earth",
+        "No force acts on it"
+      ],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — circular motion means continuous centripetal acceleration towards the centre.",
+      "feedbackWrong": "Speed constant ≠ velocity constant: direction changes continuously, so the satellite accelerates towards the centre (centripetal acceleration) under gravity.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Believes constant speed means zero acceleration.",
+          "correction": "Acceleration is the rate of change of VELOCITY — a vector. Changing direction at constant speed is still acceleration."
+        },
+        {
+          "optionIndex": 3,
+          "misconception": "Thinks objects in orbit are weightless in the sense of zero gravity.",
+          "correction": "Gravity is very much present — it IS the centripetal force keeping the satellite in orbit. 'Weightlessness' is free-fall."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Fields",
+      "subtopic": "Comparing fields",
+      "prompt": "State two similarities and one difference between gravitational and electric fields.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Similarities (any two): both follow inverse-square force laws; both are radial fields for point sources; both have potential defined as work done per unit mass/charge; both act at a distance without contact.",
+          "highlights": ["inverse-square", "radial"]
+        },
+        {
+          "marks": 1,
+          "text": "(Second similarity credited together with the first.)",
+          "highlights": []
+        },
+        {
+          "marks": 1,
+          "text": "Difference: gravity is always ATTRACTIVE, while electric forces can attract or repel because charge comes in two signs.",
+          "highlights": ["always attractive", "repel"]
+        }
+      ]
+    }
+  ]
+}

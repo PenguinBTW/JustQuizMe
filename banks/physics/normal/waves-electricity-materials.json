@@ -1,0 +1,211 @@
+{
+  "uuid": "b52cc002-0002-4000-8000-000000000002",
+  "version": 1,
+  "title": "Waves, Electricity & Materials",
+  "subject": "physics",
+  "specCode": "7408/2",
+  "topics": ["Waves", "Electricity", "Materials"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Waves",
+      "subtopic": "Wave properties",
+      "prompt": "Which quantity of a wave is unchanged when it passes from air into glass?",
+      "options": ["Speed", "Wavelength", "Frequency", "Direction"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — frequency is fixed by the source; speed and wavelength change across the boundary.",
+      "feedbackWrong": "Frequency is determined by the source and never changes at a boundary. Speed drops in glass, and since v = fλ, the wavelength must drop too.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Assumes wavelength is a fixed property of the wave.",
+          "correction": "λ = v/f — when speed changes at constant frequency, wavelength must change proportionally."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Waves",
+      "subtopic": "Wave equation",
+      "prompt": "A wave has frequency 50 Hz and wavelength 6 m. Calculate its speed in m/s.",
+      "answer": 300,
+      "tolerance": { "min": 299, "max": 301 },
+      "unit": "m/s",
+      "stepChecks": [
+        { "label": "$v = f\\lambda$", "marks": 1 },
+        { "label": "$v = 50 \\times 6 = 300$ m/s", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Waves",
+      "subtopic": "Interference",
+      "prompt": "In a double-slit experiment, describe what determines the fringe spacing of the interference pattern, and state the effect of using light of longer wavelength.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Fringe spacing $w = \\frac{\\lambda D}{s}$ — wavelength, slit-screen distance, and slit separation are the controlling variables.",
+          "highlights": ["λD/s", "wavelength", "slit separation"]
+        },
+        {
+          "marks": 1,
+          "text": "Spacing is directly proportional to wavelength.",
+          "highlights": ["proportional"]
+        },
+        {
+          "marks": 1,
+          "text": "Longer wavelength therefore gives WIDER fringe spacing — fringes spread further apart.",
+          "highlights": ["wider", "further apart"]
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Electricity",
+      "subtopic": "Ohm's law",
+      "prompt": "A resistor obeys Ohm's law. Which statement is correct?",
+      "options": [
+        "Current is proportional to voltage at constant temperature",
+        "Resistance increases with voltage",
+        "Current is inversely proportional to voltage",
+        "Resistance is zero at constant temperature"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — Ohm's law: I ∝ V provided temperature (and other physical conditions) stay constant.",
+      "feedbackWrong": "Ohm's law states current is directly proportional to potential difference, provided temperature remains constant — the I–V graph is a straight line through the origin.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Believes resistance must change as voltage changes.",
+          "correction": "For an ohmic conductor resistance is CONSTANT — that's exactly what the straight-line I–V graph means."
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Electricity",
+      "subtopic": "Circuits",
+      "prompt": "Two resistors of 6 Ω and 12 Ω are connected in parallel across a 12 V supply. Calculate the total current drawn from the supply in amperes.",
+      "answer": 3,
+      "tolerance": { "min": 2.95, "max": 3.05 },
+      "unit": "A",
+      "stepChecks": [
+        { "label": "Parallel: full 12 V across EACH resistor", "marks": 1 },
+        { "label": "$I_1 = 12/6 = 2$ A; $I_2 = 12/12 = 1$ A", "marks": 1 },
+        { "label": "Total $= 2 + 1 = 3$ A", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Electricity",
+      "subtopic": "EMF and internal resistance",
+      "prompt": "Explain why the terminal potential difference of a real battery decreases when the current it supplies increases.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "A real battery has internal resistance r in series with its emf.",
+          "highlights": ["internal resistance"]
+        },
+        {
+          "marks": 1,
+          "text": "Current flowing through the battery dissipates a 'lost volts' $Ir$ across that internal resistance.",
+          "highlights": ["lost volts", "Ir"]
+        },
+        {
+          "marks": 1,
+          "text": "$V = \\varepsilon - Ir$ — terminal p.d. is the emf minus the lost volts.",
+          "highlights": ["V = ε − Ir"]
+        },
+        {
+          "marks": 1,
+          "text": "As I increases, Ir increases, so the terminal p.d. falls — energy is wasted as heat inside the battery itself.",
+          "highlights": ["falls", "heat"]
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Materials",
+      "subtopic": "Stress and strain",
+      "prompt": "The Young modulus of a material is defined as:",
+      "options": [
+        "stress × strain",
+        "stress ÷ strain",
+        "strain ÷ stress",
+        "force ÷ extension"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — Young modulus = stress/strain, in the linear region.",
+      "feedbackWrong": "Young modulus = tensile stress ÷ tensile strain (Pa). Force ÷ extension is the spring stiffness k, not a material property.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Confuses the Young modulus (material property) with stiffness (object property).",
+          "correction": "F/e depends on the sample's dimensions; stress/strain is intrinsic to the material itself."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Materials",
+      "subtopic": "Stress-strain curves",
+      "prompt": "Sketch-describe the stress-strain curve for a ductile metal such as copper: identify the limit of proportionality, the elastic region, and what happens beyond the elastic limit.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Initially linear (stress ∝ strain) up to the limit of proportionality — Hooke's law region.",
+          "highlights": ["linear", "proportionality", "Hooke"]
+        },
+        {
+          "marks": 1,
+          "text": "In the elastic region the material returns to its original length when the load is removed.",
+          "highlights": ["elastic", "returns", "original"]
+        },
+        {
+          "marks": 1,
+          "text": "Beyond the elastic limit the metal deforms PLASTICALLY — permanent deformation remains after unloading, and ductile metals show a large plastic region before fracture.",
+          "highlights": ["plastically", "permanent"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "elastic limit and limit of proportionality are the same",
+          "misconception": "Treats the limit of proportionality and elastic limit as one point.",
+          "correction": "They are distinct: proportionality ends where the straight line ends; elasticity ends slightly later where permanent deformation begins."
+        }
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Waves",
+      "subtopic": "Photoelectric effect",
+      "prompt": "Light of frequency 8.0 × 10¹⁴ Hz strikes a metal with work function 2.0 eV. Calculate the photon energy in eV, using h = 6.63 × 10⁻³⁴ J s and e = 1.60 × 10⁻¹⁹ C.",
+      "answer": 3.31,
+      "tolerance": { "min": 3.2, "max": 3.4 },
+      "unit": "eV",
+      "stepChecks": [
+        { "label": "$E = hf = 6.63 \\times 10^{-34} \\times 8.0 \\times 10^{14}$", "marks": 1 },
+        { "label": "$E = 5.30 \\times 10^{-19}$ J", "marks": 1 },
+        { "label": "Convert: $/1.60 \\times 10^{-19} \\approx 3.31$ eV", "marks": 1 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "uuid": "c51aa002-0002-4000-8000-000000000002",
+  "version": 1,
+  "title": "Data Types, Structures & Exchanging Data",
+  "subject": "cs",
+  "specCode": "H446/01",
+  "topics": ["Data Types & Structures", "Exchanging Data", "Legal, Moral & Cultural"],
+  "questions": [
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Data Types & Structures",
+      "subtopic": "Number systems",
+      "prompt": "Convert the binary number `11010110` to denary.",
+      "answer": 214,
+      "tolerance": { "min": 213, "max": 215 },
+      "stepChecks": [
+        { "label": "Place values: 128 + 64 + 0 + 16 + 0 + 4 + 2 + 0", "marks": 1 },
+        { "label": "Sum = 214", "marks": 1 }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Data Types & Structures",
+      "subtopic": "Hexadecimal",
+      "prompt": "Convert the denary number 250 to hexadecimal. Enter the numeric value as if converting back — instead: enter the denary value of the hex digits `FA` to confirm `FA` is correct (i.e. what is `FA` in denary?).",
+      "answer": 250,
+      "tolerance": { "min": 249, "max": 251 },
+      "stepChecks": [
+        { "label": "F = 15, so 15×16 = 240", "marks": 1 },
+        { "label": "A = 10, so 240 + 10 = 250", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Data Types & Structures",
+      "subtopic": "Two's complement",
+      "prompt": "In 8-bit two's complement, what denary value does `11110011` represent?",
+      "options": ["-13", "-115", "243", "13"],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — the sign bit is set: invert and add one (or use -128 + 115) to get -13.",
+      "feedbackWrong": "`11110011` is negative in two's complement: -128 + 64 + 32 + 16 + 2 + 1 = -13.",
+      "mistakes": [
+        {
+          "optionIndex": 2,
+          "misconception": "Reads the bits as an unsigned integer.",
+          "correction": "The most significant bit is a sign bit in two's complement; `11110011` unsigned is 243 but signed it is -13."
+        },
+        {
+          "optionIndex": 1,
+          "misconception": "Uses sign-and-magnitude interpretation (treats the MSB as a simple minus flag).",
+          "correction": "Two's complement negatives are formed by inverting all bits and adding 1, not by flagging the sign bit."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Data Types & Structures",
+      "subtopic": "Floating point",
+      "prompt": "In floating-point representation with a fixed total number of bits, increasing the number of mantissa bits (at the expense of exponent bits) has what effect?",
+      "options": [
+        "Increases precision but reduces the range of representable numbers",
+        "Increases both precision and range",
+        "Decreases precision but increases range",
+        "Has no effect because the total bits are constant"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — mantissa bits control precision, exponent bits control range.",
+      "feedbackWrong": "More mantissa = more precision; fewer exponent bits = smaller range.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Believes precision and range are independent of the bit allocation trade-off.",
+          "correction": "With fixed total bits, mantissa and exponent bits trade off directly — precision and range cannot both increase."
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Data Types & Structures",
+      "subtopic": "Arrays vs linked lists",
+      "prompt": "Compare a static array with a linked list for storing a collection of records, giving one advantage of each.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Array advantage: direct/random access to any element by index in constant time / cache-friendly contiguous storage.",
+          "highlights": ["direct", "index", "constant time"]
+        },
+        {
+          "marks": 1,
+          "text": "Linked list advantage: efficient insertion/deletion without shifting other elements / dynamic size not fixed at creation.",
+          "highlights": ["insertion", "deletion", "dynamic"]
+        },
+        {
+          "marks": 1,
+          "text": "Contrast made explicit: arrays have fixed size set at declaration and waste/overflow space; linked lists use extra memory for pointers per node.",
+          "highlights": ["fixed size", "pointers", "extra memory"]
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Data Types & Structures",
+      "subtopic": "Stacks & queues",
+      "prompt": "A print server uses a queue to manage jobs, while the undo feature of a text editor uses a stack. Explain why each structure is appropriate.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "A queue is FIFO — the first job submitted is the first printed.",
+          "highlights": ["FIFO", "first"]
+        },
+        {
+          "marks": 1,
+          "text": "This is fair/matches the order of arrival for print jobs.",
+          "highlights": ["fair", "order of arrival"]
+        },
+        {
+          "marks": 1,
+          "text": "A stack is LIFO — the most recent action is popped first.",
+          "highlights": ["LIFO", "most recent"]
+        },
+        {
+          "marks": 1,
+          "text": "Undo must reverse actions in exactly the reverse order they were applied, which LIFO provides naturally.",
+          "highlights": ["reverse order", "undo"]
+        }
+      ]
+    },
+    {
+      "id": "tt1",
+      "type": "truth-table",
+      "marks": 3,
+      "topic": "Data Types & Structures",
+      "subtopic": "Boolean logic",
+      "prompt": "Complete the truth table for the expression $Q = (A \\land B) \\lor \\overline{A}$.",
+      "inputs": ["A", "B"],
+      "outputs": ["A AND B", "NOT A", "Q"],
+      "rows": [
+        { "inputs": [0, 0], "expected": [0, 1, 1] },
+        { "inputs": [0, 1], "expected": [0, 1, 1] },
+        { "inputs": [1, 0], "expected": [0, 0, 0] },
+        { "inputs": [1, 1], "expected": [1, 0, 1] }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 2,
+      "topic": "Exchanging Data",
+      "subtopic": "Compression",
+      "prompt": "Explain the difference between lossy and lossless compression, giving one situation where each is appropriate.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Lossless: no data is permanently removed — the original file can be perfectly reconstructed; appropriate for text/program files or medical images where every bit matters.",
+          "highlights": ["no data", "reconstructed"]
+        },
+        {
+          "marks": 1,
+          "text": "Lossy: some data is discarded permanently to achieve much smaller files; appropriate for streaming media/photos where human perception tolerates the loss.",
+          "highlights": ["discarded", "permanently", "streaming"]
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Exchanging Data",
+      "subtopic": "Encryption",
+      "prompt": "In asymmetric (public-key) encryption, which key does the sender use to encrypt a message for a recipient?",
+      "options": [
+        "The recipient's public key",
+        "The recipient's private key",
+        "The sender's private key",
+        "A shared secret key agreed in advance"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — anyone can encrypt with the public key; only the recipient's private key decrypts.",
+      "feedbackWrong": "Sender encrypts with the recipient's PUBLIC key; the recipient decrypts with their private key.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Thinks the sender must somehow access the recipient's private key.",
+          "correction": "Private keys are never shared; encryption uses the freely published public key."
+        },
+        {
+          "optionIndex": 3,
+          "misconception": "Confuses asymmetric with symmetric encryption.",
+          "correction": "A shared secret key describes symmetric encryption; asymmetric schemes use a mathematically linked public/private pair."
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "type": "written",
+      "marks": 3,
+      "topic": "Exchanging Data",
+      "subtopic": "Protocols",
+      "prompt": "Describe the role of a checksum in data transmission.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "A value calculated from the data block before transmission and sent with it.",
+          "highlights": ["calculated", "sent with"]
+        },
+        {
+          "marks": 1,
+          "text": "The receiver recalculates the checksum from the received data and compares it with the transmitted value.",
+          "highlights": ["recalculates", "compares"]
+        },
+        {
+          "marks": 1,
+          "text": "A mismatch indicates corruption in transit, triggering retransmission/rejection — it detects (but does not correct) errors.",
+          "highlights": ["corruption", "retransmission", "detects"]
+        }
+      ]
+    },
+    {
+      "id": "w5",
+      "type": "written",
+      "marks": 4,
+      "topic": "Legal, Moral & Cultural",
+      "subtopic": "Data protection",
+      "prompt": "A small company stores customer names, addresses and purchase histories. Outline four obligations the company has under UK data protection law (Data Protection Act 2018 / UK GDPR).",
+      "guidance": "Think about principles: lawful purpose, minimisation, accuracy, retention, security, subject rights.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Process data lawfully and fairly, for specified legitimate purposes — not reused incompatibly.",
+          "highlights": ["lawfully", "specified", "purposes"]
+        },
+        {
+          "marks": 1,
+          "text": "Collect only data that is adequate, relevant and limited to what is necessary (data minimisation), and keep it accurate and up to date.",
+          "highlights": ["minimisation", "accurate"]
+        },
+        {
+          "marks": 1,
+          "text": "Keep data no longer than necessary and protect it with appropriate security measures.",
+          "highlights": ["no longer than necessary", "security"]
+        },
+        {
+          "marks": 1,
+          "text": "Respect data subject rights — e.g. right of access to their data, right to rectification/erasure; register/pay the ICO fee as a controller.",
+          "highlights": ["access", "erasure", "ICO"]
+        }
+      ]
+    },
+    {
+      "id": "mcq4",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Legal, Moral & Cultural",
+      "subtopic": "Computer Misuse Act",
+      "prompt": "Under the Computer Misuse Act 1990, which of the following is an offence?",
+      "options": [
+        "Unauthorised access to computer material, even without any further criminal intent",
+        "Downloading any file from the internet",
+        "Writing software that could theoretically be misused",
+        "Using someone else's computer with their permission"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — unauthorised access itself is an offence, with stronger offences for intent to commit further offences or impair computers.",
+      "feedbackWrong": "The CMA criminalises unauthorised access itself, plus access with intent and acts impairing computers.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Misses that the offence requires access to be UNAUTHORISED.",
+          "correction": "Permission is the dividing line — authorised use is not an offence under the Act."
+        }
+      ]
+    }
+  ]
+}

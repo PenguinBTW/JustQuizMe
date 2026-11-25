@@ -1,0 +1,248 @@
+{
+  "uuid": "c51aa003-0003-4000-8000-000000000003",
+  "version": 1,
+  "title": "Computational Thinking, Programming & Algorithms",
+  "subject": "cs",
+  "specCode": "H446/02",
+  "topics": ["Computational Thinking", "Programming Techniques", "Algorithms & Complexity"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Algorithms & Complexity",
+      "subtopic": "Big-O",
+      "prompt": "What is the worst-case time complexity of binary search on a sorted array of n items?",
+      "options": ["O(n)", "O(log n)", "O(n log n)", "O(1)"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — each comparison halves the search space, so at most log₂n steps.",
+      "feedbackWrong": "Binary search halves the search space each step: O(log n).",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Confuses binary search with linear search, which inspects every element.",
+          "correction": "Binary search never scans linearly — it jumps to the midpoint and discards half each time."
+        },
+        {
+          "optionIndex": 3,
+          "misconception": "Believes direct midpoint access means constant time.",
+          "correction": "One midpoint probe is O(1), but the search repeats halving until found — log₂n probes in the worst case."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Algorithms & Complexity",
+      "subtopic": "Sorting",
+      "prompt": "Which sorting algorithm works by repeatedly dividing the list into smaller sublists around a pivot?",
+      "options": ["Bubble sort", "Insertion sort", "Quick sort", "Merge sort"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — quick sort partitions around a pivot recursively.",
+      "feedbackWrong": "Partitioning around a pivot is quick sort's defining step.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Confuses the two divide-and-conquer sorts — merge sort also divides.",
+          "correction": "Merge sort divides by halving and recombines by merging; only quick sort partitions around a pivot."
+        }
+      ]
+    },
+    {
+      "id": "tr1",
+      "type": "trace-table",
+      "marks": 4,
+      "topic": "Programming Techniques",
+      "subtopic": "Tracing",
+      "prompt": "Complete the trace table for this algorithm when `x = 12`.",
+      "codeSnippet": "x = 12\ncount = 0\nwhile x > 1\n  x = x / 2\n  count = count + 1\nendwhile\nprint(count)",
+      "columns": ["x", "count", "output"],
+      "initialRows": [["12", "0", "-"]],
+      "expectedRows": [
+        ["6", "1", "-"],
+        ["3", "2", "-"],
+        ["1.5", "3", "-"],
+        ["0.75", "4", "4"]
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Computational Thinking",
+      "subtopic": "Abstraction & decomposition",
+      "prompt": "A school wants a program to manage room bookings. Explain how decomposition and abstraction would each help in designing this program.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Decomposition: breaking the problem into smaller sub-problems/modules (e.g. login, search availability, make booking, cancel booking).",
+          "highlights": ["smaller", "sub-problems", "modules"]
+        },
+        {
+          "marks": 1,
+          "text": "Benefit: each module can be developed/tested independently, possibly by different team members, making the system easier to build and maintain.",
+          "highlights": ["independently", "tested", "maintain"]
+        },
+        {
+          "marks": 1,
+          "text": "Abstraction: hiding unnecessary detail and focusing on what is essential — e.g. a room is modelled by number/capacity/availability rather than its physical properties.",
+          "highlights": ["hiding", "detail", "essential"]
+        },
+        {
+          "marks": 1,
+          "text": "Benefit: simpler model that is easier to reason about; implementation details can change without affecting the interface.",
+          "highlights": ["simpler", "interface"]
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 3,
+      "topic": "Algorithms & Complexity",
+      "subtopic": "Binary vs linear search",
+      "prompt": "Explain why binary search requires the data to be sorted, and state one situation where linear search would be preferred despite being slower on average.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Binary search discards half the data based on a comparison with the midpoint — this reasoning is only valid if elements are ordered.",
+          "highlights": ["discards half", "midpoint", "ordered"]
+        },
+        {
+          "marks": 1,
+          "text": "If unsorted, elements larger than the target could be anywhere, so the wrong half may be discarded and the target missed.",
+          "highlights": ["unsorted", "wrong half", "missed"]
+        },
+        {
+          "marks": 1,
+          "text": "Linear preferred when: data is unsorted and sorting cost outweighs search cost / data set is very small / data is in a linked structure without random access.",
+          "highlights": ["unsorted", "small", "sorting cost"]
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Programming Techniques",
+      "subtopic": "Recursion",
+      "prompt": "What must every correct recursive algorithm include to guarantee it terminates?",
+      "options": [
+        "A base case that stops the recursion, reached by progressively smaller inputs",
+        "A loop counter incremented on each call",
+        "At least two recursive calls per invocation",
+        "Global variables to track depth"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — a base case plus convergence toward it prevents infinite recursion.",
+      "feedbackWrong": "Recursion terminates when a base case is reached; inputs must progress toward it.",
+      "mistakes": [
+        {
+          "optionIndex": 2,
+          "misconception": "Confuses recursion structure (e.g. tree recursion) with termination requirements.",
+          "correction": "The number of recursive calls affects branching, not termination — a single recursive call without a base case never stops."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 4,
+      "topic": "Algorithms & Complexity",
+      "subtopic": "Bubble sort",
+      "prompt": "Describe how the bubble sort algorithm orders the list [5, 2, 9, 1] ascending, and state one optimisation that detects an already-sorted list early.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Repeatedly steps through the list comparing adjacent pairs and swapping them if out of order — e.g. first pass: (5,2)→swap, (5,9) keep, (9,1)→swap giving [2,5,1,9].",
+          "highlights": ["adjacent", "swapping", "first pass"]
+        },
+        {
+          "marks": 1,
+          "text": "After each pass the largest unsorted element has 'bubbled' to its final position.",
+          "highlights": ["bubbled", "final position"]
+        },
+        {
+          "marks": 1,
+          "text": "Passes repeat until a complete pass makes no swaps; list becomes [1,2,5,9].",
+          "highlights": ["no swaps"]
+        },
+        {
+          "marks": 1,
+          "text": "Optimisation: track whether any swap occurred in a pass — if none, terminate early (or reduce the range each pass since the tail is sorted).",
+          "highlights": ["swap occurred", "terminate early"]
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "type": "written",
+      "marks": 3,
+      "topic": "Computational Thinking",
+      "subtopic": "Problem solving",
+      "prompt": "Define the terms 'abstraction', 'decomposition' and 'algorithmic thinking' as used in computational thinking.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Abstraction: removing/hiding unnecessary detail to focus on the essential features of a problem.",
+          "highlights": ["hiding", "essential"]
+        },
+        {
+          "marks": 1,
+          "text": "Decomposition: breaking a complex problem into smaller, more manageable sub-problems.",
+          "highlights": ["breaking", "smaller"]
+        },
+        {
+          "marks": 1,
+          "text": "Algorithmic thinking: defining a precise sequence of steps/rules that solves the problem for any valid input.",
+          "highlights": ["sequence of steps", "rules"]
+        }
+      ]
+    },
+    {
+      "id": "mcq4",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Programming Techniques",
+      "subtopic": "Data types",
+      "prompt": "Which data type is most appropriate for storing a UK postal code such as 'CB2 1TN'?",
+      "options": ["Integer", "Real/Float", "String", "Boolean"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — postal codes mix letters, digits and spaces; they are text.",
+      "feedbackWrong": "Postal codes contain letters and spaces — they must be strings.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Sees digits in the code and assumes numeric storage.",
+          "correction": "Codes contain letters and a space, and arithmetic on them is meaningless — they are identifiers, not quantities."
+        }
+      ]
+    },
+    {
+      "id": "w5",
+      "type": "written",
+      "marks": 3,
+      "topic": "Algorithms & Complexity",
+      "subtopic": "Efficiency",
+      "prompt": "Two algorithms solve the same problem: one is O(n²), the other O(n log n). Explain what this means in practice as input size grows, referencing a input of one million items.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "O(n²) means time grows proportionally to the square of the input size — doubling n quadruples the time.",
+          "highlights": ["square", "quadruples"]
+        },
+        {
+          "marks": 1,
+          "text": "O(n log n) grows much more slowly — for n = 1,000,000 the ratio is roughly 10¹² vs 2×10⁷ operations.",
+          "highlights": ["more slowly", "ratio"]
+        },
+        {
+          "marks": 1,
+          "text": "Conclusion: the O(n log n) algorithm is feasible at large scale where the quadratic one is not; complexity classes matter more than constant factors as n grows.",
+          "highlights": ["feasible", "large scale"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "uuid": "a41bb002-0002-4000-8000-000000000002",
+  "version": 1,
+  "title": "Pure Core — Trigonometry, Differentiation & Integration",
+  "subject": "maths",
+  "specCode": "H240/01",
+  "topics": ["Trigonometry", "Differentiation", "Integration", "Sequences & Series"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Differentiation",
+      "subtopic": "Chain rule",
+      "prompt": "Differentiate $y = (3x^2 + 1)^4$.",
+      "options": ["$4(3x^2+1)^3$", "$24x(3x^2+1)^3$", "$6x(3x^2+1)^3$", "$4x(3x^2+1)^3$"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — chain rule: outer $4u^3$ times inner derivative $6x$.",
+      "feedbackWrong": "Chain rule: bring down the 4 AND multiply by the inner derivative $6x$, giving $24x(3x^2+1)^3$.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Differentiates the outer function but forgets to multiply by the inner derivative.",
+          "correction": "The chain rule requires multiplying by du/dx — here the inside $3x^2+1$ differentiates to $6x$."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Differentiation",
+      "subtopic": "Stationary points",
+      "prompt": "The curve $y = x^3 - 3x^2 - 9x + 2$ has a stationary point at positive x. Enter the x-coordinate of that stationary point.",
+      "answer": 3,
+      "tolerance": { "min": 2.99, "max": 3.01 },
+      "stepChecks": [
+        { "label": "$\\frac{dy}{dx} = 3x^2 - 6x - 9$", "marks": 1 },
+        { "label": "Set $= 0$: $3(x^2 - 2x - 3) = 3(x-3)(x+1) = 0$", "marks": 1 },
+        { "label": "$x = 3$ or $x = -1$; positive root is 3", "marks": 1 }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Integration",
+      "subtopic": "Definite integrals",
+      "prompt": "Evaluate $\\int_1^2 (3x^2 + 2x)\\,dx$.",
+      "answer": 10,
+      "tolerance": { "min": 9.9, "max": 10.1 },
+      "stepChecks": [
+        { "label": "Integrate: $[x^3 + x^2]_1^2$", "marks": 1 },
+        { "label": "Upper: $8 + 4 = 12$; lower: $1 + 1 = 2$", "marks": 1 },
+        { "label": "$12 - 2 = 10$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Trigonometry",
+      "subtopic": "Exact values",
+      "prompt": "What is the exact value of $\\sin(60°)$?",
+      "options": ["$\\frac{1}{2}$", "$\\frac{\\sqrt{3}}{2}$", "$\\frac{\\sqrt{2}}{2}$", "$\\sqrt{3}$"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — $\\sin 60° = \\frac{\\sqrt{3}}{2}$ from the equilateral triangle.",
+      "feedbackWrong": "From the halved equilateral triangle: $\\sin 60° = \\frac{\\sqrt{3}}{2}$.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Swaps sine and cosine at 60°.",
+          "correction": "$\\sin 60° = \\cos 30° = \\frac{\\sqrt{3}}{2}$; $\\frac{1}{2}$ is $\\sin 30°$ or $\\cos 60°$."
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Trigonometry",
+      "subtopic": "Identities",
+      "prompt": "Using the identity $\\sin^2\\theta + \\cos^2\\theta = 1$, show that $\\tan^2\\theta + 1 = \\sec^2\\theta$, and hence solve $\\sec^2\\theta = 5$ for $\\theta$ in the range $0° \\le \\theta < 360°$, giving answers to 1 decimal place.",
+      "guidance": "Divide the Pythagorean identity through by cos²θ.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Divides every term by $\\cos^2\\theta$: $\\frac{\\sin^2\\theta}{\\cos^2\\theta} + 1 = \\frac{1}{\\cos^2\\theta}$.",
+          "highlights": ["divides", "cos^2"]
+        },
+        {
+          "marks": 1,
+          "text": "States $\\tan^2\\theta + 1 = \\sec^2\\theta$ using definitions $\\tan = \\sin/\\cos$ and $\\sec = 1/\\cos$.",
+          "highlights": ["sec", "tan"]
+        },
+        {
+          "marks": 1,
+          "text": "Hence $\\cos^2\\theta = \\frac{1}{5}$, so $\\cos\\theta = \\pm\\frac{1}{\\sqrt{5}} \\approx \\pm 0.447$.",
+          "highlights": ["cos^2", "1/5"]
+        },
+        {
+          "marks": 1,
+          "text": "All four solutions in range: $\\theta = 63.4°, 116.6°, 243.4°, 296.6°$.",
+          "highlights": ["63.4", "116.6", "243.4", "296.6"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "63.4 only",
+          "misconception": "Gives only the principal acute solution, missing that cosine is ±.",
+          "correction": "cos²θ = 1/5 means cos θ = ±0.447 — both signs, so all four quadrants give solutions."
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 3,
+      "topic": "Differentiation",
+      "subtopic": "Tangents & normals",
+      "prompt": "A curve has gradient function $\\frac{dy}{dx} = 4x - 6$. Describe the steps to find the equation of the tangent at $x = 2$, given the curve passes through $(2, -1)$.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Evaluate the gradient at $x = 2$: $4(2) - 6 = 2$.",
+          "highlights": ["gradient", "2"]
+        },
+        {
+          "marks": 1,
+          "text": "Use point-slope form $y - y_1 = m(x - x_1)$ with the point $(2, -1)$: $y + 1 = 2(x - 2)$.",
+          "highlights": ["point-slope", "y + 1"]
+        },
+        {
+          "marks": 1,
+          "text": "Rearrange: $y = 2x - 5$.",
+          "highlights": ["y = 2x - 5"]
+        }
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Sequences & Series",
+      "subtopic": "Geometric series",
+      "prompt": "A geometric series has first term 3 and common ratio 2. Find the sum of the first 8 terms.",
+      "answer": 765,
+      "tolerance": { "min": 764, "max": 766 },
+      "stepChecks": [
+        { "label": "$S_n = a\\frac{r^n - 1}{r - 1}$", "marks": 1 },
+        { "label": "$S_8 = 3 \\times \\frac{2^8 - 1}{2 - 1} = 3 \\times 255$", "marks": 1 },
+        { "label": "$= 765$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Integration",
+      "subtopic": "Indefinite integrals",
+      "prompt": "Which expression is $\\int 6x^2\\,dx$?",
+      "options": ["$2x^3 + c$", "$12x + c$", "$3x^3 + c$", "$6x^3 + c$"],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — increase the power by one and divide: $\\frac{6x^3}{3} = 2x^3$.",
+      "feedbackWrong": "Reverse power rule: power up by one, divide by the new power — $6/3 = 2$, so $2x^3 + c$.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Raises the power but forgets to divide by it.",
+          "correction": "Integration divides by the new power — check by differentiating your answer."
+        },
+        {
+          "optionIndex": 1,
+          "misconception": "Differentiates instead of integrating.",
+          "correction": "Integration reverses differentiation — power increases, not decreases."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Trigonometry",
+      "subtopic": "Sine rule",
+      "prompt": "In triangle ABC, angle A = 40°, side a = 8 cm, angle B = 65°. Show how to find side b and calculate it to 3 significant figures.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Sine rule: $\\frac{a}{\\sin A} = \\frac{b}{\\sin B}$ rearranged to $b = \\frac{a \\sin B}{\\sin A}$.",
+          "highlights": ["sine rule", "rearranged"]
+        },
+        {
+          "marks": 1,
+          "text": "Substitutes: $b = \\frac{8 \\sin 65°}{\\sin 40°}$.",
+          "highlights": ["8 sin 65", "sin 40"]
+        },
+        {
+          "marks": 1,
+          "text": "$b \\approx 11.3$ cm (3 s.f.).",
+          "highlights": ["11.3"]
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "type": "written",
+      "marks": 3,
+      "topic": "Integration",
+      "subtopic": "Area under a curve",
+      "prompt": "Explain why a definite integral can produce a negative value when finding areas, and how a correct total area should be computed in such cases.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "The integral measures SIGNED area — regions below the x-axis contribute negatively.",
+          "highlights": ["signed", "below", "negatively"]
+        },
+        {
+          "marks": 1,
+          "text": "If the curve crosses the axis within the interval, positive and negative contributions cancel, underestimating true area.",
+          "highlights": ["crosses", "cancel"]
+        },
+        {
+          "marks": 1,
+          "text": "Correct method: split at the roots, integrate each region separately, and add the ABSOLUTE values of each part.",
+          "highlights": ["split", "absolute"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,323 @@
+{
+  "uuid": "c51aa001-0001-4000-8000-000000000001",
+  "version": 1,
+  "title": "Systems Architecture & Software Development",
+  "subject": "cs",
+  "specCode": "H446/01",
+  "topics": ["Systems Architecture", "Software & Development"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Systems Architecture",
+      "subtopic": "Von Neumann & Harvard",
+      "prompt": "Which statement best describes the Von Neumann architecture?",
+      "options": [
+        "Instructions and data are stored in separate memories with separate buses",
+        "Instructions and data share a single memory and are fetched over the same bus",
+        "Every instruction executes in exactly one clock cycle",
+        "Programs cannot modify their own instructions at runtime"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — the stored-program concept keeps instructions and data in one shared memory.",
+      "feedbackWrong": "Von Neumann's key feature is shared memory for instructions and data over a common bus.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Confuses Von Neumann with Harvard architecture — separate memories/buses is the Harvard design.",
+          "correction": "Von Neumann uses one memory for both instructions and data; Harvard separates them."
+        },
+        {
+          "optionIndex": 2,
+          "misconception": "Confuses architecture with RISC design goals; single-cycle execution is not a Von Neumann property.",
+          "correction": "The Von Neumann fetch-decode-execute cycle typically takes multiple clock cycles per instruction."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Systems Architecture",
+      "subtopic": "Registers",
+      "prompt": "What does the Program Counter (PC) hold during the fetch-decode-execute cycle?",
+      "options": [
+        "The instruction currently being executed",
+        "The address of the next instruction to be fetched",
+        "The data value most recently read from memory",
+        "The memory address of the last arithmetic result"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — the PC holds the address of the next instruction.",
+      "feedbackWrong": "The PC is an address register: it points at the next instruction to fetch.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Confuses the PC with the CIR — the Current Instruction Register holds the instruction being executed.",
+          "correction": "The PC holds the address of the next instruction; the fetched instruction itself goes to the CIR."
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Systems Architecture",
+      "subtopic": "Buses",
+      "prompt": "A processor upgrades its address bus from 16 bits to 32 bits. What is the direct effect?",
+      "options": [
+        "Each memory location can now store twice as much data",
+        "The processor can directly address a larger memory space",
+        "Data transfers happen twice as fast",
+        "Instructions execute in half the time"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — address bus width determines the number of unique addresses: 2^32 vs 2^16 locations.",
+      "feedbackWrong": "Address bus width determines how many memory locations can be addressed, not speed or location size.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Confuses the address bus with the data bus — location capacity depends on the data bus/word size.",
+          "correction": "The data bus width governs how much data moves per transfer; the address bus width governs how many locations exist."
+        },
+        {
+          "optionIndex": 2,
+          "misconception": "Assumes wider buses always mean faster transfer.",
+          "correction": "The address bus carries only addresses, not data payload — it does not affect transfer speed."
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Systems Architecture",
+      "subtopic": "Cache",
+      "prompt": "Explain how cache memory improves the performance of a CPU.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Cache is fast memory located on or very close to the CPU, so access is much quicker than main memory (RAM).",
+          "highlights": ["fast memory", "close to the CPU", "quicker than main memory"]
+        },
+        {
+          "marks": 1,
+          "text": "It stores frequently/recently used instructions and data, so the CPU often avoids slower RAM accesses (cache hit).",
+          "highlights": ["frequently", "recently used", "cache hit"]
+        },
+        {
+          "marks": 1,
+          "text": "This reduces the effect of the Von Neumann bottleneck / reduces average memory access time, so fewer clock cycles are wasted waiting.",
+          "highlights": ["Von Neumann bottleneck", "access time", "waiting"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "cache stores all",
+          "misconception": "Overstates cache capacity — cache is small and cannot hold all program data.",
+          "correction": "Cache holds only a working subset of recently or frequently used data; bulk storage remains in RAM."
+        },
+        {
+          "pattern": "cache is in ram",
+          "misconception": "Locates cache inside main memory rather than as separate fast memory near the CPU.",
+          "correction": "Cache sits between the CPU and RAM (on-chip L1/L2/L3); it is distinct from and much faster than RAM."
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Software & Development",
+      "subtopic": "Translators",
+      "prompt": "A student writes a game in a high-level language. Compare compiling and interpreting the code, giving one reason a developer might choose each approach.",
+      "guidance": "Structure your answer around translation timing, runtime speed, and debugging/distribution.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "A compiler translates the whole source program into machine code before execution, producing an executable file.",
+          "highlights": ["whole", "before execution", "executable"]
+        },
+        {
+          "marks": 1,
+          "text": "An interpreter translates and executes the source code line by line at runtime.",
+          "highlights": ["line by line", "runtime"]
+        },
+        {
+          "marks": 1,
+          "text": "Reason to compile: the compiled executable runs faster at runtime / does not need the source code or a translator present, protecting intellectual property.",
+          "highlights": ["runs faster", "source code", "translator"]
+        },
+        {
+          "marks": 1,
+          "text": "Reason to interpret: errors are reported as soon as the offending line runs, making debugging easier during development / no recompilation cycle needed for each change.",
+          "highlights": ["errors", "debugging", "recompilation"]
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Software & Development",
+      "subtopic": "Assembler",
+      "prompt": "Describe two functions performed by an assembler when translating assembly language, other than converting mnemonics to opcodes.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Resolves symbolic labels/addresses — replacing label references with actual memory addresses.",
+          "highlights": ["labels", "memory addresses"]
+        },
+        {
+          "marks": 1,
+          "text": "Handles directives — e.g. reserving memory for data/constants or setting the origin address.",
+          "highlights": ["directives", "reserving memory", "constants"]
+        },
+        {
+          "marks": 1,
+          "text": "Performs macro expansion and/or reports syntax errors with line references.",
+          "highlights": ["macro", "syntax errors"]
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "type": "written",
+      "marks": 4,
+      "topic": "Systems Architecture",
+      "subtopic": "Fetch-decode-execute",
+      "prompt": "Describe the role of the Memory Address Register (MAR) and Memory Data Register (MDR) during the fetch stage of the fetch-decode-execute cycle.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "The address of the next instruction is copied from the PC into the MAR.",
+          "highlights": ["PC", "MAR"]
+        },
+        {
+          "marks": 1,
+          "text": "The MAR drives the address bus so that memory location is read.",
+          "highlights": ["address bus", "read"]
+        },
+        {
+          "marks": 1,
+          "text": "The instruction/data read from memory is transferred along the data bus into the MDR.",
+          "highlights": ["data bus", "MDR"]
+        },
+        {
+          "marks": 1,
+          "text": "The contents of the MDR are copied to the CIR for decoding (and the PC increments).",
+          "highlights": ["CIR", "PC increments"]
+        }
+      ]
+    },
+    {
+      "id": "mcq4",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Systems Architecture",
+      "subtopic": "Pipelining",
+      "prompt": "What is the main purpose of pipelining in a modern CPU?",
+      "options": [
+        "To execute several instructions at different stages simultaneously, increasing throughput",
+        "To allow multiple programs to share the same memory space",
+        "To remove the need for cache memory",
+        "To make each individual instruction complete faster"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — pipelining overlaps fetch/decode/execute stages so throughput rises.",
+      "feedbackWrong": "Pipelining overlaps instruction stages across the processor, increasing throughput rather than speeding up any single instruction.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Believes pipelining reduces latency of individual instructions.",
+          "correction": "Each instruction still passes through every stage; pipelining improves throughput (instructions per unit time), not single-instruction latency."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 2,
+      "topic": "Systems Architecture",
+      "subtopic": "Addressable memory",
+      "prompt": "A computer has a 24-bit address bus. How many distinct memory locations can it directly address? Give your answer as a number of locations (in millions, to 1 decimal place, in Mega-locations where 1 Mega-location = 2^20 locations).",
+      "answer": 16,
+      "unit": "Mega-locations",
+      "tolerance": { "min": 15.9, "max": 16.1 },
+      "stepChecks": [
+        { "label": "2^24 distinct addresses", "marks": 1 },
+        { "label": "2^24 / 2^20 = 2^4 = 16 Mega-locations", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w5",
+      "type": "written",
+      "marks": 3,
+      "topic": "Software & Development",
+      "subtopic": "Linkers & loaders",
+      "prompt": "Explain why a linker is needed when building a large program made of multiple object files and library routines.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Object files reference external symbols (library routines/other modules) whose addresses are unknown at compile time.",
+          "highlights": ["external", "library", "unknown"]
+        },
+        {
+          "marks": 1,
+          "text": "The linker resolves these references, combining modules into a single executable with correct cross-references.",
+          "highlights": ["resolves", "combining", "executable"]
+        },
+        {
+          "marks": 1,
+          "text": "This enables modular development and reuse of pre-compiled libraries without recompiling everything.",
+          "highlights": ["modular", "reuse", "recompiling"]
+        }
+      ]
+    },
+    {
+      "id": "w6",
+      "type": "written",
+      "marks": 2,
+      "topic": "Systems Architecture",
+      "subtopic": "Embedded systems",
+      "prompt": "State two characteristics that typically distinguish an embedded system from a general-purpose computer.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Dedicated to a single/specific function (e.g. washing machine controller) rather than running arbitrary user software.",
+          "highlights": ["dedicated", "specific function"]
+        },
+        {
+          "marks": 1,
+          "text": "Any one of: constrained resources (limited memory/power); software often in ROM/firmware; real-time operation; no conventional user interface.",
+          "highlights": ["constrained", "ROM", "real-time"]
+        }
+      ]
+    },
+    {
+      "id": "mcq5",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Software & Development",
+      "subtopic": "Operating systems",
+      "prompt": "Which of these is a memory-management function of an operating system?",
+      "options": [
+        "Converting virtual memory addresses to physical addresses using paging",
+        "Checking user passwords at login",
+        "Compressing files to save disk space",
+        "Rendering windows and icons on screen"
+      ],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — virtual-to-physical address translation and paging are core OS memory management.",
+      "feedbackWrong": "Memory management includes paging, virtual memory translation, and allocation of memory to processes.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Attributes the user interface (a separate OS function) to memory management.",
+          "correction": "Memory management concerns allocation, paging and virtual memory; rendering belongs to the UI layer."
+        }
+      ]
+    }
+  ]
+}

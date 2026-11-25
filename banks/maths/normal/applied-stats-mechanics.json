@@ -1,0 +1,243 @@
+{
+  "uuid": "a41bb003-0003-4000-8000-000000000003",
+  "version": 1,
+  "title": "Applied — Statistics & Mechanics",
+  "subject": "maths",
+  "specCode": "H240/02",
+  "topics": ["Statistical Sampling & Data", "Probability & Hypothesis Testing", "Kinematics & Projectiles", "Forces, Moments & Equilibrium"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Statistical Sampling & Data",
+      "subtopic": "Sampling methods",
+      "prompt": "A researcher selects every 20th name from an alphabetically ordered register. Which sampling method is this?",
+      "options": ["Simple random sampling", "Systematic sampling", "Stratified sampling", "Opportunity sampling"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — a fixed interval through an ordered list is systematic sampling.",
+      "feedbackWrong": "Fixed-interval selection from a list is the definition of systematic sampling.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Assumes any unbiased-looking selection is random.",
+          "correction": "Random sampling gives every subset equal probability — a fixed interval is deterministic once the start is chosen."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Probability & Hypothesis Testing",
+      "subtopic": "Binomial distribution",
+      "prompt": "X ~ B(10, 0.3). Calculate P(X = 3), giving your answer as a decimal to 3 significant figures.",
+      "answer": 0.267,
+      "tolerance": { "min": 0.265, "max": 0.269 },
+      "stepChecks": [
+        { "label": "Formula: $\\binom{10}{3}(0.3)^3(0.7)^7$", "marks": 1 },
+        { "label": "$120 \\times 0.027 \\times 0.0824$", "marks": 1 },
+        { "label": "$\\approx 0.267$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Probability & Hypothesis Testing",
+      "subtopic": "Hypothesis tests",
+      "prompt": "A coin is tossed 20 times and shows 15 heads. A test at the 5% significance level examines whether the coin is biased towards heads. State suitable null and alternative hypotheses, and explain what the significance level means in this context.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "H₀: p = 0.5 (the coin is fair), where p is the probability of heads.",
+          "highlights": ["H₀", "p = 0.5"]
+        },
+        {
+          "marks": 1,
+          "text": "H₁: p > 0.5 — one-tailed because bias TOWARDS heads is claimed.",
+          "highlights": ["H₁", "p > 0.5", "one-tailed"]
+        },
+        {
+          "marks": 1,
+          "text": "The 5% significance level is the probability of rejecting H₀ when it is actually true (a Type I error).",
+          "highlights": ["rejecting", "actually true", "Type I"]
+        },
+        {
+          "marks": 1,
+          "text": "In context: a 5% chance of concluding the coin is biased when it is in fact fair.",
+          "highlights": ["concluding", "biased", "fair"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "proves the coin",
+          "misconception": "Treats the test as proof of bias or fairness.",
+          "correction": "Hypothesis tests measure evidence strength against a threshold — they never prove either hypothesis."
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Kinematics & Projectiles",
+      "subtopic": "SUVAT",
+      "prompt": "A car accelerates uniformly from 5 m/s to 17 m/s over 8 seconds. Calculate the distance travelled in metres.",
+      "answer": 88,
+      "tolerance": { "min": 87, "max": 89 },
+      "stepChecks": [
+        { "label": "Use $s = \\frac{(u+v)}{2}t$", "marks": 1 },
+        { "label": "$s = \\frac{(5+17)}{2} \\times 8$", "marks": 1 },
+        { "label": "$= 11 \\times 8 = 88$ m", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Kinematics & Projectiles",
+      "subtopic": "Velocity-time graphs",
+      "prompt": "On a velocity-time graph, what does the area under the graph represent?",
+      "options": ["Acceleration", "Displacement", "Speed", "Jerk"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — area under v–t is displacement (signed).",
+      "feedbackWrong": "Area under a velocity-time graph is displacement; the gradient is acceleration.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Confuses the area with the gradient of the graph.",
+          "correction": "Gradient of v–t is acceleration; AREA is displacement — integration vs differentiation."
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Forces, Moments & Equilibrium",
+      "subtopic": "Newton's laws",
+      "prompt": "A lift of mass 800 kg accelerates upwards at 1.5 m/s². Using Newton's second law, show how to find the tension in the cable, taking g = 9.8 m/s².",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Identifies forces: tension T upwards, weight 800g downwards.",
+          "highlights": ["tension", "weight"]
+        },
+        {
+          "marks": 1,
+          "text": "Applies Newton's second law in the direction of motion: $T - 800g = 800 \\times 1.5$.",
+          "highlights": ["T - 800g", "800 × 1.5"]
+        },
+        {
+          "marks": 1,
+          "text": "$T = 800(9.8) + 1200 = 7840 + 1200$.",
+          "highlights": ["7840", "1200"]
+        },
+        {
+          "marks": 1,
+          "text": "$T = 9040$ N — greater than the weight because the lift accelerates upwards.",
+          "highlights": ["9040"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "T = 7840",
+          "misconception": "Sets tension equal to weight — true only in equilibrium or constant velocity.",
+          "correction": "Acceleration means net force is nonzero; the tension must exceed the weight by ma."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Statistical Sampling & Data",
+      "subtopic": "Averages & spread",
+      "prompt": "A data set has mean 40 and standard deviation 6. Every value is increased by 10, then doubled. State the new mean and standard deviation, justifying each.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "New mean = 100: both transformations scale/shift the mean linearly — $(40 + 10) \\times 2$.",
+          "highlights": ["100", "mean"]
+        },
+        {
+          "marks": 1,
+          "text": "New standard deviation = 12: adding a constant does NOT change spread.",
+          "highlights": ["12", "adding", "does not change"]
+        },
+        {
+          "marks": 1,
+          "text": "Only the doubling scales the spread — standard deviation multiplies by the scale factor (variance by its square).",
+          "highlights": ["doubling", "scale"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "standard deviation 22",
+          "misconception": "Applies the shift to the standard deviation as well as the scale.",
+          "correction": "Adding a constant moves every value together — the spread between them is unchanged."
+        }
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Kinematics & Projectiles",
+      "subtopic": "Projectiles",
+      "prompt": "A ball is thrown vertically upwards at 14 m/s. Taking g = 9.8 m/s², find the maximum height reached, in metres.",
+      "answer": 10,
+      "tolerance": { "min": 9.8, "max": 10.2 },
+      "stepChecks": [
+        { "label": "Use $v^2 = u^2 + 2as$ with $v = 0$, $a = -9.8$", "marks": 1 },
+        { "label": "$0 = 14^2 - 2(9.8)s$", "marks": 1 },
+        { "label": "$s = 196/19.6 = 10$ m", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Probability & Hypothesis Testing",
+      "subtopic": "Venn & probability",
+      "prompt": "Events A and B are mutually exclusive with P(A) = 0.3 and P(B) = 0.5. What is P(A ∪ B)?",
+      "options": ["0.15", "0.8", "0.2", "Cannot be determined"],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — mutually exclusive events add directly: 0.3 + 0.5.",
+      "feedbackWrong": "Mutually exclusive means no overlap, so probabilities add: 0.8.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Multiplies probabilities as if finding an intersection of independent events.",
+          "correction": "Multiplication finds P(A∩B) for independent events — mutually exclusive events have EMPTY intersection."
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "type": "written",
+      "marks": 3,
+      "topic": "Forces, Moments & Equilibrium",
+      "subtopic": "Moments",
+      "prompt": "A uniform plank of length 4 m rests horizontally on a pivot at its midpoint. A 30 N weight hangs 1.5 m from the pivot on the left. Explain where a 45 N weight must hang on the right for equilibrium.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Equilibrium requires total clockwise moment = total anticlockwise moment about the pivot.",
+          "highlights": ["moments", "equal"]
+        },
+        {
+          "marks": 1,
+          "text": "$30 \\times 1.5 = 45 \\times d$, so $45 = 45d$.",
+          "highlights": ["30 × 1.5", "45d"]
+        },
+        {
+          "marks": 1,
+          "text": "$d = 1$ m from the pivot on the right. The plank's own weight acts at the pivot (uniform, midpoint) so contributes no moment.",
+          "highlights": ["1 m", "no moment"]
+        }
+      ]
+    }
+  ]
+}

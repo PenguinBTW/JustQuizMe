@@ -1,0 +1,279 @@
+{
+  "uuid": "a41bb001-0001-4000-8000-000000000001",
+  "version": 1,
+  "title": "Pure Foundations — Algebra, Functions & Coordinate Geometry",
+  "subject": "maths",
+  "specCode": "H240/01",
+  "topics": ["Algebra, Polynomials & Proof", "Functions & Graphs", "Coordinate Geometry & Vectors"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Algebra, Polynomials & Proof",
+      "subtopic": "Indices",
+      "prompt": "Simplify $(2x^3)^2 \\times x^{-4}$.",
+      "options": ["$4x^2$", "$2x^2$", "$4x^{10}$", "$4x^{-1}$"],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — $(2x^3)^2 = 4x^6$, and $4x^6 \\times x^{-4} = 4x^2$.",
+      "feedbackWrong": "Square first: $4x^6$; then subtract exponents: $x^{6-4} = x^2$.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Forgets to square the coefficient 2.",
+          "correction": "The power applies to everything inside the bracket: $2^2 = 4$, not 2."
+        },
+        {
+          "optionIndex": 2,
+          "misconception": "Multiplies exponents 6 × 4 instead of adding/subtracting for multiplication of powers.",
+          "correction": "When multiplying powers of the same base you ADD exponents — here $6 + (-4) = 2$."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Algebra, Polynomials & Proof",
+      "subtopic": "Factor theorem",
+      "prompt": "Using the factor theorem, confirm $(x-2)$ is a factor of $f(x) = x^3 - 4x^2 + x + 6$ by evaluating $f(2)$. Enter the value of $f(2)$.",
+      "answer": 0,
+      "tolerance": { "min": 0, "max": 0 },
+      "stepChecks": [
+        { "label": "Substitute: $2^3 - 4(2^2) + 2 + 6$", "marks": 1 },
+        { "label": "Evaluate: $8 - 16 + 2 + 6$", "marks": 1 },
+        { "label": "$= 0$, so $(x-2)$ is a factor", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 4,
+      "topic": "Algebra, Polynomials & Proof",
+      "subtopic": "Proof",
+      "prompt": "Prove that the sum of two consecutive odd numbers is always even.",
+      "guidance": "Write the numbers algebraically — e.g. $2n+1$ and $2n+3$.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Represents two consecutive odd numbers algebraically, e.g. $2n+1$ and $2n+3$ for integer n.",
+          "highlights": ["2n+1", "2n+3"]
+        },
+        {
+          "marks": 1,
+          "text": "Sums them: $(2n+1) + (2n+3) = 4n + 4$.",
+          "highlights": ["4n + 4"]
+        },
+        {
+          "marks": 1,
+          "text": "Factorises: $4n + 4 = 4(n + 1) = 2 \\times 2(n+1)$, showing the result is a multiple of 2.",
+          "highlights": ["4(n + 1)", "multiple of 2"]
+        },
+        {
+          "marks": 1,
+          "text": "Concludes explicitly: since n is any integer the result holds for ALL consecutive odd pairs — a proof, not examples.",
+          "highlights": ["any integer", "all"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "example",
+          "misconception": "Verifies with numeric examples (3+5=8) and calls it proof.",
+          "correction": "Examples can support but never prove — a proof must cover every case algebraically."
+        }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Functions & Graphs",
+      "subtopic": "Transformations",
+      "prompt": "The graph of $y = f(x)$ is transformed to $y = f(x + 3)$. Which transformation is this?",
+      "options": [
+        "Translation 3 units in the positive x-direction",
+        "Translation 3 units in the negative x-direction",
+        "Stretch factor 3 parallel to the x-axis",
+        "Translation 3 units in the positive y-direction"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — $f(x+a)$ shifts the graph LEFT by a.",
+      "feedbackWrong": "Inside-the-bracket changes act on x in the opposite direction: $f(x+3)$ moves the graph 3 units in the negative x-direction.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Assumes +3 inside the bracket means positive x movement.",
+          "correction": "Transformations inside the function act in reverse: the graph reaches each output earlier, i.e. shifted left."
+        },
+        {
+          "optionIndex": 3,
+          "misconception": "Confuses $f(x)+3$ (vertical shift) with $f(x+3)$ (horizontal shift).",
+          "correction": "Changes outside the function affect y; changes inside affect x."
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Straight lines",
+      "prompt": "Find the gradient of the line through $(2, 5)$ and $(6, 13)$.",
+      "answer": 2,
+      "tolerance": { "min": 1.99, "max": 2.01 },
+      "stepChecks": [
+        { "label": "Formula $m = (y_2 - y_1)/(x_2 - x_1)$", "marks": 1 },
+        { "label": "$(13 - 5)/(6 - 2) = 8/4$", "marks": 1 },
+        { "label": "$m = 2$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Circles",
+      "prompt": "A circle has equation $(x - 3)^2 + (y + 1)^2 = 25$. Write down its centre and radius, and determine whether the point $(6, 3)$ lies on the circle, showing your reasoning.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Centre $(3, -1)$ read from the standard form — note the sign reversal on the y-coordinate.",
+          "highlights": ["centre", "(3, -1)"]
+        },
+        {
+          "marks": 1,
+          "text": "Radius $= \\sqrt{25} = 5$ — the right-hand side is $r^2$, not r.",
+          "highlights": ["radius", "5"]
+        },
+        {
+          "marks": 1,
+          "text": "Substitutes $(6,3)$: $(6-3)^2 + (3+1)^2 = 9 + 16 = 25$.",
+          "highlights": ["9 + 16", "25"]
+        },
+        {
+          "marks": 1,
+          "text": "Since it satisfies the equation (equals 25 exactly), the point lies ON the circle.",
+          "highlights": ["on the circle"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "radius is 25",
+          "misconception": "Reads the right-hand side as the radius rather than its square.",
+          "correction": "The standard form is $(x-a)^2+(y-b)^2=r^2$ — so 25 is $r^2$ and $r = 5$."
+        },
+        {
+          "pattern": "centre (3, 1)",
+          "misconception": "Misses the sign reversal on the y-coordinate of the centre.",
+          "correction": "$(y + 1)$ is $(y - (-1))$, so the y-coordinate of the centre is $-1$."
+        }
+      ]
+    },
+    {
+      "id": "calc3",
+      "type": "calculation",
+      "marks": 4,
+      "topic": "Algebra, Polynomials & Proof",
+      "subtopic": "Quadratics",
+      "prompt": "Solve $2x^2 - 5x - 3 = 0$. Enter the LARGER root.",
+      "answer": 3,
+      "tolerance": { "min": 2.99, "max": 3.01 },
+      "stepChecks": [
+        { "label": "Factorise or use the formula: $(2x + 1)(x - 3) = 0$", "marks": 2 },
+        { "label": "Roots $x = -\\frac{1}{2}$ and $x = 3$", "marks": 1 },
+        { "label": "Larger root $= 3$", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Functions & Graphs",
+      "subtopic": "Discriminant",
+      "prompt": "The equation $x^2 + kx + 9 = 0$ has exactly one repeated real root. Explain how the discriminant determines this, and find the possible values of k.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "A repeated root occurs exactly when the discriminant $b^2 - 4ac = 0$.",
+          "highlights": ["discriminant", "= 0"]
+        },
+        {
+          "marks": 1,
+          "text": "Substituting: $k^2 - 4(1)(9) = 0$, so $k^2 = 36$.",
+          "highlights": ["k^2 = 36"]
+        },
+        {
+          "marks": 1,
+          "text": "Both solutions given: $k = 6$ or $k = -6$.",
+          "highlights": ["k = 6", "k = -6"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "k = 6 only",
+          "misconception": "Takes only the positive square root.",
+          "correction": "$k^2 = 36$ has two solutions; a negative coefficient also produces a repeated root (at negative x)."
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Coordinate Geometry & Vectors",
+      "subtopic": "Perpendicular lines",
+      "prompt": "A line has gradient $\\frac{2}{3}$. What is the gradient of any line perpendicular to it?",
+      "options": ["$-\\frac{2}{3}$", "$\\frac{3}{2}$", "$-\\frac{3}{2}$", "$\\frac{2}{3}$"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — perpendicular gradients multiply to -1: negative reciprocal.",
+      "feedbackWrong": "Perpendicular gradient is the negative reciprocal: flip AND negate, giving $-\\frac{3}{2}$.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Negates without reciprocating.",
+          "correction": "Perpendicular lines satisfy $m_1 m_2 = -1$ — you must invert the fraction too."
+        },
+        {
+          "optionIndex": 1,
+          "misconception": "Reciprocates without negating.",
+          "correction": "Same-sign gradients with product +1 are not perpendicular; the product must be -1."
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "type": "written",
+      "marks": 5,
+      "topic": "Algebra, Polynomials & Proof",
+      "subtopic": "Binomial expansion",
+      "prompt": "Find the first three terms in the binomial expansion of $(1 + 2x)^5$ in ascending powers of x, and use them to estimate $(1.02)^5$ by choosing a suitable value of x.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Binomial coefficients for n=5: 1, 5, 10 used correctly.",
+          "highlights": ["1, 5, 10"]
+        },
+        {
+          "marks": 1,
+          "text": "First three terms: $1 + 5(2x) + 10(2x)^2 = 1 + 10x + 40x^2$.",
+          "highlights": ["1 + 10x + 40x^2"]
+        },
+        {
+          "marks": 1,
+          "text": "Chooses $x = 0.01$ so that $1 + 2x = 1.02$.",
+          "highlights": ["x = 0.01"]
+        },
+        {
+          "marks": 1,
+          "text": "Substitutes: $1 + 10(0.01) + 40(0.01)^2 = 1 + 0.1 + 0.004$.",
+          "highlights": ["0.004"]
+        },
+        {
+          "marks": 1,
+          "text": "Estimate $= 1.104$.",
+          "highlights": ["1.104"]
+        }
+      ]
+    }
+  ]
+}

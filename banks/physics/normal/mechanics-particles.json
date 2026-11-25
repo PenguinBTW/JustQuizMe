@@ -1,0 +1,198 @@
+{
+  "uuid": "b52cc001-0001-4000-8000-000000000001",
+  "version": 1,
+  "title": "Mechanics & Particles",
+  "subject": "physics",
+  "specCode": "7408/1",
+  "topics": ["Mechanics", "Particle Physics"],
+  "questions": [
+    {
+      "id": "mcq1",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Particle Physics",
+      "subtopic": "Standard model",
+      "prompt": "Which particle is a lepton?",
+      "options": ["Proton", "Neutron", "Electron", "Pion"],
+      "correctIndex": 2,
+      "feedbackCorrect": "Correct — the electron is a fundamental lepton.",
+      "feedbackWrong": "Protons and neutrons are baryons (made of quarks); pions are mesons. The electron is a fundamental lepton.",
+      "mistakes": [
+        {
+          "optionIndex": 3,
+          "misconception": "Confuses mesons with leptons because both are light.",
+          "correction": "Pions are mesons — quark-antiquark pairs, not fundamental. Leptons are fundamental particles with no quark structure."
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "type": "written",
+      "marks": 3,
+      "topic": "Particle Physics",
+      "subtopic": "Antimatter",
+      "prompt": "Describe what happens when an electron meets its antiparticle, the positron, and state what the products are.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "The electron and positron annihilate — both particles are destroyed.",
+          "highlights": ["annihilate", "destroyed"]
+        },
+        {
+          "marks": 1,
+          "text": "Their total mass-energy is converted into electromagnetic radiation per $E = mc^2$.",
+          "highlights": ["mass-energy", "E = mc²"]
+        },
+        {
+          "marks": 1,
+          "text": "Two photons (gamma rays) are produced travelling in opposite directions, conserving momentum.",
+          "highlights": ["two photons", "opposite", "momentum"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "one photon",
+          "misconception": "Produces a single photon from annihilation.",
+          "correction": "A single photon cannot conserve momentum — annihilation at rest produces two photons in opposite directions."
+        }
+      ]
+    },
+    {
+      "id": "calc1",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Mechanics",
+      "subtopic": "SUVAT",
+      "prompt": "A stone is dropped from rest from a height of 45 m. Taking g = 9.81 m/s², calculate the time taken to reach the ground in seconds.",
+      "answer": 3.03,
+      "tolerance": { "min": 2.98, "max": 3.08 },
+      "unit": "s",
+      "stepChecks": [
+        { "label": "Use $s = ut + \\frac{1}{2}gt^2$ with $u = 0$", "marks": 1 },
+        { "label": "$t = \\sqrt{2s/g} = \\sqrt{90/9.81}$", "marks": 1 },
+        { "label": "$t \\approx 3.03$ s", "marks": 1 }
+      ]
+    },
+    {
+      "id": "mcq2",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Mechanics",
+      "subtopic": "Newton's laws",
+      "prompt": "According to Newton's third law, the reaction force to a book's weight pressing on a table is:",
+      "options": [
+        "The table pushing up on the book",
+        "The book pulling gravitationally on the Earth",
+        "The Earth pulling down on the table",
+        "Air resistance on the book"
+      ],
+      "correctIndex": 1,
+      "feedbackCorrect": "Correct — the Newton III pair to the Earth's pull on the book is the book's pull on the Earth.",
+      "feedbackWrong": "Newton III pairs act on DIFFERENT bodies and are the same type of force: the weight is Earth's gravitational pull on the book, so its pair is the book's gravitational pull on Earth.",
+      "mistakes": [
+        {
+          "optionIndex": 0,
+          "misconception": "Pairs weight with the normal contact force — the classic misconception.",
+          "correction": "Weight and normal force act on the SAME body and are different types of force — they cannot be a Newton III pair, even when equal in size."
+        }
+      ]
+    },
+    {
+      "id": "calc2",
+      "type": "calculation",
+      "marks": 3,
+      "topic": "Mechanics",
+      "subtopic": "Momentum",
+      "prompt": "A 1200 kg car travelling at 15 m/s collides with and sticks to a stationary 800 kg car. Calculate their common velocity immediately after the collision in m/s.",
+      "answer": 9,
+      "tolerance": { "min": 8.9, "max": 9.1 },
+      "unit": "m/s",
+      "stepChecks": [
+        { "label": "Conservation of momentum: $m_1u_1 = (m_1+m_2)v$", "marks": 1 },
+        { "label": "$1200 \\times 15 = 2000v$", "marks": 1 },
+        { "label": "$v = 9$ m/s", "marks": 1 }
+      ]
+    },
+    {
+      "id": "w2",
+      "type": "written",
+      "marks": 4,
+      "topic": "Mechanics",
+      "subtopic": "Projectiles",
+      "prompt": "Explain why the horizontal and vertical motions of a projectile can be treated independently, and state what this implies about the horizontal velocity during flight (neglecting air resistance).",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "The only force acting is gravity, which is entirely vertical — no horizontal force exists.",
+          "highlights": ["gravity", "vertical", "no horizontal"]
+        },
+        {
+          "marks": 1,
+          "text": "Perpendicular components of motion do not affect each other — acceleration in one direction leaves the perpendicular component unchanged.",
+          "highlights": ["independent", "perpendicular"]
+        },
+        {
+          "marks": 1,
+          "text": "Therefore horizontal velocity remains CONSTANT throughout the flight.",
+          "highlights": ["constant", "horizontal velocity"]
+        },
+        {
+          "marks": 1,
+          "text": "While vertical velocity changes by g each second — the two combine to give the parabolic path.",
+          "highlights": ["vertical", "parabolic"]
+        }
+      ],
+      "mistakes": [
+        {
+          "pattern": "horizontal velocity decreases",
+          "misconception": "Believes horizontal speed decays even without air resistance.",
+          "correction": "With no horizontal force there is no horizontal acceleration — the horizontal component is constant by Newton's first law."
+        }
+      ]
+    },
+    {
+      "id": "mcq3",
+      "type": "multiple-choice",
+      "marks": 1,
+      "topic": "Particle Physics",
+      "subtopic": "Quarks",
+      "prompt": "What is the quark composition of a proton?",
+      "options": ["uud", "udd", "uuu", "ddd"],
+      "correctIndex": 0,
+      "feedbackCorrect": "Correct — proton is two up quarks and one down quark.",
+      "feedbackWrong": "Proton = uud (charge +2/3 +2/3 −1/3 = +1); the neutron is udd.",
+      "mistakes": [
+        {
+          "optionIndex": 1,
+          "misconception": "Swaps proton and neutron compositions.",
+          "correction": "udd gives charge 0 — that's the neutron. The proton needs two up quarks for its +1 charge."
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "type": "written",
+      "marks": 3,
+      "topic": "Mechanics",
+      "subtopic": "Work and energy",
+      "prompt": "A crane lifts a 500 kg load through 12 m at constant speed. Taking g = 9.81 m/s², calculate the work done by the crane and explain why it equals the gain in gravitational potential energy.",
+      "markScheme": [
+        {
+          "marks": 1,
+          "text": "Constant speed means zero net force, so the lifting force equals the weight: $F = mg = 500 \\times 9.81$.",
+          "highlights": ["constant speed", "equals weight"]
+        },
+        {
+          "marks": 1,
+          "text": "Work done $W = Fs = mgh = 500 \\times 9.81 \\times 12 \\approx 58.9$ kJ.",
+          "highlights": ["W = mgh", "58.9"]
+        },
+        {
+          "marks": 1,
+          "text": "At constant speed no kinetic energy is gained, so by conservation of energy all the work done transfers to gravitational potential energy.",
+          "highlights": ["no kinetic", "conservation"]
+        }
+      ]
+    }
+  ]
+}
