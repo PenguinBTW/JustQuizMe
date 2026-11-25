@@ -371,7 +371,7 @@
    "indicativeContent": [
     "Training data reflects historical practice: if past triage disadvantaged groups, the model inherits and amplifies that bias",
     "Correlation vs causation \u2014 the model may proxy protected characteristics (postcode, language) even if excluded",
-    "GDPR/DPA 2018 Article 22: right not to be subject to solely automated decisions with significant effect; lawful basis and DPIA required",
+    "UK GDPR and DPA 2018 restrict solely automated decisions with significant effect (the relevant provisions now sit in Articles 22A\u201322D), with stricter conditions for special-category data such as health records; a lawful basis and DPIA are required",
     "Accountability: when a triage decision harms a patient, responsibility is diffuse across vendor, trust and clinician",
     "Automation bias: staff may defer to the model even when clinical judgement disagrees",
     "Benefits: consistency, speed, 24/7 uniformity, freeing clinician time \u2014 strongest when the model augments rather than replaces judgement",

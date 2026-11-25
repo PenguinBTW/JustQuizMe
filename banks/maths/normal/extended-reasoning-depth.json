@@ -158,7 +158,7 @@
    "indicativeContent": [
     "Standard assumptions: projectile is a particle, gravity constant, no air resistance, no wind, no spin effects",
     "Basketball is light with large cross-section \u2014 air resistance is significant relative to its weight, the most questionable assumption",
-    "Drag reduces range and maximum height; the optimal launch angle drops below 45\u00b0",
+    "Drag shortens range and lowers the optimum launch angle relative to the drag-free case \u2014 noting that 45\u00b0 is the drag-free optimum only for equal launch and landing heights, which a free throw (hoop above release point) does not satisfy anyway",
     "Constant g is excellent over a few metres; the particle assumption ignores spin but the Magnus effect is small for a gentle free throw",
     "Refinement cost: drag models destroy closed-form solutions, requiring numerical methods \u2014 accuracy bought with complexity"
    ]
@@ -209,7 +209,7 @@
     "x\u2080 = 0 gives x\u2081 = 1 then x\u2082 = 0 \u2014 the iteration oscillates in a cycle rather than converging (Newton\u2013Raphson can be periodic)",
     "Failure mechanisms: f\u2032(x\u2099) \u2248 0 sends x\u2099\u208a\u2081 far away; cycles; divergence to infinity; convergence to an unintended root",
     "For x\u00b3 \u2212 2x + 2 the derivative vanishes at x = \u00b1\u221a(2/3), creating a region where iterates behave erratically",
-    "Mitigation: sketch or evaluate f first \u2014 a sign change over [a, b] guarantees a root exists there",
+    "Mitigation: sketch or evaluate f first \u2014 for a continuous function a sign change over [a, b] guarantees a root there (intermediate value theorem); a discontinuity inside the interval voids the guarantee",
     "Bracketing methods such as bisection converge slowly but cannot oscillate \u2014 robust when behaviour is unknown",
     "Newton\u2013Raphson converges quadratically near a root when f\u2032 is well-behaved \u2014 speed in exchange for fragility",
     "Practical solvers combine methods: bracketing for safety, Newton\u2013Raphson for polish"

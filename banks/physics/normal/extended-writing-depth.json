@@ -210,7 +210,7 @@
    "indicativeContent": [
     "Measure diameter with the micrometer at several positions and orientations along the wire; average to reduce random error",
     "Measure length with the metre rule; contact resistance at crocodile clips is a systematic concern",
-    "Record V and I for several lengths or use a rheostat for multiple pairs; plot R against L",
+    "Record V and I at several measured lengths of wire (moving the crocodile clip to marked positions), computing R = V/I for each; plot R against L",
     "Resistivity \u03c1 = RA/L: the gradient of the R\u2013L graph multiplied by cross-sectional area A = \u03c0d\u00b2/4",
     "Graph-gradient technique reduces the impact of zero errors compared with single-point calculation",
     "Keep current low/short-lived to avoid heating \u2014 resistance rises with temperature, biasing \u03c1",
