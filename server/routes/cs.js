@@ -1,10 +1,12 @@
 const express = require('express');
+const ExportService = require('../services/export-service');
 const { runOcrPseudocode } = require('../services/runners/ocr-pseudo');
 const { runCsharpCode } = require('../services/runners/csharp-runner');
 const { runLMC } = require('../services/runners/lmc-runner');
 
 function createCsRouter(quizService, saveService) {
   const router = express.Router();
+  const exportService = new ExportService(saveService.dataDir);
 
   router.get('/health', (req, res) => {
     res.json({ ok: true, subject: 'Computer Science', board: 'OCR H446' });
@@ -183,6 +185,13 @@ function createCsRouter(quizService, saveService) {
     catch (e) { res.status(500).json({ error: 'bank file unreadable' }); }
   });
 
+  
+  router.get('/export/attempts.csv', (req, res) => {
+    res.type('text/csv').send(exportService.attemptsCsv('cs'));
+  });
+  router.get('/export/topics.csv', (req, res) => {
+    res.type('text/csv').send(exportService.topicsCsv('cs'));
+  });
   return router;
 }
 

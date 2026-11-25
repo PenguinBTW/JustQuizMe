@@ -1,7 +1,9 @@
 const express = require('express');
+const ExportService = require('../services/export-service');
 
 function createPhysicsRouter(quizService, saveService) {
   const router = express.Router();
+  const exportService = new ExportService(saveService.dataDir);
 
   router.get('/health', (req, res) => {
     res.json({ ok: true, subject: 'Physics', board: 'AQA 7408' });
@@ -118,6 +120,13 @@ function createPhysicsRouter(quizService, saveService) {
     catch (e) { res.status(500).json({ error: 'bank file unreadable' }); }
   });
 
+  
+  router.get('/export/attempts.csv', (req, res) => {
+    res.type('text/csv').send(exportService.attemptsCsv('physics'));
+  });
+  router.get('/export/topics.csv', (req, res) => {
+    res.type('text/csv').send(exportService.topicsCsv('physics'));
+  });
   return router;
 }
 

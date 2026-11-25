@@ -1,10 +1,12 @@
 const express = require('express');
 const { checkMathEquivalence } = require('../services/cas-evaluator');
 const BookmarkService = require('../services/bookmark-service');
+const ExportService = require('../services/export-service');
 
 function createMathsRouter(quizService, saveService) {
   const router = express.Router();
   const bookmarkService = new BookmarkService(saveService.dataDir);
+  const exportService = new ExportService(saveService.dataDir);
 
   router.get('/health', (req, res) => {
     res.json({ ok: true, subject: 'Mathematics', board: 'OCR H240' });
@@ -146,6 +148,13 @@ function createMathsRouter(quizService, saveService) {
     catch (e) { res.status(500).json({ error: 'bank file unreadable' }); }
   });
 
+  
+  router.get('/export/attempts.csv', (req, res) => {
+    res.type('text/csv').send(exportService.attemptsCsv('maths'));
+  });
+  router.get('/export/topics.csv', (req, res) => {
+    res.type('text/csv').send(exportService.topicsCsv('maths'));
+  });
   return router;
 }
 
