@@ -637,7 +637,7 @@ export function mathCalcOk(val, q) {
   if (!raw) return false; // blank answers never earn marks, even when 0 is in band
   if (q && q.tolerance && typeof q.tolerance === 'object'
       && isFinite(q.tolerance.min) && isFinite(q.tolerance.max)) {
-    let v = Number(raw);
+    let v = Number(raw.replace(/\s+/g, ''));
     if (!isFinite(v)) {
       // fractions/expressions: evaluate numerically, then band-test the value —
       // but only input shaped like arithmetic; commas/comparisons/letters make
