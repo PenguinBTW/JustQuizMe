@@ -91,10 +91,22 @@ export function wireResumeBanner() {
   if (r) r.onclick = () => resumeSave();
   const d = $('#discardSave');
   if (d) d.onclick = async () => {
-    try { await api('/api/save', { method: 'DELETE' }); } catch {}
-    S.save = null;
-    renderRoom();
-  };
+    try {
+        // discarding a series checkpoint abandons the SERIES, not the quiz it
+        // displaced — the paused session is restored to the slot, never
+        // silently destroyed with the checkpoint
+        const cur = await api('/api/save');
+        const displaced = cur && cur.seriesContinuation && cur.series && cur.series.displacedSave;
+        if (displaced && displaced.quizUuid) {
+          await api('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(displaced) });
+          S.save = displaced;
+        } else {
+          await api('/api/save', { method: 'DELETE' });
+          S.save = null;
+        }
+      } catch { S.save = null; }
+      renderRoom();
+    };
 }
 
 // A timed exam's deadline is wall-clock honest: time spent away counts.

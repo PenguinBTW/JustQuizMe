@@ -231,7 +231,10 @@ export async function resumeSeriesContinuation(sv) {
   if (b) b.onclick = () => { {
       const savedAt = Date.parse(sv.savedAt || sv.updatedAt || '');
       const elapsedMin = Number.isFinite(savedAt) ? Math.max(0, (Date.now() - savedAt) / 60000) : 0;
-      recordBreak(S.series, { skipped: false, minutes: Math.round(Math.min(S.series.breakMinutes || 10, elapsedMin)) });
+      const allowance = S.series.breakMinutes || 10;
+    // honesty: a break cut short by an instant reload is a skipped break,
+    // whatever the wall clock says — only the full allowance counts as taken
+    recordBreak(S.series, { skipped: elapsedMin + 0.5 < allowance, minutes: Math.round(Math.min(allowance, elapsedMin)) });
     }
     beginSeriesPaper(); };
 }

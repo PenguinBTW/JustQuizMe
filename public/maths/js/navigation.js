@@ -79,8 +79,7 @@ export function resumeBannerHtml() {
     const idx = ((sv.series && sv.series.index) ?? 0) + 1;
     const tot = (sv.series && sv.series.papers && sv.series.papers.length) || '?';
     meta = `between papers · next is paper ${idx} of ${tot} · saved ${fmtSaved(sv.updatedAt)}`;
-  }
-  if (n) {
+  } else if (n) {
     const earned = Object.values(sv.answers || {}).reduce((s, a) => s + (Number(a?.score) || 0), 0);
     const total = sv.questions.reduce((s, q) => s + (Number(q.marks) || 0), 0);
     meta = `Q${(sv.questionIndex ?? 0) + 1} of ${n} · ${earned}/${total} marks`;
@@ -107,9 +106,18 @@ export function wireResumeBanner() {
   if (d)
     d.onclick = async () => {
       try {
-        await api('/api/save', { method: 'DELETE' });
-      } catch {}
-      S.save = null;
+        // discarding a series checkpoint abandons the SERIES, not the quiz it
+        // displaced — the paused session is restored, never destroyed with it
+        const cur = await api('/api/save');
+        const displaced = cur && cur.seriesContinuation && cur.series && cur.series.displacedSave;
+        if (displaced && displaced.quizUuid) {
+          await api('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(displaced) });
+          S.save = displaced;
+        } else {
+          await api('/api/save', { method: 'DELETE' });
+          S.save = null;
+        }
+      } catch { S.save = null; }
       renderRoom();
     };
 }
