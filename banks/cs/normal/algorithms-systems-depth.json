@@ -1,130 +1,240 @@
 {
-  "uuid": "e1c9f5a0-6d2f-4a4c-9b7e-0f3a5b6c7d8e",
-  "version": 1,
-  "title": "Algorithms & Systems Architecture — Depth Practice",
-  "subject": "computer-science",
-  "specCode": "H446/01",
-  "topics": ["Algorithms & Complexity", "Systems Architecture"],
-  "questions": [
+ "uuid": "e1c9f5a0-6d2f-4a4c-9b7e-0f3a5b6c7d8e",
+ "version": 1,
+ "title": "Algorithms & Systems Architecture \u2014 Depth Practice",
+ "subject": "computer-science",
+ "specCode": "H446/01",
+ "topics": [
+  "Algorithms & Complexity",
+  "Systems Architecture"
+ ],
+ "questions": [
+  {
+   "id": "mcq1",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Algorithms & Complexity",
+   "subtopic": "Big-O",
+   "prompt": "What is the time complexity of binary search on a sorted array of n items?",
+   "options": [
+    "O(n)",
+    "O(log n)",
+    "O(n log n)",
+    "O(n\u00b2)"
+   ],
+   "correctIndex": 1,
+   "feedbackCorrect": "Correct \u2014 each comparison halves the search space, so at most log\u2082(n) steps are needed.",
+   "feedbackWrong": "Binary search discards half the remaining items every step \u2014 halving behaviour is logarithmic, O(log n).",
+   "mistakes": [
     {
-      "id": "mcq1",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Algorithms & Complexity",
-      "subtopic": "Big-O",
-      "prompt": "What is the time complexity of binary search on a sorted array of n items?",
-      "options": ["O(n)", "O(log n)", "O(n log n)", "O(n²)"],
-      "correctIndex": 1,
-      "feedbackCorrect": "Correct — each comparison halves the search space, so at most log₂(n) steps are needed.",
-      "feedbackWrong": "Binary search discards half the remaining items every step — halving behaviour is logarithmic, O(log n).",
-      "mistakes": [
-        {"optionIndex": 0, "misconception": "Confuses binary search with linear search.", "correction": "Linear search checks each item once — O(n). Binary search exploits the sorted order to skip half the data each step."}
-      ]
-    },
-    {
-      "id": "w1",
-      "type": "written",
-      "marks": 3,
-      "topic": "Algorithms & Complexity",
-      "subtopic": "Sorting",
-      "prompt": "List the steps of one pass of a bubble sort on the array [5, 2, 8, 1], showing the array after each comparison/swap decision.",
-      "markScheme": [
-        {"marks": 1, "text": "Compares 5 and 2, swaps: [2, 5, 8, 1].", "highlights": ["2, 5"]},
-        {"marks": 1, "text": "Compares 5 and 8, no swap; then 8 and 1, swaps: [2, 5, 1, 8].", "highlights": ["1, 8"]},
-        {"marks": 1, "text": "Pass ends with 8 in final position — largest element has 'bubbled' to the end.", "highlights": ["8", "end"]}
-      ]
-    },
-    {
-      "id": "mcq2",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Algorithms & Complexity",
-      "subtopic": "Complexity comparison",
-      "prompt": "For large inputs, which is fastest in the worst case?",
-      "options": ["Bubble sort", "Linear search", "Merge sort", "Insertion sort"],
-      "correctIndex": 2,
-      "feedbackCorrect": "Correct — merge sort is O(n log n) in all cases; the others are O(n²) or O(n) but the worst-case sorting options lose to n log n.",
-      "feedbackWrong": "Compare complexities: bubble and insertion sort are O(n²), linear search O(n) — merge sort's O(n log n) grows slowest of the sorting options.",
-      "mistakes": [
-        {"optionIndex": 3, "misconception": "Knows insertion sort is fast on nearly-sorted data.", "correction": "Best-case insertion sort is fast, but the question asks worst case — O(n²). Merge sort guarantees O(n log n) always."}
-      ]
-    },
-    {
-      "id": "w2",
-      "type": "written",
-      "marks": 4,
-      "topic": "Systems Architecture",
-      "subtopic": "Fetch-decode-execute",
-      "prompt": "Describe the role of the Program Counter (PC), Memory Address Register (MAR), Memory Data Register (MDR) and Accumulator during the fetch stage of the fetch-decode-execute cycle.",
-      "markScheme": [
-        {"marks": 1, "text": "PC holds the address of the next instruction to fetch.", "highlights": ["next instruction", "address"]},
-        {"marks": 1, "text": "PC contents copied to MAR; the MAR carries the address to memory.", "highlights": ["copied", "MAR"]},
-        {"marks": 1, "text": "Instruction at that address is transferred into the MDR (and then CIR).", "highlights": ["MDR"]},
-        {"marks": 1, "text": "Accumulator's role is in execution: it stores results of ALU operations — not part of the fetch itself.", "highlights": ["ALU", "results"]}
-      ]
-    },
-    {
-      "id": "mcq3",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Systems Architecture",
-      "subtopic": "Cache",
-      "prompt": "Why does adding cache memory speed up a computer?",
-      "options": [
-        "Cache is faster memory close to the CPU, storing frequently-used instructions",
-        "Cache increases the clock speed of the processor",
-        "Cache stores files permanently so the disk is never needed",
-        "Cache adds extra cores for parallel processing"
-      ],
-      "correctIndex": 0,
-      "feedbackCorrect": "Correct — cache is fast SRAM on or near the CPU; frequently-needed data avoids slow main-memory access.",
-      "feedbackWrong": "Cache is small fast memory between CPU and RAM — it works because programs reuse the same data (locality), so fewer slow memory fetches occur.",
-      "mistakes": [
-        {"optionIndex": 2, "misconception": "Confuses cache with permanent storage.", "correction": "Cache is volatile working memory, not file storage — it holds copies of data that also lives in RAM."}
-      ]
-    },
-    {
-      "id": "tt1",
-      "type": "trace-table",
-      "marks": 3,
-      "topic": "Algorithms & Complexity",
-      "subtopic": "Tracing",
-      "prompt": "Trace this insertion-sort inner loop on a = [4, 3].\n```\nj = 0\nkey = a[1]\nwhile j >= 0 and a[j] > key\n  a[j+1] = a[j]\n  j = j - 1\nendwhile\na[j+1] = key\n```",
-      "guidance": "Record the values of j, key, and the array contents after each change.",
-      "columns": ["j", "key", "array"],
-      "expectedRows": [
-        ["0", "3", "[4, 3]"],
-        ["-1", "3", "[4, 4]"],
-        ["-1", "3", "[3, 4]"]
-      ],
-      "rows": 4
-    },
-    {
-      "id": "w3",
-      "type": "written",
-      "marks": 2,
-      "topic": "Systems Architecture",
-      "subtopic": "Von Neumann vs Harvard",
-      "prompt": "State one difference between Von Neumann and Harvard architecture and one consequence of that difference.",
-      "markScheme": [
-        {"marks": 1, "text": "Von Neumann stores instructions and data in the same memory/bus; Harvard uses separate memories/buses.", "highlights": ["same memory", "separate"]},
-        {"marks": 1, "text": "Consequence: Harvard can fetch instruction and data simultaneously (faster); Von Neumann suffers the bottleneck but is simpler/cheaper.", "highlights": ["simultaneously", "bottleneck"]}
-      ]
-    },
-    {
-      "id": "mcq4",
-      "type": "multiple-choice",
-      "marks": 1,
-      "topic": "Algorithms & Complexity",
-      "subtopic": "Graph traversal",
-      "prompt": "Which data structure is essential for breadth-first graph traversal?",
-      "options": ["Stack", "Queue", "Tree", "Hash table"],
-      "correctIndex": 1,
-      "feedbackCorrect": "Correct — BFS explores level by level using a FIFO queue; DFS uses a stack.",
-      "feedbackWrong": "BFS visits nodes in order of discovery — first in, first out — which is exactly queue behaviour.",
-      "mistakes": [
-        {"optionIndex": 0, "misconception": "Confuses BFS with DFS.", "correction": "Depth-first search plunges deep using a stack (LIFO); breadth-first spreads evenly using a queue (FIFO)."}
-      ]
+     "optionIndex": 0,
+     "misconception": "Confuses binary search with linear search.",
+     "correction": "Linear search checks each item once \u2014 O(n). Binary search exploits the sorted order to skip half the data each step."
     }
-  ]
+   ]
+  },
+  {
+   "id": "w1",
+   "type": "written",
+   "marks": 3,
+   "topic": "Algorithms & Complexity",
+   "subtopic": "Sorting",
+   "prompt": "List the steps of one pass of a bubble sort on the array [5, 2, 8, 1], showing the array after each comparison/swap decision.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "Compares 5 and 2, swaps: [2, 5, 8, 1].",
+     "highlights": [
+      "2, 5"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Compares 5 and 8, no swap; then 8 and 1, swaps: [2, 5, 1, 8].",
+     "highlights": [
+      "1, 8"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Pass ends with 8 in final position \u2014 largest element has 'bubbled' to the end.",
+     "highlights": [
+      "8",
+      "end"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mcq2",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Algorithms & Complexity",
+   "subtopic": "Complexity comparison",
+   "prompt": "For large inputs, which sorting algorithm is fastest in the worst case?",
+   "options": [
+    "Bubble sort",
+    "Quick sort",
+    "Merge sort",
+    "Insertion sort"
+   ],
+   "correctIndex": 2,
+   "feedbackCorrect": "Correct \u2014 merge sort is O(n log n) in all cases; quick sort degrades to O(n\u00b2) in the worst case and bubble/insertion are O(n\u00b2).",
+   "feedbackWrong": "Compare worst cases: bubble, insertion and quick sort are all O(n\u00b2) worst-case \u2014 merge sort guarantees O(n log n).",
+   "mistakes": [
+    {
+     "optionIndex": 1,
+     "misconception": "Knows quick sort is fastest in practice on average.",
+     "correction": "Average-case quick sort is fast, but its worst case is O(n\u00b2) \u2014 the question asks worst case, where merge sort wins."
+    }
+   ]
+  },
+  {
+   "id": "w2",
+   "type": "written",
+   "marks": 4,
+   "topic": "Systems Architecture",
+   "subtopic": "Fetch-decode-execute",
+   "prompt": "Describe the role of the Program Counter (PC), Memory Address Register (MAR), Memory Data Register (MDR) and Accumulator during the fetch stage of the fetch-decode-execute cycle.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "PC holds the address of the next instruction to fetch.",
+     "highlights": [
+      "next instruction",
+      "address"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "PC contents copied to MAR; the MAR carries the address to memory.",
+     "highlights": [
+      "copied",
+      "MAR"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Instruction at that address is transferred into the MDR (and then CIR).",
+     "highlights": [
+      "MDR"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Accumulator's role is in execution: it stores results of ALU operations \u2014 not part of the fetch itself.",
+     "highlights": [
+      "ALU",
+      "results"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mcq3",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Systems Architecture",
+   "subtopic": "Cache",
+   "prompt": "Why does adding cache memory speed up a computer?",
+   "options": [
+    "Cache is faster memory close to the CPU, storing frequently-used instructions",
+    "Cache increases the clock speed of the processor",
+    "Cache stores files permanently so the disk is never needed",
+    "Cache adds extra cores for parallel processing"
+   ],
+   "correctIndex": 0,
+   "feedbackCorrect": "Correct \u2014 cache is fast SRAM on or near the CPU; frequently-needed data avoids slow main-memory access.",
+   "feedbackWrong": "Cache is small fast memory between CPU and RAM \u2014 it works because programs reuse the same data (locality), so fewer slow memory fetches occur.",
+   "mistakes": [
+    {
+     "optionIndex": 2,
+     "misconception": "Confuses cache with permanent storage.",
+     "correction": "Cache is volatile working memory, not file storage \u2014 it holds copies of data that also lives in RAM."
+    }
+   ]
+  },
+  {
+   "id": "tt1",
+   "type": "trace-table",
+   "marks": 3,
+   "topic": "Algorithms & Complexity",
+   "subtopic": "Tracing",
+   "prompt": "Trace this insertion-sort inner loop on a = [4, 3].\n```\nj = 0\nkey = a[1]\nwhile j >= 0 and a[j] > key\n  a[j+1] = a[j]\n  j = j - 1\nendwhile\na[j+1] = key\n```",
+   "guidance": "Record the initial values first, then one row per loop iteration showing j, key and the array after that iteration completes, and finally a row after the loop-exit assignment.",
+   "columns": [
+    "j",
+    "key",
+    "array"
+   ],
+   "expectedRows": [
+    [
+     "0",
+     "3",
+     "[4, 3]"
+    ],
+    [
+     "-1",
+     "3",
+     "[4, 4]"
+    ],
+    [
+     "-1",
+     "3",
+     "[3, 4]"
+    ]
+   ],
+   "rows": 4
+  },
+  {
+   "id": "w3",
+   "type": "written",
+   "marks": 2,
+   "topic": "Systems Architecture",
+   "subtopic": "Von Neumann vs Harvard",
+   "prompt": "State one difference between Von Neumann and Harvard architecture and one consequence of that difference.",
+   "markScheme": [
+    {
+     "marks": 1,
+     "text": "Von Neumann stores instructions and data in the same memory/bus; Harvard uses separate memories/buses.",
+     "highlights": [
+      "same memory",
+      "separate"
+     ]
+    },
+    {
+     "marks": 1,
+     "text": "Consequence: Harvard can fetch instruction and data simultaneously (faster); Von Neumann suffers the bottleneck but is simpler/cheaper.",
+     "highlights": [
+      "simultaneously",
+      "bottleneck"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mcq4",
+   "type": "multiple-choice",
+   "marks": 1,
+   "topic": "Algorithms & Complexity",
+   "subtopic": "Graph traversal",
+   "prompt": "Which data structure is essential for breadth-first graph traversal?",
+   "options": [
+    "Stack",
+    "Queue",
+    "Tree",
+    "Hash table"
+   ],
+   "correctIndex": 1,
+   "feedbackCorrect": "Correct \u2014 BFS explores level by level using a FIFO queue; DFS uses a stack.",
+   "feedbackWrong": "BFS visits nodes in order of discovery \u2014 first in, first out \u2014 which is exactly queue behaviour.",
+   "mistakes": [
+    {
+     "optionIndex": 0,
+     "misconception": "Confuses BFS with DFS.",
+     "correction": "Depth-first search plunges deep using a stack (LIFO); breadth-first spreads evenly using a queue (FIFO)."
+    }
+   ]
+  }
+ ]
 }
