@@ -47,3 +47,28 @@ test('fully cleared trace table renders as unattempted', () => {
   const h = reviewWalkHtml([q], { t2: { rows: [['', '', '']] } });
   assert.ok(h.includes('unattempted'), 'cleared table is unattempted');
 });
+
+test('shared question ids across banks never borrow answers', () => {
+  // two banks carry a question with the same bare id; only bank A's copy was
+  // answered — bank B's copy must render unattempted, not borrow A's answer
+  const qA = { id: 'q1', _key: 'bankA.json:q1', type: 'written', prompt: 'p', markScheme: [] };
+  const qB = { id: 'q1', _key: 'bankB.json:q1', type: 'written', prompt: 'p', markScheme: [] };
+  const answers = { 'bankA.json:q1': { text: 'student answer for A' } };
+  const html = reviewWalkHtml([qA, qB], answers);
+  assert.match(html, /student answer for A/);
+  const items = html.split('rw-item');
+  assert.equal((html.match(/unattempted/g) || []).length, 1, 'exactly one question renders unattempted');
+});
+
+test('ambiguous suffix matches render unattempted', () => {
+  // both banks answered — an unkeyed question with the same bare id cannot
+  // tell which answer is its own, so it must not borrow either
+  const qX = { id: 'q1', type: 'written', prompt: 'p', markScheme: [] };
+  const answers = {
+    'bankA.json:q1': { text: 'answer A' },
+    'bankB.json:q1': { text: 'answer B' }
+  };
+  const html = reviewWalkHtml([qX], answers);
+  assert.match(html, /unattempted/);
+  assert.ok(!html.includes('YOUR ANSWER'), 'no answer block rendered for ambiguous question');
+});
