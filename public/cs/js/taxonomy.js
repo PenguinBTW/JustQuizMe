@@ -198,6 +198,7 @@ export function resolveDeps(questions, pool) {
       if (!src || src === q) return { id: d.id, missing: !src };
       return {
         id: src.id,
+        _srcKey: src._key || null,
         prompt: src.prompt,
         guidance: src.guidance,
         showAnswer: d.showAnswer,
@@ -213,7 +214,10 @@ export function resolveDeps(questions, pool) {
 export function depAnswerVisible(dep) {
   if (!dep.showAnswer || !dep.answer) return false;
   if (S.runMode === 'explore') return true;
-  const inRun = (S.quiz?.questions || []).find(q => q.id === dep.id);
+  // identity first: the exact object resolution picked — two run questions can
+  // share an id across banks, and the wrong one's lock must not gate the answer
+  const inRun = (dep._srcKey && (S.quiz?.questions || []).find(q => q._key === dep._srcKey))
+    || (S.quiz?.questions || []).find(q => q.id === dep.id);
   if (!inRun) return true;
   const a = S.answers[ak(inRun)];
   return !!(a && a.locked);

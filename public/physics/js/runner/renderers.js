@@ -55,7 +55,7 @@ export function resolveDeps(questions, pool){
       const src = pickSrc(d.id, q);
       if (!src || src === q) return { id: d.id, missing: !src };
       return {
-        id: src.id, prompt: src.prompt, guidance: src.guidance, showAnswer: d.showAnswer,
+        id: src.id, _srcKey: src._key || null, prompt: src.prompt, guidance: src.guidance, showAnswer: d.showAnswer,
         table: src.table || null,
         images: qImages(src).map(it => ({ src: imgSrc(it.file, src._imgBase), alt: it.alt, caption: it.caption })),
         answer: depAnswerData(src),
@@ -68,7 +68,10 @@ export function resolveDeps(questions, pool){
 export function depAnswerVisible(dep){
   if (!dep.showAnswer || !dep.answer) return false;
   if (S.runMode === 'explore') return true;
-  const inRun = (S.quiz?.questions || []).find(q => q.id === dep.id);
+  // identity first: the exact object resolution picked — two run questions can
+  // share an id across banks, and the wrong one's lock must not gate the answer
+  const inRun = (dep._srcKey && (S.quiz?.questions || []).find(q => q._key === dep._srcKey))
+    || (S.quiz?.questions || []).find(q => q.id === dep.id);
   if (!inRun) return true; // predecessor not in this set - needed to proceed
   const a = S.answers[ak(inRun)];
   return !!(a && a.locked);
