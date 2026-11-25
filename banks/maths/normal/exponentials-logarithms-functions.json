@@ -4,7 +4,10 @@
   "title": "Exponentials, Logarithms & Functions",
   "subject": "maths",
   "specCode": "H240/01",
-  "topics": ["Algebra, Polynomials & Proof", "Functions & Graphs"],
+  "topics": [
+    "Algebra, Polynomials & Proof",
+    "Functions & Graphs"
+  ],
   "questions": [
     {
       "id": "mcq1",
@@ -43,11 +46,23 @@
       "subtopic": "Exponential equations",
       "prompt": "Solve $5^x = 17$, giving x to 3 significant figures.",
       "answer": 1.76,
-      "tolerance": { "min": 1.75, "max": 1.77 },
+      "tolerance": {
+        "min": 1.75,
+        "max": 1.77
+      },
       "stepChecks": [
-        { "label": "Take logs both sides: $x \\ln 5 = \\ln 17$", "marks": 1 },
-        { "label": "$x = \\ln 17 / \\ln 5$", "marks": 1 },
-        { "label": "$x \\approx 1.76$", "marks": 1 }
+        {
+          "label": "Take logs both sides: $x \\ln 5 = \\ln 17$",
+          "marks": 1
+        },
+        {
+          "label": "$x = \\ln 17 / \\ln 5$",
+          "marks": 1
+        },
+        {
+          "label": "$x \\approx 1.76$",
+          "marks": 1
+        }
       ]
     },
     {
@@ -61,22 +76,32 @@
         {
           "marks": 1,
           "text": "500 is the INITIAL population (value at t = 0, since e⁰ = 1).",
-          "highlights": ["initial", "t = 0"]
+          "highlights": [
+            "initial",
+            "t = 0"
+          ]
         },
         {
           "marks": 1,
           "text": "0.4 is the continuous growth rate per hour — 40% continuous growth.",
-          "highlights": ["growth rate", "0.4"]
+          "highlights": [
+            "growth rate",
+            "0.4"
+          ]
         },
         {
           "marks": 1,
           "text": "Set $10000 = 500e^{0.4t}$, so $e^{0.4t} = 20$ and $0.4t = \\ln 20$.",
-          "highlights": ["ln 20"]
+          "highlights": [
+            "ln 20"
+          ]
         },
         {
           "marks": 1,
           "text": "$t = \\ln 20 / 0.4 \\approx 7.49$ hours.",
-          "highlights": ["7.49"]
+          "highlights": [
+            "7.49"
+          ]
         }
       ],
       "mistakes": [
@@ -94,7 +119,12 @@
       "topic": "Functions & Graphs",
       "subtopic": "Inverse functions",
       "prompt": "The inverse of $f(x) = e^x$ is:",
-      "options": ["$\\ln x$", "$e^{-x}$", "$\\frac{1}{e^x}$", "$x^e$"],
+      "options": [
+        "$\\ln x$",
+        "$e^{-x}$",
+        "$\\frac{1}{e^x}$",
+        "$x^e$"
+      ],
       "correctIndex": 0,
       "feedbackCorrect": "Correct — ln undoes exponentiation: $\\ln(e^x) = x$.",
       "feedbackWrong": "The inverse function of $e^x$ is the natural logarithm — they undo each other.",
@@ -114,10 +144,19 @@
       "subtopic": "Composite functions",
       "prompt": "Given $f(x) = 2x + 1$ and $g(x) = x^2$, calculate $fg(3)$.",
       "answer": 19,
-      "tolerance": { "min": 18.9, "max": 19.1 },
+      "tolerance": {
+        "min": 18.9,
+        "max": 19.1
+      },
       "stepChecks": [
-        { "label": "Inner first: $g(3) = 9$", "marks": 1 },
-        { "label": "$f(9) = 2(9) + 1 = 19$", "marks": 1 }
+        {
+          "label": "Inner first: $g(3) = 9$",
+          "marks": 1
+        },
+        {
+          "label": "$f(9) = 2(9) + 1 = 19$",
+          "marks": 1
+        }
       ]
     },
     {
@@ -131,17 +170,25 @@
         {
           "marks": 1,
           "text": "A function must be one-to-one for an inverse to exist — inverse must map each output to exactly one input.",
-          "highlights": ["one-to-one"]
+          "highlights": [
+            "one-to-one"
+          ]
         },
         {
           "marks": 1,
           "text": "$x^2$ is many-to-one: both $x$ and $-x$ give the same output, so an inverse would be ambiguous.",
-          "highlights": ["many-to-one", "ambiguous"]
+          "highlights": [
+            "many-to-one",
+            "ambiguous"
+          ]
         },
         {
           "marks": 1,
-          "text": "Restricting the domain to $x \\ge 0$ (or $x \\le 0$) makes it one-to-one, and the inverse becomes $\\sqrt{x}$.",
-          "highlights": ["x ≥ 0", "sqrt"]
+          "text": "Restricting the domain to $x \\ge 0$ makes it one-to-one with inverse $\\sqrt{x}$ (equivalently $x \\le 0$ with inverse $-\\sqrt{x}$).",
+          "highlights": [
+            "x ≥ 0",
+            "sqrt"
+          ]
         }
       ]
     },
@@ -152,7 +199,12 @@
       "topic": "Functions & Graphs",
       "subtopic": "Modulus function",
       "prompt": "How many solutions does $|2x - 3| = 5$ have?",
-      "options": ["0", "1", "2", "4"],
+      "options": [
+        "0",
+        "1",
+        "2",
+        "4"
+      ],
       "correctIndex": 2,
       "feedbackCorrect": "Correct — 2x − 3 = ±5 gives x = 4 or x = −1.",
       "feedbackWrong": "Modulus equations split into two cases: 2x − 3 = 5 and 2x − 3 = −5, giving x = 4 and x = −1.",
@@ -175,17 +227,24 @@
         {
           "marks": 1,
           "text": "Substitute: $V = 20000e^{-0.75}$.",
-          "highlights": ["e^{-0.75}"]
+          "highlights": [
+            "e^{-0.75}"
+          ]
         },
         {
           "marks": 1,
           "text": "$V \\approx 20000 \\times 0.4724 \\approx £9447$.",
-          "highlights": ["9447"]
+          "highlights": [
+            "9447"
+          ]
         },
         {
           "marks": 1,
           "text": "As $t \\to \\infty$, $V \\to 0$ — exponential decay approaches zero but never reaches it; the model becomes unrealistic for very old cars.",
-          "highlights": ["approaches zero", "never reaches"]
+          "highlights": [
+            "approaches zero",
+            "never reaches"
+          ]
         }
       ]
     }
