@@ -159,7 +159,7 @@ export async function renderSummaryReport() {
       })())
       || hasTableInput || ans.tickedCount != null || (ans.ticked && ans.ticked.length));
     return {
-      key: (q._srcFile ? q._srcFile + ':' : '') + (q.key || q.id || ''),
+      key: ((q._srcFile || S.quizMeta.file) ? (q._srcFile || S.quizMeta.file) + ':' : '') + (q.key || q.id || ''),
       id: q.id || null,
       topic: q.topic || q._topic || null,
       subtopic: q.subtopic || null,
