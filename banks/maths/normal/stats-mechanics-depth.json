@@ -1,10 +1,14 @@
 {
   "uuid": "f2d0a6b1-7e3a-4b5d-8c9f-1a4b6c7d8e9f",
   "version": 1,
-  "title": "Statistics & Mechanics — Final Depth Practice",
+  "title": "Statistics & Mechanics \u2014 Final Depth Practice",
   "subject": "maths",
   "specCode": "H240/03",
-  "topics": ["Statistical Sampling & Data", "Forces, Moments & Equilibrium", "Kinematics"],
+  "topics": [
+    "Statistical Sampling & Data",
+    "Forces, Moments & Equilibrium",
+    "Kinematics & Projectiles"
+  ],
   "questions": [
     {
       "id": "mcq1",
@@ -13,30 +17,55 @@
       "topic": "Statistical Sampling & Data",
       "subtopic": "Sampling methods",
       "prompt": "A researcher selects every 20th person from an alphabetical list of a population. This is:",
-      "options": ["Simple random sampling", "Systematic sampling", "Stratified sampling", "Quota sampling"],
+      "options": [
+        "Simple random sampling",
+        "Systematic sampling",
+        "Stratified sampling",
+        "Quota sampling"
+      ],
       "correctIndex": 1,
-      "feedbackCorrect": "Correct — selection at fixed intervals through an ordered list is systematic sampling.",
-      "feedbackWrong": "Fixed-interval selection from an ordered list is systematic — random sampling uses random numbers, stratified splits into groups first, quota is non-random.",
+      "feedbackCorrect": "Correct \u2014 selection at fixed intervals through an ordered list is systematic sampling.",
+      "feedbackWrong": "Fixed-interval selection from an ordered list is systematic \u2014 random sampling uses random numbers, stratified splits into groups first, quota is non-random.",
       "mistakes": [
-        {"optionIndex": 0, "misconception": "Assumes any unbiased-looking selection is random.", "correction": "Systematic sampling is not random — the interval structure means not every sample of a given size is equally likely, and periodicity in the list can bias it."}
+        {
+          "optionIndex": 0,
+          "misconception": "Assumes any unbiased-looking selection is random.",
+          "correction": "Systematic sampling is not random \u2014 the interval structure means not every sample of a given size is equally likely, and periodicity in the list can bias it."
+        }
       ]
     },
     {
       "id": "calc1",
       "type": "calculation",
       "marks": 3,
-      "topic": "Kinematics",
+      "topic": "Kinematics & Projectiles",
       "subtopic": "SUVAT",
       "prompt": "A ball is thrown vertically upwards at 14 m/s. Using g = 9.8, enter the maximum height reached in metres, to 2 significant figures.",
       "answer": 10,
-      "tolerance": {"min": 9.8, "max": 10.2},
+      "tolerance": {
+        "min": 9.8,
+        "max": 10.2
+      },
       "stepChecks": [
-        {"label": "$v^2 = u^2 + 2as$ with $v = 0$: $0 = 14^2 - 2 \\times 9.8 s$", "marks": 1},
-        {"label": "$s = 196 / 19.6$", "marks": 1},
-        {"label": "$s = 10$ m", "marks": 1}
+        {
+          "label": "$v^2 = u^2 + 2as$ with $v = 0$: $0 = 14^2 - 2 \\times 9.8 s$",
+          "marks": 1
+        },
+        {
+          "label": "$s = 196 / 19.6$",
+          "marks": 1
+        },
+        {
+          "label": "$s = 10$ m",
+          "marks": 1
+        }
       ],
       "mistakes": [
-        {"pattern": "20", "misconception": "Uses g instead of 2g in the division — treats the equation as v² = u² - gs.", "correction": "$v^2 = u^2 + 2as$ carries a factor of 2: $s = u^2/(2g)$, not $u^2/g$."}
+        {
+          "pattern": "20",
+          "misconception": "Uses g instead of 2g in the division \u2014 treats the equation as v\u00b2 = u\u00b2 - gs.",
+          "correction": "$v^2 = u^2 + 2as$ carries a factor of 2: $s = u^2/(2g)$, not $u^2/g$."
+        }
       ]
     },
     {
@@ -45,12 +74,39 @@
       "marks": 4,
       "topic": "Statistical Sampling & Data",
       "subtopic": "Hypothesis testing",
-      "prompt": "A coin is tossed 20 times and lands heads 14 times. Using a binomial model B(20, 0.5), explain how you would test at the 5% significance level whether the coin is biased towards heads — state the hypotheses, what probability you compute, and the decision rule. You do not need final numerical values.",
+      "prompt": "A coin is tossed 20 times and lands heads 14 times. Using a binomial model B(20, 0.5), explain how you would test at the 5% significance level whether the coin is biased towards heads \u2014 state the hypotheses, what probability you compute, and the decision rule. You do not need final numerical values.",
       "markScheme": [
-        {"marks": 1, "text": "H₀: p = 0.5; H₁: p > 0.5 (one-tailed, since the claim is bias towards heads).", "highlights": ["p = 0.5", "p > 0.5"]},
-        {"marks": 1, "text": "Test statistic X = number of heads ~ B(20, 0.5) under H₀.", "highlights": ["B(20, 0.5)"]},
-        {"marks": 1, "text": "Compute P(X ≥ 14) — the probability of a result at least this extreme under H₀.", "highlights": ["P(X ≥ 14)", "at least"]},
-        {"marks": 1, "text": "Reject H₀ if that probability < 0.05; otherwise insufficient evidence — never 'accept' H₁ as proven.", "highlights": ["0.05", "insufficient evidence"]}
+        {
+          "marks": 1,
+          "text": "H\u2080: p = 0.5; H\u2081: p > 0.5 (one-tailed, since the claim is bias towards heads).",
+          "highlights": [
+            "p = 0.5",
+            "p > 0.5"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Test statistic X = number of heads ~ B(20, 0.5) under H\u2080.",
+          "highlights": [
+            "B(20, 0.5)"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Compute P(X \u2265 14) \u2014 the probability of a result at least this extreme under H\u2080.",
+          "highlights": [
+            "P(X \u2265 14)",
+            "at least"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Reject H\u2080 if that probability < 0.05; otherwise insufficient evidence \u2014 never 'accept' H\u2081 as proven.",
+          "highlights": [
+            "0.05",
+            "insufficient evidence"
+          ]
+        }
       ]
     },
     {
@@ -60,30 +116,55 @@
       "topic": "Forces, Moments & Equilibrium",
       "subtopic": "Moments",
       "prompt": "A uniform 4 m plank of weight 100 N is supported at its centre. A 60 N weight sits 1 m left of centre. Where must a 40 N weight sit to balance it?",
-      "options": ["1.5 m right of centre", "1 m right of centre", "2.5 m right of centre", "0.67 m right of centre"],
+      "options": [
+        "1.5 m right of centre",
+        "1 m right of centre",
+        "2.5 m right of centre",
+        "0.67 m right of centre"
+      ],
       "correctIndex": 0,
-      "feedbackCorrect": "Correct — moments about centre: $60 \\times 1 = 40x$, so $x = 1.5$ m.",
+      "feedbackCorrect": "Correct \u2014 moments about centre: $60 \\times 1 = 40x$, so $x = 1.5$ m.",
       "feedbackWrong": "Equilibrium requires equal opposing moments: $60 \\times 1 = 40 \\times x$, giving x = 1.5 m right.",
       "mistakes": [
-        {"optionIndex": 1, "misconception": "Assumes equal distances balance regardless of weight.", "correction": "Moment depends on both force and distance — the lighter weight must sit further out to match the heavier one's moment."}
+        {
+          "optionIndex": 1,
+          "misconception": "Assumes equal distances balance regardless of weight.",
+          "correction": "Moment depends on both force and distance \u2014 the lighter weight must sit further out to match the heavier one's moment."
+        }
       ]
     },
     {
       "id": "calc2",
       "type": "calculation",
       "marks": 3,
-      "topic": "Kinematics",
+      "topic": "Kinematics & Projectiles",
       "subtopic": "Projectiles",
       "prompt": "A projectile is launched horizontally at 20 m/s from a cliff 45 m high. Using g = 9.8, enter the time of flight in seconds to 2 significant figures.",
       "answer": 3.0,
-      "tolerance": {"min": 2.9, "max": 3.2},
+      "tolerance": {
+        "min": 2.9,
+        "max": 3.2
+      },
       "stepChecks": [
-        {"label": "Vertical motion independent: $s = \\frac{1}{2}gt^2$, $45 = 4.9t^2$", "marks": 1},
-        {"label": "$t^2 = 45/4.9 \\approx 9.18$", "marks": 1},
-        {"label": "$t \\approx 3.0$ s", "marks": 1}
+        {
+          "label": "Vertical motion independent: $s = \\frac{1}{2}gt^2$, $45 = 4.9t^2$",
+          "marks": 1
+        },
+        {
+          "label": "$t^2 = 45/4.9 \\approx 9.18$",
+          "marks": 1
+        },
+        {
+          "label": "$t \\approx 3.0$ s",
+          "marks": 1
+        }
       ],
       "mistakes": [
-        {"pattern": "2.2", "misconception": "Involves the horizontal speed in the time-of-flight calculation.", "correction": "Horizontal and vertical motions are independent — time of flight depends only on height and g. The 20 m/s affects range, not time."}
+        {
+          "pattern": "2.2",
+          "misconception": "Involves the horizontal speed in the time-of-flight calculation.",
+          "correction": "Horizontal and vertical motions are independent \u2014 time of flight depends only on height and g. The 20 m/s affects range, not time."
+        }
       ]
     },
     {
@@ -92,11 +173,32 @@
       "marks": 3,
       "topic": "Statistical Sampling & Data",
       "subtopic": "Averages",
-      "prompt": "A small business has 9 employees earning £25,000 each and one director earning £250,000. State which average (mean or median) better represents a typical salary and justify with rough values.",
+      "prompt": "A small business has 9 employees earning \u00a325,000 each and one director earning \u00a3250,000. State which average (mean or median) better represents a typical salary and justify with rough values.",
       "markScheme": [
-        {"marks": 1, "text": "Mean ≈ £47,500 — pulled far above what anyone but the director earns.", "highlights": ["mean", "47"]},
-        {"marks": 1, "text": "Median = £25,000 — the middle value, unaffected by the outlier.", "highlights": ["median", "25"]},
-        {"marks": 1, "text": "Median is the better representative here because the mean is distorted by a single extreme value.", "highlights": ["median", "outlier"]}
+        {
+          "marks": 1,
+          "text": "Mean \u2248 \u00a347,500 \u2014 pulled far above what anyone but the director earns.",
+          "highlights": [
+            "mean",
+            "47"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Median = \u00a325,000 \u2014 the middle value, unaffected by the outlier.",
+          "highlights": [
+            "median",
+            "25"
+          ]
+        },
+        {
+          "marks": 1,
+          "text": "Median is the better representative here because the mean is distorted by a single extreme value.",
+          "highlights": [
+            "median",
+            "outlier"
+          ]
+        }
       ]
     },
     {
@@ -105,27 +207,45 @@
       "marks": 1,
       "topic": "Forces, Moments & Equilibrium",
       "subtopic": "Resolving forces",
-      "prompt": "A 100 N force acts at 30° above horizontal. Its horizontal component is:",
-      "options": ["$100\\cos 30° \\approx 86.6$ N", "$100\\sin 30° = 50$ N", "$100\\tan 30° \\approx 57.7$ N", "100 N"],
+      "prompt": "A 100 N force acts at 30\u00b0 above horizontal. Its horizontal component is:",
+      "options": [
+        "$100\\cos 30\u00b0 \\approx 86.6$ N",
+        "$100\\sin 30\u00b0 = 50$ N",
+        "$100\\tan 30\u00b0 \\approx 57.7$ N",
+        "100 N"
+      ],
       "correctIndex": 0,
-      "feedbackCorrect": "Correct — the component adjacent to the angle uses cosine.",
-      "feedbackWrong": "Horizontal is adjacent to the 30° angle — use cosine: $100\\cos30°$. Sine gives the vertical component.",
+      "feedbackCorrect": "Correct \u2014 the component adjacent to the angle uses cosine.",
+      "feedbackWrong": "Horizontal is adjacent to the 30\u00b0 angle \u2014 use cosine: $100\\cos30\u00b0$. Sine gives the vertical component.",
       "mistakes": [
-        {"optionIndex": 1, "misconception": "Uses sine for both components.", "correction": "Memory rule: the component adjacent to the angle takes cos; opposite takes sin. Horizontal is adjacent here."}
+        {
+          "optionIndex": 1,
+          "misconception": "Uses sine for both components.",
+          "correction": "Memory rule: the component adjacent to the angle takes cos; opposite takes sin. Horizontal is adjacent here."
+        }
       ]
     },
     {
       "id": "calc3",
       "type": "calculation",
       "marks": 2,
-      "topic": "Kinematics",
+      "topic": "Kinematics & Projectiles",
       "subtopic": "Velocity-time",
       "prompt": "A car accelerates uniformly from rest to 24 m/s in 8 seconds, then brakes uniformly to rest in 4 seconds. Enter the total distance travelled in metres.",
       "answer": 144,
-      "tolerance": {"min": 142, "max": 146},
+      "tolerance": {
+        "min": 142,
+        "max": 146
+      },
       "stepChecks": [
-        {"label": "Distance = area under v–t graph: triangle 1 $\\frac{1}{2}(8)(24) = 96$ m", "marks": 1},
-        {"label": "Triangle 2 $\\frac{1}{2}(4)(24) = 48$ m; total $= 144$ m", "marks": 1}
+        {
+          "label": "Distance = area under v\u2013t graph: triangle 1 $\\frac{1}{2}(8)(24) = 96$ m",
+          "marks": 1
+        },
+        {
+          "label": "Triangle 2 $\\frac{1}{2}(4)(24) = 48$ m; total $= 144$ m",
+          "marks": 1
+        }
       ]
     }
   ]
