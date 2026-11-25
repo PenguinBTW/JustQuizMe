@@ -6,6 +6,18 @@ function esc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// bank content is authorable in-app — printed HTML must not carry script
+// execution into the print window. keeps formatting markup, drops active content.
+export function sanitizeHtml(html) {
+  return String(html == null ? '' : html)
+    .replace(/<\s*script[^>]*>[\s\S]*?<\s*\/\s*script\s*>/gi, '')
+    .replace(/<\s*script[^>]*\/?\s*>/gi, '')
+    .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
+    .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
+    .replace(/\son\w+\s*=\s*[^\s>]+/gi, '')
+    .replace(/javascript\s*:/gi, '');
+}
+
 function optText(opt) {
   if (opt == null) return '';
   if (typeof opt === 'string') return opt;
@@ -20,11 +32,60 @@ export function workingLines(q) {
   return Math.min(20, Math.max(3, (+q.marks || 1) * per));
 }
 
+export function fmtTolerance(tol) {
+  if (tol == null) return '';
+  if (typeof tol === 'number' || typeof tol === 'string') return `±${esc(tol)}`;
+  if (typeof tol === 'object') {
+    if (tol.percent != null) return `±${esc(tol.percent)}%`;
+    if (tol.absolute != null) return `±${esc(tol.absolute)}`;
+    if (tol.min != null && tol.max != null) return `accepted range ${esc(tol.min)}–${esc(tol.max)}`;
+  }
+  return '';
+}
+
+// supplementary material the question depends on: context stems, diagrams,
+// data tables, algorithms, formulae — without it the question is unanswerable
+function supplementHtml(q) {
+  let out = '';
+  const ctx = q.context || q.stem || q.instructions;
+  if (ctx) out += `<div class="pq-context">${sanitizeHtml(ctx)}</div>`;
+  const algo = q.algorithm || q.pseudocode || q.code;
+  if (algo) out += `<pre class="pq-pre">${esc(algo)}</pre>`;
+  const tbl = q.table || q.dataTable;
+  if (tbl && Array.isArray(tbl.rows)) {
+    const head = Array.isArray(tbl.headers) ? `<tr>${tbl.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr>` : '';
+    out += `<table class="pq-table">${head}${tbl.rows.map(r => `<tr>${(Array.isArray(r) ? r : [r]).map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table>`;
+  }
+  if (q.formula) out += `<div class="pq-context">$${esc(q.formula)}$</div>`;
+  if (q.diagram) out += `<pre class="pq-pre">${esc(q.diagram)}</pre>`;
+  return out;
+}
+
+// trace/truth tables print with their input cells filled and answer cells blank
+function blankTableHtml(q) {
+  if (q.type === 'trace-table' && Array.isArray(q.columns)) {
+    const rows = Math.max(4, (q.expectedRows || 4) + 2);
+    return `<table class="pq-table pq-answertable"><tr>${q.columns.map(c => `<th>${esc(typeof c === 'object' ? c.label || c.name : c)}</th>`).join('')}</tr>${'<tr>' + q.columns.map(() => '<td>&nbsp;</td>').join('') + '</tr>'.repeat(rows)}</table>`;
+  }
+  if (q.type === 'truth-table' && Array.isArray(q.columns)) {
+    const cols = q.columns;
+    const rows = Array.isArray(q.rows) ? q.rows : [];
+    if (rows.length) {
+      return `<table class="pq-table pq-answertable"><tr>${cols.map(c => `<th>${esc(typeof c === 'object' ? c.label || c.name : c)}</th>`).join('')}</tr>${rows.map(r => `<tr>${cols.map((c, ci) => {
+        const key = typeof c === 'object' ? c.key || c.name : c;
+        const val = Array.isArray(r) ? r[ci] : (r && r[key]);
+        return `<td>${val != null && val !== '' ? esc(val) : '&nbsp;'}</td>`;
+      }).join('')}</tr>`).join('')}</table>`;
+    }
+  }
+  return '';
+}
+
 export function questionBlockHtml(q, n, { scheme = false } = {}) {
   const marks = +q.marks || 0;
   let body = '';
   if (q.type === 'multiple-choice' && Array.isArray(q.options)) {
-    body = `<ol class="pq-opts" type="A">${q.options.map(o => `<li>${optText(o)}</li>`).join('')}</ol>`;
+    body = `<ol class="pq-opts" type="A">${q.options.map(o => `<li>${sanitizeHtml(optText(o))}</li>`).join('')}</ol>`;
   }
   if (scheme) {
     const ms = Array.isArray(q.markScheme) && q.markScheme.length
@@ -32,13 +93,18 @@ export function questionBlockHtml(q, n, { scheme = false } = {}) {
       : q.type === 'multiple-choice'
         ? `<div class="pq-ansline">Correct answer: <strong>${'ABCDEF'[q.correctIndex] || '?'}</strong></div>`
         : q.answer != null
-          ? `<div class="pq-ansline">Answer: <strong>${esc(q.answer)}</strong>${q.tolerance != null ? ` (±${esc(q.tolerance)})` : ''}</div>`
+          ? `<div class="pq-ansline">Answer: <strong>${esc(q.answer)}</strong>${q.tolerance != null ? ` (${fmtTolerance(q.tolerance)})` : ''}</div>`
           : '';
     const mistakes = Array.isArray(q.mistakes) && q.mistakes.length
       ? `<div class="pq-mistakes"><div class="pq-mtitle">Common errors</div><ul>${q.mistakes.map(m => `<li><em>${esc(m.misconception || m.error || '')}</em>${m.correction ? ` — ${esc(m.correction)}` : ''}</li>`).join('')}</ul></div>`
       : '';
-    body = ms + mistakes;
+    const rubric = Array.isArray(q.rubric) && q.rubric.length
+      ? `<ul class="pq-scheme">${q.rubric.map(r => `<li>${esc(typeof r === 'object' ? r.text || r.criterion : r)}</li>`).join('')}</ul>`
+      : '';
+    body = ms + rubric + mistakes;
   } else {
+    const tbl = blankTableHtml(q);
+    if (tbl) body += tbl;
     const lines = workingLines(q);
     if (lines) {
       body += `<div class="pq-space">${'<div class="pq-line"></div>'.repeat(lines)}</div>`;
@@ -46,7 +112,8 @@ export function questionBlockHtml(q, n, { scheme = false } = {}) {
   }
   return `<div class="pq">
     <div class="pq-head"><span class="pq-num">${n}</span><span class="pq-marks">${marks} mark${marks === 1 ? '' : 's'}</span></div>
-    <div class="pq-prompt">${q.prompt || ''}</div>
+    <div class="pq-prompt">${sanitizeHtml(q.prompt || '')}</div>
+    ${supplementHtml(q)}
     ${body}
   </div>`;
 }
@@ -78,6 +145,12 @@ const CSS = `
   .pq-mtitle { font-weight: 700; font-size: 9.5pt; text-transform: uppercase; letter-spacing: .04em; color: #444; }
   .teacher-banner { background: #111; color: #fff; padding: 4px 10px; font-size: 9.5pt; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
   .instructions { font-size: 10pt; color: #333; font-style: italic; margin-bottom: 12px; }
+  .pq-context { background: #f4f4f4; border: 1px solid #ddd; padding: 6px 10px; font-size: 10.5pt; margin: 4px 0 8px; white-space: pre-wrap; }
+  .pq-pre { font-family: 'Courier New', monospace; font-size: 9.5pt; background: #f8f8f8; border: 1px solid #ddd; padding: 6px 10px; white-space: pre-wrap; margin: 4px 0 8px; }
+  .pq-table { border-collapse: collapse; margin: 6px 0 10px; font-size: 10.5pt; }
+  .pq-table th, .pq-table td { border: 1px solid #666; padding: 3px 10px; text-align: left; }
+  .pq-answertable td { min-width: 40px; height: 7mm; }
+  .pq-prompt { white-space: pre-wrap; }
 `;
 
 function docShell({ title, portal, timeMinutes, totalMarks, teacher, bodyHtml }) {
@@ -94,7 +167,12 @@ ${bodyHtml}
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <script>
   window.addEventListener('load', () => {
-    try { renderMathInElement(document.body, { delimiters: [{ left: '$', right: '$', display: false }] }); } catch (e) {}
+    try { renderMathInElement(document.body, { delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '\\[', right: '\\]', display: true },
+      { left: '\\(', right: '\\)', display: false },
+      { left: '$', right: '$', display: false }
+    ] }); } catch (e) {}
     setTimeout(() => { try { window.print(); } catch (e) {} }, 350);
   });
 </script>

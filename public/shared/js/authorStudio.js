@@ -4,23 +4,22 @@ import { validateQuestion, validateBank } from './questionSchema.js';
 
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// only types whose grading data the form can fully capture — complex types
+// (code-requirement, lmc, trace-table, truth-table) need structured grading
+// inputs the form doesn't have; offering them produced ungradeable questions
 const TYPE_FIELDS = {
   'multiple-choice': ['options', 'correctIndex', 'mistakes'],
   'written': ['markScheme', 'mistakes'],
   'calculation': ['answer', 'tolerancePercent', 'mistakes'],
   'self-marked': ['markScheme', 'answerText', 'mistakes'],
   'extended-response': ['markScheme', 'mistakes'],
-  'code-requirement': ['markScheme', 'starterCode'],
-  'lmc': ['markScheme'],
-  'trace-table': ['markScheme'],
-  'truth-table': ['markScheme'],
 };
 
 export function blankQuestion(type = 'multiple-choice') {
   const q = { id: 'q' + Date.now().toString(36), type, marks: 1, prompt: '', topic: '', subtopic: '' };
   if (type === 'multiple-choice') { q.options = ['', '']; q.correctIndex = 0; }
   if (type === 'written' || type === 'self-marked' || type === 'extended-response') q.markScheme = [{ marks: 1, text: '' }];
-  if (type === 'calculation') { q.answer = 0; q.tolerancePercent = 2.5; }
+  if (type === 'calculation') { q.tolerancePercent = 2.5; }
   return q;
 }
 
@@ -51,7 +50,8 @@ export function questionFormHtml(q, errs = []) {
           <button class="btn-ghost mono" id="af-addopt" style="margin-top:6px; font-size:11.5px;">+ add option</button>
         </div>` : ''}
       ${q.type === 'calculation' ? `
-        <label style="font-size:12px;">numeric answer<br><input id="af-answer" type="number" step="any" value="${q.answer}" style="padding:6px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px;" /></label>` : ''}
+        <label style="font-size:12px;">numeric answer<br><input id="af-answer" type="number" step="any" value="${q.answer != null ? q.answer : ''}" style="padding:6px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px;" /></label>
+        <label style="font-size:12px;">tolerance %<br><input id="af-tolerance" type="number" step="any" min="0" value="${q.tolerancePercent != null ? q.tolerancePercent : ''}" style="padding:6px; width:80px; background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:6px;" /></label>` : ''}
       ${tf.includes('markScheme') ? `
         <div><span class="mono" style="font-size:11px; color:var(--ink-muted);">MARK SCHEME — points must sum to ${q.marks}</span>
         ${(q.markScheme || []).map((m, i) => `
@@ -93,7 +93,9 @@ export function previewHtml(q) {
   return `
     <div style="padding:16px; border:1px dashed var(--border); border-radius:8px;">
       <div class="mono" style="font-size:10.5px; color:var(--ink-muted); margin-bottom:6px;">STUDENT PREVIEW · ${esc(q.type)} · ${q.marks} mark${q.marks === 1 ? '' : 's'}</div>
-      <div style="font-size:14.5px; line-height:1.55;">${esc(q.prompt) || '<span style="opacity:.4">prompt appears here…</span>'}</div>
+      <div style="font-size:14.5px; line-height:1.55;">${q.prompt
+        ? esc(q.prompt).replace(/```([\s\S]*?)```/g, (_, code) => `<pre style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-size:12px; white-space:pre-wrap; margin:6px 0;">${code}</pre>`).replace(/\n/g, '<br>')
+        : '<span style="opacity:.4">prompt appears here…</span>'}</div>
       <div style="margin-top:10px;">${body}</div>
     </div>`;
 }
@@ -106,11 +108,28 @@ export function readForm(root, q) {
   q.subtopic = val('#af-subtopic') || '';
   q.prompt = val('#af-prompt') || '';
   if (q.type === 'multiple-choice') {
-    root.querySelectorAll('.af-option').forEach(el => { q.options[+el.dataset.i] = el.value; });
+    root.querySelectorAll('.af-option').forEach(el => {
+      const i = +el.dataset.i;
+      const prev = q.options[i];
+      // object-form options carry explanations — editing the text must not
+      // flatten them away
+      if (prev && typeof prev === 'object') q.options[i] = { ...prev, text: el.value };
+      else q.options[i] = el.value;
+    });
   }
-  if (q.type === 'calculation') q.answer = +val('#af-answer');
+  if (q.type === 'calculation') {
+    const raw = val('#af-answer');
+    q.answer = raw === '' || raw == null ? undefined : +raw;
+    const tol = val('#af-tolerance');
+    if (tol !== '' && tol != null) q.tolerancePercent = +tol;
+  }
   if (Array.isArray(q.markScheme)) {
-    root.querySelectorAll('.af-ms-marks').forEach(el => { if (q.markScheme[+el.dataset.i]) q.markScheme[+el.dataset.i].marks = +el.value || 1; });
+    root.querySelectorAll('.af-ms-marks').forEach(el => {
+      if (!q.markScheme[+el.dataset.i]) return;
+      let v = +el.value || 1;
+      if (root.dataset && root.dataset.oneMarkPerPoint === '1') v = 1;
+      q.markScheme[+el.dataset.i].marks = v;
+    });
     root.querySelectorAll('.af-ms-text').forEach(el => { if (q.markScheme[+el.dataset.i]) q.markScheme[+el.dataset.i].text = el.value; });
   }
   if (Array.isArray(q.mistakes)) {
@@ -124,9 +143,21 @@ export function readForm(root, q) {
 
 // mountAuthorStudio(host, { apiBase, portal }) — full interactive author tab
 export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
+  const draftKey = `jqm-author-draft-${portal}`;
   let q = blankQuestion();
   let bank = { uuid: 'authored-' + Date.now().toString(36), version: 1, title: 'Authored bank', subject: portal, topics: [], questions: [] };
   let editFile = null;
+  // restore the working draft — leaving the Author tab must not discard work
+  try {
+    const draft = JSON.parse(localStorage.getItem(draftKey) || 'null');
+    if (draft && draft.bank && Array.isArray(draft.bank.questions) && draft.bank.questions.length) {
+      bank = draft.bank;
+      editFile = draft.editFile || null;
+    }
+  } catch {}
+  const persistDraft = () => {
+    try { localStorage.setItem(draftKey, JSON.stringify({ bank, editFile })); } catch {}
+  };
 
   const render = () => {
     const errs = validateQuestion(q);
@@ -193,6 +224,15 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         q.markScheme.push({ marks: 1, text: '' });
         refresh();
       });
+      // maths/physics graders award exactly one mark per ticked point — clamp
+      // multi-mark points there so authors can't write ungradeable schemes
+      if (portal !== 'cs') {
+        formhost.dataset.oneMarkPerPoint = '1';
+        formhost.querySelectorAll('.af-ms-marks').forEach(el => {
+          el.max = 1;
+          el.title = 'this portal grades one mark per marking point';
+        });
+      }
       formhost.querySelector('#af-addmk')?.addEventListener('click', ev => {
         ev.preventDefault();
         readForm(formhost, q);
@@ -212,6 +252,7 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
       const idx = bank.questions.findIndex(x => x.id === q.id);
       if (idx >= 0) bank.questions[idx] = { ...q }; else bank.questions.push({ ...q });
       bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
+      persistDraft();
       q = blankQuestion(q.type);
       render();
     });
@@ -236,6 +277,18 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
     });
     host.querySelector('#af-save')?.addEventListener('click', async () => {
       const status = host.querySelector('#af-status');
+      // if the form currently holds an edit of a banked question, fold it in —
+      // saving must never silently drop the edits the author just made
+      try {
+        readForm(host.querySelector('#af-formhost'), q);
+        const qErrs = validateQuestion(q);
+        const banked = bank.questions.findIndex(x => x.id === q.id);
+        if (banked >= 0 && !qErrs.length) {
+          const cur = JSON.stringify(bank.questions[banked]);
+          if (JSON.stringify(q) !== cur) bank.questions[banked] = { ...q };
+        }
+        bank.topics = [...new Set(bank.questions.map(x => x.topic).filter(Boolean))];
+      } catch {}
       const errs = validateBank(bank);
       if (errs.length) { status.textContent = '✗ ' + errs[0]; status.style.color = '#e0735f'; return; }
       try {
@@ -248,6 +301,9 @@ export function mountAuthorStudio(host, { apiBase = '', portal = 'cs' } = {}) {
         if (!r.ok) { status.textContent = '✗ ' + (out.details ? out.details[0] : out.error); status.style.color = '#e0735f'; return; }
         status.textContent = `✓ saved to questions/normal/${out.file}`;
         status.style.color = 'var(--accent)';
+        try { localStorage.removeItem(draftKey); } catch {}
+        persistDraft(); // keep the saved state as the working draft
+        window.dispatchEvent(new CustomEvent('jqm-bank-saved', { detail: { portal, file: out.file } }));
       } catch { status.textContent = '✗ save failed — server unreachable?'; status.style.color = '#e0735f'; }
     });
   };
