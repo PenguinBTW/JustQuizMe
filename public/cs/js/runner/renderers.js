@@ -746,12 +746,14 @@ export function wireQuestionInteractions(q) {
     document.querySelectorAll('[data-tr-r]').forEach(inp => {
       inp.oninput = () => {
         const r = +inp.dataset.trR, c = +inp.dataset.trC;
+        ans.rowsTouched = true;
         if (ans.rows && ans.rows[r]) ans.rows[r][c] = inp.value;
       };
     });
 
     $('#addTraceRowBtn')?.addEventListener('click', () => {
       saveCurrent(q);
+      ans.rowsTouched = true;
       ans.rows.push(new Array((q.columns || []).length).fill(''));
       renderQ();
     });
