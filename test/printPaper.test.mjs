@@ -84,5 +84,7 @@ test('teacher scheme prints trace-table and truth-table solutions', () => {
   };
   const h2 = questionBlockHtml(tt, 2, { scheme: true });
   assert.match(h2, /<th>Q<\/th>/);
-  assert.match(h2, /<td>1<\/td>/, 'expected output printed in scheme');
+  // position-exact: inputs 0,1 then expected output 1 in the SAME row — a
+  // blank or shifted output cell must fail
+  assert.match(h2, /<tr><td>0<\/td><td>1<\/td><td>1<\/td><\/tr>/, 'expected output printed in the correct cell position');
 });
