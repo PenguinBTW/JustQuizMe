@@ -37,7 +37,7 @@ export function topicData() {
       quizCount++;
 
       for (const q of quiz.questions || []) {
-        if (!(q.topic && normT(q.topic) === normT(topic))) continue;
+        if (q.topic && normT(q.topic) !== normT(topic)) continue;
         const name = (q.subtopic || 'General').trim() || 'General';
         if (!subs.has(name)) subs.set(name, { name, questions: [], srcs: [] });
         const g = subs.get(name);
