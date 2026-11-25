@@ -390,9 +390,9 @@ export function wireStepChecks(q, a){
   document.querySelectorAll('[data-check-step]').forEach(b => b.onclick = () => {
     const i = +b.dataset.checkStep; const s = (q.steps || (q.stepChecks||[]).map(sc=>({title:sc.label})) )[i];
     const inp = document.querySelector(`[data-step="${i}"]`);
-    const v = parseFloat(inp.value);
     a.steps = a.steps || []; a.steps[i] = a.steps[i] || {};
-    a.steps[i].value = inp.value;
+    const v = inp ? parseFloat(inp.value) : NaN;
+    if (inp) a.steps[i].value = inp.value;
     if (s.answer == null) { a.steps[i].correct = true; // descriptive checkpoint — self-certified like mark-scheme ticks
     } else if (numOk(v, s.answer, s.tolerancePercent ?? tol)){ a.steps[i].correct = true; }
     else { a.steps[i].failed = true; }
